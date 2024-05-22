@@ -12,8 +12,6 @@
     "@chainlink/env-enc": "^1.0.5",
     "@chainlink/functions-toolkit": "^0.2.7",
     "@openzeppelin/merkle-tree": "^1.0.6",
-    "ethers": "^5.7.2",
-    "keccak256": "^1.0.6",
-    "merkletreejs": "^0.3.11"
+    "ethers": "^5.7.2"
   }
 }
