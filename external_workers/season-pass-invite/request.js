@@ -1,3 +1,6 @@
+import {config} from "@chainlink/env-enc";
+import {Client, logger} from "camunda-external-task-client-js";
+
 const fs = require("fs");
 const path = require("path");
 const {
@@ -11,29 +14,48 @@ const {
 } = require("@chainlink/functions-toolkit");
 const functionsConsumerAbi = require("./functionsClientAbi.json");
 const ethers = require("ethers");
-const {exit} = require("process");
-require("@chainlink/env-enc").config();
+
+// require("@chainlink/env-enc").config();
 
 const consumerAddress = "0x5BA49755ae8eEBb1D0DeebB31a4Ec5AA6e19fc5d"; // // TODO: get from config
-const subscriptionId = 2681; // TODO: get from config
+const subscriptionId = process.env.SUBSCRIPTION_ID;
 
-const makeRequestSepolia = async () => {
+const engineConfig = {
+    baseUrl: process.env.CAMUNDA_BASE_URL,
+    use: logger,
+    workerId: "update_merkle_tree",
+    maxTasks: 1,
+    interval: 1000,
+    lockDuration: 10000,
+    asyncResponseTimeout: 10000,
+    autoPoll: true,
+};
+const client = new Client(engineConfig);
+
+
+const makeRequest= async (task, taskService) => {
     // hardcoded for Ethereum Sepolia
     const routerAddress = process.env.ROUTER_ADDRESS;  // TODO: get from config
     const linkTokenAddress = "0x779877A7B0D9E8603169DdbD7836e478b4624789"; // TODO: get from config
     const donId = "fun-ethereum-sepolia-1"; // TODO: get from config
     const explorerUrl = "https://sepolia.etherscan.io"; // TODO: get from config
+    const tokenId = task.variables.get("tokenId");
+    let invitedWallets = []
+    for (let i = 1; i <= 5; i++) {
+        const wallet = task.variables.get(`wallet_${i}`)
+        if (wallet) {
+            invitedWallets.push(wallet)
+        }
+    }
+    const slotID = 0;
 
     // Initialize functions settings
     const source = fs
         .readFileSync(path.resolve(__dirname, "source.js"))
         .toString();
 
-    let args = ["0x3da87b1c3743BD2dA60DF2ef1BC6F26Ef9Da6086"]; // TODO: get from FORM
-    // const secrets = { apiKey: process.env.COINMARKETCAP_API_KEY }; // Only used for simulation in this example
-    // const secretsUrls = [
-    //   "https://clfunctions.s3.eu-north-1.amazonaws.com/offchain-secrets.json",
-    // ]; // REPLACE WITH YOUR VALUES after running gen-offchain-secrets.js and uploading offchain-secrets.json to a public URL
+    let args = [{tokenId, invitedWallets}]; // TODO: get from FORM
+    const secrets = {SYS_KEY: process.env.SYS_KEY}; // Only used for simulation in this example
     const gasLimit = 300000;
 
     // Initialize ethers signer and provider to interact with the contracts onchain
@@ -43,7 +65,7 @@ const makeRequestSepolia = async () => {
             "private key not provided - check your environment variables"
         );
 
-    const rpcUrl = process.env.ETHEREUM_SEPOLIA_RPC_URL; // fetch Sepolia RPC URL // TODO: rename
+    const rpcUrl = process.env.RPC_URL;
 
     if (!rpcUrl)
         throw new Error(`rpcUrl not provided  - check your environment variables`);
@@ -61,7 +83,7 @@ const makeRequestSepolia = async () => {
         source: source,
         args: args,
         bytesArgs: [], // bytesArgs - arguments can be encoded off-chain to bytes.
-        secrets: [],
+        secrets: secrets,
     });
 
     console.log("Simulation result", response);
@@ -113,19 +135,39 @@ const makeRequestSepolia = async () => {
     console.log("\nMake request...");
 
     // Initialize SecretsManager instance
-    // const secretsManager = new SecretsManager({
-    //   signer: signer,
-    //   functionsRouterAddress: routerAddress,
-    //   donId: donId,
-    // });
-    // await secretsManager.initialize();
+    const secretsManager = new SecretsManager({
+      signer: signer,
+      functionsRouterAddress: routerAddress,
+      donId: donId,
+    });
+    await secretsManager.initialize();
 
     // Encrypt secrets Urls
 
-    // console.log(`\nEncrypt the URLs..`);
-    // const encryptedSecretsUrls = await secretsManager.encryptSecretsUrls(
-    //   secretsUrls
-    // );
+    console.log(`\nEncrypt the URLs..`);
+    const encryptedSecrets = await secretsManager.encryptSecrets(secrets);
+
+    const gatewayUrls = [
+        "https://01.functions-gateway.testnet.chain.link/",
+        "https://02.functions-gateway.testnet.chain.link/",
+    ];
+    // Upload secrets
+    const uploadResult = await secretsManager.uploadEncryptedSecretsToDON({
+        encryptedSecretsHexstring: encryptedSecrets.encryptedSecrets,
+        gatewayUrls: gatewayUrls,
+        slotId: slotID,
+        minutesUntilExpiration: 15,
+    });
+
+    if (!uploadResult.success)
+        throw new Error(`Encrypted secrets not uploaded to ${gatewayUrls}`);
+
+    console.log(
+        `\n✅ Secrets uploaded properly to gateways ${gatewayUrls}! Gateways response: `,
+        uploadResult
+    );
+
+    const donHostedSecretsVersion = parseInt(uploadResult.version); // fetch the reference of the encrypted secrets
 
     const functionsConsumer = new ethers.Contract(
         consumerAddress,
@@ -136,9 +178,9 @@ const makeRequestSepolia = async () => {
     // Actual transaction call
     const transaction = await functionsConsumer.sendRequest(
         source, // source
-        [], // Encrypted Urls where the DON can fetch the encrypted secrets
-        0, // don hosted secrets - slot ID - empty in this example
-        0, // don hosted secrets - version - empty in this example
+        "0x", // Encrypted Urls where the DON can fetch the encrypted secrets
+        slotID, // don hosted secrets - slot ID
+        donHostedSecretsVersion, // don hosted secrets - version
         args,
         [], // bytesArgs - arguments can be encoded off-chain to bytes.
         subscriptionId,
@@ -221,11 +263,26 @@ const makeRequestSepolia = async () => {
             }
         } catch (error) {
             console.error("Error listening for response:", error);
+            await taskService.handleBpmnError(task, "PROCESSING_ERROR", error.message);
         }
     })();
 };
 
-makeRequestSepolia().catch((e) => {
-    console.error(e);
-    process.exit(1);
-});
+async function handleTask({task, taskService}) {
+    try {
+        await makeRequest(task, taskService);
+    }
+    catch (error) {
+        logger.error(error);
+        taskService.handleBpmnError(task, "PROCESSING_ERROR", error.message);
+    }
+    finally {
+        await taskService.complete(task);
+    }
+}
+
+client.subscribe(
+    "update_merkle_tree",
+    {lockDuration: 10000, variables: ["tokenId", "address"]},
+    handleTask
+);

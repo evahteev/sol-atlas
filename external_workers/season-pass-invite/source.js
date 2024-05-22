@@ -9,7 +9,7 @@ function getExistingAddresses() {
             method: 'get',
             headers: {
                 'Content-Type': 'application/json',
-                'X-SYS-KEY': ''
+                'X-SYS-KEY': secrets.SYS_KEY
             }
         }
     )
