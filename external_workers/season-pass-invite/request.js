@@ -39,7 +39,6 @@ const makeRequest= async (task, taskService) => {
     const linkTokenAddress = "0x779877A7B0D9E8603169DdbD7836e478b4624789"; // TODO: get from config
     const donId = "fun-ethereum-sepolia-1"; // TODO: get from config
     const explorerUrl = "https://sepolia.etherscan.io"; // TODO: get from config
-    const tokenId = task.variables.get("tokenId");
     let invitedWallets = []
     for (let i = 1; i <= 5; i++) {
         const wallet = task.variables.get(`wallet_${i}`)
@@ -54,7 +53,7 @@ const makeRequest= async (task, taskService) => {
         .readFileSync(path.resolve(__dirname, "source.js"))
         .toString();
 
-    let args = [{tokenId, invitedWallets}]; // TODO: get from FORM
+    let args = [invitedWallets];
     const secrets = {SYS_KEY: process.env.SYS_KEY}; // Only used for simulation in this example
     const gasLimit = 300000;
 
@@ -283,6 +282,6 @@ async function handleTask({task, taskService}) {
 
 client.subscribe(
     "update_merkle_tree",
-    {lockDuration: 10000, variables: ["tokenId", "address"]},
+    {lockDuration: 10000, variables: ["address"]},
     handleTask
 );
