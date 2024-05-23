@@ -5,7 +5,7 @@ CAMUNDA_URL = os.getenv("CAMUNDA_URL", "http://localhost:8080/engine-rest")
 CAMUNDA_USERNAME = os.getenv("CAMUNDA_USERNAME", "demo")
 CAMUNDA_PASSWORD = os.getenv("CAMUNDA_PASSWORD", "demo")
 API_URL = os.getenv("API_URL", "https://flow.gurunetwork.ai/api")
-SYS_KEY = os.getenv("SYS_KEY", "Bz6GkOYGWxnADxZ8")
+SYS_KEY = os.getenv("SYS_KEY", "secret")
 INVITES_LIMIT = int(os.getenv("INVITES_LIMIT", 5))
 
 CAMUNDA_CLIENT_CONFIG = {
