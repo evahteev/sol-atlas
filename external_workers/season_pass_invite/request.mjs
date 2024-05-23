@@ -1,9 +1,8 @@
-import {config} from "@chainlink/env-enc";
 import {Client, logger} from "camunda-external-task-client-js";
 
-const fs = require("fs");
-const path = require("path");
-const {
+import fs from "fs";
+import path from "path";
+import {
     SubscriptionManager,
     SecretsManager,
     simulateScript,
@@ -11,29 +10,28 @@ const {
     ReturnType,
     decodeResult,
     FulfillmentCode,
-} = require("@chainlink/functions-toolkit");
-const functionsConsumerAbi = require("./functionsClientAbi.json");
-const ethers = require("ethers");
+} from "@chainlink/functions-toolkit";
+import ethers from "ethers";
 
-// require("@chainlink/env-enc").config();
+import functionsConsumerAbi from "./functionsClientAbi.mjs";
+import 'dotenv/config';
+
 
 const consumerAddress = "0x5BA49755ae8eEBb1D0DeebB31a4Ec5AA6e19fc5d"; // // TODO: get from config
 const subscriptionId = process.env.SUBSCRIPTION_ID;
 
 const engineConfig = {
-    baseUrl: process.env.CAMUNDA_BASE_URL,
+    baseUrl: process.env.ENGINE_URL,
     use: logger,
     workerId: "update_merkle_tree",
     maxTasks: 1,
-    interval: 1000,
     lockDuration: 10000,
-    asyncResponseTimeout: 10000,
     autoPoll: true,
 };
 const client = new Client(engineConfig);
 
 
-const makeRequest= async (task, taskService) => {
+const makeRequest = async (task, taskService) => {
     // hardcoded for Ethereum Sepolia
     const routerAddress = process.env.ROUTER_ADDRESS;  // TODO: get from config
     const linkTokenAddress = "0x779877A7B0D9E8603169DdbD7836e478b4624789"; // TODO: get from config
@@ -49,11 +47,9 @@ const makeRequest= async (task, taskService) => {
     const slotID = 0;
 
     // Initialize functions settings
-    const source = fs
-        .readFileSync(path.resolve(__dirname, "source.js"))
-        .toString();
+    const source = fs.readFileSync("source.js").toString();
 
-    let args = [invitedWallets];
+    let args = [JSON.stringify(invitedWallets)];
     const secrets = {SYS_KEY: process.env.SYS_KEY}; // Only used for simulation in this example
     const gasLimit = 300000;
 
@@ -270,18 +266,18 @@ const makeRequest= async (task, taskService) => {
 async function handleTask({task, taskService}) {
     try {
         await makeRequest(task, taskService);
+        await taskService.complete(task);
+
     }
     catch (error) {
         logger.error(error);
         taskService.handleBpmnError(task, "PROCESSING_ERROR", error.message);
     }
-    finally {
-        await taskService.complete(task);
-    }
 }
+
 
 client.subscribe(
     "update_merkle_tree",
-    {lockDuration: 10000, variables: ["address"]},
+    {lockDuration: 10000},
     handleTask
 );

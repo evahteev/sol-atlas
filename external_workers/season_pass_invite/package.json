@@ -2,7 +2,7 @@
   "name": "functions-examples",
   "version": "1.0.0",
   "description": "",
-  "main": "request.js",
+  "main": "request.mjs",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -12,7 +12,8 @@
     "@chainlink/env-enc": "^1.0.5",
     "@chainlink/functions-toolkit": "^0.2.7",
     "@openzeppelin/merkle-tree": "^1.0.6",
-    "ethers": "^5.7.2",
-    "camunda-external-task-client-js": "^3.1.0"
+    "camunda-external-task-client-js": "^3.1.0",
+    "dotenv": "^16.4.5",
+    "ethers": "^5.7.2"
   }
 }
