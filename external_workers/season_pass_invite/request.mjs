@@ -2,13 +2,13 @@ import {Client, logger} from "camunda-external-task-client-js";
 
 import fs from "fs";
 import {
-    SubscriptionManager,
-    SecretsManager,
-    simulateScript,
-    ResponseListener,
-    ReturnType,
     decodeResult,
     FulfillmentCode,
+    ResponseListener,
+    ReturnType,
+    SecretsManager,
+    simulateScript,
+    SubscriptionManager,
 } from "@chainlink/functions-toolkit";
 import ethers from "ethers";
 
@@ -24,7 +24,7 @@ const engineConfig = {
     use: logger,
     workerId: "update_merkle_tree",
     maxTasks: 1,
-    lockDuration: 500000,
+    lockDuration: 5000000,
     retries: 0,
     autoPoll: true,
 };
@@ -132,9 +132,9 @@ const makeRequest = async (task, taskService) => {
 
     // Initialize SecretsManager instance
     const secretsManager = new SecretsManager({
-      signer: signer,
-      functionsRouterAddress: routerAddress,
-      donId: donId,
+        signer: signer,
+        functionsRouterAddress: routerAddress,
+        donId: donId,
     });
     await secretsManager.initialize();
 
@@ -193,86 +193,85 @@ const makeRequest = async (task, taskService) => {
         `See your request in the explorer ${explorerUrl}/tx/${transaction.hash}`
     );
 
-    const responseListener = new ResponseListener({
-        provider: provider,
-        functionsRouterAddress: routerAddress,
-    }); // Instantiate a ResponseListener object to wait for fulfillment.
-    await (async () => {
-        try {
-            const response = await new Promise((resolve, reject) => {
-                responseListener
-                    .listenForResponseFromTransaction(transaction.hash)
-                    .then((response) => {
-                        resolve(response); // Resolves once the request has been fulfilled.
-                    })
-                    .catch((error) => {
-                        reject(error); // Indicate that an error occurred while waiting for fulfillment.
-                    });
-            });
-
-            const fulfillmentCode = response.fulfillmentCode;
-
-            if (fulfillmentCode === FulfillmentCode.FULFILLED) {
-                console.log(
-                    `\n✅ Request ${
-                        response.requestId
-                    } successfully fulfilled. Cost is ${ethers.utils.formatEther(
-                        response.totalCostInJuels
-                    )} LINK.Complete reponse: `,
-                    response
-                );
-            } else if (fulfillmentCode === FulfillmentCode.USER_CALLBACK_ERROR) {
-                console.log(
-                    `\n⚠️ Request ${
-                        response.requestId
-                    } fulfilled. However, the consumer contract callback failed. Cost is ${ethers.utils.formatEther(
-                        response.totalCostInJuels
-                    )} LINK.Complete reponse: `,
-                    response
-                );
-            } else {
-                console.log(
-                    `\n❌ Request ${
-                        response.requestId
-                    } not fulfilled. Code: ${fulfillmentCode}. Cost is ${ethers.utils.formatEther(
-                        response.totalCostInJuels
-                    )} LINK.Complete reponse: `,
-                    response
-                );
-            }
-
-            const errorString = response.errorString;
-            if (errorString) {
-                console.log(`\n❌ Error during the execution: `, errorString);
-            } else {
-                const responseBytesHexstring = response.responseBytesHexstring;
-                if (ethers.utils.arrayify(responseBytesHexstring).length > 0) {
-                    const decodedResponse = decodeResult(
-                        response.responseBytesHexstring,
-                        ReturnType.uint256
-                    );
-                    console.log(
-                        `\n✅ Decoded response to ${ReturnType.uint256}: `,
-                        decodedResponse
-                    );
-                }
-            }
-        } catch (error) {
-            console.error("Error listening for response:", error);
-            await taskService.handleBpmnError(task, "PROCESSING_ERROR", error.message);
-        }
-    })();
+    // const responseListener = new ResponseListener({
+    //     provider: provider,
+    //     functionsRouterAddress: routerAddress,
+    // }); // Instantiate a ResponseListener object to wait for fulfillment.
+    // (async () => {
+    //     try {
+    //         const response = await new Promise((resolve, reject) => {
+    //             responseListener
+    //                 .listenForResponseFromTransaction(transaction.hash)
+    //                 .then((response) => {
+    //                     resolve(response); // Resolves once the request has been fulfilled.
+    //                 })
+    //                 .catch((error) => {
+    //                     reject(error); // Indicate that an error occurred while waiting for fulfillment.
+    //                 });
+    //         });
+    //
+    //         const fulfillmentCode = response.fulfillmentCode;
+    //
+    //         if (fulfillmentCode === FulfillmentCode.FULFILLED) {
+    //             console.log(
+    //                 `\n✅ Request ${
+    //                     response.requestId
+    //                 } successfully fulfilled. Cost is ${ethers.utils.formatEther(
+    //                     response.totalCostInJuels
+    //                 )} LINK.Complete reponse: `,
+    //                 response
+    //             );
+    //         } else if (fulfillmentCode === FulfillmentCode.USER_CALLBACK_ERROR) {
+    //             console.log(
+    //                 `\n⚠️ Request ${
+    //                     response.requestId
+    //                 } fulfilled. However, the consumer contract callback failed. Cost is ${ethers.utils.formatEther(
+    //                     response.totalCostInJuels
+    //                 )} LINK.Complete reponse: `,
+    //                 response
+    //             );
+    //         } else {
+    //             console.log(
+    //                 `\n❌ Request ${
+    //                     response.requestId
+    //                 } not fulfilled. Code: ${fulfillmentCode}. Cost is ${ethers.utils.formatEther(
+    //                     response.totalCostInJuels
+    //                 )} LINK.Complete reponse: `,
+    //                 response
+    //             );
+    //         }
+    //
+    //         const errorString = response.errorString;
+    //         if (errorString) {
+    //             console.log(`\n❌ Error during the execution: `, errorString);
+    //         } else {
+    //             const responseBytesHexstring = response.responseBytesHexstring;
+    //             if (ethers.utils.arrayify(responseBytesHexstring).length > 0) {
+    //                 const decodedResponse = decodeResult(
+    //                     response.responseBytesHexstring,
+    //                     ReturnType.uint256
+    //                 );
+    //                 console.log(
+    //                     `\n✅ Decoded response to ${ReturnType.uint256}: `,
+    //                     decodedResponse
+    //                 );
+    //             }
+    //         }
+    //     } catch (error) {
+    //         console.error("Error listening for response:", error);
+    //         await taskService.handleBpmnError(task, "PROCESSING_ERROR", error.message);
+    //     }
+    // })();
 };
 
 async function handleTask({task, taskService}) {
     try {
         await makeRequest(task, taskService);
         await taskService.complete(task);
-    }
-    catch (error) {
+    } catch (error) {
         console.log("Error processing task", error);
         logger.error(error);
-        taskService.handleBpmnError(task, "PROCESSING_ERROR", error.message);
+        await taskService.handleBpmnError(task, "PROCESSING_ERROR", error.message);
     }
 }
 
