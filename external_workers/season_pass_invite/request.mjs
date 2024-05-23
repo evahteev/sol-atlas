@@ -1,7 +1,6 @@
 import {Client, logger} from "camunda-external-task-client-js";
 
 import fs from "fs";
-import path from "path";
 import {
     SubscriptionManager,
     SecretsManager,
