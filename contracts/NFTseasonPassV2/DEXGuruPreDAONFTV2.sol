@@ -8,7 +8,6 @@ import {FunctionsClient} from "@chainlink/contracts@1.1.0/src/v0.8/functions/v1_
 import {ConfirmedOwner} from "@chainlink/contracts@1.1.0/src/v0.8/shared/access/ConfirmedOwner.sol";
 import {FunctionsRequest} from "@chainlink/contracts@1.1.0/src/v0.8/functions/v1_0_0/libraries/FunctionsRequest.sol";
 import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
-import {IGuruSeasonPassV2NFT} from "./interfaces.sol";
 
 
 contract GuruSeason2PassNFT is ERC721, ERC721Enumerable, FunctionsClient, ConfirmedOwner {
@@ -18,10 +17,7 @@ contract GuruSeason2PassNFT is ERC721, ERC721Enumerable, FunctionsClient, Confir
     uint256 private constant MINTING_START_TIME = 1648656000;      // 03/30/2022 @ 9:00am (PST)
     uint256 private constant MINTING_END_TIME = 1748018270;     // 04/01/2022 @ 9:00am (PST)
     uint256 private constant NFT_PER_ADDRESS_LIMIT = 1;
-    bytes32 public MERKLE_ROOT = 0x85c99f9ed408529a8e32d19f1606c0783273722f7a42ae71ef5f7345b0e62870;
-    address private immutable season1Address;
-    IGuruSeasonPassV2NFT IGURU_SEASON_1_PASS_NFT = IGuruSeasonPassV2NFT(0x9bF88fAe8CF8BaB76041c1db6467E7b37b977dD7);
-
+    bytes32 private MERKLE_ROOT = 0x85c99f9ed408529a8e32d19f1606c0783273722f7a42ae71ef5f7345b0e62870;
 
     // ChainLink functions vars
     bytes32 public s_lastRequestId;
@@ -31,11 +27,9 @@ contract GuruSeason2PassNFT is ERC721, ERC721Enumerable, FunctionsClient, Confir
     error UnexpectedRequestID(bytes32 requestId);
     event Response(bytes32 indexed requestId, bytes response, bytes err);
 
-    constructor(address initialOwner, address router, address _season1Address)
+    constructor(address initialOwner, address router)
             ERC721("GuruSeason2PassNFT", "GURUV2") FunctionsClient(router) ConfirmedOwner(initialOwner)
-    {
-        season1Address = _season1Address;
-    }
+        {}
 
     function _baseURI() internal pure override returns (string memory) {
         return "https://flow.gurunetwork.ai/seasons/2";
@@ -134,14 +128,10 @@ contract GuruSeason2PassNFT is ERC721, ERC721Enumerable, FunctionsClient, Confir
             revert UnexpectedRequestID(requestId);
         }
         if (err.length == 0) {
-            updateMerkleRoot(response);
+            MERKLE_ROOT = bytes32(response);
          }
         s_lastError = err;
         emit Response(requestId, response, s_lastError);
-    }
-
-    function updateMerkleRoot(bytes memory newRoot) internal {
-        MERKLE_ROOT = bytes32(newRoot);
     }
 
 }
