@@ -54,10 +54,6 @@
       <bpmn:incoming>Flow_1udmu4h</bpmn:incoming>
       <bpmn:outgoing>Flow_12gro42</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:task id="Activity_14ks2b4" name="write in db">
-      <bpmn:incoming>Flow_1i9yzwc</bpmn:incoming>
-      <bpmn:outgoing>Flow_11qw6vw</bpmn:outgoing>
-    </bpmn:task>
     <bpmn:endEvent id="Event_1m0dudk" name="successful exit">
       <bpmn:incoming>Flow_11qw6vw</bpmn:incoming>
     </bpmn:endEvent>
@@ -75,8 +71,8 @@
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="Flow_1wb6gl5" sourceRef="Activity_0zpdse3" targetRef="Event_0sgr3hc" />
     <bpmn:sequenceFlow id="Flow_12gro42" sourceRef="invite_wallets_form" targetRef="update_merkle_tree" />
-    <bpmn:sequenceFlow id="Flow_1i9yzwc" sourceRef="update_merkle_tree" targetRef="Activity_14ks2b4" />
-    <bpmn:sequenceFlow id="Flow_11qw6vw" sourceRef="Activity_14ks2b4" targetRef="Event_1m0dudk" />
+    <bpmn:sequenceFlow id="Flow_1i9yzwc" sourceRef="update_merkle_tree" targetRef="write_invited_wallets_in_db" />
+    <bpmn:sequenceFlow id="Flow_11qw6vw" sourceRef="write_invited_wallets_in_db" targetRef="Event_1m0dudk" />
     <bpmn:sequenceFlow id="Flow_0qkv0h8" sourceRef="season_pass_invite_start" targetRef="Activity_0nu16tx" />
     <bpmn:userTask id="Activity_0nu16tx" name="wallet_address and token_id">
       <bpmn:extensionElements>
@@ -91,6 +87,10 @@
       <bpmn:outgoing>Flow_1i7ety8</bpmn:outgoing>
     </bpmn:userTask>
     <bpmn:sequenceFlow id="Flow_1i7ety8" sourceRef="Activity_0nu16tx" targetRef="checkInviteQuote" />
+    <bpmn:serviceTask id="write_invited_wallets_in_db" name="write invited wallets in db" camunda:type="external" camunda:topic="writeIvitedWallets">
+      <bpmn:incoming>Flow_1i9yzwc</bpmn:incoming>
+      <bpmn:outgoing>Flow_11qw6vw</bpmn:outgoing>
+    </bpmn:serviceTask>
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="season_pass_invite">
@@ -118,16 +118,6 @@
       <bpmndi:BPMNShape id="Activity_11x015d_di" bpmnElement="invite_wallets_form">
         <dc:Bounds x="770" y="360" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_14ks2b4_di" bpmnElement="Activity_14ks2b4">
-        <dc:Bounds x="1120" y="360" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1m0dudk_di" bpmnElement="Event_1m0dudk">
-        <dc:Bounds x="1382" y="382" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1364" y="425" width="72" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1kybejw_di" bpmnElement="Activity_0zpdse3">
         <dc:Bounds x="950" y="200" width="100" height="80" />
         <bpmndi:BPMNLabel />
@@ -147,6 +137,15 @@
       <bpmndi:BPMNShape id="Activity_1t2flgl_di" bpmnElement="Activity_0nu16tx">
         <dc:Bounds x="290" y="360" width="100" height="80" />
         <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1m0dudk_di" bpmnElement="Event_1m0dudk">
+        <dc:Bounds x="1312" y="382" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1294" y="425" width="72" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1x94s1g_di" bpmnElement="write_invited_wallets_in_db">
+        <dc:Bounds x="1120" y="360" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0o0tg3l_di" bpmnElement="Event_0iybmtm">
         <dc:Bounds x="982" y="342" width="36" height="36" />
@@ -181,7 +180,7 @@
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_11qw6vw_di" bpmnElement="Flow_11qw6vw">
         <di:waypoint x="1220" y="400" />
-        <di:waypoint x="1382" y="400" />
+        <di:waypoint x="1312" y="400" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1fsuvyk_di" bpmnElement="Flow_1fsuvyk">
         <di:waypoint x="1000" y="342" />
