@@ -16,7 +16,7 @@ import functionsConsumerAbi from "./functionsClientAbi.mjs";
 import 'dotenv/config';
 
 
-const consumerAddress = "0x5BA49755ae8eEBb1D0DeebB31a4Ec5AA6e19fc5d"; // // TODO: get from config
+const consumerAddress = process.env.CONSUMER_ADDRESS;
 const subscriptionId = process.env.SUBSCRIPTION_ID;
 
 const engineConfig = {
@@ -24,7 +24,8 @@ const engineConfig = {
     use: logger,
     workerId: "update_merkle_tree",
     maxTasks: 1,
-    lockDuration: 10000,
+    lockDuration: 500000,
+    retries: 0,
     autoPoll: true,
 };
 const client = new Client(engineConfig);
@@ -32,9 +33,9 @@ const client = new Client(engineConfig);
 
 const makeRequest = async (task, taskService) => {
     // hardcoded for Ethereum Sepolia
-    const routerAddress = process.env.ROUTER_ADDRESS;  // TODO: get from config
-    const linkTokenAddress = "0x779877A7B0D9E8603169DdbD7836e478b4624789"; // TODO: get from config
-    const donId = "fun-ethereum-sepolia-1"; // TODO: get from config
+    const routerAddress = process.env.ROUTER_ADDRESS;
+    const linkTokenAddress = process.env.LINK_TOKEN_ADDRESS;
+    const donId = process.env.DON_ID;
     const explorerUrl = "https://sepolia.etherscan.io"; // TODO: get from config
     let invitedWallets = []
     for (let i = 1; i <= 5; i++) {
@@ -43,6 +44,7 @@ const makeRequest = async (task, taskService) => {
             invitedWallets.push(wallet)
         }
     }
+    // random slot id
     const slotID = 0;
 
     // Initialize functions settings
@@ -150,7 +152,7 @@ const makeRequest = async (task, taskService) => {
         encryptedSecretsHexstring: encryptedSecrets.encryptedSecrets,
         gatewayUrls: gatewayUrls,
         slotId: slotID,
-        minutesUntilExpiration: 15,
+        minutesUntilExpiration: 10,
     });
 
     if (!uploadResult.success)
@@ -266,9 +268,9 @@ async function handleTask({task, taskService}) {
     try {
         await makeRequest(task, taskService);
         await taskService.complete(task);
-
     }
     catch (error) {
+        console.log("Error processing task", error);
         logger.error(error);
         taskService.handleBpmnError(task, "PROCESSING_ERROR", error.message);
     }
@@ -277,6 +279,5 @@ async function handleTask({task, taskService}) {
 
 client.subscribe(
     "update_merkle_tree",
-    {lockDuration: 10000},
     handleTask
 );
