@@ -1,11 +1,10 @@
 const {StandardMerkleTree} = await import('npm:@openzeppelin/merkle-tree');
-// import {StandardMerkleTree} from '@openzeppelin/merkle-tree';
 
 async function getExistingAddresses() {
     // return [address1, address2, ...]
     const response = await Functions.makeHttpRequest(
         {
-            url: 'https://flow.gurunetwork.ai/api/invited_wallets',
+            url: 'https://flow.gurunetwork.ai/api/invites',
             method: 'get',
             headers: {
                 'Content-Type': 'application/json',

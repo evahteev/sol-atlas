@@ -22,7 +22,7 @@ def handle_task(task: ExternalTask):
         if wallet:
             wallets_to_invite.add(wallet)
     invited_wallets = requests.post(
-        f"{API_URL}/invite/{token_id}",
+        f"{API_URL}/invites/token/{token_id}",
         headers={"X-SYS-KEY": SYS_KEY},
         json=list(wallets_to_invite),
     )
@@ -42,4 +42,4 @@ def handle_task(task: ExternalTask):
 if __name__ == "__main__":
     ExternalTaskWorker(
         worker_id="2", base_url=CAMUNDA_URL, config=CAMUNDA_CLIENT_CONFIG
-    ).subscribe("writeInvitedWallets", handle_task)
+    ).subscribe(TOPIC_NAME, handle_task)

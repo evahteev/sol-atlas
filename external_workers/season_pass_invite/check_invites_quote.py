@@ -17,7 +17,7 @@ def handle_task(task: ExternalTask):
     variables = task.get_variables()
     token_id = variables.get("token_id")
     invited_wallets = requests.get(
-        f"{API_URL}/invited_wallets/{token_id}", headers={"X-SYS-KEY": SYS_KEY}
+        f"{API_URL}/invites/token/{token_id}", headers={"X-SYS-KEY": SYS_KEY}
     )
     try:
         invited_wallets.raise_for_status()

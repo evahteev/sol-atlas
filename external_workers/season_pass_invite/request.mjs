@@ -32,36 +32,37 @@ const client = new Client(engineConfig);
 
 
 const makeRequest = async (task, taskService) => {
-    // hardcoded for Ethereum Sepolia
     const routerAddress = process.env.ROUTER_ADDRESS;
     const linkTokenAddress = process.env.LINK_TOKEN_ADDRESS;
     const donId = process.env.DON_ID;
-    const explorerUrl = "https://sepolia.etherscan.io"; // TODO: get from config
-    let invitedWallets = []
-    for (let i = 1; i <= 5; i++) {
+    const explorerUrl = process.env.EXPLORER_URL;
+    const availableInvites = task.variables.get("available_invites")
+    const inviterWallet = task.variables.get("wallet_address")
+    const slotID = 0;
+    const privateKey = process.env.PRIVATE_KEY; // fetch PRIVATE_KEY
+    const rpcUrl = process.env.RPC_URL;
+    let walletsToInvite = []
+
+    for (let i = 1; i <= availableInvites; i++) {
         const wallet = task.variables.get(`wallet_${i}`)
-        if (wallet) {
-            invitedWallets.push(wallet)
+        if (wallet && wallet !== inviterWallet) {
+            walletsToInvite.push(wallet)
         }
     }
-    // random slot id
-    const slotID = 0;
 
     // Initialize functions settings
     const source = fs.readFileSync("source.js").toString();
 
-    let args = [JSON.stringify(invitedWallets)];
+    let args = [JSON.stringify(walletsToInvite)];
     const secrets = {SYS_KEY: process.env.SYS_KEY}; // Only used for simulation in this example
     const gasLimit = 300000;
 
     // Initialize ethers signer and provider to interact with the contracts onchain
-    const privateKey = process.env.PRIVATE_KEY; // fetch PRIVATE_KEY
     if (!privateKey)
         throw new Error(
             "private key not provided - check your environment variables"
         );
 
-    const rpcUrl = process.env.RPC_URL;
 
     if (!rpcUrl)
         throw new Error(`rpcUrl not provided  - check your environment variables`);
@@ -86,7 +87,7 @@ const makeRequest = async (task, taskService) => {
     const errorString = response.errorString;
     if (errorString) {
         console.log(`❌ Error during simulation: `, errorString);
-        return;
+        throw new Error(`Error during simulation: ${errorString}`);
     } else {
         const returnType = ReturnType.uint256;
         const responseBytesHexstring = response.responseBytesHexstring;
@@ -193,6 +194,7 @@ const makeRequest = async (task, taskService) => {
         `See your request in the explorer ${explorerUrl}/tx/${transaction.hash}`
     );
 
+    // listener does not work
     // const responseListener = new ResponseListener({
     //     provider: provider,
     //     functionsRouterAddress: routerAddress,
@@ -267,11 +269,11 @@ const makeRequest = async (task, taskService) => {
 async function handleTask({task, taskService}) {
     try {
         await makeRequest(task, taskService);
-        await taskService.complete(task);
+        return await taskService.complete(task);
     } catch (error) {
         console.log("Error processing task", error);
         logger.error(error);
-        await taskService.handleBpmnError(task, "PROCESSING_ERROR", error.message);
+        return await taskService.handleBpmnError(task, "PROCESSING_ERROR", error.message);
     }
 }
 
