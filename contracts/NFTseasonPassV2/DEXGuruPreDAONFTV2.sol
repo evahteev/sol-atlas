@@ -4,17 +4,17 @@ pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Pausable.sol";
 import {FunctionsClient} from "@chainlink/contracts@1.1.0/src/v0.8/functions/v1_0_0/FunctionsClient.sol";
 import {ConfirmedOwner} from "@chainlink/contracts@1.1.0/src/v0.8/shared/access/ConfirmedOwner.sol";
 import {FunctionsRequest} from "@chainlink/contracts@1.1.0/src/v0.8/functions/v1_0_0/libraries/FunctionsRequest.sol";
 import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 
 
-contract GuruSeason2PassNFT is ERC721, ERC721Enumerable, FunctionsClient, ConfirmedOwner {
+contract GuruSeason2PassNFT is ERC721, ERC721Pausable, ERC721Enumerable, FunctionsClient, ConfirmedOwner {
     using FunctionsRequest for FunctionsRequest.Request;
 
     uint256 private _nextTokenId;
-    uint256 private constant MINTING_START_TIME = 1648656000;      // 03/30/2022 @ 9:00am (PST)
     uint256 private constant MINTING_END_TIME = 1722470400;     // 08/01/2024 @ 00:00am (GMT)
     uint256 private constant NFT_PER_ADDRESS_LIMIT = 1;
     bytes32 private MERKLE_ROOT = 0x85c99f9ed408529a8e32d19f1606c0783273722f7a42ae71ef5f7345b0e62870;
@@ -31,13 +31,20 @@ contract GuruSeason2PassNFT is ERC721, ERC721Enumerable, FunctionsClient, Confir
             ERC721("GuruSeason2PassNFT", "GURUV2") FunctionsClient(router) ConfirmedOwner(initialOwner)
         {}
 
+    function pause() public onlyOwner {
+        _pause();
+    }
+
+    function unpause() public onlyOwner {
+        _unpause();
+    }
+
     function _baseURI() internal pure override returns (string memory) {
-        return "https://flow.gurunetwork.ai/seasons/2";
+        return "https://flow.gurunetwork.ai/seasons/2/";
     }
 
     function safeMint(bytes32[] calldata proof) public {
         require(balanceOf(msg.sender) < NFT_PER_ADDRESS_LIMIT, "You have reached max number of NFT!");
-        require(block.timestamp >= MINTING_START_TIME, "SeasonPass is not yet available!");
         require(block.timestamp <= MINTING_END_TIME, "SeasonPass has been sold out!");
         bytes32 leaf = keccak256(bytes.concat(keccak256(abi.encode(msg.sender))));
         require(MerkleProof.verify(proof, MERKLE_ROOT, leaf), "Invalid proof");
@@ -49,7 +56,7 @@ contract GuruSeason2PassNFT is ERC721, ERC721Enumerable, FunctionsClient, Confir
 
     function _update(address to, uint256 tokenId, address auth)
         internal
-        override(ERC721, ERC721Enumerable)
+        override(ERC721, ERC721Enumerable, ERC721Pausable)
         returns (address)
     {
         return super._update(to, tokenId, auth);
