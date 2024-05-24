@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_1cab6p0" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.21.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.19.0">
+  <bpmn:process id="automation_faucet" name="Guru Canto testnet faucet" isExecutable="true" camunda:historyTimeToLive="180">
+    <bpmn:startEvent id="StartEvent_1" camunda:formRef="" camunda:formRefBinding="latest" camunda:initiator="camunda_user_id">
+      <bpmn:extensionElements />
+      <bpmn:outgoing>Flow_0u911t6</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_0u911t6" sourceRef="StartEvent_1" targetRef="web3_wallet_address_amount" />
+    <bpmn:userTask id="web3_wallet_address_amount" name="Provide Wallet Address And Amount" camunda:assignee="${camunda_user_id}">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="wallet_address" label="wallet address" type="string">
+            <camunda:properties />
+            <camunda:validation />
+          </camunda:formField>
+          <camunda:formField id="amount" label="amount" type="long" defaultValue="100" />
+        </camunda:formData>
+        <camunda:inputOutput>
+          <camunda:outputParameter name="wallet_address">${wallet_address}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0u911t6</bpmn:incoming>
+      <bpmn:incoming>Flow_16zklt4</bpmn:incoming>
+      <bpmn:outgoing>Flow_0rmvjyb</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:serviceTask id="validate_wallet_address" name="validate wallet address" camunda:type="external" camunda:topic="validate_wallet_address">
+      <bpmn:extensionElements>
+        <camunda:errorEventDefinition id="ErrorEventDefinition_0z7y2mp" />
+        <camunda:inputOutput>
+          <camunda:inputParameter name="wallet_address">${wallet_address}</camunda:inputParameter>
+          <camunda:outputParameter name="wallet_address">${wallet_address}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0rmvjyb</bpmn:incoming>
+      <bpmn:outgoing>Flow_1jsefni</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0rmvjyb" sourceRef="web3_wallet_address_amount" targetRef="validate_wallet_address" />
+    <bpmn:boundaryEvent id="Event_0ykxwvb" name="validation error" attachedToRef="validate_wallet_address">
+      <bpmn:outgoing>Flow_16zklt4</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_0a9mt24" errorRef="Error_0yhvjcc" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_16zklt4" sourceRef="Event_0ykxwvb" targetRef="web3_wallet_address_amount" />
+    <bpmn:sequenceFlow id="Flow_1jsefni" sourceRef="validate_wallet_address" targetRef="check_delay" />
+    <bpmn:serviceTask id="send_tokens" name="send tokens" camunda:type="external" camunda:topic="send_tokens">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="wallet_address">${wallet_address}</camunda:inputParameter>
+          <camunda:outputParameter name="tx_hash">${tx_hash}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_05zefkh</bpmn:incoming>
+      <bpmn:outgoing>Flow_15r1ehe</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="Event_126tt8u" name="retry later">
+      <bpmn:incoming>Flow_0n1fdm7</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:serviceTask id="check_delay" name="check delay" camunda:type="external" camunda:topic="check_delay">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="wallet_address">${wallet_address}</camunda:inputParameter>
+          <camunda:outputParameter name="wallet_address">${wallet_address}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1jsefni</bpmn:incoming>
+      <bpmn:outgoing>Flow_05zefkh</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_05zefkh" sourceRef="check_delay" targetRef="send_tokens" />
+    <bpmn:boundaryEvent id="Event_11b098a" attachedToRef="check_delay">
+      <bpmn:outgoing>Flow_0n1fdm7</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_0myekze" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_0n1fdm7" sourceRef="Event_11b098a" targetRef="Event_126tt8u" />
+    <bpmn:userTask id="Activity_1qf4m0g" name="get tx hash">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="tx_hash">${tx_hash}</camunda:inputParameter>
+        </camunda:inputOutput>
+        <camunda:formData>
+          <camunda:formField id="ok" label="ok" type="boolean" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_15r1ehe</bpmn:incoming>
+      <bpmn:outgoing>Flow_0duhv9v</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_15r1ehe" sourceRef="send_tokens" targetRef="Activity_1qf4m0g" />
+    <bpmn:endEvent id="Event_06dmrgq" name="success">
+      <bpmn:incoming>Flow_0duhv9v</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0duhv9v" sourceRef="Activity_1qf4m0g" targetRef="Event_06dmrgq" />
+  </bpmn:process>
+  <bpmn:error id="Error_0yhvjcc" name="INVALID_WALLET_ADDRESS" errorCode="429" camunda:errorMessage="INVALID_WALLET_ADDRESS" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="automation_faucet">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="152" y="142" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0lycodz_di" bpmnElement="web3_wallet_address_amount">
+        <dc:Bounds x="270" y="120" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_17ijd4r_di" bpmnElement="validate_wallet_address">
+        <dc:Bounds x="460" y="120" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1sy7xfa_di" bpmnElement="send_tokens">
+        <dc:Bounds x="840" y="120" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_126tt8u_di" bpmnElement="Event_126tt8u">
+        <dc:Bounds x="772" y="342" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="767" y="385" width="47" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0nwsa2l_di" bpmnElement="check_delay">
+        <dc:Bounds x="650" y="120" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1qf4m0g_di" bpmnElement="Activity_1qf4m0g">
+        <dc:Bounds x="1030" y="120" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_06dmrgq_di" bpmnElement="Event_06dmrgq">
+        <dc:Bounds x="1222" y="142" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1221" y="185" width="40" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_11b098a_di" bpmnElement="Event_11b098a">
+        <dc:Bounds x="682" y="182" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0ykxwvb_di" bpmnElement="Event_0ykxwvb">
+        <dc:Bounds x="492" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="523" y="93" width="73" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0u911t6_di" bpmnElement="Flow_0u911t6">
+        <di:waypoint x="188" y="160" />
+        <di:waypoint x="270" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0rmvjyb_di" bpmnElement="Flow_0rmvjyb">
+        <di:waypoint x="370" y="160" />
+        <di:waypoint x="460" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_16zklt4_di" bpmnElement="Flow_16zklt4">
+        <di:waypoint x="510" y="102" />
+        <di:waypoint x="510" y="82" />
+        <di:waypoint x="320" y="82" />
+        <di:waypoint x="320" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1jsefni_di" bpmnElement="Flow_1jsefni">
+        <di:waypoint x="560" y="160" />
+        <di:waypoint x="650" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_05zefkh_di" bpmnElement="Flow_05zefkh">
+        <di:waypoint x="750" y="160" />
+        <di:waypoint x="840" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0n1fdm7_di" bpmnElement="Flow_0n1fdm7">
+        <di:waypoint x="700" y="218" />
+        <di:waypoint x="700" y="360" />
+        <di:waypoint x="772" y="360" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_15r1ehe_di" bpmnElement="Flow_15r1ehe">
+        <di:waypoint x="940" y="160" />
+        <di:waypoint x="1030" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0duhv9v_di" bpmnElement="Flow_0duhv9v">
+        <di:waypoint x="1130" y="160" />
+        <di:waypoint x="1222" y="160" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
