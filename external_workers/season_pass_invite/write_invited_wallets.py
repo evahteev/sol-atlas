@@ -42,4 +42,4 @@ def handle_task(task: ExternalTask):
 if __name__ == "__main__":
     ExternalTaskWorker(
         worker_id="2", base_url=CAMUNDA_URL, config=CAMUNDA_CLIENT_CONFIG
-    ).subscribe("writeIvitedWallets", handle_task)
+    ).subscribe("writeInvitedWallets", handle_task)

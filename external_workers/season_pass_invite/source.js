@@ -20,13 +20,10 @@ async function getExistingAddresses() {
     return response.data;
 }
 
-
 function generateMerkletree(walletAddresses) {
-    let walletAddressesP = [];
-    for (const address of walletAddresses) {
-        walletAddressesP.push([address]);
-    }
-    return StandardMerkleTree.of(walletAddressesP, ['address']);
+    const walletsSet = new Set(walletAddresses.map(x => (x.toLowerCase())))
+    const walletArrayOfArray = [...walletsSet].map(x => ([x]))
+    return StandardMerkleTree.of(walletArrayOfArray, ['address']);
 }
 
 const existingWallets = await getExistingAddresses();

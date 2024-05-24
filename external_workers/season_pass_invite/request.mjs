@@ -277,6 +277,6 @@ async function handleTask({task, taskService}) {
 
 
 client.subscribe(
-    "update_merkle_tree",
+    "updateMerkleTree",
     handleTask
 );

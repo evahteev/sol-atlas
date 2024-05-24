@@ -1,6 +1,6 @@
 import os
 
-TOPIC_NAME = os.getenv("TOPIC_NAME", "check_invite_quote")
+TOPIC_NAME = os.getenv("TOPIC_NAME", "checkInviteQuote")
 CAMUNDA_URL = os.getenv("CAMUNDA_URL", "http://localhost:8080/engine-rest")
 CAMUNDA_USERNAME = os.getenv("CAMUNDA_USERNAME", "demo")
 CAMUNDA_PASSWORD = os.getenv("CAMUNDA_PASSWORD", "demo")

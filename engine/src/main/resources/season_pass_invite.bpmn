@@ -3,21 +3,24 @@
   <bpmn:process id="season_pass_invite" name="Season Pass V2" isExecutable="true" camunda:historyTimeToLive="180">
     <bpmn:startEvent id="season_pass_invite_start" name="Season pass V2 Invite">
       <bpmn:extensionElements>
-        <camunda:formData />
+        <camunda:formData>
+          <camunda:formField id="wallet_address" label="Wallet address" type="string" />
+          <camunda:formField id="token_id" label="Token Id" type="long" />
+        </camunda:formData>
       </bpmn:extensionElements>
       <bpmn:outgoing>Flow_0qkv0h8</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:serviceTask id="update_merkle_tree" name="update merkle tree" camunda:type="external" camunda:topic="update_merkle_tree">
+    <bpmn:serviceTask id="update_merkle_tree" name="update merkle tree" camunda:type="external" camunda:topic="updateMerkleTree">
       <bpmn:incoming>Flow_12gro42</bpmn:incoming>
       <bpmn:outgoing>Flow_1i9yzwc</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="checkInviteQuote" name="check invite quote" camunda:asyncAfter="true" camunda:type="external" camunda:topic="check_invite_quote">
+    <bpmn:serviceTask id="checkInviteQuote" name="check invite quote" camunda:asyncAfter="true" camunda:type="external" camunda:topic="checkInviteQuote">
       <bpmn:extensionElements>
         <camunda:inputOutput>
           <camunda:outputParameter name="available_invites">${available_invites}</camunda:outputParameter>
         </camunda:inputOutput>
       </bpmn:extensionElements>
-      <bpmn:incoming>Flow_1i7ety8</bpmn:incoming>
+      <bpmn:incoming>Flow_0qkv0h8</bpmn:incoming>
       <bpmn:outgoing>Flow_13ds9oi</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:exclusiveGateway id="Gateway_1wpuobs" default="Flow_1udmu4h">
@@ -73,21 +76,8 @@
     <bpmn:sequenceFlow id="Flow_12gro42" sourceRef="invite_wallets_form" targetRef="update_merkle_tree" />
     <bpmn:sequenceFlow id="Flow_1i9yzwc" sourceRef="update_merkle_tree" targetRef="write_invited_wallets_in_db" />
     <bpmn:sequenceFlow id="Flow_11qw6vw" sourceRef="write_invited_wallets_in_db" targetRef="Event_1m0dudk" />
-    <bpmn:sequenceFlow id="Flow_0qkv0h8" sourceRef="season_pass_invite_start" targetRef="Activity_0nu16tx" />
-    <bpmn:userTask id="Activity_0nu16tx" name="wallet_address and token_id">
-      <bpmn:extensionElements>
-        <camunda:formData>
-          <camunda:formField id="wallet_address" label="wallet address" type="string">
-            <camunda:validation />
-          </camunda:formField>
-          <camunda:formField id="token_id" label="token id" type="long" />
-        </camunda:formData>
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_0qkv0h8</bpmn:incoming>
-      <bpmn:outgoing>Flow_1i7ety8</bpmn:outgoing>
-    </bpmn:userTask>
-    <bpmn:sequenceFlow id="Flow_1i7ety8" sourceRef="Activity_0nu16tx" targetRef="checkInviteQuote" />
-    <bpmn:serviceTask id="write_invited_wallets_in_db" name="write invited wallets in db" camunda:type="external" camunda:topic="writeIvitedWallets">
+    <bpmn:sequenceFlow id="Flow_0qkv0h8" sourceRef="season_pass_invite_start" targetRef="checkInviteQuote" />
+    <bpmn:serviceTask id="write_invited_wallets_in_db" name="write invited wallets in db" camunda:type="external" camunda:topic="writeInvitedWallets">
       <bpmn:incoming>Flow_1i9yzwc</bpmn:incoming>
       <bpmn:outgoing>Flow_11qw6vw</bpmn:outgoing>
     </bpmn:serviceTask>
@@ -95,38 +85,47 @@
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="season_pass_invite">
       <bpmndi:BPMNShape id="Activity_0ox93jn_di" bpmnElement="update_merkle_tree">
-        <dc:Bounds x="950" y="360" width="100" height="80" />
+        <dc:Bounds x="790" y="360" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0ujwl26_di" bpmnElement="checkInviteQuote">
-        <dc:Bounds x="480" y="360" width="100" height="80" />
+        <dc:Bounds x="320" y="360" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_1wpuobs_di" bpmnElement="Gateway_1wpuobs" isMarkerVisible="true">
-        <dc:Bounds x="655" y="375" width="50" height="50" />
+        <dc:Bounds x="495" y="375" width="50" height="50" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_029lpj2_di" bpmnElement="quote_exceeded_form">
-        <dc:Bounds x="630" y="200" width="100" height="80" />
+        <dc:Bounds x="470" y="200" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0ewflrk_di" bpmnElement="Event_0ewflrk">
-        <dc:Bounds x="662" y="82" width="36" height="36" />
+        <dc:Bounds x="502" y="82" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="671" y="52" width="18" height="14" />
+          <dc:Bounds x="511" y="52" width="18" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_11x015d_di" bpmnElement="invite_wallets_form">
-        <dc:Bounds x="770" y="360" width="100" height="80" />
+        <dc:Bounds x="610" y="360" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1kybejw_di" bpmnElement="Activity_0zpdse3">
-        <dc:Bounds x="950" y="200" width="100" height="80" />
+        <dc:Bounds x="790" y="200" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0sgr3hc_di" bpmnElement="Event_0sgr3hc">
-        <dc:Bounds x="982" y="82" width="36" height="36" />
+        <dc:Bounds x="822" y="82" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="976" y="58" width="47" height="14" />
+          <dc:Bounds x="816" y="58" width="47" height="14" />
         </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1m0dudk_di" bpmnElement="Event_1m0dudk">
+        <dc:Bounds x="1152" y="382" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1134" y="425" width="72" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1x94s1g_di" bpmnElement="write_invited_wallets_in_db">
+        <dc:Bounds x="960" y="360" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="season_pass_invite_start">
         <dc:Bounds x="182" y="382" width="36" height="36" />
@@ -134,65 +133,48 @@
           <dc:Bounds x="160" y="425" width="81" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1t2flgl_di" bpmnElement="Activity_0nu16tx">
-        <dc:Bounds x="290" y="360" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1m0dudk_di" bpmnElement="Event_1m0dudk">
-        <dc:Bounds x="1312" y="382" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1294" y="425" width="72" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1x94s1g_di" bpmnElement="write_invited_wallets_in_db">
-        <dc:Bounds x="1120" y="360" width="100" height="80" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0o0tg3l_di" bpmnElement="Event_0iybmtm">
-        <dc:Bounds x="982" y="342" width="36" height="36" />
+        <dc:Bounds x="822" y="342" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_12gro42_di" bpmnElement="Flow_12gro42">
-        <di:waypoint x="870" y="400" />
-        <di:waypoint x="950" y="400" />
+        <di:waypoint x="710" y="400" />
+        <di:waypoint x="790" y="400" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1i9yzwc_di" bpmnElement="Flow_1i9yzwc">
-        <di:waypoint x="1050" y="400" />
-        <di:waypoint x="1120" y="400" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1i7ety8_di" bpmnElement="Flow_1i7ety8">
-        <di:waypoint x="390" y="400" />
-        <di:waypoint x="480" y="400" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_13ds9oi_di" bpmnElement="Flow_13ds9oi">
-        <di:waypoint x="580" y="400" />
-        <di:waypoint x="655" y="400" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1hhm2ud_di" bpmnElement="Flow_1hhm2ud">
-        <di:waypoint x="680" y="375" />
-        <di:waypoint x="680" y="280" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1udmu4h_di" bpmnElement="Flow_1udmu4h">
-        <di:waypoint x="705" y="400" />
-        <di:waypoint x="770" y="400" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0cht41u_di" bpmnElement="Flow_0cht41u">
-        <di:waypoint x="680" y="200" />
-        <di:waypoint x="680" y="118" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_11qw6vw_di" bpmnElement="Flow_11qw6vw">
-        <di:waypoint x="1220" y="400" />
-        <di:waypoint x="1312" y="400" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1fsuvyk_di" bpmnElement="Flow_1fsuvyk">
-        <di:waypoint x="1000" y="342" />
-        <di:waypoint x="1000" y="280" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1wb6gl5_di" bpmnElement="Flow_1wb6gl5">
-        <di:waypoint x="1000" y="200" />
-        <di:waypoint x="1000" y="118" />
+        <di:waypoint x="890" y="400" />
+        <di:waypoint x="960" y="400" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0qkv0h8_di" bpmnElement="Flow_0qkv0h8">
         <di:waypoint x="218" y="400" />
-        <di:waypoint x="290" y="400" />
+        <di:waypoint x="320" y="400" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_13ds9oi_di" bpmnElement="Flow_13ds9oi">
+        <di:waypoint x="420" y="400" />
+        <di:waypoint x="495" y="400" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1hhm2ud_di" bpmnElement="Flow_1hhm2ud">
+        <di:waypoint x="520" y="375" />
+        <di:waypoint x="520" y="280" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1udmu4h_di" bpmnElement="Flow_1udmu4h">
+        <di:waypoint x="545" y="400" />
+        <di:waypoint x="610" y="400" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0cht41u_di" bpmnElement="Flow_0cht41u">
+        <di:waypoint x="520" y="200" />
+        <di:waypoint x="520" y="118" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1fsuvyk_di" bpmnElement="Flow_1fsuvyk">
+        <di:waypoint x="840" y="342" />
+        <di:waypoint x="840" y="280" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1wb6gl5_di" bpmnElement="Flow_1wb6gl5">
+        <di:waypoint x="840" y="200" />
+        <di:waypoint x="840" y="118" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_11qw6vw_di" bpmnElement="Flow_11qw6vw">
+        <di:waypoint x="1060" y="400" />
+        <di:waypoint x="1152" y="400" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
