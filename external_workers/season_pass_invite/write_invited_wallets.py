@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta
+
 import logging
 
 import requests
@@ -30,13 +32,17 @@ def handle_task(task: ExternalTask):
         invited_wallets.raise_for_status()
     except Exception as e:
         logging.error(e)
-        return task.failure(
-            error_message="failed to fetch invited wallets",
-            error_details=str(e),
-            max_retries=3,
-            retry_timeout=5,
+        return task.bpmn_error(
+            error_code="FAILED_TO_UPDATE_INVITED_WALLETS",
+            error_message=str(e),
+            variables={"next_invite_date_iso": None}
         )
-    return task.complete()
+    
+    # Calculate next invite date
+    next_invite_date = datetime.utcnow() + timedelta(hours=24)
+    next_invite_date_iso = next_invite_date.isoformat() + 'Z'  # Ensure it's in UTC and ISO8601 format
+    
+    return task.complete({"next_invite_date_iso": next_invite_date_iso})
 
 
 if __name__ == "__main__":
