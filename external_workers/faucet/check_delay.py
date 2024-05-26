@@ -15,7 +15,7 @@ def check_delay(task: ExternalTask) -> TaskResult:
     variables = task.get_variables()
     wallet_address = variables.get("wallet_address")
     if redis_client.exists(wallet_address):
-        return task.bpmn_error(429, "DELAY")
+        return task.bpmn_error("FAUCET_PROCESS_ERROR", "You can claim tokens once per 24h")
     return task.complete(variables)
 
 

@@ -19,7 +19,7 @@ def handle_validate_task(task: ExternalTask) -> TaskResult:
     variables = task.get_variables()
     wallet_address = variables.get("wallet_address")
     if not is_valid_wallet_address(wallet_address):
-        return task.bpmn_error(429, "INVALID_WALLET_ADDRESS")
+        return task.bpmn_error("FAUCET_PROCESS_ERROR", "Wallet is not eligible to get tokens")
     variables["wallet_address"] = w3.to_checksum_address(wallet_address)
     return task.complete(variables)
 

@@ -273,7 +273,7 @@ async function handleTask({task, taskService}) {
     } catch (error) {
         console.log("Error processing task", error);
         logger.error(error);
-        return await taskService.handleBpmnError(task, "PROCESSING_ERROR", error.message);
+        return await taskService.handleBpmnError(task, "CHAINLINK_CCIP_ERROR", error.message);
     }
 }
 

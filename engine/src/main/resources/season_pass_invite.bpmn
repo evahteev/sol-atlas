@@ -63,7 +63,7 @@
     </bpmn:endEvent>
     <bpmn:boundaryEvent id="Event_0iybmtm" attachedToRef="update_merkle_tree">
       <bpmn:outgoing>Flow_1fsuvyk</bpmn:outgoing>
-      <bpmn:errorEventDefinition id="ErrorEventDefinition_0v2t32m" />
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_0v2t32m" camunda:errorCodeVariable="CHAINLINK_CCIP_ERROR" />
     </bpmn:boundaryEvent>
     <bpmn:sequenceFlow id="Flow_1fsuvyk" sourceRef="Event_0iybmtm" targetRef="update_merkle_tree_error" />
     <bpmn:userTask id="update_merkle_tree_error" name="update merkle tree error" camunda:assignee="${initiator_user_id}">
@@ -102,7 +102,7 @@
     <bpmn:sequenceFlow id="Flow_18w523q" sourceRef="check_invite_quote_error" targetRef="Event_01s9fku" />
     <bpmn:boundaryEvent id="Event_01l0bo1" attachedToRef="write_invited_wallets_in_db">
       <bpmn:outgoing>Flow_06f2xw9</bpmn:outgoing>
-      <bpmn:errorEventDefinition id="ErrorEventDefinition_1gf1l2h" />
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_1gf1l2h" camunda:errorCodeVariable="FAILED_TO_UPDATE_INVITED_WALLETS" />
     </bpmn:boundaryEvent>
     <bpmn:userTask id="write_invited_wallets_in_db_error" name="write invited wallets in db error" camunda:assignee="${initiator_user_id}">
       <bpmn:incoming>Flow_06f2xw9</bpmn:incoming>
@@ -166,6 +166,7 @@
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1x94s1g_di" bpmnElement="write_invited_wallets_in_db">
         <dc:Bounds x="960" y="360" width="100" height="80" />
+        <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1m0dudk_di" bpmnElement="Event_1m0dudk">
         <dc:Bounds x="1362" y="382" width="36" height="36" />
