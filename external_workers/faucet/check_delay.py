@@ -4,7 +4,7 @@ from camunda.external_task.external_task import ExternalTask, TaskResult
 from camunda.external_task.external_task_worker import ExternalTaskWorker
 from redis import Redis
 
-from external_workers.faucet.config import DEFAULT_CONFIG, CAMUNDA_URL
+from faucet.config import DEFAULT_CONFIG, CAMUNDA_URL
 
 REDIS_HOST = os.getenv("REDIS_HOST", "localhost")
 REDIS_PORT = os.getenv("REDIS_PORT", 6379)

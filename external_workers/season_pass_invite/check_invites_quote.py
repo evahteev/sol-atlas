@@ -3,7 +3,7 @@ import logging
 import requests
 from camunda.external_task.external_task_worker import ExternalTaskWorker, ExternalTask
 
-from external_workers.season_pass_invite.config import (
+from season_pass_invite.config import (
     CAMUNDA_URL,
     CAMUNDA_CLIENT_CONFIG,
     TOPIC_NAME,

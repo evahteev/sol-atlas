@@ -7,8 +7,8 @@ from camunda.external_task.external_task_worker import ExternalTaskWorker
 from redis import Redis
 from web3 import Web3
 
-from external_workers.faucet.config import DEFAULT_CONFIG, PRIVATE_KEY
-from external_workers.web3_workers.check_transaction_status import WEB3_URL
+from faucet.config import DEFAULT_CONFIG, PRIVATE_KEY
+from web3_workers.check_transaction_status import WEB3_URL
 
 REDIS_HOST = os.getenv("REDIS_HOST", "localhost")
 REDIS_PORT = os.getenv("REDIS_PORT", 6379)
