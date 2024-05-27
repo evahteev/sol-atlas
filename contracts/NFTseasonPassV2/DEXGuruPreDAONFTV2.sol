@@ -31,6 +31,10 @@ contract GuruSeason2PassNFT is ERC721, ERC721Pausable, ERC721Enumerable, Functio
             ERC721("Guru Season 2 Pass NFT", "GURUNFT2") FunctionsClient(router) ConfirmedOwner(initialOwner)
         {}
 
+    function merkleRoot() public view onlyOwner returns(bytes32) {
+        return MERKLE_ROOT;
+    }
+
     function pause() public onlyOwner {
         _pause();
     }
