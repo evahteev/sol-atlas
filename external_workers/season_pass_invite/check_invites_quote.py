@@ -26,7 +26,9 @@ def handle_task(task: ExternalTask):
         return task.bpmn_error(
             error_code="FAILED_TO_FETCH_INVITED_WALLETS",  # This should match the error code in your BPMN model
             error_message=str(e),
-            variables={"available_invites": None} # You must return variables listed in the output of external task
+            variables={
+                "available_invites": None
+            },  # You must return variables listed in the output of external task
         )
     invited_wallets = invited_wallets.json()
     return task.complete({"available_invites": INVITES_LIMIT - len(invited_wallets)})
