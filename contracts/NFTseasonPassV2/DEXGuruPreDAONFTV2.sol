@@ -34,8 +34,8 @@ contract GuruSeason2PassNFT is ERC721, ERC721Pausable, ERC721Enumerable, Functio
             executor = executorAddress;
         }
 
-    modifier onlyExecutor() {
-        require(msg.sender == executor, "Only executor can call this function");
+    modifier onlyOwnerOrExecutor() {
+        require(msg.sender == owner() || msg.sender == executor, "Caller is not the owner or the executor of the contract");
         _;
     }
 
@@ -43,7 +43,7 @@ contract GuruSeason2PassNFT is ERC721, ERC721Pausable, ERC721Enumerable, Functio
         executor = executorAddress;
     }
 
-    function merkleRoot() public view onlyOwner onlyExecutor returns(bytes32) {
+    function merkleRoot() public view onlyOwnerOrExecutor returns(bytes32) {
         return MERKLE_ROOT;
     }
 
@@ -105,7 +105,7 @@ contract GuruSeason2PassNFT is ERC721, ERC721Pausable, ERC721Enumerable, Functio
         uint64 subscriptionId,
         uint32 gasLimit,
         bytes32 donID
-    ) external onlyOwner onlyExecutor returns (bytes32 requestId) {
+    ) external onlyOwnerOrExecutor returns (bytes32 requestId) {
         FunctionsRequest.Request memory req;
         req.initializeRequestForInlineJavaScript(source);
         if (encryptedSecretsUrls.length > 0)
@@ -132,7 +132,7 @@ contract GuruSeason2PassNFT is ERC721, ERC721Pausable, ERC721Enumerable, Functio
         uint64 subscriptionId,
         uint32 gasLimit,
         bytes32 donID
-    ) external onlyOwner onlyExecutor returns (bytes32 requestId) {
+    ) external onlyOwnerOrExecutor returns (bytes32 requestId) {
         s_lastRequestId = _sendRequest(
             request,
             subscriptionId,

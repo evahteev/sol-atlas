@@ -56,7 +56,7 @@ const makeRequest = async (task, taskService) => {
     const source = fs.readFileSync("source.js").toString();
 
     let args = [JSON.stringify(walletsToInvite)];
-    const secrets = {SYS_KEY: process.env.SYS_KEY, URL: process.env.API_URL}; // Only used for simulation in this example
+    const secrets = {SYS_KEY: process.env.SYS_KEY, URL: process.env.API_URL}; // Only used for simulation
     const gasLimit = 300000;
 
     // Initialize ethers signer and provider to interact with the contracts onchain
