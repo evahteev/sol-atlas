@@ -41,6 +41,8 @@ const makeRequest = async (task, taskService) => {
     const slotID = 0;
     const privateKey = process.env.PRIVATE_KEY; // fetch PRIVATE_KEY
     const rpcUrl = process.env.RPC_URL;
+    const gatewayUrls = process.env.GATEWAY_URLS.split(",")
+
     let walletsToInvite = []
 
     for (let i = 1; i <= availableInvites; i++) {
@@ -144,10 +146,6 @@ const makeRequest = async (task, taskService) => {
     console.log(`\nEncrypt the URLs..`);
     const encryptedSecrets = await secretsManager.encryptSecrets(secrets);
 
-    const gatewayUrls = [
-        "https://01.functions-gateway.testnet.chain.link/",
-        "https://02.functions-gateway.testnet.chain.link/",
-    ];
     // Upload secrets
     const uploadResult = await secretsManager.uploadEncryptedSecretsToDON({
         encryptedSecretsHexstring: encryptedSecrets.encryptedSecrets,
@@ -193,82 +191,84 @@ const makeRequest = async (task, taskService) => {
     console.log(
         `See your request in the explorer ${explorerUrl}/tx/${transaction.hash}`
     );
+    return transaction.hash;
 
-    // listener does not work
-    // const responseListener = new ResponseListener({
-    //     provider: provider,
-    //     functionsRouterAddress: routerAddress,
-    // }); // Instantiate a ResponseListener object to wait for fulfillment.
-    // (async () => {
-    //     try {
-    //         const response = await new Promise((resolve, reject) => {
-    //             responseListener
-    //                 .listenForResponseFromTransaction(transaction.hash)
-    //                 .then((response) => {
-    //                     resolve(response); // Resolves once the request has been fulfilled.
-    //                 })
-    //                 .catch((error) => {
-    //                     reject(error); // Indicate that an error occurred while waiting for fulfillment.
-    //                 });
-    //         });
-    //
-    //         const fulfillmentCode = response.fulfillmentCode;
-    //
-    //         if (fulfillmentCode === FulfillmentCode.FULFILLED) {
-    //             console.log(
-    //                 `\n✅ Request ${
-    //                     response.requestId
-    //                 } successfully fulfilled. Cost is ${ethers.utils.formatEther(
-    //                     response.totalCostInJuels
-    //                 )} LINK.Complete reponse: `,
-    //                 response
-    //             );
-    //         } else if (fulfillmentCode === FulfillmentCode.USER_CALLBACK_ERROR) {
-    //             console.log(
-    //                 `\n⚠️ Request ${
-    //                     response.requestId
-    //                 } fulfilled. However, the consumer contract callback failed. Cost is ${ethers.utils.formatEther(
-    //                     response.totalCostInJuels
-    //                 )} LINK.Complete reponse: `,
-    //                 response
-    //             );
-    //         } else {
-    //             console.log(
-    //                 `\n❌ Request ${
-    //                     response.requestId
-    //                 } not fulfilled. Code: ${fulfillmentCode}. Cost is ${ethers.utils.formatEther(
-    //                     response.totalCostInJuels
-    //                 )} LINK.Complete reponse: `,
-    //                 response
-    //             );
-    //         }
-    //
-    //         const errorString = response.errorString;
-    //         if (errorString) {
-    //             console.log(`\n❌ Error during the execution: `, errorString);
-    //         } else {
-    //             const responseBytesHexstring = response.responseBytesHexstring;
-    //             if (ethers.utils.arrayify(responseBytesHexstring).length > 0) {
-    //                 const decodedResponse = decodeResult(
-    //                     response.responseBytesHexstring,
-    //                     ReturnType.uint256
-    //                 );
-    //                 console.log(
-    //                     `\n✅ Decoded response to ${ReturnType.uint256}: `,
-    //                     decodedResponse
-    //                 );
-    //             }
-    //         }
-    //     } catch (error) {
-    //         console.error("Error listening for response:", error);
-    //         await taskService.handleBpmnError(task, "PROCESSING_ERROR", error.message);
-    //     }
-    // })();
 };
+
+async function waitForResponse(tx_hash) {
+    const rpcUrl = process.env.RPC_URL;
+    const provider = new ethers.providers.JsonRpcProvider(rpcUrl);
+    const routerAddress = process.env.ROUTER_ADDRESS;
+    const responseListener = new ResponseListener({
+        provider: provider,
+        functionsRouterAddress: routerAddress,
+    }); // Instantiate a ResponseListener object to wait for fulfillment.
+    const response = await new Promise((resolve, reject) => {
+        responseListener
+            .listenForResponseFromTransaction(tx_hash)
+            .then((response) => {
+                resolve(response); // Resolves once the request has been fulfilled.
+            })
+            .catch((error) => {
+                reject(error); // Indicate that an error occurred while waiting for fulfillment.
+            });
+    });
+
+    const fulfillmentCode = response.fulfillmentCode;
+
+    if (fulfillmentCode === FulfillmentCode.FULFILLED) {
+        console.log(
+            `\n✅ Request ${
+                response.requestId
+            } successfully fulfilled. Cost is ${ethers.utils.formatEther(
+                response.totalCostInJuels
+            )} LINK.Complete reponse: `,
+            response
+        );
+    } else if (fulfillmentCode === FulfillmentCode.USER_CALLBACK_ERROR) {
+        console.log(
+            `\n⚠️ Request ${
+                response.requestId
+            } fulfilled. However, the consumer contract callback failed. Cost is ${ethers.utils.formatEther(
+                response.totalCostInJuels
+            )} LINK.Complete reponse: `,
+            response
+        );
+        throw new Error(`Request fulfilled. However, the consumer contract callback failed.`);
+    } else {
+        console.log(
+            `\n❌ Request ${
+                response.requestId
+            } not fulfilled. Code: ${fulfillmentCode}. Cost is ${ethers.utils.formatEther(
+                response.totalCostInJuels
+            )} LINK.Complete reponse: `,
+            response
+        );
+        throw new Error(`Request not fulfilled. Code: ${fulfillmentCode}`);
+    }
+    const errorString = response.errorString;
+    if (errorString) {
+        console.log(`\n❌ Error during the execution: `, errorString);
+        throw new Error(`Error during the execution: ${errorString}`);
+    } else {
+        const responseBytesHexstring = response.responseBytesHexstring;
+        if (ethers.utils.arrayify(responseBytesHexstring).length > 0) {
+            const decodedResponse = decodeResult(
+                response.responseBytesHexstring,
+                ReturnType.uint256
+            );
+            console.log(
+                `\n✅ Decoded response to ${ReturnType.uint256}: `,
+                decodedResponse
+            );
+        }
+    }
+}
 
 async function handleTask({task, taskService}) {
     try {
-        await makeRequest(task, taskService);
+        const tx_hash = await makeRequest(task, taskService);
+        await waitForResponse(tx_hash);
         return await taskService.complete(task);
     } catch (error) {
         console.log("Error processing task", error);
