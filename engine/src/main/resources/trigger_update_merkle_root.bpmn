@@ -4,7 +4,7 @@
     <bpmn:startEvent id="start_in_time" name="start">
       <bpmn:outgoing>Flow_1v71hsb</bpmn:outgoing>
       <bpmn:timerEventDefinition id="TimerEventDefinition_1micpr0">
-        <bpmn:timeCycle xsi:type="bpmn:tFormalExpression">R/PT10S</bpmn:timeCycle>
+        <bpmn:timeCycle xsi:type="bpmn:tFormalExpression">R/P1D</bpmn:timeCycle>
       </bpmn:timerEventDefinition>
     </bpmn:startEvent>
     <bpmn:endEvent id="Event_1xnput2" name="fail exit">
@@ -33,23 +33,23 @@
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="process_update_merkle_root">
       <bpmndi:BPMNShape id="Event_1xnput2_di" bpmnElement="Event_1xnput2">
-        <dc:Bounds x="342" y="112" width="36" height="36" />
+        <dc:Bounds x="392" y="112" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="343" y="82" width="35" height="14" />
+          <dc:Bounds x="393" y="82" width="35" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1miknow_di" bpmnElement="Activity_1miknow">
-        <dc:Bounds x="310" y="210" width="100" height="80" />
+        <dc:Bounds x="360" y="210" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_069whsm_di" bpmnElement="Event_069whsm">
-        <dc:Bounds x="572" y="372" width="36" height="36" />
+        <dc:Bounds x="622" y="372" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="578" y="415" width="25" height="14" />
+          <dc:Bounds x="628" y="415" width="25" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0ox93jn_di" bpmnElement="update_merkle_tree">
-        <dc:Bounds x="310" y="350" width="100" height="80" />
+        <dc:Bounds x="360" y="350" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_074i16h_di" bpmnElement="start_in_time">
@@ -59,23 +59,23 @@
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0o0tg3l_di" bpmnElement="Event_0iybmtm">
-        <dc:Bounds x="342" y="332" width="36" height="36" />
+        <dc:Bounds x="392" y="332" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_0n5humd_di" bpmnElement="Flow_0n5humd">
-        <di:waypoint x="360" y="210" />
-        <di:waypoint x="360" y="148" />
+        <di:waypoint x="410" y="210" />
+        <di:waypoint x="410" y="148" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1v3t82f_di" bpmnElement="Flow_1v3t82f">
-        <di:waypoint x="360" y="332" />
-        <di:waypoint x="360" y="290" />
+        <di:waypoint x="410" y="332" />
+        <di:waypoint x="410" y="290" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1xph6yc_di" bpmnElement="Flow_1xph6yc">
-        <di:waypoint x="410" y="390" />
-        <di:waypoint x="572" y="390" />
+        <di:waypoint x="460" y="390" />
+        <di:waypoint x="622" y="390" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1v71hsb_di" bpmnElement="Flow_1v71hsb">
         <di:waypoint x="188" y="390" />
-        <di:waypoint x="310" y="390" />
+        <di:waypoint x="360" y="390" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
