@@ -35,13 +35,15 @@ def handle_task(task: ExternalTask):
         return task.bpmn_error(
             error_code="FAILED_TO_UPDATE_INVITED_WALLETS",
             error_message=str(e),
-            variables={"next_invite_date_iso": None}
+            variables={"next_invite_date_iso": None},
         )
-    
+
     # Calculate next invite date
     next_invite_date = datetime.utcnow() + timedelta(hours=24)
-    next_invite_date_iso = next_invite_date.isoformat() + 'Z'  # Ensure it's in UTC and ISO8601 format
-    
+    next_invite_date_iso = (
+        next_invite_date.isoformat() + "Z"
+    )  # Ensure it's in UTC and ISO8601 format
+
     return task.complete({"next_invite_date_iso": next_invite_date_iso})
 
 
