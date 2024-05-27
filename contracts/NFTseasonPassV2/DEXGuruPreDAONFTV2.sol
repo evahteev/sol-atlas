@@ -18,6 +18,7 @@ contract GuruSeason2PassNFT is ERC721, ERC721Pausable, ERC721Enumerable, Functio
     uint256 private constant MINTING_END_TIME = 1722470400;     // 08/01/2024 @ 00:00am (GMT)
     uint256 private constant NFT_PER_ADDRESS_LIMIT = 1;
     bytes32 private MERKLE_ROOT = 0x85c99f9ed408529a8e32d19f1606c0783273722f7a42ae71ef5f7345b0e62870;
+    address private executor;
 
     // ChainLink functions vars
     bytes32 public s_lastRequestId;
@@ -27,11 +28,22 @@ contract GuruSeason2PassNFT is ERC721, ERC721Pausable, ERC721Enumerable, Functio
     error UnexpectedRequestID(bytes32 requestId);
     event Response(bytes32 indexed requestId, bytes response, bytes err);
 
-    constructor(address initialOwner, address router)
+    constructor(address initialOwner, address router, address executorAddress)
             ERC721("Guru Season 2 Pass NFT", "GURUNFT2") FunctionsClient(router) ConfirmedOwner(initialOwner)
-        {}
+        {
+            executor = executorAddress;
+        }
 
-    function merkleRoot() public view onlyOwner returns(bytes32) {
+    modifier onlyExecutor() {
+        require(msg.sender == executor, "Only executor can call this function");
+        _;
+    }
+
+    function setExecutor(address executorAddress) external onlyOwner {
+        executor = executorAddress;
+    }
+
+    function merkleRoot() public view onlyOwner onlyExecutor returns(bytes32) {
         return MERKLE_ROOT;
     }
 
@@ -93,7 +105,7 @@ contract GuruSeason2PassNFT is ERC721, ERC721Pausable, ERC721Enumerable, Functio
         uint64 subscriptionId,
         uint32 gasLimit,
         bytes32 donID
-    ) external onlyOwner returns (bytes32 requestId) {
+    ) external onlyOwner onlyExecutor returns (bytes32 requestId) {
         FunctionsRequest.Request memory req;
         req.initializeRequestForInlineJavaScript(source);
         if (encryptedSecretsUrls.length > 0)
@@ -120,7 +132,7 @@ contract GuruSeason2PassNFT is ERC721, ERC721Pausable, ERC721Enumerable, Functio
         uint64 subscriptionId,
         uint32 gasLimit,
         bytes32 donID
-    ) external onlyOwner returns (bytes32 requestId) {
+    ) external onlyOwner onlyExecutor returns (bytes32 requestId) {
         s_lastRequestId = _sendRequest(
             request,
             subscriptionId,
