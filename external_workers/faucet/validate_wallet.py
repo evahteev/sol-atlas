@@ -5,8 +5,7 @@ from camunda.external_task.external_task_worker import ExternalTaskWorker
 from web3 import Web3
 from redis import Redis
 
-from faucet.config import DEFAULT_CONFIG, CAMUNDA_URL
-from faucet.send_tokens import WEB3_URL
+from config import DEFAULT_CONFIG, CAMUNDA_URL, WEB3_URL
 
 REDIS_HOST = os.getenv("REDIS_HOST", "localhost")
 REDIS_PORT = os.getenv("REDIS_PORT", 6379)
@@ -19,7 +18,9 @@ def handle_validate_task(task: ExternalTask) -> TaskResult:
     variables = task.get_variables()
     wallet_address = variables.get("wallet_address")
     if not is_valid_wallet_address(wallet_address):
-        return task.bpmn_error("FAUCET_PROCESS_ERROR", "Wallet is not eligible to get tokens")
+        return task.bpmn_error(
+            "FAUCET_PROCESS_ERROR", "Wallet is not eligible to get tokens"
+        )
     variables["wallet_address"] = w3.to_checksum_address(wallet_address)
     return task.complete(variables)
 
