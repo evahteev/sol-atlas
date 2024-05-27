@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_1cab6p0" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.23.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.19.0">
-  <bpmn:process id="automation_faucet" name="Guru Canto testnet faucet" isExecutable="true" camunda:historyTimeToLive="180">
+  <bpmn:process id="automation_faucet" name="Guru Network Testnet faucet" isExecutable="true" camunda:historyTimeToLive="180">
     <bpmn:userTask id="error_user_task" name="Handle error" camunda:assignee="${camunda_user_id}">
       <bpmn:incoming>Flow_1d9npmi</bpmn:incoming>
       <bpmn:outgoing>Flow_1r1dxew</bpmn:outgoing>
@@ -8,37 +8,6 @@
     <bpmn:subProcess id="Activity_0qr6z46">
       <bpmn:incoming>Flow_0fefrzp</bpmn:incoming>
       <bpmn:outgoing>Flow_1r0hjz8</bpmn:outgoing>
-      <bpmn:serviceTask id="validate_wallet_address" name="validate wallet address" camunda:type="external" camunda:topic="validate_wallet_address">
-        <bpmn:extensionElements>
-          <camunda:errorEventDefinition id="ErrorEventDefinition_0z7y2mp" />
-          <camunda:inputOutput>
-            <camunda:inputParameter name="wallet_address">${wallet_address}</camunda:inputParameter>
-            <camunda:outputParameter name="wallet_address">${wallet_address}</camunda:outputParameter>
-          </camunda:inputOutput>
-        </bpmn:extensionElements>
-        <bpmn:incoming>Flow_02pqlxj</bpmn:incoming>
-        <bpmn:outgoing>Flow_1jsefni</bpmn:outgoing>
-      </bpmn:serviceTask>
-      <bpmn:serviceTask id="check_delay" name="check delay" camunda:type="external" camunda:topic="check_delay">
-        <bpmn:extensionElements>
-          <camunda:inputOutput>
-            <camunda:inputParameter name="wallet_address">${wallet_address}</camunda:inputParameter>
-            <camunda:outputParameter name="wallet_address">${wallet_address}</camunda:outputParameter>
-          </camunda:inputOutput>
-        </bpmn:extensionElements>
-        <bpmn:incoming>Flow_1jsefni</bpmn:incoming>
-        <bpmn:outgoing>Flow_05zefkh</bpmn:outgoing>
-      </bpmn:serviceTask>
-      <bpmn:serviceTask id="send_tokens" name="send tokens" camunda:type="external" camunda:topic="send_tokens">
-        <bpmn:extensionElements>
-          <camunda:inputOutput>
-            <camunda:inputParameter name="wallet_address">${wallet_address}</camunda:inputParameter>
-            <camunda:outputParameter name="tx_hash">${tx_hash}</camunda:outputParameter>
-          </camunda:inputOutput>
-        </bpmn:extensionElements>
-        <bpmn:incoming>Flow_05zefkh</bpmn:incoming>
-        <bpmn:outgoing>Flow_15r1ehe</bpmn:outgoing>
-      </bpmn:serviceTask>
       <bpmn:userTask id="success_form" name="get tx hash" camunda:assignee="${camunda_user_id}" camunda:dueDate="${next_faucet_date_iso}">
         <bpmn:extensionElements>
           <camunda:inputOutput>
@@ -54,10 +23,6 @@
         <bpmn:extensionElements />
         <bpmn:outgoing>Flow_02pqlxj</bpmn:outgoing>
       </bpmn:startEvent>
-      <bpmn:sequenceFlow id="Flow_02pqlxj" sourceRef="StartEvent_1" targetRef="validate_wallet_address" />
-      <bpmn:sequenceFlow id="Flow_1jsefni" sourceRef="validate_wallet_address" targetRef="check_delay" />
-      <bpmn:sequenceFlow id="Flow_05zefkh" sourceRef="check_delay" targetRef="send_tokens" />
-      <bpmn:sequenceFlow id="Flow_15r1ehe" sourceRef="send_tokens" targetRef="success_form" />
       <bpmn:boundaryEvent id="Event_0gtq8d3" attachedToRef="success_form">
         <bpmn:outgoing>Flow_1ra0wxa</bpmn:outgoing>
         <bpmn:timerEventDefinition id="TimerEventDefinition_0billoq">
@@ -68,6 +33,41 @@
         <bpmn:incoming>Flow_1ra0wxa</bpmn:incoming>
       </bpmn:endEvent>
       <bpmn:sequenceFlow id="Flow_1ra0wxa" sourceRef="Event_0gtq8d3" targetRef="Event_03bluya" />
+      <bpmn:sequenceFlow id="Flow_15r1ehe" sourceRef="send_tokens" targetRef="success_form" />
+      <bpmn:sequenceFlow id="Flow_02pqlxj" sourceRef="StartEvent_1" targetRef="validate_wallet_address" />
+      <bpmn:sequenceFlow id="Flow_05zefkh" sourceRef="check_delay" targetRef="send_tokens" />
+      <bpmn:sequenceFlow id="Flow_1jsefni" sourceRef="validate_wallet_address" targetRef="check_delay" />
+      <bpmn:serviceTask id="send_tokens" name="send tokens" camunda:type="external" camunda:topic="send_tokens">
+        <bpmn:extensionElements>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="wallet_address">${wallet_address}</camunda:inputParameter>
+            <camunda:outputParameter name="tx_hash">${tx_hash}</camunda:outputParameter>
+          </camunda:inputOutput>
+        </bpmn:extensionElements>
+        <bpmn:incoming>Flow_05zefkh</bpmn:incoming>
+        <bpmn:outgoing>Flow_15r1ehe</bpmn:outgoing>
+      </bpmn:serviceTask>
+      <bpmn:serviceTask id="check_delay" name="check delay" camunda:type="external" camunda:topic="check_delay">
+        <bpmn:extensionElements>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="wallet_address">${wallet_address}</camunda:inputParameter>
+            <camunda:outputParameter name="wallet_address">${wallet_address}</camunda:outputParameter>
+          </camunda:inputOutput>
+        </bpmn:extensionElements>
+        <bpmn:incoming>Flow_1jsefni</bpmn:incoming>
+        <bpmn:outgoing>Flow_05zefkh</bpmn:outgoing>
+      </bpmn:serviceTask>
+      <bpmn:serviceTask id="validate_wallet_address" name="validate wallet address" camunda:type="external" camunda:topic="validate_wallet_address">
+        <bpmn:extensionElements>
+          <camunda:errorEventDefinition id="ErrorEventDefinition_0z7y2mp" />
+          <camunda:inputOutput>
+            <camunda:inputParameter name="wallet_address">${wallet_address}</camunda:inputParameter>
+            <camunda:outputParameter name="wallet_address">${wallet_address}</camunda:outputParameter>
+          </camunda:inputOutput>
+        </bpmn:extensionElements>
+        <bpmn:incoming>Flow_02pqlxj</bpmn:incoming>
+        <bpmn:outgoing>Flow_1jsefni</bpmn:outgoing>
+      </bpmn:serviceTask>
     </bpmn:subProcess>
     <bpmn:boundaryEvent id="faucet_worker_error" attachedToRef="Activity_0qr6z46">
       <bpmn:documentation>Global error handler for external workers</bpmn:documentation>
@@ -93,7 +93,7 @@
     </bpmn:endEvent>
     <bpmn:boundaryEvent id="Event_0n3448e" attachedToRef="error_user_task">
       <bpmn:timerEventDefinition id="TimerEventDefinition_090bqou">
-        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">P30S</bpmn:timeDuration>
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT30S</bpmn:timeDuration>
       </bpmn:timerEventDefinition>
     </bpmn:boundaryEvent>
     <bpmn:sequenceFlow id="Flow_1r1dxew" sourceRef="error_user_task" targetRef="Event_01nqm2e" />
