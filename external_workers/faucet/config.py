@@ -13,3 +13,4 @@ CAMUNDA_URL = os.getenv("CAMUNDA_URL", "http://localhost:8080/engine-rest")
 PRIVATE_KEY = os.getenv(
     "PRIVATE_KEY", "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef"
 )
+WEB3_URL = os.getenv("WEB3_URL", "http://new-rpc-gw-prod.dexguru.biz/archive/261")

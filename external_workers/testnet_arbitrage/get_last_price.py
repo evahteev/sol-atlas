@@ -11,7 +11,7 @@ CAMUNDA_USERNAME = os.getenv('CAMUNDA_USERNAME', 'demo')
 CAMUNDA_PASSWORD = os.getenv('CAMUNDA_PASSWORD', 'demo')
 WAREHOUSE_API_KEY = os.getenv('WAREHOUSE_API_KEY', 'Men6g70IKs69AmWSFeBHMvjXzP7QrqrATcTOOyIW')
 WAREHOUSE_REST_URL = os.getenv('WAREHOUSE_REST_URL', 'https://api.dev.dex.guru/wh')
-
+TOPIC_NAME = os.getenv("TOPIC_NAME", "get_target_price")
 
 # Default External Worker Configuration
 default_config = {
@@ -86,4 +86,4 @@ if __name__ == '__main__':
         config=default_config
     )
 
-    worker.subscribe(['get_candles'], handle_get_candles_task)
+    worker.subscribe([TOPIC_NAME], handle_get_candles_task)

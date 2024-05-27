@@ -56,7 +56,7 @@ const makeRequest = async (task, taskService) => {
     const source = fs.readFileSync("source.js").toString();
 
     let args = [JSON.stringify(walletsToInvite)];
-    const secrets = {SYS_KEY: process.env.SYS_KEY, URL: process.env.API_URL}; // Only used for simulation in this example
+    const secrets = {SYS_KEY: process.env.SYS_KEY, URL: process.env.API_URL}; // Only used for simulation
     const gasLimit = 300000;
 
     // Initialize ethers signer and provider to interact with the contracts onchain
@@ -87,20 +87,27 @@ const makeRequest = async (task, taskService) => {
 
     console.log("Simulation result", response);
     const errorString = response.errorString;
+    let merkleRoot
     if (errorString) {
         console.log(`❌ Error during simulation: `, errorString);
         throw new Error(`Error during simulation: ${errorString}`);
     } else {
-        const returnType = ReturnType.uint256;
-        const responseBytesHexstring = response.responseBytesHexstring;
-        if (ethers.utils.arrayify(responseBytesHexstring).length > 0) {
-            const decodedResponse = decodeResult(
-                response.responseBytesHexstring,
-                returnType
-            );
-            console.log(`✅ Decoded response to ${returnType}: `, decodedResponse);
-        }
+        merkleRoot = response.responseBytesHexstring;
+        console.log(`✅ Response: `, merkleRoot);
     }
+
+    //////// CHECK IF NEED UPDATE //////////
+    const functionsConsumer = new ethers.Contract(
+        consumerAddress,
+        functionsConsumerAbi,
+        signer
+    );
+    const currentMerkleRoot = await functionsConsumer.merkleRoot();
+    if (currentMerkleRoot === merkleRoot) {
+        console.log(`\n✅ Merkle tree is up to date`);
+        return
+    }
+
     //////// ESTIMATE REQUEST COSTS ////////
     console.log("\nEstimate request costs...");
     // Initialize and return SubscriptionManager
@@ -164,12 +171,6 @@ const makeRequest = async (task, taskService) => {
 
     const donHostedSecretsVersion = parseInt(uploadResult.version); // fetch the reference of the encrypted secrets
 
-    const functionsConsumer = new ethers.Contract(
-        consumerAddress,
-        functionsConsumerAbi,
-        signer
-    );
-
     // Actual transaction call
     const transaction = await functionsConsumer.sendRequest(
         source, // source
@@ -191,8 +192,7 @@ const makeRequest = async (task, taskService) => {
     console.log(
         `See your request in the explorer ${explorerUrl}/tx/${transaction.hash}`
     );
-    return transaction.hash;
-
+    return transaction.hash
 };
 
 async function waitForResponse(tx_hash) {
@@ -268,7 +268,9 @@ async function waitForResponse(tx_hash) {
 async function handleTask({task, taskService}) {
     try {
         const tx_hash = await makeRequest(task, taskService);
-        await waitForResponse(tx_hash);
+        if (tx_hash) {
+            await waitForResponse(tx_hash);
+        }
         return await taskService.complete(task);
     } catch (error) {
         console.log("Error processing task", error);

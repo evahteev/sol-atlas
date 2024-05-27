@@ -4,7 +4,7 @@ from camunda.external_task.external_task import ExternalTask, TaskResult
 from camunda.external_task.external_task_worker import ExternalTaskWorker
 from redis import Redis
 
-from faucet.config import DEFAULT_CONFIG, CAMUNDA_URL
+from config import DEFAULT_CONFIG, CAMUNDA_URL
 
 REDIS_HOST = os.getenv("REDIS_HOST", "localhost")
 REDIS_PORT = os.getenv("REDIS_PORT", 6379)
@@ -15,7 +15,9 @@ def check_delay(task: ExternalTask) -> TaskResult:
     variables = task.get_variables()
     wallet_address = variables.get("wallet_address")
     if redis_client.exists(wallet_address):
-        return task.bpmn_error("FAUCET_PROCESS_ERROR", "You can claim tokens once per 24h")
+        return task.bpmn_error(
+            "FAUCET_PROCESS_ERROR", "You can claim tokens once per 24h"
+        )
     return task.complete(variables)
 
 

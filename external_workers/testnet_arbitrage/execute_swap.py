@@ -145,7 +145,7 @@ def fix_price_to_target(
 
 @cache
 def token_is_native(token_address: str):
-    return token_address == w3.eth.contract.functions.WETH().call()
+    return token_address == get_router_contract(ROUTER_ADDRESS).functions.WETH().call()
 
 
 def execute_swap(
