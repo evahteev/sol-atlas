@@ -4,7 +4,7 @@ async function getExistingAddresses() {
     // return [address1, address2, ...]
     const response = await Functions.makeHttpRequest(
         {
-            url: 'https://flow.gurunetwork.ai/api/invites',
+            url: secrets.URL,
             method: 'get',
             headers: {
                 'Content-Type': 'application/json',
@@ -13,7 +13,7 @@ async function getExistingAddresses() {
         }
     )
     if (response.error) {
-        console.error(response.error);
+        console.error(response.message);
         throw Error("request existing wallets failed")
     }
     return response.data;
