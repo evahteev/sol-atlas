@@ -11,8 +11,6 @@ CAMUNDA_PASSWORD = os.getenv('CAMUNDA_PASSWORD', 'demo')
 WAREHOUSE_API_KEY = os.getenv('WAREHOUSE_API_KEY', 'Men6g70IKs69AmWSFeBHMvjXzP7QrqrATcTOOyIW')
 WAREHOUSE_REST_URL = os.getenv('WAREHOUSE_REST_URL', 'https://api.dev.dex.guru/wh')
 
-NETWORK = "canto"
-
 # Default External Worker Configuration
 default_config = {
     "auth_basic": {"username": CAMUNDA_USERNAME, "password": CAMUNDA_PASSWORD},
