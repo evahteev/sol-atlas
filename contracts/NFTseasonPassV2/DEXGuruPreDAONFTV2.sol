@@ -15,9 +15,9 @@ contract GuruSeason2PassNFT is ERC721, ERC721Pausable, ERC721Enumerable, Functio
     using FunctionsRequest for FunctionsRequest.Request;
 
     uint256 private _nextTokenId;
-    uint256 private constant MINTING_END_TIME = 1722470400;     // 08/01/2024 @ 00:00am (GMT)
-    uint256 private constant NFT_PER_ADDRESS_LIMIT = 1;
-    bytes32 private MERKLE_ROOT = 0x85c99f9ed408529a8e32d19f1606c0783273722f7a42ae71ef5f7345b0e62870;
+    uint256 public constant MINTING_END_TIME = 1722470400;     // 08/01/2024 @ 00:00am (GMT)
+    uint256 public constant NFT_PER_ADDRESS_LIMIT = 1;
+    bytes32 private MERKLE_ROOT;
     address private executor;
 
     // ChainLink functions vars
