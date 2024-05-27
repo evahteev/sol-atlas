@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_05y5sr6" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.23.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.19.0">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_05y5sr6" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.15.2" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.19.0">
   <bpmn:process id="season_pass_invite" name="Season Pass V2" isExecutable="true" camunda:historyTimeToLive="180">
     <bpmn:startEvent id="season_pass_invite_start" name="Season pass V2 Invite" camunda:initiator="initiator_user_id">
       <bpmn:extensionElements>
@@ -10,10 +10,6 @@
       </bpmn:extensionElements>
       <bpmn:outgoing>Flow_0qkv0h8</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:serviceTask id="update_merkle_tree" name="update merkle tree" camunda:type="external" camunda:topic="updateMerkleTree">
-      <bpmn:incoming>Flow_12gro42</bpmn:incoming>
-      <bpmn:outgoing>Flow_1i9yzwc</bpmn:outgoing>
-    </bpmn:serviceTask>
     <bpmn:serviceTask id="checkInviteQuote" name="check invite quote" camunda:asyncAfter="true" camunda:type="external" camunda:topic="checkInviteQuote">
       <bpmn:extensionElements>
         <camunda:inputOutput>
@@ -61,25 +57,11 @@
       <bpmn:extensionElements />
       <bpmn:incoming>Flow_0j2ajw0</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:boundaryEvent id="Event_0iybmtm" attachedToRef="update_merkle_tree">
-      <bpmn:outgoing>Flow_1fsuvyk</bpmn:outgoing>
-      <bpmn:errorEventDefinition id="ErrorEventDefinition_0v2t32m" camunda:errorCodeVariable="CHAINLINK_CCIP_ERROR" />
-    </bpmn:boundaryEvent>
-    <bpmn:sequenceFlow id="Flow_1fsuvyk" sourceRef="Event_0iybmtm" targetRef="update_merkle_tree_error" />
-    <bpmn:userTask id="update_merkle_tree_error" name="update merkle tree error" camunda:assignee="${initiator_user_id}">
-      <bpmn:incoming>Flow_1fsuvyk</bpmn:incoming>
-      <bpmn:outgoing>Flow_1wb6gl5</bpmn:outgoing>
-    </bpmn:userTask>
-    <bpmn:endEvent id="Event_0sgr3hc" name="failed exit">
-      <bpmn:incoming>Flow_1wb6gl5</bpmn:incoming>
-    </bpmn:endEvent>
-    <bpmn:sequenceFlow id="Flow_1wb6gl5" sourceRef="update_merkle_tree_error" targetRef="Event_0sgr3hc" />
-    <bpmn:sequenceFlow id="Flow_12gro42" sourceRef="invite_wallets_form" targetRef="update_merkle_tree" />
-    <bpmn:sequenceFlow id="Flow_1i9yzwc" sourceRef="update_merkle_tree" targetRef="write_invited_wallets_in_db" />
+    <bpmn:sequenceFlow id="Flow_12gro42" sourceRef="invite_wallets_form" targetRef="write_invited_wallets_in_db" />
     <bpmn:sequenceFlow id="Flow_0qkv0h8" sourceRef="season_pass_invite_start" targetRef="checkInviteQuote" />
     <bpmn:serviceTask id="write_invited_wallets_in_db" name="write invited wallets in db" camunda:type="external" camunda:topic="writeInvitedWallets">
       <bpmn:extensionElements />
-      <bpmn:incoming>Flow_1i9yzwc</bpmn:incoming>
+      <bpmn:incoming>Flow_12gro42</bpmn:incoming>
       <bpmn:outgoing>Flow_0ilh0yz</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:userTask id="success_form" name="success" camunda:assignee="${initiator_user_id}" camunda:dueDate="${next_invite_date_iso}">
@@ -130,10 +112,6 @@
           <dc:Bounds x="160" y="425" width="81" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0ox93jn_di" bpmnElement="update_merkle_tree">
-        <dc:Bounds x="790" y="360" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0ujwl26_di" bpmnElement="checkInviteQuote">
         <dc:Bounds x="320" y="360" width="100" height="80" />
         <bpmndi:BPMNLabel />
@@ -154,30 +132,6 @@
       <bpmndi:BPMNShape id="Activity_11x015d_di" bpmnElement="invite_wallets_form">
         <dc:Bounds x="610" y="360" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1kybejw_di" bpmnElement="update_merkle_tree_error">
-        <dc:Bounds x="790" y="200" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_0sgr3hc_di" bpmnElement="Event_0sgr3hc">
-        <dc:Bounds x="822" y="82" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="816" y="58" width="47" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1x94s1g_di" bpmnElement="write_invited_wallets_in_db">
-        <dc:Bounds x="960" y="360" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1m0dudk_di" bpmnElement="Event_1m0dudk">
-        <dc:Bounds x="1362" y="382" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1344" y="425" width="72" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_06vnzs3_di" bpmnElement="success_form">
-        <dc:Bounds x="1130" y="360" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_00p5x3d_di" bpmnElement="check_invite_quote_error">
         <dc:Bounds x="320" y="200" width="100" height="80" />
         <bpmndi:BPMNLabel />
@@ -188,27 +142,38 @@
           <dc:Bounds x="346" y="58" width="47" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1m0dudk_di" bpmnElement="Event_1m0dudk">
+        <dc:Bounds x="1212" y="382" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1194" y="425" width="72" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1x94s1g_di" bpmnElement="write_invited_wallets_in_db">
+        <dc:Bounds x="810" y="360" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_06vnzs3_di" bpmnElement="success_form">
+        <dc:Bounds x="980" y="360" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1gj07v7_di" bpmnElement="write_invited_wallets_in_db_error">
-        <dc:Bounds x="960" y="200" width="100" height="80" />
+        <dc:Bounds x="810" y="200" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_0ayt4rl" bpmnElement="Event_0wvb8n3">
-        <dc:Bounds x="992" y="82" width="36" height="36" />
+        <dc:Bounds x="842" y="82" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="986" y="58" width="47" height="14" />
+          <dc:Bounds x="836" y="58" width="47" height="14" />
         </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_0o0tg3l_di" bpmnElement="Event_0iybmtm">
-        <dc:Bounds x="822" y="342" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0scbvbu_di" bpmnElement="Event_0scbvbu">
         <dc:Bounds x="352" y="342" width="36" height="36" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_01l0bo1_di" bpmnElement="Event_01l0bo1">
-        <dc:Bounds x="992" y="342" width="36" height="36" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1kh1xx3_di" bpmnElement="Event_1kh1xx3">
-        <dc:Bounds x="1212" y="382" width="36" height="36" />
+        <dc:Bounds x="1062" y="382" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_01l0bo1_di" bpmnElement="Event_01l0bo1">
+        <dc:Bounds x="842" y="342" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_13ds9oi_di" bpmnElement="Flow_13ds9oi">
         <di:waypoint x="420" y="400" />
@@ -226,29 +191,13 @@
         <di:waypoint x="545" y="400" />
         <di:waypoint x="610" y="400" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1fsuvyk_di" bpmnElement="Flow_1fsuvyk">
-        <di:waypoint x="840" y="342" />
-        <di:waypoint x="840" y="280" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1wb6gl5_di" bpmnElement="Flow_1wb6gl5">
-        <di:waypoint x="840" y="200" />
-        <di:waypoint x="840" y="118" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_12gro42_di" bpmnElement="Flow_12gro42">
         <di:waypoint x="710" y="400" />
-        <di:waypoint x="790" y="400" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1i9yzwc_di" bpmnElement="Flow_1i9yzwc">
-        <di:waypoint x="890" y="400" />
-        <di:waypoint x="960" y="400" />
+        <di:waypoint x="810" y="400" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0qkv0h8_di" bpmnElement="Flow_0qkv0h8">
         <di:waypoint x="218" y="400" />
         <di:waypoint x="320" y="400" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0ilh0yz_di" bpmnElement="Flow_0ilh0yz">
-        <di:waypoint x="1060" y="400" />
-        <di:waypoint x="1130" y="400" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0y5pfde_di" bpmnElement="Flow_0y5pfde">
         <di:waypoint x="370" y="342" />
@@ -258,17 +207,21 @@
         <di:waypoint x="370" y="200" />
         <di:waypoint x="370" y="118" />
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0j2ajw0_di" bpmnElement="Flow_0j2ajw0">
+        <di:waypoint x="1098" y="400" />
+        <di:waypoint x="1212" y="400" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ilh0yz_di" bpmnElement="Flow_0ilh0yz">
+        <di:waypoint x="910" y="400" />
+        <di:waypoint x="980" y="400" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_06f2xw9_di" bpmnElement="Flow_06f2xw9">
-        <di:waypoint x="1010" y="342" />
-        <di:waypoint x="1010" y="280" />
+        <di:waypoint x="860" y="342" />
+        <di:waypoint x="860" y="280" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_17i9ma1_di" bpmnElement="Flow_17i9ma1">
-        <di:waypoint x="1010" y="200" />
-        <di:waypoint x="1010" y="118" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0j2ajw0_di" bpmnElement="Flow_0j2ajw0">
-        <di:waypoint x="1248" y="400" />
-        <di:waypoint x="1362" y="400" />
+        <di:waypoint x="860" y="200" />
+        <di:waypoint x="860" y="118" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
