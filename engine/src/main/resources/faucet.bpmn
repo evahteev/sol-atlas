@@ -3,11 +3,10 @@
   <bpmn:process id="automation_faucet" name="Guru Canto testnet faucet" isExecutable="true" camunda:historyTimeToLive="180">
     <bpmn:userTask id="error_user_task" name="Handle error" camunda:assignee="${camunda_user_id}">
       <bpmn:incoming>Flow_1d9npmi</bpmn:incoming>
-      <bpmn:outgoing>Flow_1a8d9ji</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1r1dxew</bpmn:outgoing>
     </bpmn:userTask>
     <bpmn:subProcess id="Activity_0qr6z46">
       <bpmn:incoming>Flow_0fefrzp</bpmn:incoming>
-      <bpmn:incoming>Flow_1a8d9ji</bpmn:incoming>
       <bpmn:outgoing>Flow_1r0hjz8</bpmn:outgoing>
       <bpmn:serviceTask id="validate_wallet_address" name="validate wallet address" camunda:type="external" camunda:topic="validate_wallet_address">
         <bpmn:extensionElements>
@@ -89,24 +88,38 @@
       <bpmn:incoming>Flow_1r0hjz8</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="Flow_1r0hjz8" sourceRef="Activity_0qr6z46" targetRef="Event_19zko5q" />
-    <bpmn:sequenceFlow id="Flow_1a8d9ji" sourceRef="error_user_task" targetRef="Activity_0qr6z46" />
+    <bpmn:endEvent id="Event_01nqm2e" name="fail exit&#10;">
+      <bpmn:incoming>Flow_1r1dxew</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:boundaryEvent id="Event_0n3448e" attachedToRef="error_user_task">
+      <bpmn:timerEventDefinition id="TimerEventDefinition_090bqou">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">P30S</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_1r1dxew" sourceRef="error_user_task" targetRef="Event_01nqm2e" />
   </bpmn:process>
   <bpmn:error id="Error_0yhvjcc" name="INVALID_WALLET_ADDRESS" errorCode="429" camunda:errorMessage="INVALID_WALLET_ADDRESS" />
   <bpmn:error id="Error_17rqb3z" name="Error_03bc7a6" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="automation_faucet">
-      <bpmndi:BPMNShape id="Activity_1vgqqvj_di" bpmnElement="error_user_task">
-        <dc:Bounds x="410" y="80" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_0rei3zd" bpmnElement="Event_19zko5q">
-        <dc:Bounds x="1102" y="112" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1100" y="88" width="40" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_0504iwh" bpmnElement="Event_0ul7cl6">
         <dc:Bounds x="207" y="92" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1vgqqvj_di" bpmnElement="error_user_task">
+        <dc:Bounds x="390" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_01nqm2e_di" bpmnElement="Event_01nqm2e">
+        <dc:Bounds x="592" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="593" y="145" width="35" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0rei3zd" bpmnElement="Event_19zko5q">
+        <dc:Bounds x="1102" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1100" y="78" width="40" height="14" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0xmdy7i_di" bpmnElement="Activity_0qr6z46" isExpanded="true">
         <dc:Bounds x="160" y="250" width="1080" height="200" />
@@ -159,21 +172,24 @@
       <bpmndi:BPMNShape id="Event_0e799zf_di" bpmnElement="faucet_worker_error">
         <dc:Bounds x="422" y="232" width="36" height="36" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0n3448e_di" bpmnElement="Event_0n3448e">
+        <dc:Bounds x="472" y="102" width="36" height="36" />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_1d9npmi_di" bpmnElement="Flow_1d9npmi">
         <di:waypoint x="440" y="232" />
         <di:waypoint x="440" y="160" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1a8d9ji_di" bpmnElement="Flow_1a8d9ji">
-        <di:waypoint x="480" y="160" />
-        <di:waypoint x="480" y="250" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1r0hjz8_di" bpmnElement="Flow_1r0hjz8">
         <di:waypoint x="1120" y="250" />
-        <di:waypoint x="1120" y="148" />
+        <di:waypoint x="1120" y="138" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0fefrzp_di" bpmnElement="Flow_0fefrzp">
         <di:waypoint x="225" y="128" />
         <di:waypoint x="225" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1r1dxew_di" bpmnElement="Flow_1r1dxew">
+        <di:waypoint x="490" y="120" />
+        <di:waypoint x="592" y="120" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
