@@ -87,11 +87,12 @@ const makeRequest = async (task, taskService) => {
 
     console.log("Simulation result", response);
     const errorString = response.errorString;
+    let merkleRoot
     if (errorString) {
         console.log(`❌ Error during simulation: `, errorString);
         throw new Error(`Error during simulation: ${errorString}`);
     } else {
-        const merkleRoot = response.responseBytesHexstring;
+        merkleRoot = response.responseBytesHexstring;
         console.log(`✅ Response: `, merkleRoot);
     }
 
