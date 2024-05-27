@@ -28,7 +28,7 @@ contract GuruSeason2PassNFT is ERC721, ERC721Pausable, ERC721Enumerable, Functio
     event Response(bytes32 indexed requestId, bytes response, bytes err);
 
     constructor(address initialOwner, address router)
-            ERC721("GuruSeason2PassNFT", "GURUV2") FunctionsClient(router) ConfirmedOwner(initialOwner)
+            ERC721("Guru Season 2 Pass NFT", "GURUNFT2") FunctionsClient(router) ConfirmedOwner(initialOwner)
         {}
 
     function pause() public onlyOwner {
