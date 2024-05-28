@@ -1,6 +1,10 @@
 import os
 
+CAMUNDA_USERNAME = os.getenv('CAMUNDA_USERNAME', 'demo')
+CAMUNDA_PASSWORD = os.getenv('CAMUNDA_PASSWORD', 'demo')
+
 DEFAULT_CONFIG = {
+    "auth_basic": {"username": CAMUNDA_USERNAME, "password": CAMUNDA_PASSWORD},
     "maxTasks": 1,
     "lockDuration": 10000,
     "asyncResponseTimeout": 5000,
