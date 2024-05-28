@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0c1sdwn" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.22.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.20.0">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0c1sdwn" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.20.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.20.0">
   <bpmn:collaboration id="Collaboration_0l7446t">
     <bpmn:participant id="Participant_1a992mb" name="Guru" processRef="generate_invite_season_2" />
     <bpmn:group id="Group_02dxxtn" categoryValueRef="CategoryValue_0ixx6jj" />
@@ -180,8 +180,8 @@
     <bpmn:userTask id="arts_modal" name="Season 2 Pass Invitee Orders Image from Pixelpact Orchestration Node" camunda:assignee="${camunda_user_id}">
       <bpmn:extensionElements>
         <camunda:formData>
-          <camunda:formField id="src1_art_id" label="src1_art_id" type="string" />
-          <camunda:formField id="src2_art_id" label="src2_art_id" type="string" />
+          <camunda:formField id="src1_art_id" label="src1_art_id" type="string" defaultValue="8732b2e7-42a7-40aa-a109-5e6be1197d73	" />
+          <camunda:formField id="src2_art_id" label="src2_art_id" type="string" defaultValue="364c9d64-9c5d-40b5-9cf2-14d04e37d551" />
           <camunda:formField id="wallet_address" label="wallet_address" type="string" />
           <camunda:formField id="activation_ts" label="activation_ts" type="long">
             <camunda:properties />
@@ -201,13 +201,13 @@
       <bpmn:incoming>Flow_00l3m44</bpmn:incoming>
       <bpmn:outgoing>Flow_1co5uwn</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:callActivity id="Activity_0l92qi2" name="Pixelpact Orchestration Node Image Gen AI Processor Flow" calledElement="generate_season_artwork">
+    <bpmn:callActivity id="Activity_0l92qi2" name="Pixelpact Orchestration Node Image Gen AI Processor Flow" calledElement="generate_season_artwork_dummy">
       <bpmn:extensionElements>
         <camunda:in source="src1_art_id" target="src1_art_id" />
         <camunda:in source="src2_art_id" target="src2_art_id" />
         <camunda:in source="wallet_address" target="wallet_address" />
-        <camunda:out source="gen_art_id" target="gen_art_id" />
-        <camunda:out source="gen_post" target="gen_post" />
+        <camunda:out source="src1_art_id" target="gen_art_id" />
+        <camunda:out sourceExpression="This masterpiece melds the futuristic allure of a space thriller with the avant-garde elegance of Bauhaus design. Follow #xgurunetwork" target="gen_post" />
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0iu3jen</bpmn:incoming>
       <bpmn:outgoing>Flow_0wtr19b</bpmn:outgoing>
@@ -250,6 +250,7 @@
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1rcfiuf_di" bpmnElement="Activity_1nwu03i">
         <dc:Bounds x="1670" y="480" width="100" height="80" />
+        <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1u12oqw_di" bpmnElement="Activity_11w67z1">
         <dc:Bounds x="1830" y="480" width="100" height="80" />
