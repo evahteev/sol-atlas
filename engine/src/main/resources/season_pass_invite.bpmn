@@ -6,6 +6,7 @@
         <camunda:formData>
           <camunda:formField id="wallet_address" label="Wallet address" type="string" />
           <camunda:formField id="token_id" label="Token Id" type="long" />
+          <camunda:formField id="chain_id" label="Chain Id" type="long" defaultValue="8453" />
         </camunda:formData>
       </bpmn:extensionElements>
       <bpmn:outgoing>Flow_0qkv0h8</bpmn:outgoing>

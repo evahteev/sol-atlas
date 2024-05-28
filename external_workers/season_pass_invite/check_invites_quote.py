@@ -3,7 +3,7 @@ import logging
 import requests
 from camunda.external_task.external_task_worker import ExternalTaskWorker, ExternalTask
 
-from season_pass_invite.config import (
+from config import (
     CAMUNDA_URL,
     CAMUNDA_CLIENT_CONFIG,
     TOPIC_NAME,
@@ -16,8 +16,16 @@ from season_pass_invite.config import (
 def handle_task(task: ExternalTask):
     variables = task.get_variables()
     token_id = variables.get("token_id")
+    chain_id = variables.get("chain_id", 8453)
+    if not token_id or not chain_id:
+        return task.bpmn_error(
+            error_code="MISSING_TOKEN_OR_CHAIN_ID",
+            error_message="Token ID or Chain ID is missing",
+            variables={"available_invites": 0},
+        )
     invited_wallets = requests.get(
-        f"{API_URL}/invites/token/{token_id}", headers={"X-SYS-KEY": SYS_KEY}
+        f"{API_URL}/invites/chain/{chain_id}/token/{token_id}",
+        headers={"X-SYS-KEY": SYS_KEY},
     )
     try:
         invited_wallets.raise_for_status()
