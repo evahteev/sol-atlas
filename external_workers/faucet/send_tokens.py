@@ -37,7 +37,7 @@ def handle_send_native_tokens(task: ExternalTask) -> TaskResult:
         }
         signed_tx = w3.eth.account.sign_transaction(tx, PRIVATE_KEY)
         tx_hash = w3.eth.send_raw_transaction(signed_tx.rawTransaction)
-        redis_client.set(wallet_address, tx_hash, ex=86400)  # 24h
+        redis_client.set(wallet_address, tx_hash.hex(), ex=86400)  # 24h
     except Exception as e:
         logging.error(e)
         return task.bpmn_error(
@@ -49,7 +49,7 @@ def handle_send_native_tokens(task: ExternalTask) -> TaskResult:
     next_faucet_date = datetime.utcnow() + timedelta(hours=24)
     next_faucet_date_iso = next_faucet_date.isoformat() + 'Z'  # Ensure it's in UTC and ISO8601 format
 
-    return task.complete({"tx_hash": tx_hash, "next_faucet_date_iso": next_faucet_date_iso})
+    return task.complete({"tx_hash": tx_hash.hex(), "next_faucet_date_iso": next_faucet_date_iso})
 
 
 if __name__ == "__main__":
