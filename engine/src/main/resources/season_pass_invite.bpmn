@@ -12,7 +12,7 @@
       </bpmn:extensionElements>
       <bpmn:outgoing>Flow_0qkv0h8</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:serviceTask id="checkInviteQuote" name="check invite quote" camunda:asyncAfter="true" camunda:type="external" camunda:topic="checkInviteQuote">
+    <bpmn:serviceTask id="check_invite_quote" name="check invite quote" camunda:asyncAfter="true" camunda:type="external" camunda:topic="checkInviteQuote">
       <bpmn:extensionElements>
         <camunda:inputOutput>
           <camunda:outputParameter name="available_invites">${available_invites}</camunda:outputParameter>
@@ -21,12 +21,12 @@
       <bpmn:incoming>Flow_0qkv0h8</bpmn:incoming>
       <bpmn:outgoing>Flow_13ds9oi</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:exclusiveGateway id="Gateway_1wpuobs">
+    <bpmn:exclusiveGateway id="Gateway_1wpuobs" default="Flow_1udmu4h">
       <bpmn:incoming>Flow_13ds9oi</bpmn:incoming>
       <bpmn:outgoing>Flow_1hhm2ud</bpmn:outgoing>
       <bpmn:outgoing>Flow_1udmu4h</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:sequenceFlow id="Flow_13ds9oi" sourceRef="checkInviteQuote" targetRef="Gateway_1wpuobs" />
+    <bpmn:sequenceFlow id="Flow_13ds9oi" sourceRef="check_invite_quote" targetRef="Gateway_1wpuobs" />
     <bpmn:userTask id="quote_exceeded_form" name="invite quote exceeded" camunda:assignee="${camunda_user_id}">
       <bpmn:incoming>Flow_1hhm2ud</bpmn:incoming>
       <bpmn:outgoing>Flow_0cht41u</bpmn:outgoing>
@@ -39,7 +39,7 @@
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="Flow_0cht41u" sourceRef="quote_exceeded_form" targetRef="Event_0ewflrk" />
     <bpmn:sequenceFlow id="Flow_1udmu4h" sourceRef="Gateway_1wpuobs" targetRef="invite_wallets_form">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"></bpmn:conditionExpression>
+      <bpmn:extensionElements />
     </bpmn:sequenceFlow>
     <bpmn:userTask id="invite_wallets_form" name="invite wallets" camunda:assignee="${camunda_user_id}">
       <bpmn:extensionElements>
@@ -58,7 +58,7 @@
       <bpmn:incoming>Flow_0j2ajw0</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="Flow_12gro42" sourceRef="invite_wallets_form" targetRef="write_invited_wallets_in_db" />
-    <bpmn:sequenceFlow id="Flow_0qkv0h8" sourceRef="season_pass_invite_start" targetRef="checkInviteQuote" />
+    <bpmn:sequenceFlow id="Flow_0qkv0h8" sourceRef="season_pass_invite_start" targetRef="check_invite_quote" />
     <bpmn:serviceTask id="write_invited_wallets_in_db" name="process invite" camunda:type="external" camunda:topic="writeInvitedWallets">
       <bpmn:extensionElements />
       <bpmn:incoming>Flow_12gro42</bpmn:incoming>
@@ -82,7 +82,7 @@
       <bpmn:incoming>Flow_0ilh0yz</bpmn:incoming>
     </bpmn:userTask>
     <bpmn:sequenceFlow id="Flow_0ilh0yz" sourceRef="write_invited_wallets_in_db" targetRef="success_form" />
-    <bpmn:boundaryEvent id="Event_0scbvbu" attachedToRef="checkInviteQuote">
+    <bpmn:boundaryEvent id="Event_0scbvbu" attachedToRef="check_invite_quote">
       <bpmn:outgoing>Flow_0y5pfde</bpmn:outgoing>
       <bpmn:errorEventDefinition id="ErrorEventDefinition_1d2w3sz" camunda:errorCodeVariable="FAILED_TO_FETCH_INVITED_WALLETS" />
     </bpmn:boundaryEvent>
@@ -133,7 +133,7 @@
           <dc:Bounds x="210" y="425" width="81" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0ujwl26_di" bpmnElement="checkInviteQuote">
+      <bpmndi:BPMNShape id="Activity_0ujwl26_di" bpmnElement="check_invite_quote">
         <dc:Bounds x="370" y="360" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
