@@ -36,7 +36,6 @@ const makeRequest = async (task, taskService) => {
     const linkTokenAddress = process.env.LINK_TOKEN_ADDRESS;
     const donId = process.env.DON_ID;
     const explorerUrl = process.env.EXPLORER_URL;
-    const availableInvites = task.variables.get("available_invites")
     const inviterWallet = task.variables.get("wallet_address")
     const slotID = 0;
     const privateKey = process.env.PRIVATE_KEY; // fetch PRIVATE_KEY
@@ -45,11 +44,9 @@ const makeRequest = async (task, taskService) => {
 
     let walletsToInvite = []
 
-    for (let i = 1; i <= availableInvites; i++) {
-        const wallet = task.variables.get(`wallet_${i}`)
-        if (wallet && wallet !== inviterWallet) {
-            walletsToInvite.push(wallet)
-        }
+    const walletToInvite = task.variables.get("wallet_1")
+    if (walletToInvite && walletToInvite !== inviterWallet) {
+        walletsToInvite.push(walletToInvite)
     }
 
     // Initialize functions settings

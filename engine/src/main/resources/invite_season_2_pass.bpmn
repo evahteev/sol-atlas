@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0c1sdwn" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.20.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.20.0">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0c1sdwn" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.15.2" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.20.0">
   <bpmn:collaboration id="Collaboration_0l7446t">
     <bpmn:participant id="Participant_1a992mb" name="Guru" processRef="generate_invite_season_2" />
     <bpmn:group id="Group_02dxxtn" categoryValueRef="CategoryValue_0ixx6jj" />
@@ -40,16 +40,18 @@
       </bpmn:lane>
       <bpmn:lane id="Lane_0asmgth" name="DexGuru V2 Invites Page">
         <bpmn:flowNodeRef>Gateway_0jre9h4</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Activity_1nwu03i</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Activity_11w67z1</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Event_1013xif</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_16pztjb</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Activity_0wqsj7a</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>UpdateMerkleTree</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_0eqn5wj</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_0cbbops</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>StartEvent_1</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>arts_modal</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_1514wn9</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_1nwu03i</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Activity_11w67z1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>store_token_id_and_art_id</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_1013xif</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_1uuift7</bpmn:flowNodeRef>
       </bpmn:lane>
     </bpmn:laneSet>
     <bpmn:serviceTask id="Activity_1golbhl" name="Guru Network Transport Layer" camunda:class="ai.hhrdr.chainflow.engine.LoggerDelegate">
@@ -61,28 +63,9 @@
       <bpmn:outgoing>Flow_1k76t4f</bpmn:outgoing>
       <bpmn:outgoing>Flow_1o6z6gb</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:serviceTask id="Activity_1nwu03i" name="Web3 Check Transaction Status" camunda:type="external" camunda:topic="CheckTransactionConfirmed">
-      <bpmn:incoming>Flow_1o6z6gb</bpmn:incoming>
-      <bpmn:outgoing>Flow_0cn14aj</bpmn:outgoing>
-    </bpmn:serviceTask>
-    <bpmn:userTask id="Activity_11w67z1" name="User to review collections and call to actions (Faucet)" camunda:assignee="${camunda_user_id}">
-      <bpmn:extensionElements>
-        <camunda:formData>
-          <camunda:formField id="gen_art_id" label="gen_art_id" type="string" defaultValue="${gen_art_id}">
-            <camunda:validation>
-              <camunda:constraint name="readonly" config="readonly" />
-            </camunda:validation>
-          </camunda:formField>
-        </camunda:formData>
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_0cn14aj</bpmn:incoming>
-      <bpmn:outgoing>Flow_0l6w116</bpmn:outgoing>
-    </bpmn:userTask>
-    <bpmn:endEvent id="Event_1013xif">
-      <bpmn:incoming>Flow_0l6w116</bpmn:incoming>
-    </bpmn:endEvent>
     <bpmn:subProcess id="Activity_0cbbops" name="User Review, Share And Boost Rewards Flow Modal">
       <bpmn:incoming>Flow_1344k37</bpmn:incoming>
+      <bpmn:incoming>Flow_07bwosv</bpmn:incoming>
       <bpmn:outgoing>Flow_1p7yucm</bpmn:outgoing>
       <bpmn:startEvent id="Event_16xr77w">
         <bpmn:outgoing>Flow_00q7ofy</bpmn:outgoing>
@@ -112,6 +95,8 @@
               </camunda:validation>
             </camunda:formField>
             <camunda:formField id="is_regenerate" label="is_regenerate" type="boolean" defaultValue="false" />
+            <camunda:formField id="transactionHash" label="Transaction Hash" type="string" />
+            <camunda:formField id="chain_id" label="Chain id" type="long" />
           </camunda:formData>
         </bpmn:extensionElements>
         <bpmn:incoming>Flow_0mzmy51</bpmn:incoming>
@@ -144,21 +129,25 @@
     <bpmn:sequenceFlow id="Flow_0iu3jen" sourceRef="Activity_1golbhl" targetRef="Activity_0l92qi2" />
     <bpmn:sequenceFlow id="Flow_1p7yucm" sourceRef="Activity_0cbbops" targetRef="Gateway_0jre9h4" />
     <bpmn:sequenceFlow id="Flow_1o6z6gb" name="Mint NFT" sourceRef="Gateway_0jre9h4" targetRef="Activity_1nwu03i" />
-    <bpmn:sequenceFlow id="Flow_0cn14aj" sourceRef="Activity_1nwu03i" targetRef="Activity_11w67z1" />
     <bpmn:sequenceFlow id="Flow_0l6w116" sourceRef="Activity_11w67z1" targetRef="Event_1013xif" />
     <bpmn:intermediateCatchEvent id="Event_16pztjb">
       <bpmn:outgoing>Flow_01h5zjo</bpmn:outgoing>
       <bpmn:messageEventDefinition id="MessageEventDefinition_1mj8xx2" messageRef="Message_1aq4rjr" />
     </bpmn:intermediateCatchEvent>
-    <bpmn:serviceTask id="Activity_0wqsj7a" name="Update NFT Mercle Tree Through Chainlink Functions" camunda:class="ai.hhrdr.chainflow.engine.LoggerDelegate">
+    <bpmn:serviceTask id="UpdateMerkleTree" name="Update NFT Mercle Tree Through Chainlink Functions" camunda:type="external" camunda:topic="writeInvitedWallets">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="wallet_1">${wallet_address}</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
       <bpmn:incoming>Flow_01h5zjo</bpmn:incoming>
       <bpmn:outgoing>Flow_1h28aam</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:endEvent id="Event_0eqn5wj">
       <bpmn:incoming>Flow_1h28aam</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:sequenceFlow id="Flow_01h5zjo" sourceRef="Event_16pztjb" targetRef="Activity_0wqsj7a" />
-    <bpmn:sequenceFlow id="Flow_1h28aam" sourceRef="Activity_0wqsj7a" targetRef="Event_0eqn5wj" />
+    <bpmn:sequenceFlow id="Flow_01h5zjo" sourceRef="Event_16pztjb" targetRef="UpdateMerkleTree" />
+    <bpmn:sequenceFlow id="Flow_1h28aam" sourceRef="UpdateMerkleTree" targetRef="Event_0eqn5wj" />
     <bpmn:startEvent id="StartEvent_1" camunda:initiator="camunda_user_id">
       <bpmn:extensionElements>
         <camunda:formData>
@@ -207,6 +196,37 @@
       <bpmn:incoming>Flow_0wtr19b</bpmn:incoming>
       <bpmn:outgoing>Flow_1344k37</bpmn:outgoing>
     </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_1nwu03i" name="Web3 Check Transaction Status" camunda:type="external" camunda:topic="CheckTransactionConfirmed">
+      <bpmn:incoming>Flow_1o6z6gb</bpmn:incoming>
+      <bpmn:outgoing>Flow_0s23fxz</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0s23fxz" sourceRef="Activity_1nwu03i" targetRef="store_token_id_and_art_id" />
+    <bpmn:userTask id="Activity_11w67z1" name="User to review collections and call to actions (Faucet)" camunda:assignee="${camunda_user_id}">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="gen_art_id" label="gen_art_id" type="string" defaultValue="${gen_art_id}">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1nfmyt0</bpmn:incoming>
+      <bpmn:outgoing>Flow_0l6w116</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_1nfmyt0" sourceRef="store_token_id_and_art_id" targetRef="Activity_11w67z1" />
+    <bpmn:serviceTask id="store_token_id_and_art_id" name="Store relation NFT token_id and art_id" camunda:type="external" camunda:topic="StoreTokenIdAndImage">
+      <bpmn:incoming>Flow_0s23fxz</bpmn:incoming>
+      <bpmn:outgoing>Flow_1nfmyt0</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="Event_1013xif">
+      <bpmn:incoming>Flow_0l6w116</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:boundaryEvent id="Event_1uuift7" attachedToRef="Activity_1nwu03i">
+      <bpmn:outgoing>Flow_07bwosv</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_09ntmlg" camunda:errorCodeVariable="404" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_07bwosv" sourceRef="Event_1uuift7" targetRef="Activity_0cbbops" />
     <bpmn:association id="Association_1pjdc80" associationDirection="None" sourceRef="StartEvent_1" targetRef="TextAnnotation_0s5lc10" />
     <bpmn:association id="Association_0o99o8m" associationDirection="None" sourceRef="arts_modal" targetRef="TextAnnotation_0il41ek" />
     <bpmn:association id="Association_1fd12rv" associationDirection="None" sourceRef="Activity_03au33a" targetRef="TextAnnotation_0brigzi" />
@@ -240,14 +260,18 @@
         <dc:Bounds x="1535" y="495" width="50" height="50" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1rcfiuf_di" bpmnElement="Activity_1nwu03i">
-        <dc:Bounds x="1670" y="480" width="100" height="80" />
+        <dc:Bounds x="1660" y="480" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1u12oqw_di" bpmnElement="Activity_11w67z1">
-        <dc:Bounds x="1830" y="480" width="100" height="80" />
+        <dc:Bounds x="1830" y="620" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1xv1g34_di" bpmnElement="store_token_id_and_art_id">
+        <dc:Bounds x="1660" y="620" width="100" height="80" />
+        <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1013xif_di" bpmnElement="Event_1013xif">
-        <dc:Bounds x="1992" y="502" width="36" height="36" />
+        <dc:Bounds x="1982" y="642" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0cbbops_di" bpmnElement="Activity_0cbbops" isExpanded="true">
         <dc:Bounds x="790" y="480" width="600" height="260" />
@@ -307,7 +331,7 @@
       <bpmndi:BPMNShape id="Event_1y9a4ey_di" bpmnElement="Event_16pztjb">
         <dc:Bounds x="842" y="932" width="36" height="36" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_09du2gc_di" bpmnElement="Activity_0wqsj7a">
+      <bpmndi:BPMNShape id="Activity_09du2gc_di" bpmnElement="UpdateMerkleTree">
         <dc:Bounds x="1055" y="910" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0eqn5wj_di" bpmnElement="Event_0eqn5wj">
@@ -328,6 +352,9 @@
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_1mph5k5" bpmnElement="Activity_03au33a">
         <dc:Bounds x="850" y="260" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1uuift7_di" bpmnElement="Event_1uuift7">
+        <dc:Bounds x="1692" y="462" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_1k76t4f_di" bpmnElement="Flow_1k76t4f">
         <di:waypoint x="1560" y="545" />
@@ -368,18 +395,14 @@
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1o6z6gb_di" bpmnElement="Flow_1o6z6gb">
         <di:waypoint x="1585" y="520" />
-        <di:waypoint x="1670" y="520" />
+        <di:waypoint x="1660" y="520" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1605" y="502" width="46" height="14" />
+          <dc:Bounds x="1600" y="502" width="46" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0cn14aj_di" bpmnElement="Flow_0cn14aj">
-        <di:waypoint x="1770" y="520" />
-        <di:waypoint x="1830" y="520" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0l6w116_di" bpmnElement="Flow_0l6w116">
-        <di:waypoint x="1930" y="520" />
-        <di:waypoint x="1992" y="520" />
+        <di:waypoint x="1930" y="660" />
+        <di:waypoint x="1982" y="660" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_01h5zjo_di" bpmnElement="Flow_01h5zjo">
         <di:waypoint x="878" y="950" />
@@ -404,6 +427,20 @@
       <bpmndi:BPMNEdge id="Association_1fd12rv_di" bpmnElement="Association_1fd12rv">
         <di:waypoint x="949" y="267" />
         <di:waypoint x="970" y="253" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0s23fxz_di" bpmnElement="Flow_0s23fxz">
+        <di:waypoint x="1710" y="560" />
+        <di:waypoint x="1710" y="620" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1nfmyt0_di" bpmnElement="Flow_1nfmyt0">
+        <di:waypoint x="1760" y="660" />
+        <di:waypoint x="1830" y="660" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_07bwosv_di" bpmnElement="Flow_07bwosv">
+        <di:waypoint x="1710" y="462" />
+        <di:waypoint x="1710" y="442" />
+        <di:waypoint x="1100" y="442" />
+        <di:waypoint x="1100" y="480" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Group_02dxxtn_di" bpmnElement="Group_02dxxtn">
         <dc:Bounds x="790" y="850" width="630" height="170" />
