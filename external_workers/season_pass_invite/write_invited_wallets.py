@@ -8,7 +8,6 @@ from camunda.external_task.external_task_worker import ExternalTaskWorker, Exter
 from config import (
     CAMUNDA_URL,
     CAMUNDA_CLIENT_CONFIG,
-    TOPIC_NAME,
     API_URL,
     SYS_KEY,
 )
@@ -60,4 +59,4 @@ if __name__ == "__main__":
         worker_id="write_invited_wallets_in_db",
         base_url=CAMUNDA_URL,
         config=CAMUNDA_CLIENT_CONFIG,
-    ).subscribe(TOPIC_NAME, handle_task)
+    ).subscribe(['writeInvitedWallets'], handle_task)

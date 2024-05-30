@@ -62,11 +62,9 @@ def handle_task(task: ExternalTask) -> TaskResult:
         txn_input = bytes.fromhex(txn_input[2:])
 
     if not tx_hash:
-        return task.failure(
-            "Transaction hash not provided",
+        return task.bpmn_error(
+            404,
             "Transaction hash is missing from the variables",
-            3,
-            15000,
         )
 
     is_transaction_same = check_transaction_data(tx_hash, txn_value, txn_input)
