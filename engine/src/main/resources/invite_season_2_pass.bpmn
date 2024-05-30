@@ -52,6 +52,7 @@
         <bpmn:flowNodeRef>Activity_11w67z1</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>store_token_id_and_art_id</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_1013xif</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_1uuift7</bpmn:flowNodeRef>
       </bpmn:lane>
     </bpmn:laneSet>
     <bpmn:serviceTask id="Activity_1golbhl" name="Guru Network Transport Layer" camunda:class="ai.hhrdr.chainflow.engine.LoggerDelegate">
@@ -65,6 +66,7 @@
     </bpmn:exclusiveGateway>
     <bpmn:subProcess id="Activity_0cbbops" name="User Review, Share And Boost Rewards Flow Modal">
       <bpmn:incoming>Flow_1344k37</bpmn:incoming>
+      <bpmn:incoming>Flow_07bwosv</bpmn:incoming>
       <bpmn:outgoing>Flow_1p7yucm</bpmn:outgoing>
       <bpmn:startEvent id="Event_16xr77w">
         <bpmn:outgoing>Flow_00q7ofy</bpmn:outgoing>
@@ -140,7 +142,12 @@
       <bpmn:outgoing>Flow_01h5zjo</bpmn:outgoing>
       <bpmn:messageEventDefinition id="MessageEventDefinition_1mj8xx2" messageRef="Message_1aq4rjr" />
     </bpmn:intermediateCatchEvent>
-    <bpmn:serviceTask id="UpdateMerkleTree" name="Update NFT Mercle Tree Through Chainlink Functions" camunda:type="external" camunda:topic="updateMerkleTree">
+    <bpmn:serviceTask id="UpdateMerkleTree" name="Update NFT Mercle Tree Through Chainlink Functions" camunda:type="external" camunda:topic="writeInvitedWallets">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="wallet_1">${wallet_address}</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
       <bpmn:incoming>Flow_01h5zjo</bpmn:incoming>
       <bpmn:outgoing>Flow_1h28aam</bpmn:outgoing>
     </bpmn:serviceTask>
@@ -224,6 +231,11 @@
     <bpmn:endEvent id="Event_1013xif">
       <bpmn:incoming>Flow_0l6w116</bpmn:incoming>
     </bpmn:endEvent>
+    <bpmn:boundaryEvent id="Event_1uuift7" attachedToRef="Activity_1nwu03i">
+      <bpmn:outgoing>Flow_07bwosv</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_09ntmlg" camunda:errorCodeVariable="404" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_07bwosv" sourceRef="Event_1uuift7" targetRef="Activity_0cbbops" />
     <bpmn:association id="Association_1pjdc80" associationDirection="None" sourceRef="StartEvent_1" targetRef="TextAnnotation_0s5lc10" />
     <bpmn:association id="Association_0o99o8m" associationDirection="None" sourceRef="arts_modal" targetRef="TextAnnotation_0il41ek" />
     <bpmn:association id="Association_1fd12rv" associationDirection="None" sourceRef="Activity_03au33a" targetRef="TextAnnotation_0brigzi" />
@@ -353,6 +365,9 @@
       <bpmndi:BPMNShape id="Event_0eog5m5_di" bpmnElement="Event_02qy6i7">
         <dc:Bounds x="772" y="656" width="36" height="36" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1uuift7_di" bpmnElement="Event_1uuift7">
+        <dc:Bounds x="1692" y="462" width="36" height="36" />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_1k76t4f_di" bpmnElement="Flow_1k76t4f">
         <di:waypoint x="1560" y="545" />
         <di:waypoint x="1560" y="820" />
@@ -437,6 +452,12 @@
       <bpmndi:BPMNEdge id="Flow_1nfmyt0_di" bpmnElement="Flow_1nfmyt0">
         <di:waypoint x="1760" y="660" />
         <di:waypoint x="1830" y="660" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_07bwosv_di" bpmnElement="Flow_07bwosv">
+        <di:waypoint x="1710" y="462" />
+        <di:waypoint x="1710" y="442" />
+        <di:waypoint x="1100" y="442" />
+        <di:waypoint x="1100" y="480" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Group_02dxxtn_di" bpmnElement="Group_02dxxtn">
         <dc:Bounds x="790" y="850" width="630" height="170" />
