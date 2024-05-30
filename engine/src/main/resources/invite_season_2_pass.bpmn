@@ -44,7 +44,6 @@
         <bpmn:flowNodeRef>UpdateMerkleTree</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_0eqn5wj</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_0cbbops</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Event_02qy6i7</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>StartEvent_1</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>arts_modal</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_1514wn9</bpmn:flowNodeRef>
@@ -124,7 +123,6 @@
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${is_regenerate}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_00l3m44" sourceRef="StartEvent_1" targetRef="Activity_1514wn9" />
-    <bpmn:sequenceFlow id="Flow_06wsvtv" sourceRef="Event_02qy6i7" targetRef="arts_modal" />
     <bpmn:sequenceFlow id="Flow_0uh5vds" sourceRef="arts_modal" targetRef="Activity_1golbhl" />
     <bpmn:sequenceFlow id="Flow_0wtr19b" sourceRef="Activity_0l92qi2" targetRef="Activity_03au33a" />
     <bpmn:sequenceFlow id="Flow_1344k37" sourceRef="Activity_03au33a" targetRef="Activity_0cbbops" />
@@ -132,12 +130,6 @@
     <bpmn:sequenceFlow id="Flow_1p7yucm" sourceRef="Activity_0cbbops" targetRef="Gateway_0jre9h4" />
     <bpmn:sequenceFlow id="Flow_1o6z6gb" name="Mint NFT" sourceRef="Gateway_0jre9h4" targetRef="Activity_1nwu03i" />
     <bpmn:sequenceFlow id="Flow_0l6w116" sourceRef="Activity_11w67z1" targetRef="Event_1013xif" />
-    <bpmn:boundaryEvent id="Event_02qy6i7" attachedToRef="Activity_0cbbops">
-      <bpmn:outgoing>Flow_06wsvtv</bpmn:outgoing>
-      <bpmn:timerEventDefinition id="TimerEventDefinition_1pd059g">
-        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT1H</bpmn:timeDuration>
-      </bpmn:timerEventDefinition>
-    </bpmn:boundaryEvent>
     <bpmn:intermediateCatchEvent id="Event_16pztjb">
       <bpmn:outgoing>Flow_01h5zjo</bpmn:outgoing>
       <bpmn:messageEventDefinition id="MessageEventDefinition_1mj8xx2" messageRef="Message_1aq4rjr" />
@@ -181,7 +173,6 @@
         </camunda:formData>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1k76t4f</bpmn:incoming>
-      <bpmn:incoming>Flow_06wsvtv</bpmn:incoming>
       <bpmn:incoming>Flow_1co5uwn</bpmn:incoming>
       <bpmn:outgoing>Flow_0uh5vds</bpmn:outgoing>
     </bpmn:userTask>
@@ -190,12 +181,12 @@
       <bpmn:incoming>Flow_00l3m44</bpmn:incoming>
       <bpmn:outgoing>Flow_1co5uwn</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:callActivity id="Activity_0l92qi2" name="Pixelpact Orchestration Node Image Gen AI Processor Flow" calledElement="generate_season_artwork_dummy">
+    <bpmn:callActivity id="Activity_0l92qi2" name="Pixelpact Orchestration Node Image Gen AI Processor Flow" calledElement="generate_season_artwork">
       <bpmn:extensionElements>
         <camunda:in source="src1_art_id" target="src1_art_id" />
         <camunda:in source="src2_art_id" target="src2_art_id" />
         <camunda:in source="wallet_address" target="wallet_address" />
-        <camunda:out source="src1_art_id" target="gen_art_id" />
+        <camunda:out source="generated_art_id" target="gen_art_id" />
         <camunda:out sourceExpression="This masterpiece melds the futuristic allure of a space thriller with the avant-garde elegance of Bauhaus design. Follow #xgurunetwork" target="gen_post" />
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0iu3jen</bpmn:incoming>
@@ -362,9 +353,6 @@
       <bpmndi:BPMNShape id="BPMNShape_1mph5k5" bpmnElement="Activity_03au33a">
         <dc:Bounds x="850" y="260" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_0eog5m5_di" bpmnElement="Event_02qy6i7">
-        <dc:Bounds x="772" y="656" width="36" height="36" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1uuift7_di" bpmnElement="Event_1uuift7">
         <dc:Bounds x="1692" y="462" width="36" height="36" />
       </bpmndi:BPMNShape>
@@ -380,11 +368,6 @@
       <bpmndi:BPMNEdge id="Flow_00l3m44_di" bpmnElement="Flow_00l3m44">
         <di:waypoint x="248" y="570" />
         <di:waypoint x="320" y="570" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_06wsvtv_di" bpmnElement="Flow_06wsvtv">
-        <di:waypoint x="772" y="674" />
-        <di:waypoint x="560" y="674" />
-        <di:waypoint x="560" y="610" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0uh5vds_di" bpmnElement="Flow_0uh5vds">
         <di:waypoint x="540" y="530" />
