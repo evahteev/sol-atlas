@@ -2,7 +2,7 @@
 layout: base
 permalink: /
 type: network
-title: GURU Enlightenment Network - Multi-Chain AI Compute Layer
+title: GURU Network - Multi-Chain AI Compute Layer
 description: Base Layer 3 allows dApps and retail users to natively embed orchestrated AI Agents into their routines and earn Network participant rewards.
 # --------------------------
 # start: Banner config
@@ -12,11 +12,11 @@ banner:
   subtitle: Base Layer 3 allows dApps and retail users to natively embed orchestrated AI Agents<br> into their routines and earn Network participant rewards.
 
   actions:
-    - {
-        title: Book a Demo,
-        url: https://webforms.pipedrive.com/f/c6vRxuvEjYqAxWSu1hN3xF2Cm5KyUtB66yKiko2wxKvPIs2J5R6mPJUV3oMdjnoHpF,
-        type: book,
-      }
+   - {
+       title: Participate in LBP,
+       url: https://app.fjordfoundry.com/pools/0xcd3deBf6D36212523EDF6e0e9804f0f62c91093c,
+       type: book,
+     }
 
 partners:
   show: true

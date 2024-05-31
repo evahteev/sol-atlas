@@ -127,7 +127,7 @@ menu:
           },
         ],
     }
-  - { title: Ecosytem, url: "#ecosystem" }
+  - { title: Block Explorer, url: https://scan.gurunetwork.ai/ }
   - { title: Docs, url: https://docs.gurunetwork.ai/ }
 
 aside:
