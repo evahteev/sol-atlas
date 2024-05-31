@@ -32,6 +32,8 @@ def set_web3_by_chain_id(chain_id: int):
     global w3
     if chain_id == 261:
         url = "http://new-rpc-gw-prod.dexguru.biz/archive/261"
+    elif chain_id == 8453:
+        url = "https://base-rpc.publicnode.com"
     else:
         url = f"http://rpc-gw-stage.dexguru.biz/full/{chain_id}"
     w3 = Web3(Web3.HTTPProvider(url))

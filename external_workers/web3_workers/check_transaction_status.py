@@ -4,12 +4,21 @@ from web3 import Web3
 import os
 
 TOPIC_NAME = os.getenv("TOPIC_NAME", "CheckTransactionConfirmed")
-WEB3_URL = os.getenv("WEB3_URL", "http://new-rpc-gw-prod.dexguru.biz/archive/261")
 CAMUNDA_URL = os.getenv("CAMUNDA_URL", "http://localhost:8080/engine-rest")
 CAMUNDA_USERNAME = os.getenv("CAMUNDA_USERNAME", "demo")
 CAMUNDA_PASSWORD = os.getenv("CAMUNDA_PASSWORD", "demo")
 
-w3 = Web3(Web3.HTTPProvider(WEB3_URL))
+
+def set_web3_by_chain_id(chain_id: int):
+    global w3
+    if chain_id == 261:
+        url = "http://new-rpc-gw-prod.dexguru.biz/archive/261"
+    elif chain_id == 8453:
+        url = "https://base-rpc.publicnode.com"
+    else:
+        url = f"http://rpc-gw-stage.dexguru.biz/full/{chain_id}"
+    w3 = Web3(Web3.HTTPProvider(url))
+
 
 # configuration for the Client
 default_config = {
@@ -57,6 +66,8 @@ def handle_task(task: ExternalTask) -> TaskResult:
     tx_hash = variables.get("transactionHash")
     txn_input = variables.get("transactionInput")
     txn_value = variables.get("value")
+    chain_id = variables.get("chain_id")
+    set_web3_by_chain_id(chain_id)
 
     if txn_input:
         txn_input = bytes.fromhex(txn_input[2:])
