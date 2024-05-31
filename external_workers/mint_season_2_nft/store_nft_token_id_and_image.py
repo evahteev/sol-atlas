@@ -1,5 +1,6 @@
 import logging
 
+import requests
 from camunda.external_task.external_task import ExternalTask, TaskResult
 from camunda.external_task.external_task_worker import ExternalTaskWorker
 from web3 import Web3
@@ -7,8 +8,10 @@ import os
 
 
 CAMUNDA_URL = os.getenv("CAMUNDA_URL", "http://localhost:8080/engine-rest")
+API_URL = os.getenv("API_URL", "http://localhost:8000/api")
 CAMUNDA_USERNAME = os.getenv("CAMUNDA_USERNAME", "demo")
 CAMUNDA_PASSWORD = os.getenv("CAMUNDA_PASSWORD", "demo")
+SYS_KEY = os.getenv("SYS_KEY", "secret")
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
@@ -73,6 +76,9 @@ def handle_task(task: ExternalTask) -> TaskResult:
         )
     try:
         token_id = get_nft_token_id(tx_hash)
+        url = f"{API_URL}/seasons/2/chain/{chain_id}/token/{token_id}/art/{art_id}"
+        resp = requests.post(url, headers={"X-SYS-KEY": SYS_KEY})
+        resp.raise_for_status()
     except Exception as e:
         logger.error(f"Failed to get NFT token id: {e}")
         return task.failure(
