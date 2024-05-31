@@ -1,19 +1,24 @@
 import logging
+import os
 
 import requests
 from camunda.external_task.external_task import ExternalTask, TaskResult
 from camunda.external_task.external_task_worker import ExternalTaskWorker
 from web3 import Web3
-import os
-
 
 CAMUNDA_URL = os.getenv("CAMUNDA_URL", "http://localhost:8080/engine-rest")
-API_URL = os.getenv("API_URL", "http://localhost:8000/api")
+API_URL = os.getenv("API_URL", "http://localhost:8000")
 CAMUNDA_USERNAME = os.getenv("CAMUNDA_USERNAME", "demo")
 CAMUNDA_PASSWORD = os.getenv("CAMUNDA_PASSWORD", "demo")
+OPENSEA_API_KEY = os.getenv("OPENSEA_API_KEY", "secret")
 SYS_KEY = os.getenv("SYS_KEY", "secret")
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
+
+CHAIN_ID_TO_CHAIN_NAME = {
+    '8453': 'base',
+    '1': 'ethereum',
+}
 
 # configuration for the Client
 default_config = {
@@ -57,6 +62,20 @@ def get_nft_token_id(tx_hash: str) -> int:
     logger.info("No NFT token id found in the transaction logs")
 
 
+def store_token_id_and_art_id(token_id: int, art_id: str, chain_id: int) -> None:
+    url = f"{API_URL}/seasons/2/chain/{chain_id}/token/{token_id}/art/{art_id}"
+    resp = requests.post(url, headers={"X-SYS-KEY": SYS_KEY})
+    resp.raise_for_status()
+
+
+def refresh_opensea_metadata(token_id: int, chain_id: int) -> None:
+    chain = "base"
+    address = '0xeb8ae9ed9df8bff58f9d364eef3c4986f4331d1e'
+    url = f'https://api.opensea.io/api/v2/chain/{chain}/contract/{address}/nfts/{token_id}/refresh'
+    resp = requests.post(url, headers={"x-api-key": OPENSEA_API_KEY})
+    resp.raise_for_status()
+
+
 def handle_task(task: ExternalTask) -> TaskResult:
     variables = task.get_variables()
     tx_hash = variables.get("transactionHash")
@@ -76,9 +95,6 @@ def handle_task(task: ExternalTask) -> TaskResult:
         )
     try:
         token_id = get_nft_token_id(tx_hash)
-        url = f"{API_URL}/seasons/2/chain/{chain_id}/token/{token_id}/art/{art_id}"
-        resp = requests.post(url, headers={"X-SYS-KEY": SYS_KEY})
-        resp.raise_for_status()
     except Exception as e:
         logger.error(f"Failed to get NFT token id: {e}")
         return task.failure(
@@ -94,6 +110,20 @@ def handle_task(task: ExternalTask) -> TaskResult:
             max_retries=3,
             retry_timeout=5000,
         )
+    try:
+        store_token_id_and_art_id(token_id, art_id, chain_id)
+    except Exception as e:
+        logger.error(f"Failed to store token id and art id: {e}")
+        return task.failure(
+            "FAILED_TO_STORE_TOKEN_ID_AND_ART_ID",
+            f"Failed to store token id and art id: {e}",
+            max_retries=3,
+            retry_timeout=5000,
+        )
+    try:
+        refresh_opensea_metadata(token_id, chain_id)
+    except Exception as e:
+        logger.error(f"Failed to refresh opensea metadata: {e}")
     logger.info(f"Got NFT token id: {token_id}")
     variables["nft_token_id"] = token_id
     variables["transactionHash"] = tx_hash
