@@ -10,6 +10,7 @@ CAMUNDA_URL = os.getenv("CAMUNDA_URL", "http://localhost:8080/engine-rest")
 CAMUNDA_USERNAME = os.getenv("CAMUNDA_USERNAME", "demo")
 CAMUNDA_PASSWORD = os.getenv("CAMUNDA_PASSWORD", "demo")
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 # configuration for the Client
 default_config = {
@@ -64,25 +65,28 @@ def handle_task(task: ExternalTask) -> TaskResult:
     )
     if not tx_hash or not art_id or not chain_id:
         logger.error("transactionHash or get_art_id or chain_id is missing")
-        return task.bpmn_error(
-            "VARIABLE_MISSING",
-            "transactionHash or get_art_id is missing",
-            variables,
+        return task.failure(
+            "MISSING_VARIABLES",
+            "transactionHash or get_art_id or chain_id is missing",
+            max_retries=3,
+            retry_timeout=5000,
         )
     try:
         token_id = get_nft_token_id(tx_hash)
     except Exception as e:
         logger.error(f"Failed to get NFT token id: {e}")
-        return task.bpmn_error(
+        return task.failure(
             "FAILED_TO_GET_NFT_TOKEN_ID",
             f"Failed to get NFT token id: {e}",
-            variables,
+            max_retries=3,
+            retry_timeout=5000,
         )
     if token_id is None:
-        return task.bpmn_error(
+        return task.failure(
             "FAILED_TO_GET_NFT_TOKEN_ID",
             "Failed to get NFT token id",
-            variables,
+            max_retries=3,
+            retry_timeout=5000,
         )
     logger.info(f"Got NFT token id: {token_id}")
     variables["nft_token_id"] = token_id
@@ -95,7 +99,9 @@ def handle_task(task: ExternalTask) -> TaskResult:
 if __name__ == "__main__":
     logger.info("Starting the worker...")
     ExternalTaskWorker(
-        worker_id="1", base_url=CAMUNDA_URL, config=default_config
+        worker_id="store_token_id_and_art_id",
+        base_url=CAMUNDA_URL,
+        config=default_config,
     ).subscribe(
         [
             'StoreTokenIdAndImage',
