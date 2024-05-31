@@ -262,12 +262,29 @@ async function waitForResponse(tx_hash) {
     }
 }
 
+async function markWalletsAsInvited() {
+    const url = process.env.API_URL + "?only_updated=false"
+    const sys_key = process.env.SYS_KEY
+    const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-SYS-KEY': sys_key
+        }
+    })
+    if (response.status !== 200) {
+        console.log("Failed to mark wallets as invited. Status", response.status)
+        throw new Error(`Failed to mark wallets as invited. Status ${response.status}`)
+    }
+}
+
 async function handleTask({task, taskService}) {
     try {
         const tx_hash = await makeRequest(task, taskService);
         if (tx_hash) {
             await waitForResponse(tx_hash);
         }
+        await markWalletsAsInvited();
         return await taskService.complete(task);
     } catch (error) {
         console.log("Error processing task", error);
