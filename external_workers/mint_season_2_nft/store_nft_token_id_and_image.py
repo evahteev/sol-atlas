@@ -25,6 +25,7 @@ default_config = {
 NFT_ADDRESSES = (
     '0x872ef2bfe4efc19ba4e21e36f4cadac4f8c92ede',
     '0xe41eab3053ddf33ebe071fecfe42ae5332a9eea3',
+    '0xeb8ae9ed9df8bff58f9d364eef3c4986f4331d1e',
 )
 
 
