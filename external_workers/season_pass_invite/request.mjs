@@ -14,6 +14,7 @@ import ethers from "ethers";
 
 import functionsConsumerAbi from "./functionsClientAbi.mjs";
 import 'dotenv/config';
+import {StandardMerkleTree} from "@openzeppelin/merkle-tree";
 
 
 const consumerAddress = process.env.CONSUMER_ADDRESS;
@@ -31,28 +32,20 @@ const engineConfig = {
 const client = new Client(engineConfig);
 
 
-const makeRequest = async (task, taskService) => {
+const makeRequest = async (wallets) => {
     const routerAddress = process.env.ROUTER_ADDRESS;
     const linkTokenAddress = process.env.LINK_TOKEN_ADDRESS;
     const donId = process.env.DON_ID;
     const explorerUrl = process.env.EXPLORER_URL;
-    const inviterWallet = task.variables.get("wallet_address")
     const slotID = 0;
     const privateKey = process.env.PRIVATE_KEY; // fetch PRIVATE_KEY
     const rpcUrl = process.env.RPC_URL;
     const gatewayUrls = process.env.GATEWAY_URLS.split(",")
 
-    let walletsToInvite = []
-
-    const walletToInvite = task.variables.get("wallet_1")
-    if (walletToInvite && walletToInvite !== inviterWallet) {
-        walletsToInvite.push(walletToInvite)
-    }
-
     // Initialize functions settings
     const source = fs.readFileSync("source.js").toString();
-
-    let args = [JSON.stringify(walletsToInvite)];
+    const merkleRoot = generateMerkleRoot(wallets);
+    let args = [merkleRoot.slice(2)];
     const secrets = {SYS_KEY: process.env.SYS_KEY, URL: process.env.API_URL}; // Only used for simulation
     const gasLimit = 300000;
 
@@ -84,15 +77,12 @@ const makeRequest = async (task, taskService) => {
 
     console.log("Simulation result", response);
     const errorString = response.errorString;
-    let merkleRoot
     if (errorString) {
         console.log(`❌ Error during simulation: `, errorString);
         throw new Error(`Error during simulation: ${errorString}`);
     } else {
-        merkleRoot = response.responseBytesHexstring;
-        console.log(`✅ Response: `, merkleRoot);
+        console.log(`✅ Response: `, response.responseBytesHexstring);
     }
-
     //////// CHECK IF NEED UPDATE //////////
     const functionsConsumer = new ethers.Contract(
         consumerAddress,
@@ -263,14 +253,17 @@ async function waitForResponse(tx_hash) {
 }
 
 async function markWalletsAsInvited() {
-    const url = process.env.API_URL + "?only_updated=false"
+    const url = process.env.API_URL
     const sys_key = process.env.SYS_KEY
-    const response = await fetch(url, {
+    const queryParams = new URLSearchParams({
+        "only_updated": "false"
+    })
+    const response = await fetch(url + "?" + queryParams.toString(), {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
             'X-SYS-KEY': sys_key
-        }
+        },
     })
     if (response.status !== 200) {
         console.log("Failed to mark wallets as invited. Status", response.status)
@@ -278,9 +271,32 @@ async function markWalletsAsInvited() {
     }
 }
 
+async function getExistingAddresses() {
+    const url = process.env.API_URL
+    const sys_key = process.env.SYS_KEY
+    const queryParams = new URLSearchParams({
+        "only_updated": "false"
+    })
+    const response = await fetch(url + "?" + queryParams.toString(), {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-SYS-KEY': sys_key
+        },
+    })
+    if (response.status !== 200) {
+        console.log("Failed to mark wallets as invited. Status", response.status)
+        throw new Error(`Failed to mark wallets as invited. Status ${response.status}`)
+    }
+    return await response.json()
+}
+
+
 async function handleTask({task, taskService}) {
     try {
-        const tx_hash = await makeRequest(task, taskService);
+        const wallets = await getExistingAddresses();
+
+        const tx_hash = await makeRequest(wallets);
         if (tx_hash) {
             await waitForResponse(tx_hash);
         }
@@ -291,6 +307,12 @@ async function handleTask({task, taskService}) {
         logger.error(error);
         return await taskService.handleBpmnError(task, "CHAINLINK_CCIP_ERROR", error.message);
     }
+}
+
+function generateMerkleRoot(walletAddresses) {
+    const walletsSet = new Set(walletAddresses.map(x => (x.toLowerCase())))
+    const walletArrayOfArray = [...walletsSet].map(x => ([x]))
+    return StandardMerkleTree.of(walletArrayOfArray, ['address']).root;
 }
 
 
