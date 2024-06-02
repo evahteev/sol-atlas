@@ -20,6 +20,8 @@ banner:
 
 partners:
   show: true
+
+chat: true
 ---
 
 {% include achievements.html %}
