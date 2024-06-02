@@ -9,6 +9,7 @@
       <div class="page__header">{%- include header.html -%}</div>
       <div class="page__body">
         {%- if page.banner -%} {% include banner.html %} {%- endif -%}
+        {%- if page.chat -%} {% include chat.html %} {%- endif -%}
         {%- if page.features -%} {% include features.html %} {%- endif -%}
         {%- if page.chains -%} {% include chains.html %} {%- endif -%}
         {%- if page.instruments -%} {% include instruments.html %} {%- endif -%}
