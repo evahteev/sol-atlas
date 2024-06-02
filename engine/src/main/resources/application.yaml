@@ -33,8 +33,3 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
-
-prometheus:
-  port: 9999
-  camundaReportingIntervalInSeconds: 5
-  collectorYmlFilePath: classpath:prometheus-metrics.yml
