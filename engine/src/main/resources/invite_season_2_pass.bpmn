@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0c1sdwn" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.23.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.20.0">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0c1sdwn" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.21.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.20.0">
   <bpmn:collaboration id="Collaboration_0l7446t">
     <bpmn:participant id="Participant_1a992mb" name="Guru" processRef="generate_invite_season_2" />
     <bpmn:textAnnotation id="TextAnnotation_0il41ek">
@@ -175,10 +175,10 @@
         <camunda:in source="src1_art_id" target="src1_art_id" />
         <camunda:in source="src2_art_id" target="src2_art_id" />
         <camunda:out source="generated_art_id" target="gen_art_id" />
-        <camunda:out sourceExpression="This masterpiece melds the futuristic allure of a space thriller with the avant-garde elegance of Bauhaus design. Follow #xgurunetwork" target="gen_post" />
-        <camunda:out sourceExpression="Guru Robot" target="gen_token_name" />
-        <camunda:out sourceExpression="robot, technology, futurism" target="gen_token_tags" />
-        <camunda:out sourceExpression="A hyperrealistic, absurdist art piece featuring a person emerging from stone, with elements of shock art and high-resolution detail.	" target="gen_token_description" />
+        <camunda:out sourceExpression="gen_post" target="gen_post" />
+        <camunda:out sourceExpression="gen_token_name" target="gen_token_name" />
+        <camunda:out sourceExpression="gen_token_tags" target="gen_token_tags" />
+        <camunda:out sourceExpression="gen_token_description" target="gen_token_description" />
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0iu3jen</bpmn:incoming>
       <bpmn:outgoing>Flow_0wtr19b</bpmn:outgoing>
@@ -268,11 +268,11 @@
         <dc:Bounds x="1050" y="540" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_0b148uf_di" bpmnElement="Event_0kuji47">
-        <dc:Bounds x="1212" y="562" width="36" height="36" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0ef56mp_di" bpmnElement="Event_0aur9r4">
         <dc:Bounds x="1312" y="662" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0b148uf_di" bpmnElement="Event_0kuji47">
+        <dc:Bounds x="1212" y="562" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_09du2gc_di" bpmnElement="UpdateMerkleTree">
         <dc:Bounds x="1170" y="640" width="100" height="80" />
