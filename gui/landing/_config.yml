@@ -108,7 +108,7 @@ menu:
         ],
     }
   - {
-      title: Resources,
+      title: Developers,
       dropdown:
         [
           {
@@ -123,15 +123,17 @@ menu:
                   title: "Interoperability Architecture Whitepaper",
                   url: "/assets/img/guru_network_architecture_whitepaper.pdf",
                 },
+                 { title: Developer Docs, url: https://docs.gurunetwork.ai/ }
               ],
           },
         ],
     }
-  - { title: Block Explorer, url: https://scan.gurunetwork.ai/ }
-  - { title: Docs, url: https://docs.gurunetwork.ai/ }
+  # - { title: Ecosytem, url: "#ecosystem" }
+  - { title: Blog, url: https://blog.dex.guru/ }
+  - { title: Season 2 Pass NFT, url: https://opensea.io/collection/guru-season-2-pass }
 
 aside:
-  - { title: Flow Orchestraror App, url: https://warehouse.dex.guru }
+  - { title: DexGuru v2 Automations, url: https://warehouse.dex.guru }
 
 # Generate social links in footer.
 social_links:
