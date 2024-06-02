@@ -193,7 +193,6 @@
       <bpmn:extensionElements>
         <camunda:in source="src1_art_id" target="src1_art_id" />
         <camunda:in source="src2_art_id" target="src2_art_id" />
-        <camunda:in source="wallet_address" target="wallet_address" />
         <camunda:out source="generated_art_id" target="gen_art_id" />
         <camunda:out sourceExpression="This masterpiece melds the futuristic allure of a space thriller with the avant-garde elegance of Bauhaus design. Follow #xgurunetwork" target="gen_post" />
         <camunda:out sourceExpression="Guru Robot" target="gen_token_name" />
