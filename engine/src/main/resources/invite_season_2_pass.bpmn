@@ -175,10 +175,10 @@
         <camunda:in source="src1_art_id" target="src1_art_id" />
         <camunda:in source="src2_art_id" target="src2_art_id" />
         <camunda:out source="generated_art_id" target="gen_art_id" />
-        <camunda:out sourceExpression="gen_post" target="gen_post" />
-        <camunda:out sourceExpression="gen_token_name" target="gen_token_name" />
-        <camunda:out sourceExpression="gen_token_tags" target="gen_token_tags" />
-        <camunda:out sourceExpression="gen_token_description" target="gen_token_description" />
+        <camunda:out source="gen_post" target="gen_post" />
+        <camunda:out source="gen_token_name" target="gen_token_name" />
+        <camunda:out source="gen_token_tags" target="gen_token_tags" />
+        <camunda:out source="" target="gen_token_description" />
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0iu3jen</bpmn:incoming>
       <bpmn:outgoing>Flow_0wtr19b</bpmn:outgoing>
