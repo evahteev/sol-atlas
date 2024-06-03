@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_1amw9xt" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.15.2" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.20.0">
-  <bpmn:process id="CrossfiArbitrage" name="TelcoinArbitrage" isExecutable="true" camunda:historyTimeToLive="180">
-    <bpmn:startEvent id="start_tel_testnet_arbitrage" name="Start GURU Testnet Arbitrage" camunda:initiator="camunda_user_id">
+  <bpmn:process id="GuruArbitrage" name="GuruArbitrage" isExecutable="true" camunda:historyTimeToLive="180">
+    <bpmn:startEvent id="start_guru_testnet_arbitrage" name="Start GURU Testnet Arbitrage" camunda:initiator="camunda_user_id">
       <bpmn:extensionElements>
         <camunda:formData>
-          <camunda:formField id="token_address" label="Target token address" type="string" defaultValue="0x80d1f6dafc9c13e9d19aedf75e3c1e2586d4a2a5" />
-          <camunda:formField id="pool_address" label="Pool address" type="string" defaultValue="0xe2005c7718f3849f39c65b8ea93c7a7030aec463" />
+          <camunda:formField id="token_address" label="Target token address" type="string" defaultValue="0xa3e9bf36ff51ce14a25a2cf4b4086cbcf1df781b" />
+          <camunda:formField id="pool_address" label="Pool address" type="string" defaultValue="0xfe0067c22fd4d58844399c4bb8e930aacbbd896e" />
           <camunda:formField id="src_token_address" label="src_token_address" type="string" defaultValue="0x525574c899a7c877a11865339e57376092168258" />
           <camunda:formField id="src_chain_id" label="src_chain_id" type="long" defaultValue="1" />
           <camunda:formField id="arbitrage_delta" label="threshold delta" type="long" defaultValue="2" />
@@ -17,20 +17,20 @@
       </bpmn:extensionElements>
       <bpmn:outgoing>Flow_04o5ic0</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:serviceTask id="Activity_15govpe" name="Price Agent (source chain)" camunda:type="external" camunda:topic="get_target_price">
+    <bpmn:serviceTask id="guru_price_agent" name="Price Agent (source chain)" camunda:type="external" camunda:topic="get_target_price">
       <bpmn:extensionElements />
       <bpmn:incoming>Flow_100dcwl</bpmn:incoming>
       <bpmn:outgoing>Flow_1cgsyqj</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="Activity_1s57yv7" name="Execute Liquidity Manage Transaction" camunda:type="external" camunda:topic="GuruCrossChainArbitrage">
+    <bpmn:serviceTask id="execute_guru_swap_arbitrage" name="Execute Liquidity Manage Transaction" camunda:type="external" camunda:topic="GuruCrossChainArbitrage">
       <bpmn:incoming>Flow_1i8zen2</bpmn:incoming>
       <bpmn:outgoing>Flow_0hv4d7q</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:sequenceFlow id="Flow_1qebca7" sourceRef="Gateway_0x8i6s6" targetRef="Activity_1bd8cj1">
+    <bpmn:sequenceFlow id="Flow_1qebca7" sourceRef="Gateway_asdfsadfasdf" targetRef="guru_calc_price_delta">
       <bpmn:extensionElements />
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_0hv4d7q" sourceRef="Activity_1s57yv7" targetRef="Event_0yssuii" />
-    <bpmn:intermediateCatchEvent id="Event_0yssuii" name="Tick Timer (default 15s)">
+    <bpmn:sequenceFlow id="Flow_0hv4d7q" sourceRef="execute_guru_swap_arbitrage" targetRef="Event_0yssuiiii" />
+    <bpmn:intermediateCatchEvent id="Event_0yssuiiii" name="Tick Timer (default 15s)">
       <bpmn:incoming>Flow_0hv4d7q</bpmn:incoming>
       <bpmn:incoming>Flow_04o5ic0</bpmn:incoming>
       <bpmn:incoming>Flow_02e3upy</bpmn:incoming>
@@ -39,22 +39,22 @@
         <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT${tick_time}S</bpmn:timeDuration>
       </bpmn:timerEventDefinition>
     </bpmn:intermediateCatchEvent>
-    <bpmn:serviceTask id="Activity_0ef52lm" name="Reserves Agent (target chain)" camunda:type="external" camunda:topic="getGuruPriceFromReserves">
+    <bpmn:serviceTask id="guru_reserves_agent" name="Reserves Agent (target chain)" camunda:type="external" camunda:topic="getGuruPriceFromReserves">
       <bpmn:incoming>Flow_01wmhm8</bpmn:incoming>
       <bpmn:outgoing>Flow_0t8ajho</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:parallelGateway id="Gateway_115d2bw">
+    <bpmn:parallelGateway id="Gateway_guru_123">
       <bpmn:incoming>Flow_0y1rjni</bpmn:incoming>
       <bpmn:outgoing>Flow_01wmhm8</bpmn:outgoing>
       <bpmn:outgoing>Flow_100dcwl</bpmn:outgoing>
     </bpmn:parallelGateway>
-    <bpmn:sequenceFlow id="Flow_01wmhm8" sourceRef="Gateway_115d2bw" targetRef="Activity_0ef52lm" />
-    <bpmn:sequenceFlow id="Flow_100dcwl" sourceRef="Gateway_115d2bw" targetRef="Activity_15govpe" />
-    <bpmn:sequenceFlow id="Flow_0t8ajho" sourceRef="Activity_0ef52lm" targetRef="Gateway_0x8i6s6" />
-    <bpmn:sequenceFlow id="Flow_1cgsyqj" sourceRef="Activity_15govpe" targetRef="Gateway_0x8i6s6" />
-    <bpmn:sequenceFlow id="Flow_0y1rjni" sourceRef="Event_0yssuii" targetRef="Gateway_115d2bw" />
-    <bpmn:sequenceFlow id="Flow_04o5ic0" sourceRef="start_tel_testnet_arbitrage" targetRef="Event_0yssuii" />
-    <bpmn:scriptTask id="Activity_1bd8cj1" name="Calculate price delta" scriptFormat="javascript">
+    <bpmn:sequenceFlow id="Flow_01wmhm8" sourceRef="Gateway_guru_123" targetRef="guru_reserves_agent" />
+    <bpmn:sequenceFlow id="Flow_100dcwl" sourceRef="Gateway_guru_123" targetRef="guru_price_agent" />
+    <bpmn:sequenceFlow id="Flow_0t8ajho" sourceRef="guru_reserves_agent" targetRef="Gateway_asdfsadfasdf" />
+    <bpmn:sequenceFlow id="Flow_1cgsyqj" sourceRef="guru_price_agent" targetRef="Gateway_asdfsadfasdf" />
+    <bpmn:sequenceFlow id="Flow_0y1rjni" sourceRef="Event_0yssuiiii" targetRef="Gateway_guru_123" />
+    <bpmn:sequenceFlow id="Flow_04o5ic0" sourceRef="start_guru_testnet_arbitrage" targetRef="Event_0yssuiiii" />
+    <bpmn:scriptTask id="guru_calc_price_delta" name="Calculate price delta" scriptFormat="javascript">
       <bpmn:incoming>Flow_1qebca7</bpmn:incoming>
       <bpmn:outgoing>Flow_11gryoz</bpmn:outgoing>
       <bpmn:script>var currentPrice = execution.getVariable('current_price');
@@ -67,71 +67,71 @@ if (currentPrice &lt; 0) {
 var priceDelta = Math.abs(((targetPrice - currentPrice) / currentPrice) * 100);
 execution.setVariable('price_delta', priceDelta);</bpmn:script>
     </bpmn:scriptTask>
-    <bpmn:inclusiveGateway id="Gateway_0x8i6s6">
+    <bpmn:inclusiveGateway id="Gateway_asdfsadfasdf">
       <bpmn:incoming>Flow_1cgsyqj</bpmn:incoming>
       <bpmn:incoming>Flow_0t8ajho</bpmn:incoming>
       <bpmn:outgoing>Flow_1qebca7</bpmn:outgoing>
     </bpmn:inclusiveGateway>
-    <bpmn:sequenceFlow id="Flow_11gryoz" sourceRef="Activity_1bd8cj1" targetRef="Gateway_0ylm00v" />
-    <bpmn:exclusiveGateway id="Gateway_0ylm00v" default="Flow_02e3upy">
+    <bpmn:sequenceFlow id="Flow_11gryoz" sourceRef="guru_calc_price_delta" targetRef="Gateway_45634fsdcsdc" />
+    <bpmn:exclusiveGateway id="Gateway_45634fsdcsdc" default="Flow_02e3upy">
       <bpmn:incoming>Flow_11gryoz</bpmn:incoming>
       <bpmn:outgoing>Flow_1i8zen2</bpmn:outgoing>
       <bpmn:outgoing>Flow_02e3upy</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:sequenceFlow id="Flow_1i8zen2" name="delta&#62;threshold" sourceRef="Gateway_0ylm00v" targetRef="Activity_1s57yv7">
+    <bpmn:sequenceFlow id="Flow_1i8zen2" name="delta&#62;threshold" sourceRef="Gateway_45634fsdcsdc" targetRef="execute_guru_swap_arbitrage">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${price_delta &gt; arbitrage_delta}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_02e3upy" sourceRef="Gateway_0ylm00v" targetRef="Event_0yssuii" />
+    <bpmn:sequenceFlow id="Flow_02e3upy" sourceRef="Gateway_45634fsdcsdc" targetRef="Event_0yssuiiii" />
     <bpmn:textAnnotation id="TextAnnotation_0nuxj3r">
       <bpmn:text>Requesting tGURU price on GURU Network and setting up context</bpmn:text>
     </bpmn:textAnnotation>
-    <bpmn:association id="Association_0b6aocx" associationDirection="None" sourceRef="Activity_0ef52lm" targetRef="TextAnnotation_0nuxj3r" />
+    <bpmn:association id="Association_0b6aocx" associationDirection="None" sourceRef="guru_reserves_agent" targetRef="TextAnnotation_0nuxj3r" />
     <bpmn:textAnnotation id="TextAnnotation_0kxk2db">
       <bpmn:text>GURU price on Mainnet requested using https://warehouse.dex.guru/queries/202/source#-1</bpmn:text>
     </bpmn:textAnnotation>
-    <bpmn:association id="Association_17u4yee" associationDirection="None" sourceRef="Activity_15govpe" targetRef="TextAnnotation_0kxk2db" />
+    <bpmn:association id="Association_17u4yee" associationDirection="None" sourceRef="guru_price_agent" targetRef="TextAnnotation_0kxk2db" />
     <bpmn:textAnnotation id="TextAnnotation_083xe73">
       <bpmn:text>External Worker Executed in Secured Environment With EOA account pashprase attached in form of hardware key or from secured storage like 1password API. Non Castodial Execution</bpmn:text>
     </bpmn:textAnnotation>
-    <bpmn:association id="Association_12hruwj" associationDirection="None" sourceRef="Activity_1s57yv7" targetRef="TextAnnotation_083xe73" />
+    <bpmn:association id="Association_12hruwj" associationDirection="None" sourceRef="execute_guru_swap_arbitrage" targetRef="TextAnnotation_083xe73" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
-    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="CrossfiArbitrage">
-      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="start_tel_testnet_arbitrage">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="GuruArbitrage">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="start_guru_testnet_arbitrage">
         <dc:Bounds x="192" y="82" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="171" y="125" width="83" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_17hjsn1_di" bpmnElement="Activity_15govpe">
+      <bpmndi:BPMNShape id="Activity_17hjsn1_di" bpmnElement="guru_price_agent">
         <dc:Bounds x="640" y="540" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0re019j_di" bpmnElement="Activity_1s57yv7">
+      <bpmndi:BPMNShape id="Activity_0re019j_di" bpmnElement="execute_guru_swap_arbitrage">
         <dc:Bounds x="1510" y="360" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_0fu707s_di" bpmnElement="Event_0yssuii">
+      <bpmndi:BPMNShape id="Event_0fu707s_di" bpmnElement="Event_0yssuiiii">
         <dc:Bounds x="1292" y="202" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="1229" y="236" width="62" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1as7vrs_di" bpmnElement="Activity_0ef52lm">
+      <bpmndi:BPMNShape id="Activity_1as7vrs_di" bpmnElement="guru_reserves_agent">
         <dc:Bounds x="640" y="360" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_01maz37_di" bpmnElement="Gateway_115d2bw">
+      <bpmndi:BPMNShape id="Gateway_01maz37_di" bpmnElement="Gateway_guru_123">
         <dc:Bounds x="425" y="468" width="50" height="50" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1l3spku_di" bpmnElement="Activity_1bd8cj1">
+      <bpmndi:BPMNShape id="Activity_1l3spku_di" bpmnElement="guru_calc_price_delta">
         <dc:Bounds x="1010" y="360" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_00vbyqk_di" bpmnElement="Gateway_0x8i6s6">
+      <bpmndi:BPMNShape id="Gateway_00vbyqk_di" bpmnElement="Gateway_asdfsadfasdf">
         <dc:Bounds x="845" y="375" width="50" height="50" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_0ylm00v_di" bpmnElement="Gateway_0ylm00v" isMarkerVisible="true">
+      <bpmndi:BPMNShape id="Gateway_0ylm00v_di" bpmnElement="Gateway_45634fsdcsdc" isMarkerVisible="true">
         <dc:Bounds x="1285" y="375" width="50" height="50" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="TextAnnotation_0nuxj3r_di" bpmnElement="TextAnnotation_0nuxj3r">
