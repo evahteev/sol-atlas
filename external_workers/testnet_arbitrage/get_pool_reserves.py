@@ -10,6 +10,7 @@ from config import (
     WEB3_URL,
     CAMUNDA_URL,
     CAMUNDA_CLIENT_CONFIG,
+    TOPIC_NAME
 )
 from testnet_arbitrage.execute_swap import get_pool_contract, get_pool_tokens, get_token_decimals, get_pool_reserves
 
@@ -46,4 +47,4 @@ def handle_task(task: ExternalTask) -> TaskResult:
 if __name__ == "__main__":
     ExternalTaskWorker(
         worker_id="1", base_url=CAMUNDA_URL, config=CAMUNDA_CLIENT_CONFIG
-    ).subscribe(['getPriceFromReserves'], handle_task)
+    ).subscribe([TOPIC_NAME], handle_task)
