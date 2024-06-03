@@ -94,13 +94,12 @@ menu:
     }
   - {
       title: Community,
-      url: "https://webforms.pipedrive.com/f/6rExdWpdC4j2tsyB09LRGHr6990s7NqeLfhIpT4vPjJOmddqhyIMu7dyvJFAjABNHd",
       dropdown:
         [
           {
             items:
               [
-                { title: "Twitter", url: "https://twitter.com/dexguru" },
+                { title: "X/Twitter", url: "https://x.com/xgurunetwork" },
                 { title: "Telegram", url: "https://t.me/dexguru" },
                 { title: "Discord", url: "https://discord.gg/dPW8fzwzz9" },
               ],
@@ -123,7 +122,7 @@ menu:
                   title: "Interoperability Architecture Whitepaper",
                   url: "/assets/img/guru_network_architecture_whitepaper.pdf",
                 },
-                 { title: Developer Docs, url: https://docs.gurunetwork.ai/ }
+                 { title: Docs, url: https://docs.gurunetwork.ai/ }
               ],
           },
         ],
@@ -133,7 +132,7 @@ menu:
   - { title: Season 2 Pass NFT, url: https://opensea.io/collection/guru-season-2-pass }
 
 aside:
-  - { title: DexGuru v2 Automations, url: https://warehouse.dex.guru }
+  - { title: DexGuru V2, url: https://v2.dex.guru }
 
 # Generate social links in footer.
 social_links:
