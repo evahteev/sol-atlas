@@ -24,13 +24,16 @@ public class InscriptionSender implements DisposableBean {
     @Value("${inscription.enabled}")
     private Boolean enabled;
 
+    @Value("${inscription.max_threads}")
+    private Integer max_threads;
+
     private ExecutorService executorService;
 
     private static final Logger LOG = LoggerFactory.getLogger(InscriptionSender.class);
 
     @PostConstruct
     public void init() {
-        executorService = Executors.newFixedThreadPool(10);  // TODO: move to env
+        executorService = Executors.newFixedThreadPool(max_threads);
     }
 
     public void send(HistoryEvent event, String camundaEventType) {
