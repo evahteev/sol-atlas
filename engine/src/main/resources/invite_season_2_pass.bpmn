@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0c1sdwn" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.20.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.20.0">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0c1sdwn" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.21.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.20.0">
   <bpmn:collaboration id="Collaboration_0l7446t">
     <bpmn:participant id="Participant_1a992mb" name="Guru" processRef="generate_invite_season_2" />
     <bpmn:textAnnotation id="TextAnnotation_0il41ek">
@@ -26,6 +26,7 @@
     <bpmn:textAnnotation id="TextAnnotation_0ixknn4">
       <bpmn:text>We can have another list there of user's already generated art, if he went re-generate route, so effectively he can choose his own generated art as one of two sources for next gen</bpmn:text>
     </bpmn:textAnnotation>
+    <bpmn:association id="Association_0g6dotb" associationDirection="None" sourceRef="arts_modal" targetRef="TextAnnotation_0ixknn4" />
     <bpmn:textAnnotation id="TextAnnotation_1h7anf6">
       <bpmn:text>Process drops there for sync purposes, but user sees the choose img task there</bpmn:text>
     </bpmn:textAnnotation>
@@ -44,6 +45,7 @@
         <bpmn:flowNodeRef>Gateway_0jre9h4</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_0cbbops</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>StartEvent_1</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>arts_modal</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_1514wn9</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_1nwu03i</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Activity_11w67z1</bpmn:flowNodeRef>
@@ -54,7 +56,7 @@
       </bpmn:lane>
     </bpmn:laneSet>
     <bpmn:serviceTask id="Activity_1golbhl" name="Guru Network Transport Layer" camunda:class="ai.hhrdr.chainflow.engine.LoggerDelegate">
-      <bpmn:incoming>Flow_03gn7ax</bpmn:incoming>
+      <bpmn:incoming>Flow_0uh5vds</bpmn:incoming>
       <bpmn:outgoing>Flow_0iu3jen</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:exclusiveGateway id="Gateway_0jre9h4" default="Flow_1o6z6gb">
@@ -131,6 +133,7 @@
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${is_regenerate}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_00l3m44" sourceRef="StartEvent_1" targetRef="Activity_1514wn9" />
+    <bpmn:sequenceFlow id="Flow_0uh5vds" sourceRef="arts_modal" targetRef="Activity_1golbhl" />
     <bpmn:sequenceFlow id="Flow_0wtr19b" sourceRef="Activity_0l92qi2" targetRef="Activity_03au33a" />
     <bpmn:sequenceFlow id="Flow_1344k37" sourceRef="Activity_03au33a" targetRef="Activity_0cbbops" />
     <bpmn:sequenceFlow id="Flow_0iu3jen" sourceRef="Activity_1golbhl" targetRef="Activity_0l92qi2" />
@@ -140,21 +143,32 @@
     <bpmn:startEvent id="StartEvent_1" camunda:initiator="camunda_user_id">
       <bpmn:extensionElements>
         <camunda:formData>
-          <camunda:formField id="invite_hash" label="invite_hash" type="string" defaultValue="null">
-            <camunda:validation>
-              <camunda:constraint name="readonly" />
-            </camunda:validation>
-          </camunda:formField>
+          <camunda:formField id="invite_hash" label="invite_hash" type="string" defaultValue="null" />
           <camunda:formField id="activation_ts" label="activation_ts" type="long" defaultValue="1779736363" />
-          <camunda:formField id="src1_art_id" label="src1_art_id" type="string" />
-          <camunda:formField id="src2_art_id" label="src2_art_id" type="string" />
         </camunda:formData>
       </bpmn:extensionElements>
       <bpmn:outgoing>Flow_00l3m44</bpmn:outgoing>
     </bpmn:startEvent>
+    <bpmn:userTask id="arts_modal" name="Season 2 Pass Invitee Orders Image from Pixelpact Orchestration Node" camunda:assignee="${camunda_user_id}">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="src1_art_id" label="src1_art_id" type="string" defaultValue="8732b2e7-42a7-40aa-a109-5e6be1197d73	" />
+          <camunda:formField id="src2_art_id" label="src2_art_id" type="string" defaultValue="364c9d64-9c5d-40b5-9cf2-14d04e37d551" />
+          <camunda:formField id="activation_ts" label="activation_ts" type="long">
+            <camunda:properties />
+            <camunda:validation>
+              <camunda:constraint name="readonly" />
+            </camunda:validation>
+          </camunda:formField>
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1co5uwn</bpmn:incoming>
+      <bpmn:outgoing>Flow_0uh5vds</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_1co5uwn" sourceRef="Activity_1514wn9" targetRef="arts_modal" />
     <bpmn:serviceTask id="Activity_1514wn9" name="Set ENV Vars and Calculate flags based on provided inputs" camunda:class="ai.hhrdr.chainflow.engine.LoggerDelegate">
       <bpmn:incoming>Flow_00l3m44</bpmn:incoming>
-      <bpmn:outgoing>Flow_03gn7ax</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1co5uwn</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:callActivity id="Activity_0l92qi2" name="Pixelpact Orchestration Node Image Gen AI Processor Flow" calledElement="generate_season_artwork">
       <bpmn:extensionElements>
@@ -207,9 +221,8 @@
     <bpmn:endEvent id="Event_0fhsgf4">
       <bpmn:incoming>Flow_1k76t4f</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:sequenceFlow id="Flow_03gn7ax" sourceRef="Activity_1514wn9" targetRef="Activity_1golbhl" />
     <bpmn:association id="Association_1pjdc80" associationDirection="None" sourceRef="StartEvent_1" targetRef="TextAnnotation_0s5lc10" />
-    <bpmn:association id="Association_0o99o8m" associationDirection="None" sourceRef="StartEvent_1" targetRef="TextAnnotation_0il41ek" />
+    <bpmn:association id="Association_0o99o8m" associationDirection="None" sourceRef="arts_modal" targetRef="TextAnnotation_0il41ek" />
     <bpmn:association id="Association_1fd12rv" associationDirection="None" sourceRef="Activity_03au33a" targetRef="TextAnnotation_0brigzi" />
   </bpmn:process>
   <bpmn:message id="Message_1aq4rjr" name="socials_shared" />
@@ -295,6 +308,10 @@
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
         <dc:Bounds x="212" y="552" width="36" height="36" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0r0wiay_di" bpmnElement="arts_modal">
+        <dc:Bounds x="490" y="530" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0cshvz6_di" bpmnElement="Activity_1514wn9">
         <dc:Bounds x="320" y="530" width="100" height="80" />
       </bpmndi:BPMNShape>
@@ -337,6 +354,12 @@
         <di:waypoint x="248" y="570" />
         <di:waypoint x="320" y="570" />
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0uh5vds_di" bpmnElement="Flow_0uh5vds">
+        <di:waypoint x="540" y="530" />
+        <di:waypoint x="540" y="435" />
+        <di:waypoint x="600" y="435" />
+        <di:waypoint x="600" y="340" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0wtr19b_di" bpmnElement="Flow_0wtr19b">
         <di:waypoint x="800" y="140" />
         <di:waypoint x="900" y="140" />
@@ -366,6 +389,10 @@
         <di:waypoint x="1930" y="660" />
         <di:waypoint x="1982" y="660" />
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1co5uwn_di" bpmnElement="Flow_1co5uwn">
+        <di:waypoint x="420" y="570" />
+        <di:waypoint x="490" y="570" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0s23fxz_di" bpmnElement="Flow_0s23fxz">
         <di:waypoint x="1710" y="560" />
         <di:waypoint x="1710" y="620" />
@@ -385,17 +412,12 @@
         <di:waypoint x="308" y="840" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Association_0o99o8m_di" bpmnElement="Association_0o99o8m">
-        <di:waypoint x="239" y="554" />
-        <di:waypoint x="342" y="490" />
+        <di:waypoint x="490" y="540" />
+        <di:waypoint x="409" y="490" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Association_1fd12rv_di" bpmnElement="Association_1fd12rv">
         <di:waypoint x="949" y="267" />
         <di:waypoint x="970" y="253" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_03gn7ax_di" bpmnElement="Flow_03gn7ax">
-        <di:waypoint x="420" y="570" />
-        <di:waypoint x="590" y="570" />
-        <di:waypoint x="590" y="340" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="TextAnnotation_0il41ek_di" bpmnElement="TextAnnotation_0il41ek">
         <dc:Bounds x="290" y="410" width="170" height="80" />
@@ -440,6 +462,10 @@
       <bpmndi:BPMNEdge id="Association_1l4il7g_di" bpmnElement="Association_1l4il7g">
         <di:waypoint x="1331" y="480" />
         <di:waypoint x="1410" y="437" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0g6dotb_di" bpmnElement="Association_0g6dotb">
+        <di:waypoint x="573" y="530" />
+        <di:waypoint x="610" y="485" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Association_1b3mbm4_di" bpmnElement="Association_1b3mbm4">
         <di:waypoint x="555" y="700" />
