@@ -1267,6 +1267,9 @@ html.open-menu {
 .section__title .ai {
   color: #12b886;
 }
+.section__title--light {
+  color: #46A6FF;
+}
 .section__pretitle {
   display: block;
   color: #12b886;
@@ -2290,7 +2293,7 @@ s .section__img:only-child {
 .partners__image path, .partners__link > svg path {
   transition: 0.25s ease;
 }
-.partners__link:focus > svg path, .partners__link:hover > svg path {
+.partners__link:focus > svg path:not(.keep), .partners__link:hover > svg path:not(.keep) {
   fill: #46a6ff;
 }
 
@@ -2806,6 +2809,47 @@ s .section__img:only-child {
 }
 .chat-bubble__link--primary:focus-visible, .chat-bubble__link--primary:hover {
   background: #3aeab5;
+}
+
+.team {
+  width: 100%;
+}
+.team__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 40px 24px;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+}
+.team-entry {
+  display: flex;
+  flex-flow: column;
+  gap: 8px;
+}
+.team-entry__img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 320/360;
+  border-radius: 16px;
+  margin-bottom: 16px;
+}
+.team-entry__name {
+  font-size: 24px;
+  font-weight: 400;
+  line-height: 32px;
+}
+.team-entry__position {
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  color: #46A6FF;
+}
+.team-entry__description {
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  color: #6B7A8A;
 }
 
 /*# sourceMappingURL=style.css.map */

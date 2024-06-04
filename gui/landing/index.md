@@ -22,6 +22,8 @@ partners:
   show: true
 
 chat: true
+
+team: true
 ---
 
 {% include achievements.html %}
@@ -49,6 +51,8 @@ For Application developers it’s became expected that they embed GPT mechanics,
 {% include tokenomics.html %}
 {% include section.html title="Roadmap" img="/assets/img/content/roadmap.svg" bg="roadmap"  %}
 
+
+{% include partners2.html %}
 {% include adopters.html %}
 
 {% include section.html title="GURU Network Ecosystem Markets" subtitle="Market Analysis for GURU Network" img="/assets/img/content/market.svg" %}

@@ -140,3 +140,15 @@ social_links:
   - { platform: twitter, user_url: "https://twitter.com/xgurunetwork" }
   - { platform: telegram, user_url: "https://t.me/dexguru" }
   - { platform: discord, user_url: "https://discord.gg/dPW8fzwzz9" }
+
+team: 
+  - { name: 'Nick Sawinyh', position: 'CEO', description: 'Blockchain expert since 2017, Co-founder of Defiprime, Key Opinion Leader (KOL), CEO of DexGuru', img: 'ns'}
+  - { name: 'Evgeny Vakhteev', position: 'CTO', description: 'Ex Hulu, Disney (video ingestions orchestration), CTO and Cofounder of DexGuru', img: 'ev' }
+  - { name: 'Alexey Volynshikov', position: 'Senior Backend Engineer', description: 'Architected DexGuru Data Warehouse, indexation pipelines, co authored Guru Network orchestration architecture.', img: 'av' }
+  - { name: 'Evgeny Shestakov', position: 'Backend Engineer', description: 'Developers Office Lead, indexation, price calculations and Web3', img: 'es' }
+  - { name: 'Rodion Kharabet', position: 'Senior Frontend Engineer', description: 'Developed DexGuru MVP, Web3 wallets integrations, and led all DexGurufrontend teams', img: 'rk' }
+  - { name: 'Alexey Ilin', position: 'Frontend Engineer', description: 'Created pixel-perfect GUIs for DexGuru, Block Explorer, and Warehouse applications', img: 'ai' }
+  - { name: 'Gennady Omyshev', position: 'UI/UX DesignerAll Guru applications, focusing on user experience and Web3 mechanics', img: 'go' }
+  - { name: 'Evgeny Sudlenkov', position: 'Lead DevOps Engineer', description: 'The hero behind our own Data Center', img: 'il' }
+  - { name: 'Ivan Lylov', position: 'Manual/Automated QA', description: 'Specified regression test cases, executed manual and automated tests for DexGuru products', img: 'il' }
+  - { name: 'Roman', position: 'Head of Community', description: "Guru Network's community alchemist and marketing aficionado, transforming engagement into $GURU", img: 'rm' }
