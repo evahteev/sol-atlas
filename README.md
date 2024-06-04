@@ -105,6 +105,9 @@ Make sure you have dependencies installed run the framework.
 Each component within the Guru Framework can be operated independently according to the setup instructions provided in
 their respective directories.
 
+
+### README Update with Quick Start Instructions
+
 #### Overview
 
 This guide provides quick start instructions for the GURU project, including setting up the application with Camunda, FastAPI, and a GUI. It also describes the development process using an arbitrage bot example.
