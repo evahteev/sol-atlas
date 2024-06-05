@@ -151,3 +151,12 @@ team:
   - { name: 'Evgeny Sudlenkov', position: 'Lead DevOps Engineer', description: 'The hero behind our own Data Center', img: 'il' }
   - { name: 'Ivan Lylov', position: 'Manual/Automated QA', description: 'Specified regression test cases, executed manual and automated tests for DexGuru products', img: 'il' }
   - { name: 'Roman', position: 'Head of Community', description: "Guru Network's community alchemist and marketing aficionado, transforming engagement into $GURU", img: 'rm' }
+
+partners2: 
+  - {key: chainlink, url: https://chain.link/}
+  - {key: telcoin, url: https://www.telco.in/ }
+  - {key: uncx, url: https://uncx.network/}
+  - {key: paraswap, url: https://www.paraswap.io/}
+  - {key: 3baseio, url:https://3base.org/ }
+  - {key: kybernetwork, url: https://kyber.network/}
+  - {key: crossfi, url: https://www.crossfimain.com/}

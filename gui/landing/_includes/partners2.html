@@ -1,5 +1,3 @@
-{% assign partners = 'chainlink, telcoin, uncx, paraswap, 3baseio, kybernetwork, crossfi' | split: ", " %}
-
 
 <section class="section section--dark">
   <div class="section__header">
@@ -9,10 +7,10 @@
   <div class="section__body">
     <div class="section__content">
       <ul class="partners__list">
-        {%- for partner in partners -%}
+        {%- for partner in site.partners2 -%}
         <li class="partners__item">
-          <span class="partners__link"
-            >{%- include partners2/{{ partner }}.svg -%}</span
+          <a class="partners__link" href="{{ partner.url }}" target="_blank" rel="noopener noreferrer"
+            >{%- include partners2/{{ partner.key }}.svg -%}</a
           >
         </li>
         {%- endfor -%}
