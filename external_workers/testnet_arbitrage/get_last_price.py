@@ -69,7 +69,7 @@ def handle_get_candles_task(task: ExternalTask) -> TaskResult:
 
     # Extract the current price data from response
     price_data = response.json()
-    if not price_data:
+    if not price_data or not price_data[0].get('last_price'):
         return task.failure("get last price failed",
                             f"failed to get last price in {network}, token: {token_address}",
                             3, 5000)
