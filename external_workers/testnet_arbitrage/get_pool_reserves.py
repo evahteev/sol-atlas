@@ -47,7 +47,7 @@ def handle_task(task: ExternalTask) -> TaskResult:
         return task.complete(variables)
     except Exception as e:
         logger.error(e)
-        task.failure(f'''Cannot get token price from pool - {target_token_address} 
+        return task.failure(f'''Cannot get token price from pool - {target_token_address} 
                          for token - {target_pool_address}''',
                      'Cannot resolve token price from pool',
                      max_retries=3,
