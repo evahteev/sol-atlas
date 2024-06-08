@@ -55,7 +55,7 @@
         <bpmn:flowNodeRef>Event_1uuift7</bpmn:flowNodeRef>
       </bpmn:lane>
     </bpmn:laneSet>
-    <bpmn:serviceTask id="Activity_1golbhl" name="Guru Network Transport Layer" camunda:class="ai.hhrdr.chainflow.engine.LoggerDelegate">
+    <bpmn:serviceTask id="Activity_1golbhl" name="Guru Network Transport Layer" camunda:class="ai.hhrdr.chainflow.engine.delegate.LoggerDelegate">
       <bpmn:incoming>Flow_0uh5vds</bpmn:incoming>
       <bpmn:outgoing>Flow_0iu3jen</bpmn:outgoing>
     </bpmn:serviceTask>
@@ -166,7 +166,7 @@
       <bpmn:outgoing>Flow_0uh5vds</bpmn:outgoing>
     </bpmn:userTask>
     <bpmn:sequenceFlow id="Flow_1co5uwn" sourceRef="Activity_1514wn9" targetRef="arts_modal" />
-    <bpmn:serviceTask id="Activity_1514wn9" name="Set ENV Vars and Calculate flags based on provided inputs" camunda:class="ai.hhrdr.chainflow.engine.LoggerDelegate">
+    <bpmn:serviceTask id="Activity_1514wn9" name="Set ENV Vars and Calculate flags based on provided inputs" camunda:class="ai.hhrdr.chainflow.engine.delegate.LoggerDelegate">
       <bpmn:incoming>Flow_00l3m44</bpmn:incoming>
       <bpmn:outgoing>Flow_1co5uwn</bpmn:outgoing>
     </bpmn:serviceTask>
@@ -183,7 +183,7 @@
       <bpmn:incoming>Flow_0iu3jen</bpmn:incoming>
       <bpmn:outgoing>Flow_0wtr19b</bpmn:outgoing>
     </bpmn:callActivity>
-    <bpmn:serviceTask id="Activity_03au33a" name="Guru Network Transport Layer" camunda:class="ai.hhrdr.chainflow.engine.LoggerDelegate">
+    <bpmn:serviceTask id="Activity_03au33a" name="Guru Network Transport Layer" camunda:class="ai.hhrdr.chainflow.engine.delegate.LoggerDelegate">
       <bpmn:incoming>Flow_0wtr19b</bpmn:incoming>
       <bpmn:outgoing>Flow_1344k37</bpmn:outgoing>
     </bpmn:serviceTask>

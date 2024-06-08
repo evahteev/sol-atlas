@@ -46,7 +46,7 @@
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="Flow_1mp2wsm" sourceRef="Gateway_19yxt5y" targetRef="Activity_1eb6mv5" />
     <bpmn:sequenceFlow id="Flow_09bpvjh" sourceRef="Activity_1eb6mv5" targetRef="Event_15n3g9v" />
-    <bpmn:serviceTask id="Activity_1eb6mv5" name="Publish IN Catalog" camunda:class="ai.hhrdr.chainflow.engine.LoggerDelegate">
+    <bpmn:serviceTask id="Activity_1eb6mv5" name="Publish IN Catalog" camunda:class="ai.hhrdr.chainflow.engine.delegate.LoggerDelegate">
       <bpmn:incoming>Flow_1mp2wsm</bpmn:incoming>
       <bpmn:outgoing>Flow_09bpvjh</bpmn:outgoing>
     </bpmn:serviceTask>

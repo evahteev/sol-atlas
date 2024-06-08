@@ -19,7 +19,7 @@
       <bpmn:incoming>Flow_1sbob4f</bpmn:incoming>
       <bpmn:outgoing>Flow_0sfqwuq</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:serviceTask id="Activity_1a53jgr" name="AddArtworkDelegate" camunda:asyncBefore="true" camunda:class="ai.hhrdr.chainflow.engine.AddArtworkDelegate">
+    <bpmn:serviceTask id="Activity_1a53jgr" name="AddArtworkDelegate" camunda:asyncBefore="true" camunda:class="ai.hhrdr.chainflow.engine.delegate.AddArtworkDelegate">
       <bpmn:incoming>Flow_0k7fm0a</bpmn:incoming>
       <bpmn:outgoing>Flow_1wed66d</bpmn:outgoing>
     </bpmn:serviceTask>

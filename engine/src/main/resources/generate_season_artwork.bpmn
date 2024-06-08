@@ -15,7 +15,7 @@
       <bpmn:incoming>Flow_10z45g9</bpmn:incoming>
       <bpmn:outgoing>Flow_0pc5o4x</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="Activity_0od7hs8" name="Get Art Object Description/Populate ENV Vars" camunda:class="ai.hhrdr.chainflow.engine.LoggerDelegate">
+    <bpmn:serviceTask id="Activity_0od7hs8" name="Get Art Object Description/Populate ENV Vars" camunda:class="ai.hhrdr.chainflow.engine.delegate.LoggerDelegate">
       <bpmn:incoming>Flow_1caskys</bpmn:incoming>
       <bpmn:incoming>Flow_14snrs3</bpmn:incoming>
       <bpmn:outgoing>Flow_10z45g9</bpmn:outgoing>
