@@ -150,7 +150,7 @@ team:
   - { name: 'Evgeny Sudlenkov', position: 'Lead DevOps Engineer', description: 'The hero behind our own Data Center', img: 'il' }
   - { name: 'Ivan Lylov', position: 'Manual/Automated QA', description: 'Specified regression test cases, executed manual and automated tests for DexGuru products', img: 'il' }
   - { name: 'Roman', position: 'Head of Community', description: "Guru Network's community alchemist and marketing aficionado, transforming engagement into $GURU", img: 'rm' }
-  - { name: 'Nick Sawinyh', position: 'Advisor', description: 'Blockchain expert since 2017, Co-founder of Defiprime, Key Opinion Leader (KOL), CEO of DexGuru', img: 'ns'}
+  - { name: 'Nick Sawinyh', position: 'Advisor', description: 'Blockchain expert since 2017, Co-founder of Defiprime, Key Opinion Leader (KOL), ex-CEO of DexGuru', img: 'ns'}
 
 partners2: 
   - {key: chainlink, url: https://chain.link/}
