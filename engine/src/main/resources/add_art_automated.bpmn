@@ -21,7 +21,7 @@
       <bpmn:startEvent id="Event_1amat17">
         <bpmn:outgoing>Flow_1oix3ky</bpmn:outgoing>
       </bpmn:startEvent>
-      <bpmn:serviceTask id="AddArtworkDelegate" name="Update Prompt for Art" camunda:class="ai.hhrdr.chainflow.engine.AddArtworkDelegate">
+      <bpmn:serviceTask id="AddArtworkDelegate" name="Update Prompt for Art" camunda:class="ai.hhrdr.chainflow.engine.delegate.AddArtworkDelegate">
         <bpmn:incoming>Flow_10gy4o5</bpmn:incoming>
         <bpmn:outgoing>Flow_1j6z8it</bpmn:outgoing>
       </bpmn:serviceTask>
@@ -44,7 +44,7 @@
       <bpmn:incoming>Flow_1mtjyhr</bpmn:incoming>
       <bpmn:outgoing>Flow_0ciqvrp</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:serviceTask id="Activity_1a53jgr" name="AddArtworkDelegate" camunda:asyncBefore="true" camunda:class="ai.hhrdr.chainflow.engine.AddArtworkDelegate">
+    <bpmn:serviceTask id="Activity_1a53jgr" name="AddArtworkDelegate" camunda:asyncBefore="true" camunda:class="ai.hhrdr.chainflow.engine.delegate.AddArtworkDelegate">
       <bpmn:incoming>Flow_17idybh</bpmn:incoming>
       <bpmn:outgoing>Flow_1wed66d</bpmn:outgoing>
     </bpmn:serviceTask>

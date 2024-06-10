@@ -1,4 +1,4 @@
-package ai.hhrdr.chainflow.engine;
+package ai.hhrdr.chainflow.engine.delegate;
 
 import ai.hhrdr.chainflow.engine.exceptions.ArtworkProcessingException;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
