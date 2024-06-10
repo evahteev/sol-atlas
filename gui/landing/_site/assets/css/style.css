@@ -1391,6 +1391,11 @@ s .section__img:only-child {
   display: block;
   margin: 72px auto 0;
 }
+.distribution__title {
+  font-weight: 400;
+  text-align: center;
+  margin: 56px auto 48px auto;
+}
 
 .section-animate__ripples {
   --pulse-diff: 140px;
