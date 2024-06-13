@@ -17,7 +17,7 @@
           {%- for action in banner.actions -%}
           <li class="actions__item">
             {%- if action.button -%}
-              <button type="button" id="{{ action.id }}" class="actions__link actions__link--{{ action.type }}">
+              <button type="button" id="{{ action.id }}" class="actions__link actions__link--{{ action.type }} actions__link--{{ action.width }}">
                 <span>{{ action.title }} </span> 
                 {%- if action.iconPath -%}
                   <img src="{{ action.iconPath }}" title="{{ action.iconAlt }}" alt="{{ action.iconAlt }}"/>
@@ -26,7 +26,7 @@
             {%- else -%}
               <a
                 href="{{ action.url }}"
-                class="actions__link actions__link--{{ action.type }}"
+                class="actions__link actions__link--{{ action.type }} actions__link--{{ action.width }}"
                 ><span class="caption"> {{ action.title }} </span></a
               >
             {%- endif -%}

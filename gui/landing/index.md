@@ -18,12 +18,14 @@ banner:
        iconAlt: Metamask,
        button: true,
        id: addTokenToMetmaskId,
-       type: book
+       type: book,
+       width: main
      }
    - {
        title: Buy $GURU,
        url: https://app.uniswap.org/explore/tokens/ethereum/0x525574c899a7c877a11865339e57376092168258,
        type: secondary,
+       width: main
      }
 
 partners:

@@ -791,6 +791,12 @@ html.open-menu {
 .actions__link--secondary:focus, .actions__link--secondary:hover {
   background: #3aeab5;
 }
+.actions__link--main {
+  width: 210px;
+  max-width: 210px;
+  margin: auto;
+  padding: 8px 24px;
+}
 
 .banner {
   display: flex;

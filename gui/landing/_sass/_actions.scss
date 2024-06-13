@@ -65,5 +65,12 @@
         background: $color-style-green-hover;
       }
     }
+
+    &--main {
+      width: 210px;
+      max-width: 210px;
+      margin: auto;
+      padding: 8px 24px;
+    }
   }
 }
