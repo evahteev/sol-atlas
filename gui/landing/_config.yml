@@ -147,7 +147,7 @@ team:
   - { name: 'Rodion Kharabet', position: 'Senior Frontend Engineer', description: 'Developed DexGuru MVP, Web3 wallets integrations, and led all DexGuru frontend teams', img: 'rk' }
   - { name: 'Alexey Ilin', position: 'Frontend Engineer', description: 'Created pixel-perfect GUIs for DexGuru, Block Explorer, and Warehouse applications', img: 'ai' }
   - { name: 'Gennady Omyshev', position: 'UI/UX Designer', description: 'All Guru applications, focusing on user experience and Web3 mechanics', img: 'go' }
-  - { name: 'Evgeny Sudlenkov', position: 'Lead DevOps Engineer', description: 'The hero behind our own Data Center', img: 'esu' }
+  - { name: 'Evgeny', position: 'Lead DevOps Engineer', description: 'The hero behind our own Data Center', img: 'esu' }
   - { name: 'Ivan Lylov', position: 'Manual/Automated QA', description: 'Specified regression test cases, executed manual and automated tests for DexGuru products', img: 'il' }
   - { name: 'Roman', position: 'Head of Community', description: "Guru Network's community alchemist and marketing aficionado, transforming engagement into $GURU", img: 'rm' }
   - { name: 'Nick Sawinyh', position: 'Advisor', description: 'Blockchain expert since 2017, Co-founder of Defiprime, Key Opinion Leader (KOL), ex-CEO of DexGuru', img: 'ns'}

@@ -16,11 +16,20 @@
         <ul class="actions__list">
           {%- for action in banner.actions -%}
           <li class="actions__item">
-            <a
-              href="{{ action.url }}"
-              class="actions__link actions__link--{{ action.type }}"
-              ><span class="caption"> {{ action.title }} </span></a
-            >
+            {%- if action.button -%}
+              <button type="button" id="{{ action.id }}" class="actions__link actions__link--{{ action.type }}">
+                <span>{{ action.title }} </span> 
+                {%- if action.iconPath -%}
+                  <img src="{{ action.iconPath }}" title="{{ action.iconAlt }}" alt="{{ action.iconAlt }}"/>
+                {%- endif -%}
+              </button>
+            {%- else -%}
+              <a
+                href="{{ action.url }}"
+                class="actions__link actions__link--{{ action.type }}"
+                ><span class="caption"> {{ action.title }} </span></a
+              >
+            {%- endif -%}
           </li>
           {%- endfor -%}
         </ul>
