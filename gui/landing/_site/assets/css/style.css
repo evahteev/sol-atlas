@@ -768,6 +768,7 @@ html.open-menu {
   background: #545c66;
   color: #fff;
   cursor: pointer;
+  transition: 0.25s ease;
 }
 .actions__link:focus, .actions__link:hover {
   background: #6b7a8a;
