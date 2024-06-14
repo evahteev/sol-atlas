@@ -54,7 +54,7 @@ const addTokenToMetmask = async () => {
       console.log("Your loss!");
     }
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 }
 
