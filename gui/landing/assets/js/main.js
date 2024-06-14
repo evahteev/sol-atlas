@@ -39,7 +39,7 @@ const addTokenToMetmask = async () => {
   }
   
   try {
-    const wasAdded = await window.ethereum
+    await window.ethereum
       .request({
         method: "wallet_watchAsset",
         params: {
