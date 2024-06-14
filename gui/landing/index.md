@@ -11,12 +11,22 @@ banner:
   title: Building a Multi-Chain AI Compute Layer
   subtitle: Base Layer 3 allows dApps and retail users to natively embed orchestrated AI Agents<br> into their routines and earn Network participant rewards.
 
-  # actions:
-  #  - {
-  #      title: Participate in LBP,
-  #      url: https://app.fjordfoundry.com/pools/0xcd3deBf6D36212523EDF6e0e9804f0f62c91093c,
-  #      type: book,
-  #    }
+  actions:
+   - {
+       title: Add $GURU to,
+       iconPath: /assets/img/metamask.svg,
+       iconAlt: Metamask,
+       button: true,
+       id: addTokenToMetmaskId,
+       type: book,
+       width: main
+     }
+   - {
+       title: Buy $GURU,
+       url: https://app.uniswap.org/explore/tokens/ethereum/0x525574c899a7c877a11865339e57376092168258,
+       type: secondary,
+       width: main
+     }
 
 partners:
   show: true

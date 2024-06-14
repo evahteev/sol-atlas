@@ -23,12 +23,16 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    gap: 8px;
     height: 48px;
     padding: 8px 32px;
     border-radius: 8px;
+    border: none;
     font: normal 400 18px/1 "Sora", sans-serif;
     background: $color-elements-text;
     color: $color-style-white;
+    cursor: pointer;
+    transition: .25s ease;
 
     &:focus,
     &:hover {
@@ -61,6 +65,13 @@
       &:hover {
         background: $color-style-green-hover;
       }
+    }
+
+    &--main {
+      width: 210px;
+      max-width: 210px;
+      margin: auto;
+      padding: 8px 24px;
     }
   }
 }
