@@ -71,21 +71,33 @@ public class InscriptionHistoricalEventsHandler implements HistoryEventHandler {
 
     private Set<String> getDefaultEventTypes() {
         return new HashSet<>(Arrays.asList(
+                HistoryEventTypes.PROCESS_INSTANCE_START.getEventName(),
+                HistoryEventTypes.PROCESS_INSTANCE_UPDATE.getEventName(),
+                HistoryEventTypes.PROCESS_INSTANCE_MIGRATE.getEventName(),
+                HistoryEventTypes.PROCESS_INSTANCE_END.getEventName(),
                 HistoryEventTypes.ACTIVITY_INSTANCE_START.getEventName(),
+                HistoryEventTypes.ACTIVITY_INSTANCE_UPDATE.getEventName(),
+                HistoryEventTypes.ACTIVITY_INSTANCE_MIGRATE.getEventName(),
                 HistoryEventTypes.ACTIVITY_INSTANCE_END.getEventName(),
                 HistoryEventTypes.TASK_INSTANCE_CREATE.getEventName(),
                 HistoryEventTypes.TASK_INSTANCE_UPDATE.getEventName(),
+                HistoryEventTypes.TASK_INSTANCE_MIGRATE.getEventName(),
                 HistoryEventTypes.TASK_INSTANCE_COMPLETE.getEventName(),
                 HistoryEventTypes.TASK_INSTANCE_DELETE.getEventName(),
                 HistoryEventTypes.VARIABLE_INSTANCE_CREATE.getEventName(),
                 HistoryEventTypes.VARIABLE_INSTANCE_UPDATE.getEventName(),
+                HistoryEventTypes.VARIABLE_INSTANCE_MIGRATE.getEventName(),
+                HistoryEventTypes.VARIABLE_INSTANCE_UPDATE_DETAIL.getEventName(),
                 HistoryEventTypes.VARIABLE_INSTANCE_DELETE.getEventName(),
-                HistoryEventTypes.FORM_PROPERTY_UPDATE.getEventName(),
                 HistoryEventTypes.INCIDENT_CREATE.getEventName(),
+                HistoryEventTypes.INCIDENT_MIGRATE.getEventName(),
                 HistoryEventTypes.INCIDENT_DELETE.getEventName(),
                 HistoryEventTypes.INCIDENT_RESOLVE.getEventName(),
-                HistoryEventTypes.IDENTITY_LINK_ADD.getEventName(),
-                HistoryEventTypes.IDENTITY_LINK_DELETE.getEventName()
+                HistoryEventTypes.INCIDENT_UPDATE.getEventName(),
+                HistoryEventTypes.EXTERNAL_TASK_CREATE.getEventName(),
+                HistoryEventTypes.EXTERNAL_TASK_FAIL.getEventName(),
+                HistoryEventTypes.EXTERNAL_TASK_SUCCESS.getEventName(),
+                HistoryEventTypes.EXTERNAL_TASK_DELETE.getEventName()
         ));
     }
 }
