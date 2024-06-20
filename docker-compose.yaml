@@ -25,6 +25,7 @@ services:
   external-workers:
     build:
       context: ./external_workers
+      dockerfile: Dockerfile.local
     container_name: chainflow-external-workers
     environment:
       - WORKER_SCRIPTS=messaging/telegram_message_worker.py,testnet_arbitrage/get_last_price.py  # Add more worker scripts as needed
