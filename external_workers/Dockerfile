@@ -9,6 +9,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
+ENV PYTHONPATH=.
 
 # Copy the entrypoint script and the envs directory into the container
 COPY entrypoint.sh /app/entrypoint.sh
