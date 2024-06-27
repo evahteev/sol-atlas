@@ -45,7 +45,7 @@ def handle_get_candles_task(task: ExternalTask) -> TaskResult:
 
     networks = get_supported_chains()
 
-    network = networks.get(chain_id)
+    network = networks.get(int(chain_id))
 
     if not network:
         task.failure(f'Cannot get network name for chain: {chain_id}',
