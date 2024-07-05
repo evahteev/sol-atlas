@@ -8,7 +8,7 @@ description: Base Layer 3 allows dApps and retail users to natively embed orches
 # start: Banner config
 banner:
   type: network
-  image: /assets/img/yoga-robot.svg
+  image: /assets/img/robot-yoga-base.svg
   imageAlt: Yoga Robot
   title: Building a Multi-Chain AI Compute Layer
   subtitle: Base Layer 3 allows dApps and retail users to natively embed orchestrated AI Agents<br> into their routines and earn Network participant rewards.

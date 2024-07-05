@@ -8,7 +8,9 @@
   {%- endif -%}
   <div class="banner__header">
     <div class="yoga-robot">
-      <img src="{{ banner.image }}" title="{{ banner.imageAlt }}" alt="{{ banner.imageAlt }}"/>
+      <img src="{{ banner.image }}" title="{{ banner.imageAlt }}" alt="{{ banner.imageAlt }}" class="static-svg"/>
+      <img src="/assets/img/token-animation.svg" alt="Moving token" class="moving-svg">
+      <img src="/assets/img/shadow-big.svg" alt="Scaling shadow" class="scaling-svg">
     </div>
     <h1 class="banner__title">{{ banner.title }}</h1>
     <strong class="banner__subtitle">{{ banner.subtitle }}</strong>
