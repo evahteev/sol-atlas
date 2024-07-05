@@ -1,0 +1,170 @@
+.additional-resources{
+    background: #12161c;
+    position: relative;
+    padding-bottom: 0;
+
+
+    &::after{
+        content:'';
+        position: absolute;
+        background-color:  #232A32;
+        bottom:0;
+        left:0;
+        width:100%;
+        height: 778px;
+        z-index:0;
+    }
+
+    .subtitle{
+        font-family: "IBM Plex Sans Condensed", sans-serif;
+        font-size: 24px;
+        font-weight: 400;
+        line-height: 32px;
+        text-align: center;
+        margin-bottom:24px;
+    }
+
+   
+
+    .section--community{
+        display: flex;
+        flex-flow: column;
+        gap: 64px;
+        grid-column: fullwidth;
+
+        &:after{
+            z-index: 1;
+            margin: -70px 0 -7px;
+            position: relative;
+        }
+
+        .section__subtitle{
+            max-width: 920px;
+            margin-top:40px;
+        }
+
+        .section__body{
+            z-index: 1;
+            margin-bottom:-14px;
+        }
+}
+
+    .blogs{
+        display:flex;
+        gap: 47.5px;
+        margin-top:30px;
+        margin-bottom: 20px;
+        position: relative;
+        z-index: 1;
+
+        .blog-post{
+            flex:1;
+            a{   
+                background-color: $color-bg-120;
+                display:block;
+                        
+                .image-part{
+                    position:relative;
+                    img{
+                        width:100%;
+
+                    }
+
+                    .play{
+                        position:absolute;
+                        display:flex;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+    
+                        .back{
+                            background-color: $color-style-white;
+                            opacity:0.2;
+                            border-radius:32px;
+                            width:64px;
+                            height:64px;
+                        }
+                        .arrow{
+                            background-image: url('/assets/img/play.svg');
+                            width:28px;
+                            height:28px;
+                            background-size: 100%;
+                            background-repeat: no-repeat;
+                            position: absolute;
+                            top:18px;
+                            left:18px;
+                        }
+        
+                    }
+                }
+
+                .title{
+                    font-family: "IBM Plex Sans Condensed", sans-serif;
+                    font-size: 24px;
+                    font-weight: 400;
+                    line-height: 32px;
+                    text-align: left;
+                    padding:24px;
+                   margin-top:-5px;
+
+                }
+
+                
+
+                &:hover{
+                    .image-part .play .back{
+                        background-color: $color-style-red;
+                        opacity:0.8;
+                    }
+                }
+
+            }
+            
+        }
+    }
+}
+
+.tokens{
+    position: relative;
+    z-index: 1;
+}
+
+.tokens__list{
+    display: flex;
+    gap: 16px;
+    list-style: none;
+    padding:0;
+    margin:0;
+    flex-wrap: wrap;
+
+    .token__item{
+        flex:1;
+        min-width:216px;
+
+        a{
+            width: 100%;
+            display: inline-block;
+            color:#fff;
+            padding:13px 24px 15px;
+            font-family: "IBM Plex Sans Condensed", sans-serif;
+            font-size: 20px;
+            font-weight: 400;
+            line-height: 28px;
+            text-align: center;
+            background-color: $color-style-black;
+            border: 1px solid $color-style-blue;
+            border-radius:16px;
+
+            &:hover{
+                background-color: $color-style-blue;
+                color:$color-bg-120;
+            }
+        }
+        
+
+    }
+
+    .big-item{
+        min-width:331px;
+    }
+}

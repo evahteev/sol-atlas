@@ -47,8 +47,17 @@
   }
 }
 
+.section__header{
+  gap:64px;
+}
+
 .section--achievements {
   position: relative;
+  gap: 64px;
+
+  .section__subtitle{
+    margin-top:64px;
+  }
 
   &:after {
     content: "";
@@ -61,7 +70,7 @@
 
     @media (min-width: 720.1px) {
       left: 50%;
-      margin: 0 0 0 126px;
+      margin: 0 0 0 165px;
     }
     @media (max-width: 720px) {
       margin: 0;

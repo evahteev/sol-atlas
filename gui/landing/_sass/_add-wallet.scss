@@ -1,0 +1,23 @@
+.add-wallet{
+    gap:unset;
+    padding-bottom:276px;
+    position:relative;
+
+    .section__subtitle{
+        max-width:918px;
+        text-align: center;
+        margin: 40px auto;
+    }
+
+    &::after{
+        content:'';
+        display:block;
+        position:absolute;
+        background-image: url('/assets/img/shark.svg');
+        bottom:0;
+        left:50%;
+        transform: translate(-50%, 0);
+        width:410px;
+        height:239px;
+    }
+}

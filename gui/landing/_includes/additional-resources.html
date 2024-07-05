@@ -1,0 +1,111 @@
+<section class="section additional-resources">
+    <div class="section__header">
+        <h2 class="section__title">Additional Resources</h2>
+    </div>
+    <div class="tokens">
+        <div class="subtitle">Token:</div>
+        <ul class="tokens__list">
+            {%- for token in site.tokens -%}
+            <li class="token__item">
+                <a href="{{ token.url }}"  class="token_link">{{token.name}}</a>
+            </li>
+            {%- endfor -%}
+          </ul>
+    </div>
+    <div class="links tokens">
+        <div class="subtitle">Our links</div>
+        <ul class="tokens__list">
+            <li class="token__item">
+                <a href="/"  class="token_link">Framework Github</a>
+            </li>
+            <li class="token__item">
+                <a href="/"  class="token_link">Opensea Season 1</a>
+            </li>
+            <li class="token__item">
+                <a href="/"  class="token_link">Opensea Season 2</a>
+            </li>
+            <li class="token__item">
+                <a href="/"  class="token_link">Docs</a>
+            </li>
+            <li class="token__item">
+                <a href="/"  class="token_link">Litepaper</a>
+            </li>
+            <li class="token__item">
+                <a href="/"  class="token_link">White paper</a>
+            </li>
+            <li class="token__item">
+                <a href="/"  class="token_link">Overview</a>
+            </li>
+            <li class="token__item">
+                <a href="/"  class="token_link">AMA</a>
+            </li>
+            <li class="token__item big-item">
+                <a href="/"  class="token_link">Guru Enlightenment Network Deck</a>
+            </li>
+            <li class="token__item">
+                <a href="/"  class="token_link">AMA YT</a>
+            </li>
+            <li class="token__item">
+                <a href="/"  class="token_link">CTO’s Mirror</a>
+            </li>
+          </ul>
+    </div>
+    <div class="blogs">
+        <div class="blog-post">
+            <a href="/">
+                <div class="image-part">
+                    <img src="/assets/img/blog1.svg" alt="blog1">
+                    <div class="title">What is Guru Network?</div>
+                    <div class="play">
+                        <div class="back"></div>
+                        <div class="arrow"></div>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="blog-post">
+            <a href="/">
+                <div class="image-part">
+                    <img src="/assets/img/blog2.svg" alt="blog2">
+                    <div class="play">
+                        <div class="back"></div>
+                        <div class="arrow"></div>
+                    </div>
+                </div>
+                <div class="title">What’s DexGuru V2</div>
+            </a>
+        </div>
+        <div class="blog-post">
+            <a href="/">
+                <div class="image-part">
+                    <img src="/assets/img/blog3.svg" alt="blog3">
+                    <div class="title">How Guru Network works?</div>
+                    <div class="play">
+                        <div class="back"></div>
+                        <div class="arrow"></div>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+    {%- if site.social_links -%}
+          <div class="section--community">
+            <div class="section__header">
+              <h2 class="section__title">Join us on our</h2>
+              <span class="section__subtitle"> Become a part of the Guru Network community! Connect with developers, innovators, and enthusiasts who are shaping the future of AI and blockchain integration. Join us to share ideas, collaborate on projects, and stay updated with the latest advancements.
+              </span>
+            </div>
+            <div class="section__body">
+              <div class="socials">
+                <ul class="socials__list">
+                  {%- for entry in site.social_links -%}
+                  <li class="socials__item">
+                    {%- include social-item.html item = entry -%}
+                  </li>
+                  {%- endfor -%}
+                </ul>
+              </div>
+            </div>
+          </div>
+        {%- endif -%}
+</section>

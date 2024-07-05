@@ -2,11 +2,11 @@
   display: flex;
   flex-flow: column;
   align-items: center;
-  gap: 112px;
+  gap: 114px;
   text-align: center;
   padding: 0 var(--page-side-padding, 16px);
   width: 100%;
-  margin: 0 0 80px;
+  margin: 0 0 56px;
 
   &__header {
     display: flex;
@@ -14,7 +14,13 @@
     align-items: center;
     gap: 24px;
     font-family: "Sora", sans-serif;
+
+    .yoga-robot{
+    margin-bottom:18px;
+    }
   }
+
+  
 
   &__title {
   }
@@ -22,9 +28,10 @@
   &__subtitle {
     font-style: normal;
     font-weight: 400;
-    font-size: 18px;
+    font-size: 20px;
     line-height: 160%;
     color: $color-style-blue;
+    font-family: "IBM Plex Sans Condensed", sans-serif;
   }
 
   &__comment {

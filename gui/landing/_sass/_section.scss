@@ -1,9 +1,8 @@
 .section {
-  margin-top: 80px;
-  padding: 80px 16px;
+  padding: 80px 32px;
   display: flex;
   flex-flow: column;
-  gap: 40px;
+  gap: 64px;
   grid-column: fullwidth;
   overflow: hidden;
   background: #181d23;
@@ -41,6 +40,10 @@
       color: #12b886;
     }
 
+    .white{
+      color:#fff;
+    }
+
     &--light {
       color: #46A6FF
     }
@@ -55,6 +58,8 @@
     display: block;
     max-width: 680px;
     margin: 0 auto;
+    font-size:20px;
+    line-height:28px;
 
     &:not(:first-child) {
       margin-top: 16px;
@@ -79,7 +84,7 @@
   }
 
   .quote {
-    max-width: 520px;
+    max-width: 565px;
     text-align: center;
 
     &--long {
@@ -323,4 +328,8 @@
       }
     }
   }
+}
+
+.section-ecosystem{
+  background: #12161c;
 }

@@ -6,14 +6,12 @@ else -%} {% assign partners = site.partners %} {%- endif -%}
       We have the support and backing of prominent
       <span class="accent">industry leaders.</span>
     </h2>
-    {%- if page.partners.subtitle -%}
-    <strong class="partners__subtitle">{{ page.partners.subtitle }}</strong>
-    {%- endif -%}
+    <strong class="partners__subtitle">We secured a total of $6 million through two successful venture capital rounds to develop a sophisticated trading terminal and deliver dependable market data.</strong>
   </div>
   <div class="partners__body">
     <ul class="partners__list">
       {%- for partner in partners -%}
-      <li class="partners__item">
+      <li class="partners__item long">
         <span class="partners__link"
           >{%- include partners/{{ partner.key }}.svg -%}</span
         >
