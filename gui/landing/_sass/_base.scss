@@ -151,8 +151,8 @@ iframe {
 :where(a[href^="https://t.me/"]),
 :where(a[href^="https://twitter.com/"]),
 :where(a[href^="https://discord.gg/"]),
-:where(a[href^="https://arc/"]),
-:where(a[href^="https://twitch/"])
+:where(a[href^="https://warpcast.com/"]),
+:where(a[href^="https://www.twitch.tv/"])
 {
   &:before {
     content: "";
@@ -191,15 +191,15 @@ iframe {
   }
 }
 
-:where(a[href^="https://arc/"])
+:where(a[href^="https://warpcast.com/"])
 {
   &:before {
     --_color: #6046FF;
-    background-image: url("data:image/svg+xml,%3Csvg%20width%3D%2234%22%20height%3D%2232%22%20viewBox%3D%220%200%2034%2032%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22M5.83432%200H27.7633V32H24.5444V17.3419H24.5128C24.1571%2013.2908%2020.8392%2010.1161%2016.7988%2010.1161C12.7584%2010.1161%209.44058%2013.2908%209.08483%2017.3419H9.05326V32H5.83432V0Z%22%20fill%3D%22white%22%2F%3E%3Cpath%20d%3D%22M0%204.54194L1.30769%209.08387H2.4142V27.4581C1.85865%2027.4581%201.40828%2027.9202%201.40828%2028.4903V29.729H1.2071C0.651548%2029.729%200.201183%2030.1912%200.201183%2030.7613V32H11.4675V30.7613C11.4675%2030.1912%2011.0171%2029.729%2010.4615%2029.729H10.2604V28.4903C10.2604%2027.9202%209.80999%2027.4581%209.25444%2027.4581H8.04734V4.54194H0Z%22%20fill%3D%22white%22%2F%3E%3Cpath%20d%3D%22M24.7456%2027.4581C24.19%2027.4581%2023.7396%2027.9202%2023.7396%2028.4903V29.729H23.5385C22.9829%2029.729%2022.5325%2030.1912%2022.5325%2030.7613V32H33.7988V30.7613C33.7988%2030.1912%2033.3485%2029.729%2032.7929%2029.729H32.5917V28.4903C32.5917%2027.9202%2032.1414%2027.4581%2031.5858%2027.4581V9.08387H32.6923L34%204.54194H25.9527V27.4581H24.7456Z%22%20fill%3D%22white%22%2F%3E%3C%2Fsvg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg%20width%3D%2234%22%20height%3D%2226%22%20viewBox%3D%220%200%2034%2026%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22M26.2889%200L23.3562%2011.7594L20.414%200H13.643L10.6726%2011.846L7.71189%200H0L7.16609%2026H13.8193L17.0007%2013.9266L20.182%2026H26.8496L34%200H26.2889Z%22%20fill%3D%22white%22%2F%3E%3C%2Fsvg%3E");
   }
 }
 
-:where(a[href^="https://twitch/"])
+:where(a[href^="https://www.twitch.tv/"])
 {
   &:before {
     --_color: #6046FF;
@@ -207,8 +207,8 @@ iframe {
   }
 }
 
-:where(a[href^="https://twitch/"]:hover),
-:where(a[href^="https://arc/"]:hover),
+:where(a[href^="https://www.twitch.tv/"]:hover),
+:where(a[href^="https://warpcast.com/"]:hover),
 :where(a[href^="https://discord.gg/"]:hover),
 :where(a[href^="https://twitter.com/"]:hover),
 :where(a[href^="https://t.me/"]:hover){

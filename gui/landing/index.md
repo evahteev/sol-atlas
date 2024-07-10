@@ -32,7 +32,7 @@ banner:
      }
    - {
        title: $GURU Contract,
-       url: /,
+       url: https://etherscan.io/token/0x525574C899A7c877a11865339e57376092168258#code,
        type: ternary,
        width: main,
      }

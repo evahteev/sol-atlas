@@ -15,39 +15,11 @@
     <div class="links tokens">
         <div class="subtitle">Our links</div>
         <ul class="tokens__list">
-            <li class="token__item">
-                <a href="/"  class="token_link">Framework Github</a>
+            {%- for link in site.links-resourse -%}
+            <li class="{{ link.class }}">
+                <a href="{{ link.url }}"  class="token_link">{{link.name}}</a>
             </li>
-            <li class="token__item">
-                <a href="/"  class="token_link">Opensea Season 1</a>
-            </li>
-            <li class="token__item">
-                <a href="/"  class="token_link">Opensea Season 2</a>
-            </li>
-            <li class="token__item">
-                <a href="/"  class="token_link">Docs</a>
-            </li>
-            <li class="token__item">
-                <a href="/"  class="token_link">Litepaper</a>
-            </li>
-            <li class="token__item">
-                <a href="/"  class="token_link">White paper</a>
-            </li>
-            <li class="token__item">
-                <a href="/"  class="token_link">Overview</a>
-            </li>
-            <li class="token__item">
-                <a href="/"  class="token_link">AMA</a>
-            </li>
-            <li class="token__item big-item">
-                <a href="/"  class="token_link">Guru Enlightenment Network Deck</a>
-            </li>
-            <li class="token__item">
-                <a href="/"  class="token_link">AMA YT</a>
-            </li>
-            <li class="token__item">
-                <a href="/"  class="token_link">CTO’s Mirror</a>
-            </li>
+            {%- endfor -%}
           </ul>
     </div>
 </section>
