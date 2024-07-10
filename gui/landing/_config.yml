@@ -101,11 +101,11 @@ menu:
           {
             items:
               [
-                { title: "X/Twitter", url: "https://x.com/xgurunetwork" },
+                { title: "Twitter", url: "https://twitter.com/xgurunetwork" },
                 { title: "Telegram", url: "https://t.me/dexguru" },
                 { title: "Discord", url: "https://discord.gg/dPW8fzwzz9" },
-                { title: "Arc", url: "https://t.me/dexguru" },
-                { title: "Twitch", url: "https://discord.gg/dPW8fzwzz9" },
+                { title: "Warpcast", url: "https://warpcast.com/gurunetwork" },
+                { title: "Twitch", url: "https://www.twitch.tv/gurunetwork" },
               ],
           },
         ],
