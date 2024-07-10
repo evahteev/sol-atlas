@@ -87,6 +87,10 @@ blockquote {
   font-size: 24px;
   font-weight: 400;
   line-height: 32px;
+
+  @media(max-width:640px){
+    display:none;
+  }
 }
 
 a {

@@ -1,6 +1,10 @@
 .section--adopters {
   background: #12161c;
 
+  @media(max-width:640px){
+    display: none;
+  }
+
   .section__subtitle{
     margin-top:24px;
   }

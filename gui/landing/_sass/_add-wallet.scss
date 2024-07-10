@@ -3,6 +3,10 @@
     padding-bottom:276px;
     position:relative;
 
+    @media(max-width:640px){
+        padding-bottom: 180px;
+    }
+
     .section__subtitle{
         max-width:918px;
         text-align: center;
@@ -19,5 +23,11 @@
         transform: translate(-50%, 0);
         width:410px;
         height:239px;
+
+        @media(max-width:640px){
+            width:278px;
+            height:162px;
+            background-size: 100%;
+        }
     }
 }

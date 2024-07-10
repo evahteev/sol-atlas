@@ -45,7 +45,7 @@ partners:
 team: true
 ---
 {% include possibilities.html %}
-{% include section.html pretitle="Guru Network(GEN) and Flow Orchestrator" title="Scaling dApps Ecosystem" img="/assets/img/content/scaling.svg" bg="light" %}
+{% include section.html pretitle="GURU Framework and Network" title="Scaling dApps Ecosystem" img="/assets/img/content/scaling.svg" small-img="/assets/img/content/scaling-small.svg" bg="light" %}
 {% include guru-network.html %}
 {% include innovations.html %}
 
@@ -69,12 +69,14 @@ For Application developers it’s became expected that they embed GPT mechanics,
 {% include tokenomics.html %}
 {% include key-features.html %}
 {% include participants.html %}
-{% include section.html title="Roadmap" img="/assets/img/content/roadmap.svg" bg="roadmap"  %}
+{% include section.html title="Roadmap" img="/assets/img/content/roadmap.svg" small-img="/assets/img/content/roadmap-small.svg" bg="roadmap"  %}
 <!-- {% include additional-resources.html %} -->
 {% include additional-resources.html %}
+{% include blogs.html %}
+{% include joinus.html %}
 {% include partners2.html %}
 {% include adopters.html %}
 
-{% include section.html title="GURU Network Ecosystem Markets" subtitle="Market Analysis for GURU Network" img="/assets/img/content/market.svg" %}
+{% include section.html title="GURU Network Ecosystem Markets" bg="ecosystem" subtitle="Market Analysis for GURU Network" img="/assets/img/content/market.svg" %}
 
 <!-- SDK SECTION -->

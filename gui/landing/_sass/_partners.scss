@@ -61,11 +61,17 @@
 
     @media (max-width: 640px) {
       gap: 16px;
+      margin-top:0;
     }
   }
   &__link.short{
     height:88px;
     padding: 0 38px;
+
+    @media(max-width:640px){
+      height:53px;
+      padding:0 20px;
+    }
   } 
 
   &__item.long{
@@ -91,6 +97,7 @@
     @media (max-width: 640px) {
       height: 54px;
       padding: 0 20px;
+      max-width: 154px;
     }
   }
 
@@ -102,8 +109,8 @@
     object-fit: contain;
 
     @media (max-width: 640px) {
-      max-height: 40px;
-      max-width: 112px;
+      max-height: 54px;
+      max-width: 154px;
     }
 
     path {
@@ -116,5 +123,11 @@
     path:not(.keep) {
       fill: $color-style-blue;
     }
+  }
+}
+
+.partners-long-section{
+  @media(max-width:640px){
+    display:none;
   }
 }

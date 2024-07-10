@@ -7,6 +7,11 @@
   overflow: hidden;
   background: #181d23;
 
+  @media(max-width: 640px){
+    padding: 64px 16px;
+    gap:40px;
+  }
+
   & + &,
   &:first-child {
     margin-top: 0;
@@ -60,6 +65,11 @@
     margin: 0 auto;
     font-size:20px;
     line-height:28px;
+
+    @media(max-width:640px){
+      font-size:16px;
+      line-height:24px;
+    }
 
     &:not(:first-child) {
       margin-top: 16px;
@@ -115,6 +125,10 @@
 
   &--roadmap &__illustration {
     margin-bottom: -80px;
+
+    @media(max-width:640px){
+      margin-bottom: 0;
+    }
   }
 
   &__img {
@@ -124,6 +138,18 @@
     s &:only-child {
       margin: 0 auto;
     }
+
+    @media(max-width:640px){
+      display:none;
+    }
+  }
+
+  .small__img{
+    display:none;
+    @media(max-width:640px){
+      display:block;
+    }
+
   }
 
   &--animate &__img {
@@ -332,4 +358,39 @@
 
 .section-ecosystem{
   background: #12161c;
+}
+
+.section--roadmap,  .section--blogs{
+  background-color: #232A32;
+}
+
+.section--blogs{
+  position: relative;
+  padding-bottom:4px;
+
+  @media(max-width:640px){
+    padding-top:40px;
+  }
+
+  &::before{
+    content:'';
+    height:228px;
+    width:100%;
+    background-color: #181d23;
+    display:block;
+    position:absolute;
+    top:0;
+    left:0;
+    z-index:1;
+
+    @media(max-width:640px){
+      height:110px;
+    }
+  }
+}
+
+.section--ecosystem{
+  @media(max-width:640px){
+    display:none;
+  }
 }

@@ -2,11 +2,19 @@
     padding:80px 32px;
     background-color:$color-bg-100;
     position: relative;
+    display:flex;
+    flex-direction: column;
+    gap:64px;
+
+    @media (max-width: 640px) {
+        padding:64px 0;
+        gap:40px
+      }
 
     .text-block{
         max-width:688px;
         text-align: center;
-        margin:64px auto;
+        margin: auto;
         p{
             font-family: "IBM Plex Sans Condensed", sans-serif;
             font-size: 20px;
@@ -22,14 +30,23 @@
         &__list {
             display: flex;
             gap: 24px;
-         //   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            flex-wrap:wrap;
             margin: 0;
             padding: 0;
             list-style: none;
+
+            @media (max-width: 640px) {
+                gap:16px;
+            }
+
           }
     
           &__item{
             flex:1;
+            @media (max-width: 640px) {
+                max-width: 156px;
+            }
+
           }
 
         .possibilities-entry{
@@ -41,6 +58,11 @@
             padding: 24px;
             border-radius: 16px;
 
+            @media (max-width: 640px) {
+                padding: 16px;
+                gap:8px;
+              }
+
             &__title{
                 font-family: "IBM Plex Sans Condensed", sans-serif;
                 font-size: 20px;
@@ -48,6 +70,11 @@
                 line-height: 28px;
                 text-align: left;
                 color: $color-text-ultralight;
+                
+                @media (max-width: 640px) {
+                    font-size: 16px;
+                    line-height: 24px;
+                  }
 
             }
             &__value{
@@ -56,6 +83,11 @@
                 font-weight: 700;
                 line-height: 40px;
                 text-align: left;   
+
+                @media (max-width: 640px) {
+                    font-size: 28px;
+                    line-height: 28px;
+                  }
             }
         }
         .gray{
@@ -73,5 +105,12 @@
         height:178px;
         bottom:-23px;
         right: 16%;
+
+        @media (max-width: 640px) {
+            width: 203px;
+            height: 160px;
+            background-size: 100%;
+            right: 19px;
+          }
     }
 }
