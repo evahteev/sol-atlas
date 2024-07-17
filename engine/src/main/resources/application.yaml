@@ -11,7 +11,8 @@ camunda.bpm:
     # https://docs.camunda.org/manual/latest/user-guide/camunda-bpm-run/#cross-origin-resource-sharing
     cors:
       enabled: true
-      allowed-origins: "*"
+      # To support both HTTP authentication and CORS, allowed-origins must not be *
+      allowed-origins: "http://localhost:[*],https://*.gurunetwork.ai,https://*.dex.guru,file://"
   authorization:
     enabled: true
     tenant-check-enabled: true
