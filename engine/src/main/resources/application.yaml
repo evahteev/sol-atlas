@@ -12,7 +12,7 @@ camunda.bpm:
     cors:
       enabled: true
       # To support both HTTP authentication and CORS, allowed-origins must not be *
-      allowed-origins: "http://localhost:[*],https://*.gurunetwork.ai,https://*.dex.guru,file://"
+      allowed-origins: "http://localhost:*,http://127.0.0.1:*,http://127.0.0.1:[*],https://*.gurunetwork.ai,https://*.dex.guru,https://*.pages.dev,file://"
   authorization:
     enabled: true
     tenant-check-enabled: true
