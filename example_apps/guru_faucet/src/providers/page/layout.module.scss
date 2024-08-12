@@ -1,0 +1,43 @@
+.container {
+  min-height: 100vh;
+  min-height: 100svh;
+  display: flex;
+  gap: 16px;
+  flex-flow: column;
+  align-items: stretch;
+  padding: 16px;
+  margin: -16px;
+}
+
+.menu {
+  flex: 0 0 auto;
+  position: sticky;
+  z-index: 1000;
+
+  @media (min-width: 720.1px) {
+    margin: -16px -16px 0;
+    top: 0;
+  }
+  @media (max-width: 720px) {
+    order: 1;
+    margin: 0 -16px -16px;
+    bottom: 0;
+  }
+}
+
+.body {
+  flex: 1 0 auto;
+  display: flex;
+  gap: 16px;
+  flex-flow: column;
+  align-items: stretch;
+}
+
+.marqueue {
+  margin: -16px -16px 0;
+}
+
+.logo {
+  width: 40px;
+  height: 40px;
+}

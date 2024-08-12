@@ -1,0 +1,276 @@
+.container {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  transition: 0.25s ease;
+  text-decoration: none;
+  min-width: max-content;
+  border: 0;
+  white-space: nowrap;
+  outline: none;
+  border-top: 1px rgba(var(--color-light), 0.2) solid;
+
+  &.disabled,
+  &:disabled {
+    pointer-events: none;
+  }
+}
+
+.default {
+  background: rgba(var(--color-bg-30));
+  color: rgba(var(--color-bg-70));
+
+  &:hover,
+  &:focus-visible {
+    background: rgba(var(--color-bg-40));
+    color: rgba(var(--color-text));
+  }
+
+  &.active {
+    background: rgb(var(--color-active));
+    color: rgb(var(--color-dark));
+  }
+
+  &.disabled,
+  &:disabled {
+    background: rgb(var(--color-bg-10));
+    color: rgba(var(--color-bg-30));
+  }
+}
+
+.primary {
+  background: rgba(var(--color-accent));
+  color: rgba(var(--color-dark));
+
+  &:hover,
+  &:focus-visible {
+    background: rgba(var(--color-hover));
+    color: rgba(var(--color-dark));
+  }
+
+  &.disabled,
+  &:disabled {
+    background: rgba(var(--color-accent), 0.25);
+    color: rgba(var(--color-bg-15));
+  }
+}
+
+.success {
+  background: rgba(var(--color-success));
+  color: rgba(var(--color-dark));
+
+  &:hover,
+  &:focus-visible {
+    background: rgb(var(--color-success-a));
+    color: rgba(var(--color-dark));
+  }
+
+  &.disabled,
+  &:disabled {
+    background: rgba(var(--color-success), 0.25);
+    color: rgba(var(--color-bg-15));
+  }
+}
+
+.warn {
+  background: rgba(var(--color-warn));
+  color: rgba(var(--color-dark));
+
+  &:hover,
+  &:focus-visible {
+    background: rgb(var(--color-warn-a));
+    color: rgba(var(--color-dark));
+  }
+
+  &.disabled,
+  &:disabled {
+    background: rgba(var(--color-warn), 0.25);
+    color: rgba(var(--color-bg-15));
+  }
+}
+
+.danger {
+  background: rgba(var(--color-danger));
+  color: rgba(var(--color-dark));
+
+  &:hover,
+  &:focus-visible {
+    background: rgb(var(--color-danger-a));
+    color: rgba(var(--color-dark));
+  }
+
+  &.disabled,
+  &:disabled {
+    background: rgba(var(--color-danger), 0.25);
+    color: rgba(var(--color-bg-15));
+  }
+}
+
+.prompt {
+  background: rgba(var(--color-prompt));
+  color: rgba(var(--color-dark));
+
+  &:hover,
+  &:focus-visible {
+    background: rgb(var(--color-prompt-a));
+    color: rgba(var(--color-dark));
+  }
+
+  &.disabled,
+  &:disabled {
+    background: rgba(var(--color-prompt), 0.25);
+    color: rgba(var(--color-bg-15));
+  }
+}
+
+.info {
+  background: rgba(var(--color-info));
+  color: rgba(var(--color-dark));
+
+  &:hover,
+  &:focus-visible {
+    background: rgb(var(--color-info-a));
+    color: rgba(var(--color-dark));
+  }
+
+  &.disabled,
+  &:disabled {
+    background: rgba(var(--color-prompt), 0.25);
+    color: rgba(var(--color-bg-15));
+  }
+}
+
+.clear {
+  background: transparent;
+  color: rgba(var(--color-light));
+
+  &:hover,
+  &:focus-visible {
+    color: rgba(var(--color-hover));
+  }
+
+  &.disabled,
+  &:disabled {
+    color: rgba(var(--color-bg-15));
+  }
+}
+
+.xl {
+  height: 48px;
+  min-width: 48px;
+  padding: 8px 16px;
+  font-size: 20px;
+  line-height: 28px;
+
+  .icon {
+    height: 24px;
+  }
+}
+
+.lg {
+  height: 40px;
+  min-width: 40px;
+  padding: 6px 8px;
+  font-size: 16px;
+  line-height: 24px;
+
+  .icon {
+    height: 20px;
+  }
+}
+
+.md {
+  height: 36px;
+  min-width: 36px;
+  padding: 6px 10px;
+  font-size: 16px;
+  line-height: 24px;
+
+  .icon {
+    height: 20px;
+  }
+}
+
+.sm {
+  padding: 4px 8px;
+  height: 32px;
+  min-width: 32px;
+  font-size: 14px;
+  line-height: 20px;
+
+  .icon {
+    height: 16px;
+  }
+}
+
+.xs {
+  padding: 4px 4px;
+  height: 24px;
+  min-width: 24px;
+  font-size: 12px;
+  line-height: 16px;
+
+  .icon {
+    height: 16px;
+  }
+}
+
+.icon {
+  display: flex;
+  align-self: center;
+  align-items: stretch;
+  justify-content: center;
+
+  & > :where(svg) {
+    width: auto;
+    height: auto;
+  }
+}
+
+.caption {
+  flex: 0 1 auto;
+}
+
+.counter {
+}
+
+.indicator {
+}
+
+.pending {
+  pointer-events: none;
+  position: relative;
+
+  &:after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    height: 1px;
+    animation: pending 1.5s linear infinite;
+    background: linear-gradient(
+        to right,
+        rgba(var(--color-success), 0.5) 0%,
+        rgba(var(--color-success), 0.5) 100%
+      )
+      no-repeat;
+    background-size: 100% 1px;
+
+    @keyframes pending {
+      0% {
+        background-size: 50% 1px;
+        background-position: -100% 0;
+      }
+
+      100% {
+        background-size: 50% 1px;
+        background-position: 200% 0;
+      }
+    }
+  }
+}
