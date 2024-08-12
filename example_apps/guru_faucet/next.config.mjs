@@ -7,8 +7,6 @@ const {
   SYS_KEY,
   AUTH_SECRET,
   DEPLOY_ENVIRONMENT,
-  WAREHOUSE_API_KEY,
-  WAREHOUSE_API_HOST,
 } = process.env
 
 export const sourcePrefixes = {
@@ -85,8 +83,6 @@ const fullNextConfig = {
     SYS_KEY,
     AUTH_SECRET,
     DEPLOY_ENVIRONMENT,
-    WAREHOUSE_API_KEY,
-    WAREHOUSE_API_HOST,
   },
   generateBuildId: () => nextBuildId.sync().slice(0, 7),
 
