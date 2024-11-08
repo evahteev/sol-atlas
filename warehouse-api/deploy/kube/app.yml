@@ -1,0 +1,78 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: warehouse-api
+  name: warehouse-api-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: warehouse-api-app
+  template:
+    metadata:
+      labels:
+        app: warehouse-api-app
+    spec:
+      containers:
+      - name: app
+        image: warehouse_api:latest
+        readinessProbe:
+          httpGet:
+            path: /api/health
+            port: api-port
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        env:
+        - name: WAREHOUSE_API_HOST
+          value: "0.0.0.0"
+        - name: WAREHOUSE_API_WORKERS_COUNT
+          value: "10"
+        - name: WAREHOUSE_API_DB_HOST
+          value: "warehouse-api-db-service"
+        - name: WAREHOUSE_API_REDIS_HOST
+          value: "warehouse-api-redis-service"
+        resources:
+          limits:
+            memory: "200Mi"
+            cpu: "100m"
+        ports:
+        - containerPort: 8000
+          name: api-port
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: warehouse-api
+  name: warehouse-api-app-service
+spec:
+  selector:
+    app: warehouse-api-app
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: api-port
+    name: api-port
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: warehouse-api-app
+  namespace: warehouse-api
+  labels:
+    name: warehouse-api-app
+spec:
+  rules:
+  - host: warehouse-api.local
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: warehouse-api-app-service
+            port:
+              name: api-port
+
+---

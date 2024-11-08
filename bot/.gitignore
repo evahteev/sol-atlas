@@ -135,4 +135,6 @@ dmypy.json
 
 logs/
 
+Pipfile.lock
+Pipfile
 

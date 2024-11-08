@@ -186,6 +186,24 @@
       <artifactId>spring-boot-starter-amqp</artifactId>
     </dependency>
 
+    <!-- Camunda connector plugins dependency -->
+    <dependency>
+      <groupId>org.camunda.connect</groupId>
+      <artifactId>camunda-connect-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.camunda.connect</groupId>
+      <artifactId>camunda-connect-http-client</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.camunda.connect</groupId>
+      <artifactId>camunda-connect-soap-http-client</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.camunda.bpm</groupId>
+      <artifactId>camunda-engine-plugin-connect</artifactId>
+    </dependency>
+
 
   </dependencies>
 

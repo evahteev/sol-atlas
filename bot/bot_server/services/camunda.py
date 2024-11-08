@@ -1,145 +1,95 @@
-from typing import Optional, List
+import asyncio
+from typing import Sequence
 
-import niche_pycamunda.processinst
-import niche_pycamunda.processdef
-import niche_pycamunda.task
-import niche_pycamunda.variable
-import niche_pycamunda.user
-import niche_pycamunda.group
-import requests.auth
-import requests.sessions
+import httpx
+import logging
 
-from niche_app.config import Config
-from niche_app.utils.jwt_password import SystemUser
-from niche_app.utils.logger import get_logger
+from bot_server.core.config import settings
+from camunda_client import CamundaEngineClient
+from camunda_client.clients.dto import AuthData
+from camunda_client.clients.engine.schemas import (
+    ProcessInstanceQuerySchema,
+    ProcessInstanceSchema,
+    GetHistoryTasksFilterSchema,
+)
 
-logger = get_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
-class CamundaService:
-    def __init__(
-            self,
-            *,
-            config: Config,
-            session: requests.sessions.Session,
-    ):
-        self.config = config
-        self.session = session
-
-    async def login(
-            self,
-            username: str,
-            password: str
-    ) -> Optional[niche_pycamunda.user.User]:
-        get_profile = niche_pycamunda.user.GetProfile(self.config.CAMUNDA_URL,
-                                                      id_=username)
-        get_profile.session = self.session
-        get_profile.session.auth = requests.auth.HTTPBasicAuth(username=username, password=password)
-        try:
-            return get_profile()
-        except niche_pycamunda.Unauthorized:
-            return None
-
-    async def create_user(self,
-                          username: str,
-                          email: str,
-                          password: str
-                          ) -> None:
-        session = requests.sessions.Session()
-        session.auth = requests.auth.HTTPBasicAuth(
-            username=self.config.CAMUNDA_ADMIN_LOGIN,
-            password=self.config.CAMUNDA_ADMIN_PASSWORD,
+async def start_process_instance(
+    variables: list[dict],
+    process_definition_key: str | None = None,
+    business_key: str | None = None,
+    camunda_user_id: str = settings.ENGINE_USERNAME,
+    camunda_key: str = settings.ENGINE_PASSWORD,
+) -> ProcessInstanceSchema:
+    camunda_variables = {
+        var["name"]: {"value": var["value"], "type": var["type"]} for var in variables
+    }
+    async with httpx.AsyncHTTPTransport() as transport:
+        camunda_client = CamundaEngineClient(
+            auth_data=AuthData(username=camunda_user_id, password=camunda_key),
+            base_url=settings.ENGINE_URL,
+            transport=transport,
         )
-        create_user = niche_pycamunda.user.Create(
-            url=self.config.CAMUNDA_URL,
-            id_=username,
-            first_name=username,
-            last_name=username,
-            email=email,
-            password=password
+        # Start the process instance with the collected variables
+        process_instance = await camunda_client.start_process(
+            process_definition_key,
+            business_key=business_key,
+            variables=camunda_variables,
         )
-        create_user.session = session
-        member_create = niche_pycamunda.group.MemberCreate(self.config.CAMUNDA_URL,
-                                                           id_=self.config.CAMUNDA_USERS_GROUP_ID,
-                                                           user_id=username)
-        member_create.session = session
-        create_user()
-        member_create()
+        await camunda_client.close()
+    return process_instance
 
-    async def get_tasks(self,
-                        user: SystemUser) -> Optional[List[niche_pycamunda.task.Task]]:
-        get_tasks = niche_pycamunda.task.GetList(self.config.CAMUNDA_URL,
-                                                 assignee=user.username,
-                                                 active=True)
-        get_tasks.session = self.session
-        get_tasks.session.auth = requests.auth.HTTPBasicAuth(
-            username=user.username,
-            password=user.password,
-        )
-        try:
-            tasks = get_tasks()
-            return tasks
-        except niche_pycamunda.Unauthorized:
-            return None
 
-    async def get_task_variables(self,
-                                 user: SystemUser,
-                                 task_id: str) -> Optional[List[niche_pycamunda.variable.Variable]]:
-        get_variables = niche_pycamunda.task.VariablesGetList(
-            self.config.CAMUNDA_URL,
-            task_id=task_id,
-            deserialize_values=False,
+async def get_process_instance(
+    user_id: str,
+    password: str,
+    process_definition_name: str,
+    business_key: str = "",
+) -> ProcessInstanceSchema:
+    async with httpx.AsyncHTTPTransport() as transport:
+        camunda_client = CamundaEngineClient(
+            auth_data=AuthData(username=user_id, password=password),
+            base_url=settings.ENGINE_URL,
+            transport=transport,
         )
-        get_variables.session = self.session
-        get_variables.session.auth = requests.auth.HTTPBasicAuth(
-            username=user.username,
-            password=user.password,
+        # Start the process instance with the collected variables
+        process_instance = await camunda_client.get_process_instances(
+            params=ProcessInstanceQuerySchema(
+                business_key=business_key,
+                process_definition_key=process_definition_name,
+            )
         )
-        return get_variables()
+        await camunda_client.close()
+    if process_instance:
+        return process_instance[0]
 
-    async def get_instances(self,
-                            user: SystemUser) -> Optional[List[niche_pycamunda.processinst.ProcessInstance]]:
-        get_instances = niche_pycamunda.processinst.GetList(self.config.CAMUNDA_URL)
-        get_instances.session = self.session
-        get_instances.session.auth = requests.auth.HTTPBasicAuth(
-            username=user.username,
-            password=user.password,
-        )
-        try:
-            instances = get_instances()
-            for instance in instances:
-                get_variables = niche_pycamunda.processinst.VariablesGetList(
-                    self.config.CAMUNDA_URL,
-                    process_instance_id=instance.id_,
-                    deserialize_values=False,
-                )
-                get_variables.session = self.session
-                variables = get_variables()
-                instance.variables = variables
-            return instances
-        except niche_pycamunda.Unauthorized:
-            return None
 
-    async def start_instance(self,
-                             user: SystemUser,
-                             project_title: str,
-                             niche: str
-                             ) -> niche_pycamunda.processinst.ProcessInstance:
-        start_instance = niche_pycamunda.processdef.StartInstance(self.config.CAMUNDA_URL,
-                                                                  key='gpt_research')
-        start_instance.session = self.session
-        start_instance.session.auth = requests.auth.HTTPBasicAuth(
-            username=user.username,
-            password=user.password,
+async def get_or_create_process_instance(
+    user_id: str,
+    password: str,
+    process_definition_name: str,
+    variables: list[dict] | None = None,
+    business_key: str = "",
+) -> ProcessInstanceSchema:
+    process_instance = await get_process_instance(
+        user_id=user_id,
+        password=password,
+        process_definition_name=process_definition_name,
+        business_key=business_key,
+    )
+    if process_instance:
+        return process_instance
+    else:
+        logging.info(
+            f"Starting generate process instance with business key: {business_key}"
         )
-        start_instance.variables = {
-            "project_title": {
-                "value": project_title,
-                "type": "String"
-            },
-            "niche": {
-                "value": niche,
-                "type": "String"
-            }
-        }
-        return start_instance()
+        process_instance = await start_process_instance(
+            variables,
+            business_key=business_key,
+            process_definition_key=process_definition_name,
+            camunda_user_id=user_id,
+            camunda_key=password,
+        )
+    return process_instance

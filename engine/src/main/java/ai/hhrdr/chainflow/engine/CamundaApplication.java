@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
+import org.camunda.connect.plugin.impl.ConnectProcessEnginePlugin;
 
 import org.camunda.bpm.engine.rest.security.auth.ProcessEngineAuthenticationFilter;
 import org.camunda.bpm.spring.boot.starter.annotation.EnableProcessApplication;
@@ -59,6 +60,11 @@ public class CamundaApplication extends SpringBootServletInitializer {
   @Bean
   public static PropertySourcesPlaceholderConfigurer propertyConfigurer() {
     return new PropertySourcesPlaceholderConfigurer();
+  }
+
+  @Bean
+  public ConnectProcessEnginePlugin connectProcessEnginePlugin() {
+    return new ConnectProcessEnginePlugin();
   }
 
 

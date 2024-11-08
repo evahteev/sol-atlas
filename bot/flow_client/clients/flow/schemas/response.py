@@ -24,6 +24,8 @@ class UserSchema(BaseSchema):
     webapp_user_id: str | None = None
     is_block: bool
     is_premium: bool
+    web3_wallets: list = []
+    telegram_accounts: list = []
 
     @property
     def user_uuid(self) -> UUID:
@@ -35,6 +37,7 @@ class ArtSchema(BaseSchema):
     name: str
     description: str | None = None
     description_prompt: str | None = None
+    symbol: str | None = None
     created_at: datetime | None = datetime.now(tz=utc)
     img_picture: str | None = None
     type: str
@@ -45,3 +48,4 @@ class ArtSchema(BaseSchema):
     token_id: int | None = None
     likes: int = 0
     is_liked: bool = False
+    token_address: str | None = None

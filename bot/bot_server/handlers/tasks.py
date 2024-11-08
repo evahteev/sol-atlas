@@ -16,6 +16,7 @@ from camunda_client import VariableValueSchema
 from camunda_client.clients.dto import AuthData
 from camunda_client.clients.engine.client import CamundaEngineClient
 from camunda_client.clients.engine.schemas import GetHistoryTasksFilterSchema
+from camunda_client.clients.engine.schemas.response import ProcessVariablesSchema
 
 router = Router()
 
@@ -24,18 +25,27 @@ class Form(StatesGroup):
     waiting_for_input = State()
 
 
-async def fetch_camunda_tasks(camunda_user_id: str | None = None,
-                              root_process_instance_id: UUID | None = None) -> Sequence[dict]:
-    async with (httpx.AsyncHTTPTransport() as transport):
+async def fetch_camunda_tasks(
+    camunda_user_id: str | None = None, root_process_instance_id: UUID | None = None
+) -> Sequence[dict]:
+    async with httpx.AsyncHTTPTransport() as transport:
 
         camunda_client = CamundaEngineClient(
-            auth_data=AuthData(username=settings.ENGINE_USERNAME, password=settings.ENGINE_PASSWORD),
+            auth_data=AuthData(
+                username=settings.ENGINE_USERNAME, password=settings.ENGINE_PASSWORD
+            ),
             base_url=settings.ENGINE_URL,
             transport=transport,
         )
-        tasks = await camunda_client.get_history_tasks(schema=GetHistoryTasksFilterSchema(unfinished=True))
+        tasks = await camunda_client.get_history_tasks(
+            schema=GetHistoryTasksFilterSchema(
+                unfinished=True,
+                process_instance_id=root_process_instance_id,
+                task_assignee=camunda_user_id,
+            )
+        )
         tasks_to_ping = []
-
+        async_tasks = []
         for task in tasks:
             if root_process_instance_id:
                 if str(task.root_process_instance_id) != str(root_process_instance_id):
@@ -43,15 +53,25 @@ async def fetch_camunda_tasks(camunda_user_id: str | None = None,
             if camunda_user_id:
                 if task.assignee != str(camunda_user_id):
                     continue
-            user = await get_user_by_camunda_user_id(task.assignee)
-            variables = await camunda_client.get_variable_instances(
-                process_instance_id=task.process_instance_id)
-            tasks_to_ping.append({"task": task,
-                                  "id": task.id,
-                                  "name": task.name,
-                                  "telegram_user_id": user.telegram_user_id if user else None,
-                                  "variables": variables
-                                  })
+            async_tasks.append(
+                asyncio.gather(
+                    get_user_by_camunda_user_id(task.assignee),
+                    camunda_client.get_variable_instances(
+                        process_instance_id=task.process_instance_id
+                    ),
+                )
+            )
+        results = await asyncio.gather(*async_tasks)
+        for task, (user, variables) in zip(tasks, results):
+            tasks_to_ping.append(
+                {
+                    "task": task,
+                    "id": task.id,
+                    "name": task.name,
+                    "telegram_user_id": user.telegram_user_id if user else None,
+                    "variables": variables,
+                }
+            )
         await camunda_client.close()
         return tasks_to_ping
 
@@ -67,17 +87,21 @@ async def tasks_handler(message: types.Message, state: FSMContext) -> None:
     if not tasks:
         await message.answer("No tasks available.")
     else:
-        await message.answer("Tasks available in tasklist:", reply_markup=task_keyboard(tasks))
+        await message.answer(
+            "Tasks available in tasklist:", reply_markup=task_keyboard(tasks)
+        )
 
 
-async def get_task_form_variables(task_id: str, state: FSMContext):
+async def get_task_form_variables(
+    task_id: str, state: FSMContext
+) -> Sequence[ProcessVariablesSchema]:
     user_data = await state.get_data()
     user_info = user_data.get("user")
     if not user_info:
         user_info_obj = await get_user(state.key.user_id)
         camunda_user_id = user_info_obj.camunda_user_id
         camunda_key = user_info_obj.camunda_key
-        await state.update_data(user=user_info_obj.to_dict())
+        await state.update_data(user=user_info_obj.model_dump())
     else:
         camunda_user_id = user_info.get("camunda_user_id")
         camunda_key = user_info.get("camunda_key")
@@ -88,6 +112,7 @@ async def get_task_form_variables(task_id: str, state: FSMContext):
             transport=transport,
         )
         variables = await camunda_client.get_task_form_variables(task_id)
+        await camunda_client.close()
         return variables
 
 
@@ -109,18 +134,27 @@ async def get_task(task_id: str, state: FSMContext):
             transport=transport,
         )
         task_info = await camunda_client.get_task(task_id)
+        await camunda_client.close()
         return task_info
 
 
-async def complete_task(state: FSMContext, task_id: str,
-                        camunda_user_id: str = settings.ENGINE_USERNAME, camunda_key: str = settings.ENGINE_PASSWORD):
+async def complete_task(
+    state: FSMContext,
+    task_id: str,
+    camunda_user_id: str = settings.ENGINE_USERNAME,
+    camunda_key: str = settings.ENGINE_PASSWORD,
+):
     data = await state.get_data()
-    variables = data['resulting_variables']
+    variables = data["resulting_variables"]
     # Convert variables to Camunda's expected format
-    camunda_variables = {var['name']: {'value': var['value'], 'type': var['type']} for var in variables}
+    camunda_variables = {
+        var["name"]: {"value": var["value"], "type": var["type"]} for var in variables
+    }
     variables = camunda_variables
     variables_fixed = {}
     for key, value in variables.items():
+        if isinstance(value.get("value"), list):
+            continue
         value = VariableValueSchema(**value)
         variables_fixed[key] = value
     async with httpx.AsyncHTTPTransport() as transport:
@@ -130,23 +164,28 @@ async def complete_task(state: FSMContext, task_id: str,
             transport=transport,
         )
         # Start the process instance with the collected variables
-        return await camunda_client.complete_task(task_id=task_id,
-                                                  variables=variables_fixed)
+        await camunda_client.complete_task(task_id=task_id, variables=variables_fixed)
+        await camunda_client.close()
+
 
 async def get_history_task(task_id: str):
     async with httpx.AsyncHTTPTransport() as transport:
-        camunda_client = CamundaEngineClient(
-            auth_data=AuthData(username=settings.ENGINE_USERNAME, password=settings.ENGINE_PASSWORD),
+        async with CamundaEngineClient(
+            auth_data=AuthData(
+                username=settings.ENGINE_USERNAME, password=settings.ENGINE_PASSWORD
+            ),
             base_url=settings.ENGINE_URL,
             transport=transport,
-        )
-        # Start the process instance with the collected variables
-        return await camunda_client.get_history_tasks(schema=GetHistoryTasksFilterSchema(task_id=task_id))
+        ) as camunda_client:
+            # Start the process instance with the collected variables
+            return await camunda_client.get_history_tasks(
+                schema=GetHistoryTasksFilterSchema(task_id=task_id)
+            )
 
 
-@router.callback_query(F.data.startswith('complete_task'))
+@router.callback_query(F.data.startswith("complete_task"))
 async def complete_task_callback(callback_query: CallbackQuery, state: FSMContext):
-    _, task_id = callback_query.data.split(':')
+    _, task_id = callback_query.data.split(":")
     try:
         user_data = await state.get_data()
         user_info = user_data.get("user")
@@ -167,22 +206,33 @@ async def complete_task_callback(callback_query: CallbackQuery, state: FSMContex
     history_tasks = await get_history_task(task_id)
     if not history_tasks:
 
-        tasks = await fetch_camunda_tasks(camunda_user_id=user_info.get("camunda_user_id"))
+        tasks = await fetch_camunda_tasks(
+            camunda_user_id=user_info.get("camunda_user_id")
+        )
     else:
-        tasks = await fetch_camunda_tasks(root_process_instance_id=history_tasks[0].root_process_instance_id,
-                                      camunda_user_id=history_tasks[0].assignee)
+        tasks = await fetch_camunda_tasks(
+            root_process_instance_id=history_tasks[0].root_process_instance_id,
+            camunda_user_id=history_tasks[0].assignee,
+        )
     if tasks:
-        await callback_query.bot.send_message(callback_query.from_user.id,
-                                              "Tasks available in tasklist:",
-                                              reply_markup=task_keyboard(tasks))
+        await callback_query.bot.send_message(
+            callback_query.message.chat.id,
+            "Tasks available in tasklist:",
+            reply_markup=task_keyboard(tasks),
+            message_thread_id=callback_query.message.message_thread_id,
+        )
     else:
-        await callback_query.bot.send_message(callback_query.from_user.id,
-                                              "No tasks available.")
+        await callback_query.bot.send_message(
+            callback_query.message.chat.id,
+            "No tasks available.",
+            message_thread_id=callback_query.message.message_thread_id,
+        )
 
 
-@router.callback_query(F.data.startswith('claim_task'))
+@router.callback_query(F.data.startswith("claim_task"))
 async def claim_task_callback(callback_query: CallbackQuery, state: FSMContext):
     from bot_server.handlers.user_inputs import claim_task
+
     user_data = await state.get_data()
     user_info = user_data.get("user")
     await state.clear()
@@ -190,21 +240,24 @@ async def claim_task_callback(callback_query: CallbackQuery, state: FSMContext):
     await claim_task(callback_query, state)
 
 
-@router.callback_query(F.data.startswith('set_variable'))
+@router.callback_query(F.data.startswith("set_variable"))
 async def set_variable_callback(callback_query: CallbackQuery, state: FSMContext):
     from bot_server.handlers.user_inputs import set_variable
+
     await set_variable(callback_query, state, Form)
 
 
 @router.message(Form.waiting_for_input)
 async def _process_input(message: types.Message, state: FSMContext):
     from bot_server.handlers.user_inputs import process_input
+
     await process_input(message, state, Form)
 
 
-@router.callback_query(F.data.startswith('generate_qr_code'))
+@router.callback_query(F.data.startswith("generate_qr_code"))
 async def generate_qr_code_callback(callback_query: CallbackQuery, state: FSMContext):
     from bot_server.handlers.user_inputs import generate_qr_code
+
     try:
         await generate_qr_code(callback_query, state)
         await complete_task_callback(callback_query, state)

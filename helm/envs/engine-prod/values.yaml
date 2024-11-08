@@ -1,0 +1,6 @@
+app:
+  serviceType: NodePort
+  strategyType: 'RollingUpdate'
+  workingDir: '/app/src/'
+  baseEnv:
+    ENVIRONMENT: "prod"

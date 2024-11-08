@@ -7,7 +7,7 @@ from bot_server.keyboards.inline.menu import main_keyboard
 router = Router(name="menu")
 
 
-@router.message(Command(commands=["menu", "main"]))
-async def menu_handler(message: types.Message) -> None:
-    """Return main menu."""
-    await message.answer(_("title main keyboard"), reply_markup=main_keyboard())
+# @router.message(Command(commands=["menu", "main"]))
+# async def menu_handler(message: types.Message) -> None:
+#     """Return main menu."""
+#     await message.answer(_("title main keyboard"), reply_markup=main_keyboard())

@@ -1,6 +1,5 @@
 from aiogram import Bot, Dispatcher
 from aiogram.client.default import DefaultBotProperties
-from aiogram.enums import ParseMode
 from aiogram.fsm.storage.redis import DefaultKeyBuilder, RedisStorage
 from aiogram.utils.i18n.core import I18n
 from aiohttp import web
@@ -12,7 +11,7 @@ app = web.Application()
 
 token = settings.BOT_TOKEN
 
-bot = Bot(token=token, default=DefaultBotProperties(parse_mode='HTML'))
+bot = Bot(token=token, default=DefaultBotProperties(parse_mode="HTML"))
 
 redis_client = Redis(
     connection_pool=ConnectionPool(
@@ -20,6 +19,16 @@ redis_client = Redis(
         port=settings.REDIS_PORT,
         password=settings.REDIS_PASS,
         db=0,
+        retry_on_timeout=True,
+        retry_on_error=[
+            ConnectionError,
+            TimeoutError,
+            ConnectionResetError,
+            ConnectionRefusedError,
+            ConnectionAbortedError,
+            ConnectionResetError,
+        ],
+        health_check_interval=30,
     ),
 )
 

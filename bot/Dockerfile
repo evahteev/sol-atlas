@@ -1,4 +1,4 @@
-FROM python:3.10-alpine3.18
+FROM docker-registry.dexguru.biz/dex.guru/utils/python:3.10-alpine3.18
 
 WORKDIR /usr/src/app
 
@@ -23,4 +23,4 @@ RUN adduser -D appuser \
 
 USER appuser
 
-CMD ["python", "-m", "bot"]
+CMD [ "python", "./bot_server/__main__.py" ]

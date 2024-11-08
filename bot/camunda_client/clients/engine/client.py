@@ -63,7 +63,8 @@ class CamundaEngineClient:
         self._urls = urls or CamundaUrls()
         self._session = aiohttp.ClientSession(
             headers={
-                "Authorization": f"Basic {base64.b64encode(f'{auth_data.username}:{auth_data.password}'.encode()).decode()}"}
+                "Authorization": f"Basic {base64.b64encode(f'{auth_data.username}:{auth_data.password}'.encode()).decode()}"
+            }
         )
 
     async def __aenter__(self):
@@ -84,23 +85,32 @@ class CamundaEngineClient:
         deployment_name: Optional[str],
         deployment_activation_time: Optional[str],
         file_bytes: bytes,
-        file_name: str
+        file_name: str,
     ) -> dict:
 
         url = f"{self._http_client.base_url}deployment/create"
 
         form_data = aiohttp.FormData()
-        form_data.add_field('deploy-changed-only', str(deploy_changed_only).lower())
-        form_data.add_field('enable-duplicate-filtering', str(enable_duplicate_filtering).lower())
-        form_data.add_field('data', file_bytes, filename=file_name, content_type='application/octet-stream')
+        form_data.add_field("deploy-changed-only", str(deploy_changed_only).lower())
+        form_data.add_field(
+            "enable-duplicate-filtering", str(enable_duplicate_filtering).lower()
+        )
+        form_data.add_field(
+            "data",
+            file_bytes,
+            filename=file_name,
+            content_type="application/octet-stream",
+        )
         if tenant_id:
-            form_data.add_field('tenant-id', tenant_id)
+            form_data.add_field("tenant-id", tenant_id)
         if deployment_source:
-            form_data.add_field('deployment-source', deployment_source)
+            form_data.add_field("deployment-source", deployment_source)
         if deployment_name:
-            form_data.add_field('deployment-name', deployment_name)
+            form_data.add_field("deployment-name", deployment_name)
         if deployment_activation_time:
-            form_data.add_field('deployment-activation-time', deployment_activation_time)
+            form_data.add_field(
+                "deployment-activation-time", deployment_activation_time
+            )
 
         async with self._session.post(url, data=form_data) as response:
             response.raise_for_status()
@@ -156,7 +166,9 @@ class CamundaEngineClient:
         return adapter.validate_python(response.json())
 
     async def get_process_definition_start_form(
-        self, process_definition_key: str, params: FormVariablesQuerySchema | None = None
+        self,
+        process_definition_key: str,
+        params: FormVariablesQuerySchema | None = None,
     ) -> Sequence[ProcessVariablesSchema]:
         """
         Queries for process definitions start form that fulfill given parameters.

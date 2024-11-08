@@ -106,3 +106,7 @@ class CamundaUrls:
     @classmethod
     def get_process_instance_variable(cls, process_instance_id: str) -> str:
         return f"{cls.process_instances}/{process_instance_id}/variables"
+
+    @classmethod
+    def get_rendered_form(cls, task_id: str) -> str:
+        return f"{cls.task}/{task_id}/rendered-form"

@@ -43,6 +43,8 @@ prometheus-client = "^0.20.0"
 requests = "^2.31.0"
 aiocache = {extras = ["redis"], version = "^0.12.2"}
 elastic-apm = "6.22.2"
+beautifulsoup4 = "^4.12.3"
+web3 = "6.17.2"
 
 
 [tool.poetry.group.dev.dependencies]

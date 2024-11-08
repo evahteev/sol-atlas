@@ -1,13 +1,13 @@
 import pathlib
 
 from aiocache import cached
-from fastapi import APIRouter, Path, Depends
+from fastapi import APIRouter, Path, Depends, Query
 from starlette.responses import JSONResponse, Response
 
 from async_fastapi_jwt_auth import AuthJWT
-from fa_admin.dependencies import sys_key_depends
-from fa_admin.flow_models import NftMetadata
-from fa_admin.utils import CACHE_CONFIG
+from flow_api.dependencies import sys_key_depends
+from flow_api.flow_models import NftMetadata
+from flow_api.utils import DECORATOR_CACHE_CONFIG
 
 seasons_router = APIRouter()
 
@@ -15,7 +15,7 @@ seasons_router = APIRouter()
 @seasons_router.get(
     "/{season_id}/{token_id}",
 )
-@cached(ttl=3600, **CACHE_CONFIG)
+@cached(ttl=3600, **DECORATOR_CACHE_CONFIG)
 async def get_nft_metadata_mainnet(
     season_id: str = Path(...),
     token_id: str = Path(...),
@@ -33,7 +33,7 @@ async def get_nft_metadata_mainnet(
 @seasons_router.get(
     "/{season_id}/chain/{chain_id}/token/{token_id}/img.jpeg",
 )
-@cached(ttl=3600, **CACHE_CONFIG)
+@cached(ttl=3600, **DECORATOR_CACHE_CONFIG)
 async def get_nft_picture(
     season_id: str = Path(...),
     chain_id: str = Path(...),
@@ -87,16 +87,22 @@ async def store_nft_metadata(
     chain_id: str = Path(...),
     token_id: str = Path(...),
     art_id: str = Path(...),
+    token_address: str = Query(""),
 ):
     exist = await NftMetadata.filter(
-        season_id=season_id, chain_id=chain_id, token_id=token_id
+        season_id=season_id,
+        chain_id=chain_id,
+        token_id=token_id,
+        art_id=art_id,
+        token_address=token_address,
     ).first()
     if exist:
-        return JSONResponse({"message": "Metadata already stored"}, status_code=405)
+        return JSONResponse({"message": "Metadata already stored"}, status_code=200)
     await NftMetadata(
         season_id=season_id,
         chain_id=chain_id,
         token_id=token_id,
         art_id=art_id,
+        token_address=token_address,
     ).save()
     return JSONResponse({"message": "Metadata stored"}, status_code=200)

@@ -18,7 +18,11 @@ from pyzbar.pyzbar import decode
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from bot_server.core.config import settings
-from bot_server.handlers.tasks import get_task_form_variables, get_task, fetch_camunda_tasks
+from bot_server.handlers.tasks import (
+    get_task_form_variables,
+    get_task,
+    fetch_camunda_tasks,
+)
 from bot_server.keyboards.inline.task import task_keyboard
 from camunda_client.clients.dto import AuthData
 from camunda_client.clients.engine.client import CamundaEngineClient
@@ -60,13 +64,15 @@ def upload_file_to_s3_binary(content: bytes, bucket_name, s3_file_name) -> str:
     Returns:
     - URL of the uploaded file on success.
     """
-    s3 = boto3.client('s3',
-                      aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
-                      aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
-                      region_name=settings.AWS_REGION_NAME)
+    s3 = boto3.client(
+        "s3",
+        aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+        aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+        region_name=settings.AWS_REGION_NAME,
+    )
     try:
         s3.put_object(Bucket=bucket_name, Key=s3_file_name, Body=content)
-        location = s3.get_bucket_location(Bucket=bucket_name)['LocationConstraint']
+        location = s3.get_bucket_location(Bucket=bucket_name)["LocationConstraint"]
         url = f"https://{bucket_name}.s3.{location}.amazonaws.com/{s3_file_name}"
         return url
     except NoCredentialsError:
@@ -106,21 +112,27 @@ async def process_image_upload(message: types.Message, state: FSMContext, form):
         s3_file_name = f"images/{uuid.uuid4()}.jpg"
 
         # Upload to S3
-        photo_url = upload_file_to_s3_binary(photo_bytes, settings.AWS_S3_BUCKET, s3_file_name)
+        photo_url = upload_file_to_s3_binary(
+            photo_bytes, settings.AWS_S3_BUCKET, s3_file_name
+        )
 
         # Save the image URL as the variable value
         index = data["current_image_variable_index"]
         variables = data["variables"]
         resulting_variables = data.get("resulting_variables", [])
 
-        resulting_variables.append({
-            "name": variables[index]['name'],
-            "value": photo_url,
-            "type": variables[index]['value']['type']
-        })
+        resulting_variables.append(
+            {
+                "name": variables[index]["name"],
+                "value": photo_url,
+                "type": variables[index]["value"]["type"],
+            }
+        )
 
         # Update state to indicate the image has been processed and move to the next variable
-        await state.update_data(awaiting_image=False, resulting_variables=resulting_variables)
+        await state.update_data(
+            awaiting_image=False, resulting_variables=resulting_variables
+        )
     elif data.get("image_qr"):
         # as we are not saving QR image into variables anyhow, index = -1
         index = -1
@@ -135,11 +147,19 @@ async def process_image_upload(message: types.Message, state: FSMContext, form):
 
         if decoded_objects:
             # Assuming there is at least one QR code
-            qr_data = decoded_objects[0].data.decode('utf-8')
-            await message.bot.send_message(message.from_user.id, f"QR Code data: {qr_data}")
+            qr_data = decoded_objects[0].data.decode("utf-8")
+            await message.bot.send_message(
+                message.chat.id,
+                f"QR Code data: {qr_data}",
+                message_thread_id=message.message_thread_id,
+            )
         else:
             qr_data = None
-            await message.bot.send_message(message.from_user.id, "No QR Code found")
+            await message.bot.send_message(
+                message.chat.id,
+                "No QR Code found",
+                message_thread_id=message.message_thread_id,
+            )
         # Update state to indicate the image has been processed
         parsed_url = urlparse(qr_data)
 
@@ -149,55 +169,93 @@ async def process_image_upload(message: types.Message, state: FSMContext, form):
         resulting_variables = data.get("resulting_variables", [])
 
         for key, value in query_params.items():
-            resulting_variables.append({
-                "name": key,
-                "value": value,
-                "type": "String"
-            })
+            resulting_variables.append({"name": key, "value": value, "type": "String"})
 
-        await state.update_data(awaiting_image=False, image_qr=False, resulting_variables=resulting_variables)
+        await state.update_data(
+            awaiting_image=False,
+            image_qr=False,
+            resulting_variables=resulting_variables,
+        )
     else:
         # If not expecting an image, you could remind the user to follow the instructions or handle as needed
-        await message.reply("Currently not expecting an image. Please follow the instructions provided.")
+        await message.reply(
+            "Currently not expecting an image. Please follow the instructions provided."
+        )
         await state.update_data(awaiting_image=False, image_qr=False)
     if data.get("callback_name") and data.get("form_key"):
         callback_name = data["callback_name"]
         form_key = data["form_key"]
-        keyboard = InlineKeyboardBuilder(markup=[
-            [InlineKeyboardButton(text=f"{callback_name}",
-                                  callback_data=f"{callback_name}:{form_key}")]])
+        keyboard = InlineKeyboardBuilder(
+            markup=[
+                [
+                    InlineKeyboardButton(
+                        text=f"{callback_name}",
+                        callback_data=f"{callback_name}:{form_key}",
+                    )
+                ]
+            ]
+        )
         if index >= 0:
-            await message.bot.send_message(message.from_user.id,
-                                           f"Accepted: {variables[index]['name']}",
-                                           reply_markup=keyboard.as_markup())
+            await message.bot.send_message(
+                message.chat.id,
+                f"Accepted: {variables[index]['name']}",
+                reply_markup=keyboard.as_markup(),
+                message_thread_id=message.message_thread_id,
+            )
         else:
-            await message.bot.send_message(message.from_user.id, f"Accepted QR Code data",
-                                           reply_markup=keyboard.as_markup())
+            await message.bot.send_message(
+                message.chat.id,
+                f"Accepted QR Code data",
+                reply_markup=keyboard.as_markup(),
+                message_thread_id=message.message_thread_id,
+            )
 
 
-async def handle_upload_new(chat_id, state: FSMContext, bot: Bot,
-                            current_image_variable_index: int):
+async def handle_upload_new(
+    chat_id,
+    state: FSMContext,
+    bot: Bot,
+    current_image_variable_index: int,
+    thread_id: int | None = None,
+):
     # Prompt user to upload a new image
-    await bot.send_message(chat_id, "Please upload the new image.")
-    await state.update_data(awaiting_image=True, image_upload=True,
-                            current_image_variable_index=current_image_variable_index)
+    await bot.send_message(
+        chat_id, "Please upload the new image.", message_thread_id=thread_id
+    )
+    await state.update_data(
+        awaiting_image=True,
+        image_upload=True,
+        current_image_variable_index=current_image_variable_index,
+    )
 
 
-async def handle_upload_qr(chat_id, state: FSMContext, bot: Bot):
+async def handle_upload_qr(
+    chat_id, state: FSMContext, bot: Bot, thread_id: int | None = None
+):
     # Prompt user to upload a new image
-    await bot.send_message(chat_id, "Please scan/upload QR Code.")
+    await bot.send_message(
+        chat_id, "Please scan/upload QR Code.", message_thread_id=thread_id
+    )
     await state.update_data(awaiting_image=True, image_qr=True)
 
 
-async def start_process_instance(state: FSMContext,
-                                 process_definition_key: str | None = None,
-                                 business_key: str | None = None,
-                                 camunda_user_id: str = settings.ENGINE_USERNAME,
-                                 camunda_key: str = settings.ENGINE_PASSWORD) -> ProcessInstanceSchema:
+async def start_process_instance(
+    state: FSMContext,
+    process_definition_key: str | None = None,
+    business_key: str | None = None,
+    camunda_user_id: str = settings.ENGINE_USERNAME,
+    camunda_key: str = settings.ENGINE_PASSWORD,
+) -> ProcessInstanceSchema:
     data = await state.get_data()
-    process_definition_key = data['process_definition_key'] if not process_definition_key else process_definition_key
-    variables = data.get('resulting_variables', [])
-    camunda_variables = {var['name']: {'value': var['value'], 'type': var['type']} for var in variables}
+    process_definition_key = (
+        data["process_definition_key"]
+        if not process_definition_key
+        else process_definition_key
+    )
+    variables = data.get("resulting_variables", [])
+    camunda_variables = {
+        var["name"]: {"value": var["value"], "type": var["type"]} for var in variables
+    }
     async with httpx.AsyncHTTPTransport() as transport:
         camunda_client = CamundaEngineClient(
             auth_data=AuthData(username=camunda_user_id, password=camunda_key),
@@ -205,9 +263,11 @@ async def start_process_instance(state: FSMContext,
             transport=transport,
         )
         # Start the process instance with the collected variables
-        process_instance = await camunda_client.start_process(process_definition_key,
-                                                              business_key=business_key,
-                                                              variables=camunda_variables)
+        process_instance = await camunda_client.start_process(
+            process_definition_key,
+            business_key=business_key,
+            variables=camunda_variables,
+        )
         await camunda_client.close()
     return process_instance
 
@@ -229,23 +289,39 @@ async def process_input(message: types.Message, state: FSMContext, form):
             index = data["current_index"]
             user_input = message.text
 
-            resulting_variables.append({
-                "name": variables[index]['name'],
-                "value": user_input,
-                "type": variables[index]['value']['type']
-            })
+            resulting_variables.append(
+                {
+                    "name": variables[index]["name"],
+                    "value": user_input,
+                    "type": variables[index]["value"]["type"],
+                }
+            )
 
         await state.update_data(resulting_variables=resulting_variables)
 
-        if data.get("callback_name") and data.get("form_key") and len(variables) >= index:
+        if (
+            data.get("callback_name")
+            and data.get("form_key")
+            and len(variables) >= index
+        ):
             callback_name = data["callback_name"]
             form_key = data["form_key"]
-            keyboard = InlineKeyboardBuilder(markup=[
-                [InlineKeyboardButton(text=f"{callback_name}",
-                                      callback_data=f"{callback_name}:{form_key}")]])
-            await message.bot.send_message(message.from_user.id,
-                                           f"Accepted: {variables[index]['name']}: {user_input}",
-                                           reply_markup=keyboard.as_markup())
+            keyboard = InlineKeyboardBuilder(
+                markup=[
+                    [
+                        InlineKeyboardButton(
+                            text=f"{callback_name}",
+                            callback_data=f"{callback_name}:{form_key}",
+                        )
+                    ]
+                ]
+            )
+            await message.bot.send_message(
+                message.chat.id,
+                f"Accepted: {variables[index]['name']}: {user_input}",
+                reply_markup=keyboard.as_markup(),
+                message_thread_id=message.message_thread_id,
+            )
 
     except Exception as e:
         logging.error(f"Unexpected input error: {e}")
@@ -254,20 +330,24 @@ async def process_input(message: types.Message, state: FSMContext, form):
 async def edit_variable(callback_query: CallbackQuery, state: FSMContext, form):
     await callback_query.answer()  # Optional: Provides immediate feedback to the user
     # Extract the index of the variable from the callback data
-    _, index = callback_query.data.split(':')
+    _, index = callback_query.data.split(":")
     index = int(index)
     data = await state.get_data()
     variables = data.get("variables")
-    await callback_query.bot.send_message(callback_query.from_user.id, f"Enter {variables[index]['name']}")
+    await callback_query.bot.send_message(
+        callback_query.message.chat.id,
+        f"Enter {variables[index]['name']}",
+        message_thread_id=callback_query.message.message_thread_id,
+    )
     await state.update_data(current_index=index)
     await state.set_state(form.waiting_for_input)
 
 
 async def set_variable(callback_query: CallbackQuery, state: FSMContext, form):
-    await callback_query.answer()  # Optional: Provides immediate feedback to the user
+    # await callback_query.answer()  # Optional: Provides immediate feedback to the user
 
     # Extract the index of the variable from the callback data
-    _, index, value = callback_query.data.split(':')
+    _, index, value = callback_query.data.split(":")
     index = int(index)
 
     data = await state.get_data()
@@ -277,39 +357,45 @@ async def set_variable(callback_query: CallbackQuery, state: FSMContext, form):
     if not callback_name or not variables:
         raise ValueError("Form type/variables are not set in the state data.")
     resulting_variables[index] = {
-        "name": variables[index]['name'],
+        "name": variables[index]["name"],
         "value": value,
-        "type": variables[index]['value']['type']
+        "type": variables[index]["value"]["type"],
     }
     await state.update_data(resulting_variables=resulting_variables)
 
 
-async def get_process_definition_start_form_variables(process_definition_key: str,
-                                                      camunda_user_id: str = settings.ENGINE_USERNAME,
-                                                      camunda_key: str = settings.ENGINE_PASSWORD):
+async def get_process_definition_start_form_variables(
+    process_definition_key: str,
+    camunda_user_id: str = settings.ENGINE_USERNAME,
+    camunda_key: str = settings.ENGINE_PASSWORD,
+):
     async with httpx.AsyncHTTPTransport() as transport:
         camunda_client = CamundaEngineClient(
             auth_data=AuthData(username=camunda_user_id, password=camunda_key),
             base_url=settings.ENGINE_URL,
             transport=transport,
         )
-        variables = await camunda_client.get_process_definition_start_form(process_definition_key)
+        variables = await camunda_client.get_process_definition_start_form(
+            process_definition_key
+        )
+        await camunda_client.close()
         return variables
 
 
-async def generate_qr_code(callback_query: CallbackQuery, state: FSMContext, session: AsyncSession):
+async def generate_qr_code(
+    callback_query: CallbackQuery, state: FSMContext, session: AsyncSession
+):
     task_id = callback_query.data.split(":")[1]
     task_variables = await get_task_form_variables(task_id, state, session)
     task_variables_list = []
     task_variables_dict = {}
 
     for variable in task_variables:
-        task_variables_list.append(
-            variable.model_dump()
-        )
+        task_variables_list.append(variable.model_dump())
         task_variables_dict[variable.name] = variable.model_dump()
 
     import qrcode
+
     qr = qrcode.QRCode(
         version=1,
         error_correction=qrcode.constants.ERROR_CORRECT_L,
@@ -317,8 +403,10 @@ async def generate_qr_code(callback_query: CallbackQuery, state: FSMContext, ses
         border=4,
     )
     # b'https://pixelpact.ai/?event_id=1&art_id=1'
-    params = urlencode({key: value['value']['value'] for key, value in task_variables_dict.items()})
-    qr_data = (f"{settings.SERVICE_URL}/?{params}")
+    params = urlencode(
+        {key: value["value"]["value"] for key, value in task_variables_dict.items()}
+    )
+    qr_data = f"{settings.SERVICE_URL}/?{params}"
     qr.add_data(qr_data)
     qr.make(fit=True)
     img = qr.make_image(fill_color="black", back_color="white")
@@ -330,75 +418,162 @@ async def generate_qr_code(callback_query: CallbackQuery, state: FSMContext, ses
 
     s3_file_name = f"qr/{uuid.uuid4()}.jpg"
     # Upload to S3
-    photo_url = upload_file_to_s3_binary(image_bytes, settings.AWS_S3_BUCKET, s3_file_name)
+    photo_url = upload_file_to_s3_binary(
+        image_bytes, settings.AWS_S3_BUCKET, s3_file_name
+    )
 
     # Send QR code as photo
-    await callback_query.bot.send_photo(chat_id=callback_query.from_user.id, photo=photo_url)
+    await callback_query.bot.send_photo(
+        chat_id=callback_query.message.chat.id,
+        photo=photo_url,
+        message_thread_id=callback_query.message.message_thread_id,
+    )
 
-async def compose_review_keyboard(bot: Bot, user_id: int, start_form_variables: list,
-                                callback_name: str, form_key: str):
+
+async def compose_review_keyboard(
+    bot: Bot,
+    user_id: int,
+    start_form_variables: list,
+    callback_name: str,
+    form_key: str,
+    thread_id: int | None = None,
+):
     buttons = []
     for idx, variable in enumerate(start_form_variables):
-        variable_name = variable['name']
+        variable_name = variable["name"]
         if variable_name == "is_regenerate":
-            buttons.append([
-                InlineKeyboardButton(
-                    text="Regenerate?",
-                    callback_data=f"set_variable:{idx}:{True}",
-                )
-            ])
+            buttons.extend(
+                [
+                    [
+                        InlineKeyboardButton(
+                            text="Regenerate",
+                            callback_data=f"set_variable:{idx}:{True}",
+                        ),
+                        InlineKeyboardButton(
+                            text="Complete",
+                            callback_data=f"{callback_name}:{form_key}",
+                        ),
+                    ],
+                ]
+            )
             continue
     keyboard = InlineKeyboardBuilder(markup=buttons)
-    await bot.send_message(user_id, "Regenerate or Complete?", reply_markup=keyboard.as_markup())
-    keyboard = InlineKeyboardBuilder(markup=[
-        [InlineKeyboardButton(text=f"{callback_name}",
-                              callback_data=f"{callback_name}:{form_key}")]])
-    await bot.send_message(user_id, "Complete", reply_markup=keyboard.as_markup())
+    await bot.send_message(
+        user_id,
+        "Regenerate or Complete?",
+        reply_markup=keyboard.as_markup(),
+        message_thread_id=thread_id,
+    )
 
-async def compose_form_keyboard(bot: Bot, user_id: int, start_form_variables: list,
-                                callback_name: str, form_key: str):
+    # await bot.send_message(
+    #     user_id,
+    #     "Complete",
+    #     reply_markup=keyboard.as_markup(),
+    #     message_thread_id=thread_id,
+    # )
+
+
+async def compose_form_keyboard(
+    bot: Bot,
+    user_id: int,
+    start_form_variables: list,
+    callback_name: str,
+    form_key: str,
+    thread_id: int | None = None,
+):
     buttons = []
     for idx, variable in enumerate(start_form_variables):
-        variable_type = variable['value']['type']
-        variable_name = variable['name']
-        variable_value = variable['value'].get('value')
-        if variable_type == 'String' and 'img_' in variable_name:
+        variable_type = variable["value"]["type"]
+        variable_name = variable["name"]
+        variable_value = variable["value"].get("value")
+        if variable_type == "String" and "img_" in variable_name:
             if variable_value:
-                buttons.append([InlineKeyboardButton(text=f"Default {variable_name}",
-                                                     callback_data=f"set_variable:{idx}:{True}"),
-                                InlineKeyboardButton(text="Upload new image", callback_data=f"upload_new:{idx}")])
+                buttons.append(
+                    [
+                        InlineKeyboardButton(
+                            text=f"Default {variable_name}",
+                            callback_data=f"set_variable:{idx}:{True}",
+                        ),
+                        InlineKeyboardButton(
+                            text="Upload new image", callback_data=f"upload_new:{idx}"
+                        ),
+                    ]
+                )
             else:
-                buttons.append([InlineKeyboardButton(text=f"Upload new {variable_name}",
-                                                     callback_data=f"upload_new:{idx}")])
+                buttons.append(
+                    [
+                        InlineKeyboardButton(
+                            text=f"Upload new {variable_name}",
+                            callback_data=f"upload_new:{idx}",
+                        )
+                    ]
+                )
             continue
-        if variable_type == 'Boolean':
+        if variable_type == "Boolean":
             true_text = f"{variable_name}: True"
             false_text = f"{variable_name}: False"
             if variable_value:
                 true_text += "(Default)"
             else:
                 false_text += "(Default)"
-            buttons.append([
-                InlineKeyboardButton(text=true_text, callback_data=f"set_variable:{idx}:{True}"),
-                InlineKeyboardButton(text=false_text, callback_data=f"set_variable:{idx}:{False}")])
+            buttons.append(
+                [
+                    InlineKeyboardButton(
+                        text=true_text, callback_data=f"set_variable:{idx}:{True}"
+                    ),
+                    InlineKeyboardButton(
+                        text=false_text, callback_data=f"set_variable:{idx}:{False}"
+                    ),
+                ]
+            )
             continue
         if not variable_value:
-            buttons.append([InlineKeyboardButton(text=f"Edit {variable_name}:{variable_type}",
-                                                 callback_data=f"edit_variable:{idx}")])
+            buttons.append(
+                [
+                    InlineKeyboardButton(
+                        text=f"Edit {variable_name}:{variable_type}",
+                        callback_data=f"edit_variable:{idx}",
+                    )
+                ]
+            )
         else:
             buttons.append(
-                [InlineKeyboardButton(text=f"Edit {variable_name}:{variable_type}, default: {variable_value}",
-                                      callback_data=f"edit_variable:{idx}")])
+                [
+                    InlineKeyboardButton(
+                        text=f"Edit {variable_name}:{variable_type}, default: {variable_value}",
+                        callback_data=f"edit_variable:{idx}",
+                    )
+                ]
+            )
     keyboard = InlineKeyboardBuilder(markup=buttons)
-    await bot.send_message(user_id, "Please fill in the form:", reply_markup=keyboard.as_markup())
-    keyboard = InlineKeyboardBuilder(markup=[
-        [InlineKeyboardButton(text=f"{callback_name}",
-                              callback_data=f"{callback_name}:{form_key}")]])
-    await bot.send_message(user_id, f"Actions after: {callback_name}:{form_key}", reply_markup=keyboard.as_markup())
+    await bot.send_message(
+        user_id,
+        "Please fill in the form:",
+        reply_markup=keyboard.as_markup(),
+        message_thread_id=thread_id,
+    )
+    keyboard = InlineKeyboardBuilder(
+        markup=[
+            [
+                InlineKeyboardButton(
+                    text=f"{callback_name}", callback_data=f"{callback_name}:{form_key}"
+                )
+            ]
+        ]
+    )
+    await bot.send_message(
+        user_id,
+        f"Actions after: {callback_name}:{form_key}",
+        reply_markup=keyboard.as_markup(),
+        message_thread_id=thread_id,
+    )
 
 
-async def get_process_definitions(prefix: str | None = None, camunda_user_id: str = settings.ENGINE_USERNAME,
-                                  camunda_key: str = settings.ENGINE_PASSWORD):
+async def get_process_definitions(
+    prefix: str | None = None,
+    camunda_user_id: str = settings.ENGINE_USERNAME,
+    camunda_key: str = settings.ENGINE_PASSWORD,
+):
     async with httpx.AsyncHTTPTransport() as transport:
         camunda_client = CamundaEngineClient(
             auth_data=AuthData(username=camunda_user_id, password=camunda_key),
@@ -406,115 +581,154 @@ async def get_process_definitions(prefix: str | None = None, camunda_user_id: st
             transport=transport,
         )
         process_definitions = await camunda_client.get_process_definitions()
+        await camunda_client.close()
         process_definitions_artwork = {}
         for process_definition in process_definitions:
             if prefix and process_definition.key.startswith(prefix):
-                process_definitions_artwork[process_definition.name] = process_definition
+                process_definitions_artwork[process_definition.name] = (
+                    process_definition
+                )
             elif not prefix:
-                process_definitions_artwork[process_definition.name] = process_definition
+                process_definitions_artwork[process_definition.name] = (
+                    process_definition
+                )
         return list(process_definitions_artwork.values())
 
 
-async def start_definition_by_key(user_id,
-                                  bot: Bot,
-                                  state: FSMContext,
-                                  process_definition_key: str,
-                                  camunda_user_id: str = settings.ENGINE_USERNAME,
-                                  camunda_key: str = settings.ENGINE_PASSWORD):
-    start_form_variables = await get_process_definition_start_form_variables(process_definition_key,
-                                                                             camunda_user_id=camunda_user_id,
-                                                                             camunda_key=camunda_key)
+async def start_definition_by_key(
+    user_id,
+    bot: Bot,
+    state: FSMContext,
+    process_definition_key: str,
+    camunda_user_id: str = settings.ENGINE_USERNAME,
+    camunda_key: str = settings.ENGINE_PASSWORD,
+    thread_id: int | None = None,
+):
+    start_form_variables = await get_process_definition_start_form_variables(
+        process_definition_key, camunda_user_id=camunda_user_id, camunda_key=camunda_key
+    )
     # Assuming model_dump converts the variables to a list of dicts
     start_form_variables = [variable.model_dump() for variable in start_form_variables]
     data = await state.get_data()
     resulting_variables = data.get("resulting_variables", [])
     for variable in start_form_variables:
-        resulting_variables.append({
-            "name": variable['name'],
-            "value": variable['value']['value'],
-            "type": variable['value']['type']
-        })
-    await state.update_data(**{"variables": start_form_variables, "current_index": 0,
-                               "callback_name": "start_process_instance",
-                               "form_key": process_definition_key,
-                               "resulting_variables": resulting_variables})
+        resulting_variables.append(
+            {
+                "name": variable["name"],
+                "value": variable["value"]["value"],
+                "type": variable["value"]["type"],
+            }
+        )
+    await state.update_data(
+        **{
+            "variables": start_form_variables,
+            "current_index": 0,
+            "callback_name": "start_process_instance",
+            "form_key": process_definition_key,
+            "resulting_variables": resulting_variables,
+        }
+    )
     await state.update_data(process_definition_key=process_definition_key)
     if start_form_variables:
-        await compose_form_keyboard(bot, user_id, start_form_variables,
-                                    callback_name="start_process_instance", form_key=process_definition_key)
+        await compose_form_keyboard(
+            bot,
+            user_id,
+            start_form_variables,
+            callback_name="start_process_instance",
+            form_key=process_definition_key,
+            thread_id=thread_id,
+        )
     else:
-        process_instance = await start_process_instance(state, process_definition_key, camunda_user_id, camunda_key)
-        await bot.send_message(user_id, f"Process instance started: {process_instance.id}")
+        process_instance = await start_process_instance(
+            state, process_definition_key, camunda_user_id, camunda_key
+        )
+        await bot.send_message(
+            user_id,
+            f"Process instance started: {process_instance.id}",
+            message_thread_id=thread_id,
+        )
         await asyncio.sleep(2)
-        tasks = await fetch_camunda_tasks(camunda_user_id=camunda_user_id,
-                                          root_process_instance_id=process_instance.id)
+        tasks = await fetch_camunda_tasks(
+            camunda_user_id=camunda_user_id,
+            root_process_instance_id=process_instance.id,
+        )
         if tasks:
-            await bot.send_message(user_id,
-                                   "Tasks available in tasklist:",
-                                   reply_markup=task_keyboard(tasks))
+            await bot.send_message(
+                user_id,
+                "Tasks available in tasklist:",
+                reply_markup=task_keyboard(tasks),
+                message_thread_id=thread_id,
+            )
 
 
 async def claim_task(callback_query: CallbackQuery, state: FSMContext):
     task_id = callback_query.data.split(":")[1]
-    task_info = await get_task(task_id, state)
-    task_variables = await get_task_form_variables(task_id, state)
+    task_info, task_variables = await asyncio.gather(
+        get_task(task_id, state), get_task_form_variables(task_id, state)
+    )
     task_variables_list = []
     task_variables_dict = {}
 
     for variable in task_variables:
-        task_variables_list.append(
-            variable.model_dump()
-        )
+        task_variables_list.append(variable.model_dump())
         task_variables_dict[variable.name] = variable.model_dump()
-
-    user_data = await state.get_data()
-    user_info = user_data.get("user")
-
-    if task_info.assignee == user_info.get("camunda_user_id"):
-        if task_info.task_definition_key == "qr_reading":
-            # Send QR code as photo
-            await handle_upload_qr(callback_query.from_user.id, state, callback_query.bot)
-            state_data = await state.get_data()
-            qr_data = state_data.get("qr_data")
-            await callback_query.bot.send_message(callback_query.from_user.id, f"QR Code data: {qr_data}")
 
     data = await state.get_data()
     resulting_variables = data.get("resulting_variables", [])
-    resulting_variables_dict = {var['name']: var for var in resulting_variables}
+    resulting_variables_dict = {var["name"]: var for var in resulting_variables}
 
     for variable in task_variables_list:
-        name = variable['name']
-        value = variable['value']['value']
-        var_type = variable['value']['type']
-        if var_type == 'Boolean':
+        name = variable["name"]
+        value = variable["value"]["value"]
+        var_type = variable["value"]["type"]
+        if var_type == "Boolean":
             value = bool(value)
         if name in resulting_variables_dict:
             # Update the existing variable
-            resulting_variables_dict[name]['value'] = value
-            resulting_variables_dict[name]['type'] = var_type
+            resulting_variables_dict[name]["value"] = value
+            resulting_variables_dict[name]["type"] = var_type
         else:
             # Append the new variable
             resulting_variables_dict[name] = {
                 "name": name,
                 "value": value,
-                "type": var_type
+                "type": var_type,
             }
     resulting_variables = list(resulting_variables_dict.values())
 
-    callback_name = "generate_qr_code" if task_info.task_definition_key == "generate_qr_code" else "complete_task"
+    callback_name = (
+        "generate_qr_code"
+        if task_info.task_definition_key == "generate_qr_code"
+        else "complete_task"
+    )
     form_key = str(task_info.id)
-    await state.update_data(**{"variables": task_variables_list, "current_index": 0,
-                               "resulting_variables": resulting_variables,
-                               "callback_name": callback_name, "form_key": form_key})
+    await state.update_data(
+        **{
+            "variables": task_variables_list,
+            "current_index": 0,
+            "resulting_variables": resulting_variables,
+            "callback_name": callback_name,
+            "form_key": form_key,
+        }
+    )
     if task_info.task_definition_key in ["review_modal_season_pass_invite"]:
         for variable in resulting_variables:
-            if variable['name'] == "gen_art_id":
-                async with FlowClient(base_url=settings.FLOW_API, sys_key=settings.FLOW_SYS_KEY) as flow_client:
-                    art = await flow_client.get_art_by_id(art_id=variable['value'])
-                await callback_query.bot.send_photo(chat_id=callback_query.from_user.id, photo=art.img_picture)
-                await compose_review_keyboard(callback_query.bot, callback_query.from_user.id, task_variables_list,
-                                    callback_name, form_key)
+            if variable["name"] == "gen_art_id":
+                async with FlowClient(
+                    base_url=settings.FLOW_API, sys_key=settings.FLOW_SYS_KEY
+                ) as flow_client:
+                    art = await flow_client.get_art_by_id(art_id=variable["value"])
+                await callback_query.bot.send_photo(
+                    chat_id=callback_query.message.chat.id,
+                    photo=art.img_picture,
+                    message_thread_id=callback_query.message.message_thread_id,
+                )
+                await compose_review_keyboard(
+                    callback_query.bot,
+                    callback_query.message.chat.id,
+                    task_variables_list,
+                    callback_name,
+                    form_key,
+                    thread_id=callback_query.message.message_thread_id,
+                )
                 return
-    if task_info.task_definition_key not in ["qr_reading"]:
-        await compose_form_keyboard(callback_query.bot, callback_query.from_user.id, task_variables_list,
-                                    callback_name, form_key)

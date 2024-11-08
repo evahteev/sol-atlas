@@ -1,0 +1,7 @@
+# Bitnami PostgreSQL Configuration
+auth:
+  database: 'database'
+  enablePostgresUser: true
+  password: 'SuperSecret'
+  postgresPassword: 'SuperSecretPassword'
+  username: 'admin'

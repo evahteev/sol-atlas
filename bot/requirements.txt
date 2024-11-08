@@ -90,4 +90,4 @@ wrapt==1.16.0 ; python_version >= "3.10" and python_version < "4"
 yarl==1.9.4 ; python_version >= "3.10" and python_version < "4.0"
 pytest==7.1.2 ; python_version >= "3.10" and python_version < "4.0"
 pytest-asyncio
-
+web3==6.20.2 ; python_version >= "3.10" and python_version < "4.0"

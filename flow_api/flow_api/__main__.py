@@ -26,17 +26,17 @@ from starlette.status import (
 )
 from tortoise.contrib.fastapi import register_tortoise
 
-from fa_admin import settings
-from fa_admin.constants import BASE_DIR
-from fa_admin.exception_handlers import authjwt_exception_handler
-from fa_admin.models import Admin
-from fa_admin.providers import LoginProvider
-from fa_admin.routes.api_routes import router as api_route
-from fa_admin.routes.warehouse_proxy import router as warehouse_router
-from fa_admin.routes.camunda_routes import router as camunda_route
-from fa_admin.routes.seasons_routes import seasons_router
-from fa_admin.routes.token_info_routes import router as token_info_router
-from fa_admin.settings import database_url
+from flow_api import settings
+from flow_api.constants import BASE_DIR
+from flow_api.exception_handlers import authjwt_exception_handler
+from flow_api.models import Admin
+from flow_api.providers import LoginProvider
+from flow_api.routes.api_routes import router as api_route
+from flow_api.routes.warehouse_proxy import router as warehouse_router
+from flow_api.routes.camunda_routes import router as camunda_route
+from flow_api.routes.seasons_routes import seasons_router
+from flow_api.routes.token_info_routes import router as token_info_router
+from flow_api.settings import database_url
 
 
 class ApmClient:
@@ -96,13 +96,16 @@ def create_app():
 
     @app.on_event("startup")
     async def startup():
-        r = redis.from_url(
+        pool = redis.ConnectionPool.from_url(
             settings.REDIS_URL,
             decode_responses=True,
-            encoding="utf8",
+            encoding="utf-8",
             health_check_interval=30,
+            max_connections=10,
             retry_on_timeout=True,
+            socket_keepalive=True,
         )
+        app.redis = redis.Redis(connection_pool=pool)
         await admin_app.configure(
             logo_url="https://preview.tabler.io/static/logo-white.svg",
             template_folders=[os.path.join(BASE_DIR, "templates")],
@@ -113,7 +116,7 @@ def create_app():
                     admin_model=Admin,
                 )
             ],
-            redis=r,
+            redis=app.redis,
         )
         app.sys_key = settings.SYS_KEY
 
@@ -144,16 +147,16 @@ def create_app():
             "apps": {
                 "models": {
                     "models": [
-                        "fa_admin.models",
-                        "fa_admin.art_models",
-                        "fa_admin.flow_models",
+                        "flow_api.models",
+                        "flow_api.art_models",
+                        "flow_api.flow_models",
                     ],
                     "default_connection": "default",
                 }
             },
             "use_tz": False,
         },
-        generate_schemas=True,
+        generate_schemas=settings.GENERATE_SCHEMA,
     )
     app = add_routes(app)
     return app
@@ -171,4 +174,9 @@ def add_routes(app):
 app_ = create_app()
 
 if __name__ == "__main__":
-    uvicorn.run("fa_admin.__main__:app_", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run(
+        "flow_api.__main__:app_",
+        host="0.0.0.0",
+        port=8000,
+        reload=settings.ENVIRONMENT == "dev",
+    )

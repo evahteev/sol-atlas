@@ -4,7 +4,7 @@ from camunda_client.types_ import BaseSchema, Variables
 
 
 class AddUserSchema(BaseSchema):
-    username: str
+    username: str | None = None
     first_name: str | None = None
     last_name: str | None = None
     language_code: str | None = None

@@ -1,0 +1,35 @@
+.container {
+  padding: 16px;
+  border-radius: var(--_card-border-radius, 16px);
+  background: var(--_card-background, var(--card-background));
+}
+
+.dark {
+  &--100 {
+    --card-background: var(--color-dark-100);
+  }
+
+  &--80 {
+    --card-background: var(--color-dark-80);
+  }
+
+  &--60 {
+    --card-background: var(--color-dark-60);
+  }
+
+  &--40 {
+    --card-background: var(--color-dark-40);
+  }
+
+  &--30 {
+    --card-background: var(--color-dark-30);
+  }
+
+  &--20 {
+    --card-background: var(--color-dark-20);
+  }
+
+  &--10 {
+    --card-background: var(--color-dark-10);
+  }
+}

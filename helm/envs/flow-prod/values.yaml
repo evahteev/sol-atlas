@@ -1,0 +1,17 @@
+app:
+  replicas:
+    default: 1
+  serviceType: NodePort
+  limitsCpu: 1
+  limitsMemory: 1G
+  requestsCpu: 1
+  requestsMemory: 1G
+  strategyType: 'RollingUpdate'
+  workingDir: '/app/src/'
+  baseEnv:
+    OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: http://localhost:4318/v1/traces
+    OTEL_EXPORTER_OTLP_TRACES_PROTOCOL: http/protobuf
+    LOGGING_LEVEL: 'INFO'
+    LOG_HANDLERS: '["console"]'
+    LOGSTASH: "logstash-logstash.logging.svc.cluster.local"
+

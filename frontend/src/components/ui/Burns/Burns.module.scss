@@ -1,0 +1,12 @@
+.container {
+  display: inline-flex;
+  gap: 0.25em;
+}
+
+.value {
+  color: var(--color-accent);
+}
+
+.unit {
+  color: var(--color-comment);
+}

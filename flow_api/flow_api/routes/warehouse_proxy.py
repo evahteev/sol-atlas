@@ -6,8 +6,8 @@ from starlette.requests import Request
 from starlette.responses import Response
 from yarl import URL
 
-from fa_admin import settings
-from fa_admin.utils import CACHE_CONFIG
+from flow_api import settings
+from flow_api.utils import DECORATOR_CACHE_CONFIG
 
 router = APIRouter()
 
@@ -29,7 +29,7 @@ async def warehouse(
     return response
 
 
-@cached(ttl=300, **CACHE_CONFIG)
+@cached(ttl=300, **DECORATOR_CACHE_CONFIG)
 async def get_warehouse(
     path: str,
     query_params: dict | None = None,

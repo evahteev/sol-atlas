@@ -1,0 +1,17 @@
+.container {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.avatar {
+  flex: 0 0 auto;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: block;
+}
+
+.action {
+  margin-inline-start: auto;
+}

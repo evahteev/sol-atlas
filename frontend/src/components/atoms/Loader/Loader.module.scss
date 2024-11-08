@@ -1,0 +1,59 @@
+.container {
+  width: 56px;
+  aspect-ratio: 1;
+  margin: auto;
+  position: relative;
+}
+.segment::before,
+.segment::after {
+  content: '';
+  left: 0;
+  top: 0;
+  border: 0;
+  margin: 0;
+  width: 40%;
+  height: 40%;
+  position: absolute;
+  border-radius: 50%;
+  animation: spin 2s ease infinite;
+}
+
+.segment {
+  &:first-child {
+    &::before {
+      background: var(--color-primary);
+      animation-delay: -1.5s;
+    }
+    &::after {
+      background: var(--color-brand-bg);
+      --_angle-bg: -86deg;
+      animation-delay: -1s;
+    }
+  }
+
+  &:last-child {
+    &::before {
+      background: var(--color-secondary);
+      animation-delay: -0.5s;
+    }
+    &::after {
+      background: var(--color-brand-bg);
+    }
+  }
+}
+
+@keyframes spin {
+  0%,
+  100% {
+    transform: translate(0);
+  }
+  25% {
+    transform: translate(150%);
+  }
+  50% {
+    transform: translate(150%, 150%);
+  }
+  75% {
+    transform: translate(0, 150%);
+  }
+}

@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.20.0">
+  <bpmn:process id="daily_rewards" name="Daily tGURU Faucet" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1" name="Start" camunda:initiator="camunda_user_id">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="def_rewardAmount" label="def_rewardAmount" type="long" defaultValue="100" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_1oijnvg</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:userTask id="ClaimRewardTask" name="Daily Faucet" camunda:assignee="${camunda_user_id}">
+      <bpmn:documentation>Claim Daily Rewards</bpmn:documentation>
+      <bpmn:extensionElements>
+        <camunda:executionListener event="end">
+          <camunda:script scriptFormat="JavaScript">
+              var currentTime = new Date().getTime();
+              execution.setVariable("lastClaimTime", currentTime);
+            </camunda:script>
+        </camunda:executionListener>
+        <camunda:formData>
+          <camunda:formField id="text_claim_daily_gurus " label="Claim Guru" type="string" defaultValue="You are able to claim ${def_rewardAmount} " />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1k0cb6y</bpmn:incoming>
+      <bpmn:incoming>Flow_08z4qjd</bpmn:incoming>
+      <bpmn:outgoing>Flow_0di2s7m</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:intermediateCatchEvent id="Wait24HoursEvent" name="Wait 24 Hours">
+      <bpmn:incoming>Flow_0xs87v7</bpmn:incoming>
+      <bpmn:incoming>Flow_11i6nnv</bpmn:incoming>
+      <bpmn:outgoing>Flow_08z4qjd</bpmn:outgoing>
+      <bpmn:timerEventDefinition>
+        <bpmn:timeDuration>PT24H</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:intermediateCatchEvent>
+    <bpmn:endEvent id="EndEvent_1" name="End">
+      <bpmn:incoming>Flow_0rheqqb</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0di2s7m" sourceRef="ClaimRewardTask" targetRef="add_rewards" />
+    <bpmn:sequenceFlow id="Flow_0lzwzls" sourceRef="add_rewards" targetRef="success_message" />
+    <bpmn:serviceTask id="add_rewards" name="Add rewards" camunda:type="external" camunda:topic="finance_send_rewards">
+      <bpmn:incoming>Flow_0di2s7m</bpmn:incoming>
+      <bpmn:outgoing>Flow_0lzwzls</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0xs87v7" sourceRef="success_message" targetRef="Wait24HoursEvent" />
+    <bpmn:userTask id="success_message" name="Success Message" camunda:assignee="${camunda_user_id}">
+      <bpmn:documentation>Confirmed! Come back for more tomorrow.</bpmn:documentation>
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="text_success_message" label="Success" type="string" defaultValue="Congratulations! You just recieved ${def_rewardAmount} tGURU! Get back in 24 hours, to claim more tGURU for your builds!" />
+          <camunda:formField id="txhash_rewards" label="Transaction" type="string" defaultValue="${txhash_rewards}" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0lzwzls</bpmn:incoming>
+      <bpmn:outgoing>Flow_0xs87v7</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:boundaryEvent id="Event_0c5w665" cancelActivity="false" attachedToRef="add_rewards">
+      <bpmn:outgoing>Flow_1pvk80a</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_1xo0gqv">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT30S</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:boundaryEvent>
+    <bpmn:userTask id="admin_check_rewards_worker" name="Admin Task To Check rewards worker" camunda:assignee="admin">
+      <bpmn:incoming>Flow_1pvk80a</bpmn:incoming>
+      <bpmn:outgoing>Flow_0rheqqb</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_1pvk80a" sourceRef="Event_0c5w665" targetRef="admin_check_rewards_worker" />
+    <bpmn:sequenceFlow id="Flow_0rheqqb" sourceRef="admin_check_rewards_worker" targetRef="EndEvent_1" />
+    <bpmn:serviceTask id="Activity_1jk6f7r" name="Get telegram ID" camunda:asyncBefore="true" camunda:class="ai.hhrdr.chainflow.engine.delegate.GetUserInfoDelegate">
+      <bpmn:incoming>Flow_0vbqff4</bpmn:incoming>
+      <bpmn:outgoing>Flow_1k0cb6y</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1oijnvg" sourceRef="StartEvent_1" targetRef="Activity_0adj1sy" />
+    <bpmn:sequenceFlow id="Flow_1k0cb6y" sourceRef="Activity_1jk6f7r" targetRef="ClaimRewardTask" />
+    <bpmn:sequenceFlow id="Flow_08z4qjd" sourceRef="Wait24HoursEvent" targetRef="ClaimRewardTask" />
+    <bpmn:sequenceFlow id="Flow_11i6nnv" sourceRef="Event_0rvf252" targetRef="Wait24HoursEvent" />
+    <bpmn:boundaryEvent id="Event_0rvf252" attachedToRef="success_message">
+      <bpmn:outgoing>Flow_11i6nnv</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_1fqb4k1">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT60S</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:boundaryEvent>
+    <bpmn:serviceTask id="Activity_0adj1sy" name="Set Default Variables with def_ prefix if not specified" camunda:class="ai.hhrdr.chainflow.engine.delegate.SetDefaultVariablesDelegate">
+      <bpmn:incoming>Flow_1oijnvg</bpmn:incoming>
+      <bpmn:outgoing>Flow_0vbqff4</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0vbqff4" sourceRef="Activity_0adj1sy" targetRef="Activity_1jk6f7r" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="daily_rewards">
+      <bpmndi:BPMNShape id="StartEvent_1_di" bpmnElement="StartEvent_1">
+        <dc:Bounds x="162" y="252" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="168" y="288" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ClaimRewardTask_di" bpmnElement="ClaimRewardTask">
+        <dc:Bounds x="590" y="230" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Wait24HoursEvent_di" bpmnElement="Wait24HoursEvent">
+        <dc:Bounds x="1052" y="252" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1035" y="228" width="70" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_1_di" bpmnElement="EndEvent_1">
+        <dc:Bounds x="1052" y="412" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1060" y="453" width="20" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0ldfdo0_di" bpmnElement="add_rewards">
+        <dc:Bounds x="750" y="230" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0oo4zcy_di" bpmnElement="success_message">
+        <dc:Bounds x="910" y="230" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1tddvco_di" bpmnElement="admin_check_rewards_worker">
+        <dc:Bounds x="750" y="390" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1gh9b6s_di" bpmnElement="Activity_1jk6f7r">
+        <dc:Bounds x="420" y="233" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0stqx66_di" bpmnElement="Activity_0adj1sy">
+        <dc:Bounds x="270" y="230" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1w6kl52_di" bpmnElement="Event_0rvf252">
+        <dc:Bounds x="952" y="292" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1imo3w3_di" bpmnElement="Event_0c5w665">
+        <dc:Bounds x="782" y="292" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0di2s7m_di" bpmnElement="Flow_0di2s7m">
+        <di:waypoint x="690" y="270" />
+        <di:waypoint x="750" y="270" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0lzwzls_di" bpmnElement="Flow_0lzwzls">
+        <di:waypoint x="850" y="270" />
+        <di:waypoint x="910" y="270" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0xs87v7_di" bpmnElement="Flow_0xs87v7">
+        <di:waypoint x="1010" y="270" />
+        <di:waypoint x="1052" y="270" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1pvk80a_di" bpmnElement="Flow_1pvk80a">
+        <di:waypoint x="800" y="328" />
+        <di:waypoint x="800" y="390" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0rheqqb_di" bpmnElement="Flow_0rheqqb">
+        <di:waypoint x="850" y="430" />
+        <di:waypoint x="1052" y="430" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1oijnvg_di" bpmnElement="Flow_1oijnvg">
+        <di:waypoint x="198" y="270" />
+        <di:waypoint x="270" y="270" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1k0cb6y_di" bpmnElement="Flow_1k0cb6y">
+        <di:waypoint x="520" y="271" />
+        <di:waypoint x="590" y="270" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_08z4qjd_di" bpmnElement="Flow_08z4qjd">
+        <di:waypoint x="1071" y="252" />
+        <di:waypoint x="1080" y="80" />
+        <di:waypoint x="650" y="80" />
+        <di:waypoint x="641" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_11i6nnv_di" bpmnElement="Flow_11i6nnv">
+        <di:waypoint x="970" y="328" />
+        <di:waypoint x="970" y="348" />
+        <di:waypoint x="1070" y="348" />
+        <di:waypoint x="1070" y="288" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0vbqff4_di" bpmnElement="Flow_0vbqff4">
+        <di:waypoint x="370" y="271" />
+        <di:waypoint x="420" y="272" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

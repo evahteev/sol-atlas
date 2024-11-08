@@ -1,0 +1,475 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_1i2gsp8" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.20.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.20.0">
+  <bpmn:process id="share_link_in_socials" name="Share in Socials" isExecutable="true">
+    <bpmn:documentation>Share Burning Meme link in socials and get Updates and Rewards</bpmn:documentation>
+    <bpmn:startEvent id="StartEvent_1" camunda:initiator="camunda_user_id">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="def_xLink" label="X Link" type="string" defaultValue="https://twitter.com/intent/tweet?text=Check%20out%20the%20new%20Guru%20Network%20App!%20Dive%20into%20AI,%20DeFi%20automations,%20GPT%20quests,%20and%20earn%20rewards.%20Join%20@xgurunetwork%20and%20explore%20it%20here:%20&#38;url=https://t.me/guru_network_bot/gurunetwork" />
+          <camunda:formField id="def_rewardAmount" label="Rewards" type="long" defaultValue="150" />
+          <camunda:formField id="def_fbLink" label="Fb Link" type="string" defaultValue="https://www.facebook.com/sharer/sharer.php?u=https://t.me/guru_network_bot/gurunetwork" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_0459irp</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_0459irp" sourceRef="StartEvent_1" targetRef="Activity_0adj1sy" />
+    <bpmn:serviceTask id="Activity_1jk6f7r" name="Get telegram ID" camunda:asyncBefore="true" camunda:class="ai.hhrdr.chainflow.engine.delegate.GetUserInfoDelegate">
+      <bpmn:incoming>Flow_07z2nas</bpmn:incoming>
+      <bpmn:outgoing>Flow_14mju00</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_14mju00" sourceRef="Activity_1jk6f7r" targetRef="Gateway_02vqdwe" />
+    <bpmn:parallelGateway id="Gateway_02vqdwe">
+      <bpmn:incoming>Flow_14mju00</bpmn:incoming>
+      <bpmn:outgoing>Flow_091il9f</bpmn:outgoing>
+      <bpmn:outgoing>Flow_05056ha</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:serviceTask id="Activity_1dcktmf" name="Add rewards" camunda:type="external" camunda:topic="finance_send_rewards">
+      <bpmn:incoming>Flow_0k41slz</bpmn:incoming>
+      <bpmn:outgoing>Flow_0wr2m2d</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:userTask id="Activity_185rimj" name="X Shared" camunda:assignee="${camunda_user_id}">
+      <bpmn:documentation>Rewards Transfered</bpmn:documentation>
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="text_succes_message" label="succes_message" type="string" defaultValue="Congratulations! You just earned ${def_rewardAmount} tGURU! Keep completing tasks to rack up even more!" />
+          <camunda:formField id="txhash_rewards" label="txhash_rewards" type="string" defaultValue="${txhash_rewards}" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0wr2m2d</bpmn:incoming>
+      <bpmn:outgoing>Flow_195m523</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="Activity_0qxgn6f" name="Admin Task To Check telegram worker" camunda:assignee="admin">
+      <bpmn:incoming>Flow_1cm9oz1</bpmn:incoming>
+      <bpmn:outgoing>Flow_0b62l3b</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:boundaryEvent id="Event_00c982z" cancelActivity="false" attachedToRef="Activity_1dcktmf">
+      <bpmn:outgoing>Flow_1cm9oz1</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_0jo8p0b">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT30S</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_0wr2m2d" sourceRef="Activity_1dcktmf" targetRef="Activity_185rimj" />
+    <bpmn:sequenceFlow id="Flow_195m523" sourceRef="Activity_185rimj" targetRef="Gateway_1nuq840" />
+    <bpmn:sequenceFlow id="Flow_1cm9oz1" sourceRef="Event_00c982z" targetRef="Activity_0qxgn6f" />
+    <bpmn:userTask id="share_link_twitter" name="Share link on X/Twitter" camunda:assignee="${camunda_user_id}">
+      <bpmn:documentation>Share Burning meme link on X/Twitter and get 150 Burns for each link</bpmn:documentation>
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="text_x_copy_message" label="Copy this text" type="string" defaultValue="Check out the new Guru Network App! Dive into AI, DeFi automations, GPT quests, and earn rewards." />
+          <camunda:formField id="link_x" label="Open X link and post with text" type="string" defaultValue="${def_xLink}" />
+          <camunda:formField id="form_xHandle" label="Link for your post on X" type="string">
+            <camunda:validation>
+              <camunda:constraint name="required" />
+              <camunda:constraint name="minlength" config="10" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="form_xPosted" label="X Posted" type="boolean" defaultValue="false">
+            <camunda:validation>
+              <camunda:constraint name="required" />
+            </camunda:validation>
+          </camunda:formField>
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1mt1mlr</bpmn:incoming>
+      <bpmn:incoming>Flow_091il9f</bpmn:incoming>
+      <bpmn:outgoing>Flow_14agwi4</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_091il9f" sourceRef="Gateway_02vqdwe" targetRef="share_link_twitter" />
+    <bpmn:sequenceFlow id="Flow_0naj0cz" sourceRef="Event_1a1ekyt" targetRef="Gateway_06u2myx" />
+    <bpmn:userTask id="wait_message" name="Check X Follow" camunda:assignee="support">
+      <bpmn:documentation>We are verifying your shared post. Get back in 1 hour to claim your rewards.</bpmn:documentation>
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="form_xHandle" label="X Handle" type="string" defaultValue="${form_xHandle}" />
+          <camunda:formField id="form_xPosted" label="X posted" type="boolean" defaultValue="${form_xPosted}" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_14agwi4</bpmn:incoming>
+      <bpmn:outgoing>Flow_00rg3r0</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_07z2nas" sourceRef="Activity_0adj1sy" targetRef="Activity_1jk6f7r" />
+    <bpmn:serviceTask id="Activity_0adj1sy" name="Set Default Variables with def_ prefix if not specified" camunda:class="ai.hhrdr.chainflow.engine.delegate.SetDefaultVariablesDelegate">
+      <bpmn:incoming>Flow_0459irp</bpmn:incoming>
+      <bpmn:outgoing>Flow_07z2nas</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:boundaryEvent id="Event_1a1ekyt" attachedToRef="wait_message">
+      <bpmn:outgoing>Flow_0naj0cz</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_0v1y373">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT1H</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:boundaryEvent>
+    <bpmn:exclusiveGateway id="Gateway_06u2myx">
+      <bpmn:incoming>Flow_0naj0cz</bpmn:incoming>
+      <bpmn:incoming>Flow_00rg3r0</bpmn:incoming>
+      <bpmn:outgoing>Flow_1mt1mlr</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0k41slz</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_00rg3r0" sourceRef="wait_message" targetRef="Gateway_06u2myx" />
+    <bpmn:sequenceFlow id="Flow_1mt1mlr" sourceRef="Gateway_06u2myx" targetRef="share_link_twitter">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${!form_xPosted}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_14agwi4" sourceRef="share_link_twitter" targetRef="wait_message" />
+    <bpmn:sequenceFlow id="Flow_0k41slz" sourceRef="Gateway_06u2myx" targetRef="Activity_1dcktmf" />
+    <bpmn:inclusiveGateway id="Gateway_1nuq840">
+      <bpmn:incoming>Flow_195m523</bpmn:incoming>
+      <bpmn:incoming>Flow_1akup76</bpmn:incoming>
+      <bpmn:incoming>Flow_1m46hd0</bpmn:incoming>
+      <bpmn:incoming>Flow_0b62l3b</bpmn:incoming>
+      <bpmn:outgoing>Flow_14vabds</bpmn:outgoing>
+    </bpmn:inclusiveGateway>
+    <bpmn:serviceTask id="Activity_0arnf27" name="Add rewards" camunda:type="external" camunda:topic="finance_send_rewards">
+      <bpmn:extensionElements />
+      <bpmn:incoming>Flow_0qbghum</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ms92bf</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:userTask id="Activity_19aba9i" name="Facebook Shared" camunda:assignee="${camunda_user_id}">
+      <bpmn:documentation>Rewards Transfered</bpmn:documentation>
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="text_succes_message" label="succes_message" type="string" defaultValue="Congratulations! You just earned ${def_rewardAmount} tGURU! Keep completing tasks to rack up even more!" />
+          <camunda:formField id="txhash_rewards" label="txhash_rewards" type="string" defaultValue="${txhash_rewards}" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0ms92bf</bpmn:incoming>
+      <bpmn:outgoing>Flow_1akup76</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="Activity_0h6t4xn" name="Admin Task To Check telegram worker" camunda:assignee="admin">
+      <bpmn:incoming>Flow_1l3g7et</bpmn:incoming>
+      <bpmn:outgoing>Flow_1m46hd0</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:boundaryEvent id="Event_1rc0mp4" cancelActivity="false" attachedToRef="Activity_0arnf27">
+      <bpmn:outgoing>Flow_1l3g7et</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_183arug">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT30S</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_0ms92bf" sourceRef="Activity_0arnf27" targetRef="Activity_19aba9i" />
+    <bpmn:sequenceFlow id="Flow_1l3g7et" sourceRef="Event_1rc0mp4" targetRef="Activity_0h6t4xn" />
+    <bpmn:sequenceFlow id="Flow_14vabds" sourceRef="Gateway_1nuq840" targetRef="Event_002yv6g" />
+    <bpmn:endEvent id="Event_08m9g1c">
+      <bpmn:incoming>Flow_1bz0b9x</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1akup76" sourceRef="Activity_19aba9i" targetRef="Gateway_1nuq840" />
+    <bpmn:sequenceFlow id="Flow_1m46hd0" sourceRef="Activity_0h6t4xn" targetRef="Gateway_1nuq840" />
+    <bpmn:sequenceFlow id="Flow_0b62l3b" sourceRef="Activity_0qxgn6f" targetRef="Gateway_1nuq840" />
+    <bpmn:userTask id="Activity_0nlraq0" name="Share link on Facebook" camunda:assignee="${camunda_user_id}">
+      <bpmn:documentation>Share Burning meme link on Facebook and get 150 Burns for each link</bpmn:documentation>
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="text_x_copy_message" label="Copy this text" type="string" defaultValue="Check out the new Guru Network App! Dive into AI, DeFi automations, GPT quests, and earn rewards." />
+          <camunda:formField id="link_fb" label="Open FB link and post with text" type="string" defaultValue="${def_fbLink}" />
+          <camunda:formField id="form_fbHandle" label="Link for your post on Facebook" type="string">
+            <camunda:validation>
+              <camunda:constraint name="required" />
+              <camunda:constraint name="minlength" config="10" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="form_fbPosted" label="Facebook Posted" type="boolean" defaultValue="false">
+            <camunda:validation>
+              <camunda:constraint name="required" />
+              <camunda:constraint name="minlength" config="10" />
+            </camunda:validation>
+          </camunda:formField>
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_05056ha</bpmn:incoming>
+      <bpmn:incoming>Flow_0morz2x</bpmn:incoming>
+      <bpmn:outgoing>Flow_1cdo3yu</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="Activity_1u4phf7" name="Check Facebook Follow" camunda:assignee="support">
+      <bpmn:documentation>We are verifying your shared post. Get back in 1 hour to claim your rewards.</bpmn:documentation>
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="form_fbHandle" label="X Handle" type="string" defaultValue="${form_fbHandle}" />
+          <camunda:formField id="form_fbPosted" label="Fb Posted" type="boolean" defaultValue="${form_fbPosted}" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1cdo3yu</bpmn:incoming>
+      <bpmn:outgoing>Flow_0zz21fe</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:boundaryEvent id="Event_0hc0m7t" attachedToRef="Activity_1u4phf7">
+      <bpmn:outgoing>Flow_1sy7hc9</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_1k0r3d8">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT1H</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_05056ha" sourceRef="Gateway_02vqdwe" targetRef="Activity_0nlraq0" />
+    <bpmn:sequenceFlow id="Flow_1cdo3yu" sourceRef="Activity_0nlraq0" targetRef="Activity_1u4phf7" />
+    <bpmn:exclusiveGateway id="Gateway_1gwwmwj">
+      <bpmn:incoming>Flow_1sy7hc9</bpmn:incoming>
+      <bpmn:incoming>Flow_0zz21fe</bpmn:incoming>
+      <bpmn:outgoing>Flow_0morz2x</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0qbghum</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0morz2x" sourceRef="Gateway_1gwwmwj" targetRef="Activity_0nlraq0">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${!form_fbPosted}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1sy7hc9" sourceRef="Event_0hc0m7t" targetRef="Gateway_1gwwmwj" />
+    <bpmn:sequenceFlow id="Flow_0zz21fe" sourceRef="Activity_1u4phf7" targetRef="Gateway_1gwwmwj" />
+    <bpmn:sequenceFlow id="Flow_0qbghum" sourceRef="Gateway_1gwwmwj" targetRef="Activity_0arnf27" />
+    <bpmn:intermediateCatchEvent id="Event_002yv6g">
+      <bpmn:incoming>Flow_14vabds</bpmn:incoming>
+      <bpmn:outgoing>Flow_1bz0b9x</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_131cdp4">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">P14D</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:intermediateCatchEvent>
+    <bpmn:sequenceFlow id="Flow_1bz0b9x" sourceRef="Event_002yv6g" targetRef="Event_08m9g1c" />
+    <bpmn:textAnnotation id="TextAnnotation_1uenf9y">
+      <bpmn:text>User Pushed Start on Quest</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_0687phw" associationDirection="None" sourceRef="StartEvent_1" targetRef="TextAnnotation_1uenf9y" />
+    <bpmn:textAnnotation id="TextAnnotation_0czdbn4">
+      <bpmn:text>Injesting user_id, telegram_user_id, user_is_premium, user_is_admin, web3_wallets into process instance context</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_1heumbr" associationDirection="None" sourceRef="Activity_1jk6f7r" targetRef="TextAnnotation_0czdbn4" />
+    <bpmn:textAnnotation id="TextAnnotation_0b5mlzs">
+      <bpmn:text>bot.getChatMember(chat_id='@burning_meme', user_id=telegram_user_id)</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:textAnnotation id="TextAnnotation_1lfyb4r">
+      <bpmn:text>Add rewards and push notification?</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_026m3ru" associationDirection="None" sourceRef="Activity_1dcktmf" targetRef="TextAnnotation_1lfyb4r" />
+    <bpmn:textAnnotation id="TextAnnotation_0k2yffd">
+      <bpmn:text>Set all def_ prefixed  variables into the execution context of process instance</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_0bknafq" associationDirection="None" sourceRef="Activity_0adj1sy" targetRef="TextAnnotation_0k2yffd" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="share_link_in_socials">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="132" y="722" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1gh9b6s_di" bpmnElement="Activity_1jk6f7r">
+        <dc:Bounds x="450" y="700" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0pp6mz0_di" bpmnElement="Gateway_02vqdwe">
+        <dc:Bounds x="625" y="715" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1i1cffo" bpmnElement="Activity_1dcktmf">
+        <dc:Bounds x="1530" y="420" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1t4bh07" bpmnElement="Activity_185rimj">
+        <dc:Bounds x="1670" y="420" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_12t0fv2" bpmnElement="Activity_0qxgn6f">
+        <dc:Bounds x="1530" y="599" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1dstvxx" bpmnElement="share_link_twitter">
+        <dc:Bounds x="740" y="420" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1x5sk9r_di" bpmnElement="wait_message">
+        <dc:Bounds x="1000" y="420" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0stqx66_di" bpmnElement="Activity_0adj1sy">
+        <dc:Bounds x="250" y="700" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_06u2myx_di" bpmnElement="Gateway_06u2myx" isMarkerVisible="true">
+        <dc:Bounds x="1185" y="435" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0ndx9jj_di" bpmnElement="Gateway_1nuq840">
+        <dc:Bounds x="1915" y="765" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1qmqegz" bpmnElement="Activity_0arnf27">
+        <dc:Bounds x="1530" y="730" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0r6u8ml" bpmnElement="Activity_19aba9i">
+        <dc:Bounds x="1670" y="730" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1d9tzbr" bpmnElement="Activity_0h6t4xn">
+        <dc:Bounds x="1530" y="909" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_08m9g1c_di" bpmnElement="Event_08m9g1c">
+        <dc:Bounds x="2202" y="772" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_04njnai" bpmnElement="Activity_0nlraq0">
+        <dc:Bounds x="740" y="700" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0lkgdzk" bpmnElement="Activity_1u4phf7">
+        <dc:Bounds x="1000" y="690" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0navdpg" bpmnElement="Gateway_1gwwmwj" isMarkerVisible="true">
+        <dc:Bounds x="1185" y="705" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0nne91r_di" bpmnElement="Event_002yv6g">
+        <dc:Bounds x="2052" y="772" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1uenf9y_di" bpmnElement="TextAnnotation_1uenf9y">
+        <dc:Bounds x="140" y="570" width="100" height="41" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0czdbn4_di" bpmnElement="TextAnnotation_0czdbn4">
+        <dc:Bounds x="450" y="580" width="169.99831309041835" height="98.51551956815115" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0b5mlzs_di" bpmnElement="TextAnnotation_0b5mlzs">
+        <dc:Bounds x="1140" y="80" width="300" height="41" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_13gh0yx" bpmnElement="TextAnnotation_1lfyb4r">
+        <dc:Bounds x="1610" y="309" width="190" height="41" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0k2yffd_di" bpmnElement="TextAnnotation_0k2yffd">
+        <dc:Bounds x="260" y="800" width="180" height="58" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1i8d3n1" bpmnElement="Event_0hc0m7t">
+        <dc:Bounds x="1082" y="712" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_05x8rek" bpmnElement="Event_1rc0mp4">
+        <dc:Bounds x="1562" y="792" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_122v1q5_di" bpmnElement="Event_1a1ekyt">
+        <dc:Bounds x="1082" y="442" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0gyqkmd" bpmnElement="Event_00c982z">
+        <dc:Bounds x="1562" y="482" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0459irp_di" bpmnElement="Flow_0459irp">
+        <di:waypoint x="168" y="740" />
+        <di:waypoint x="250" y="740" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_14mju00_di" bpmnElement="Flow_14mju00">
+        <di:waypoint x="550" y="740" />
+        <di:waypoint x="625" y="740" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_0l1nby0" bpmnElement="Flow_0wr2m2d">
+        <di:waypoint x="1630" y="460" />
+        <di:waypoint x="1670" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_1k5w2rq" bpmnElement="Flow_195m523">
+        <di:waypoint x="1770" y="460" />
+        <di:waypoint x="1940" y="460" />
+        <di:waypoint x="1940" y="765" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_0yx9gmd" bpmnElement="Flow_1cm9oz1">
+        <di:waypoint x="1580" y="518" />
+        <di:waypoint x="1580" y="599" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_091il9f_di" bpmnElement="Flow_091il9f">
+        <di:waypoint x="650" y="715" />
+        <di:waypoint x="650" y="460" />
+        <di:waypoint x="740" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0naj0cz_di" bpmnElement="Flow_0naj0cz">
+        <di:waypoint x="1118" y="460" />
+        <di:waypoint x="1185" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_07z2nas_di" bpmnElement="Flow_07z2nas">
+        <di:waypoint x="350" y="740" />
+        <di:waypoint x="450" y="740" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_00rg3r0_di" bpmnElement="Flow_00rg3r0">
+        <di:waypoint x="1050" y="420" />
+        <di:waypoint x="1050" y="370" />
+        <di:waypoint x="1170" y="370" />
+        <di:waypoint x="1202" y="443" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1mt1mlr_di" bpmnElement="Flow_1mt1mlr">
+        <di:waypoint x="1210" y="435" />
+        <di:waypoint x="1210" y="270" />
+        <di:waypoint x="760" y="270" />
+        <di:waypoint x="760" y="420" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_14agwi4_di" bpmnElement="Flow_14agwi4">
+        <di:waypoint x="840" y="460" />
+        <di:waypoint x="1000" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0k41slz_di" bpmnElement="Flow_0k41slz">
+        <di:waypoint x="1235" y="460" />
+        <di:waypoint x="1530" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_0qpskhu" bpmnElement="Flow_0ms92bf">
+        <di:waypoint x="1630" y="770" />
+        <di:waypoint x="1670" y="770" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_14rxvlr" bpmnElement="Flow_1l3g7et">
+        <di:waypoint x="1580" y="828" />
+        <di:waypoint x="1580" y="909" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_14vabds_di" bpmnElement="Flow_14vabds">
+        <di:waypoint x="1965" y="790" />
+        <di:waypoint x="2052" y="790" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1akup76_di" bpmnElement="Flow_1akup76">
+        <di:waypoint x="1770" y="770" />
+        <di:waypoint x="1843" y="770" />
+        <di:waypoint x="1843" y="790" />
+        <di:waypoint x="1915" y="790" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1m46hd0_di" bpmnElement="Flow_1m46hd0">
+        <di:waypoint x="1630" y="949" />
+        <di:waypoint x="1830" y="949" />
+        <di:waypoint x="1930" y="805" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0b62l3b_di" bpmnElement="Flow_0b62l3b">
+        <di:waypoint x="1630" y="639" />
+        <di:waypoint x="1830" y="639" />
+        <di:waypoint x="1929" y="776" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_05056ha_di" bpmnElement="Flow_05056ha">
+        <di:waypoint x="675" y="740" />
+        <di:waypoint x="740" y="740" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1cdo3yu_di" bpmnElement="Flow_1cdo3yu">
+        <di:waypoint x="840" y="740" />
+        <di:waypoint x="1000" y="740" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0morz2x_di" bpmnElement="Flow_0morz2x">
+        <di:waypoint x="1210" y="755" />
+        <di:waypoint x="1210" y="980" />
+        <di:waypoint x="790" y="980" />
+        <di:waypoint x="790" y="780" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1sy7hc9_di" bpmnElement="Flow_1sy7hc9">
+        <di:waypoint x="1118" y="730" />
+        <di:waypoint x="1185" y="730" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0zz21fe_di" bpmnElement="Flow_0zz21fe">
+        <di:waypoint x="1050" y="770" />
+        <di:waypoint x="1050" y="830" />
+        <di:waypoint x="1140" y="830" />
+        <di:waypoint x="1200" y="745" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0qbghum_di" bpmnElement="Flow_0qbghum">
+        <di:waypoint x="1235" y="730" />
+        <di:waypoint x="1383" y="730" />
+        <di:waypoint x="1383" y="770" />
+        <di:waypoint x="1530" y="770" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0687phw_di" bpmnElement="Association_0687phw">
+        <di:waypoint x="155" y="723" />
+        <di:waypoint x="184" y="611" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1heumbr_di" bpmnElement="Association_1heumbr">
+        <di:waypoint x="499" y="700" />
+        <di:waypoint x="498" y="679" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_1c252mu" bpmnElement="Association_026m3ru">
+        <di:waypoint x="1589" y="420" />
+        <di:waypoint x="1657" y="350" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0bknafq_di" bpmnElement="Association_0bknafq">
+        <di:waypoint x="305" y="780" />
+        <di:waypoint x="308" y="800" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1bz0b9x_di" bpmnElement="Flow_1bz0b9x">
+        <di:waypoint x="2088" y="790" />
+        <di:waypoint x="2202" y="790" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

@@ -11,9 +11,15 @@ REDIS_HOST = os.getenv("REDIS_HOST", "localhost")
 REDIS_PORT = int(os.getenv("REDIS_PORT", 6379))
 REDIS_DATABASE = int(os.getenv("REDIS_DATABASE", 0))
 SYS_KEY = os.getenv("SYS_KEY", "secret")
+GENERATE_SCHEMA = bool(os.getenv("GENERATE_SCHEMA", False))
+
 CACHE = os.getenv("CACHE", "redis")
 ENVIRONMENT = os.getenv("ENVIRONMENT", "dev")
 WAREHOUSE_URL = os.getenv("WAREHOUSE_URL", "https://warehouse.dex.guru")
+WAREHOUSE_REST_URL = os.getenv("WAREHOUSE_REST_URL", "https://api.dev.dex.guru")
+WAREHOUSE_API_KEY = os.getenv("WAREHOUSE_API_KEY", "API KEY")
+WAREHOUSE_REST_RETRIES = int(os.getenv("WAREHOUSE_REST_RETRIES", 3))
+WAREHOUSE_REST_TIMEOUT = int(os.getenv("WAREHOUSE_REST_TIMEOUT", 0.3))
 
 
 def database_url() -> str:

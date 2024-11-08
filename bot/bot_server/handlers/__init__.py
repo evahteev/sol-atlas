@@ -4,8 +4,28 @@ from bot_server.handlers import start
 
 
 def get_handlers_router() -> Router:
-    from . import (export_users, info, menu, artworks, support, tasks, account,
-                   events, artworks, notifications, generate, stats, scan)
+    from . import (
+        export_users,
+        info,
+        menu,
+        artworks,
+        support,
+        tasks,
+        account,
+        events,
+        artworks,
+        notifications,
+        generate,
+        stats,
+        scan,
+        balance,
+        voting,
+        quests,
+        faucet,
+        guru_gpt,
+        projects,
+    )
+
     """
         help - help
         account - manage account to access personalized features and settings
@@ -20,15 +40,14 @@ def get_handlers_router() -> Router:
     """
 
     router = Router()
-    router.include_router(account.router)
-    router.include_router(events.router)
-    router.include_router(artworks.router)
-    router.include_router(notifications.router)
-    router.include_router(generate.router)
-    router.include_router(tasks.router)
-    router.include_router(info.router)
     router.include_router(start.router)
-    router.include_router(support.router)
-    router.include_router(scan.router)
+    router.include_router(generate.router)
+    # router.include_router(balance.router)
+    # router.include_router(voting.router)
+    # router.include_router(quests.router)
+    # router.include_router(tasks.router)
+    router.include_router(faucet.router)
+    router.include_router(guru_gpt.router)
+    router.include_router(projects.router)
 
     return router

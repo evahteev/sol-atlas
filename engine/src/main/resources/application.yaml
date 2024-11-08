@@ -1,10 +1,13 @@
 spring.h2.console.enabled: true
 camunda.bpm:
+  generic-properties:
+    properties:
+      historyTimeToLive: P30D
   admin-user:
-    id: demo
-    password: demo
-    firstName: Demo
-    lastName: Demo
+   id: demo
+   password: demo
+   firstName: Demo
+   lastName: Demo
   filter:
     create: All Tasks
   run:

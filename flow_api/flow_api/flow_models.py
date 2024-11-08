@@ -38,7 +38,7 @@ class Strategy(Model):
 
 class Flow(Model):
     id = fields.UUIDField(pk=True, default=uuid.uuid4)
-    key = fields.CharField(max_length=200)
+    key = fields.CharField(max_length=200, null=True)
     name = fields.CharField(max_length=200, null=True)
     description = fields.TextField(null=True)
     img_picture = fields.CharField(max_length=200, null=True)
@@ -48,6 +48,7 @@ class Flow(Model):
         "models.User", related_name="flow", on_delete=fields.CASCADE
     )
     reference_id = fields.UUIDField(default=uuid.uuid4)
+    reward = fields.FloatField(default=0)
 
 
 class ExternalWorker(Model):
@@ -88,6 +89,7 @@ class NftMetadata(Model):
     season_id = fields.IntField()
     token_id = fields.IntField()
     chain_id = fields.IntField()
+    token_address = fields.CharField(max_length=200)
     art = fields.ForeignKeyField("models.Art", related_name="nft_metadata")
 
     class Meta:

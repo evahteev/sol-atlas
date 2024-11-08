@@ -1,9 +1,10 @@
 import re
+from uuid import UUID
 
 
-def remove_hyphens_from_uuid(uuid_str: str) -> str:
+def remove_hyphens_from_uuid(uuid_str: str | UUID) -> str:
     """Remove hyphens from a UUID string."""
-    return uuid_str.replace('-', '')
+    return str(uuid_str).replace('-', '')
 
 
 def add_hyphens_to_uuid(uuid_str: str) -> str:
