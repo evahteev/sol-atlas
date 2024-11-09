@@ -2,7 +2,7 @@ from uuid import UUID
 
 from pydantic import Field
 
-from fa_admin.rest_models.api_rest_models import ORMBaseModel
+from flow_api.rest_models.api_rest_models import ORMBaseModel
 
 
 class StrategyRest(ORMBaseModel):
@@ -32,6 +32,7 @@ class FlowRest(ORMBaseModel):
     parent_id: UUID
     user_id: UUID
     reference_id: UUID
+    reward: float = 0
 
 
 class ExternalWorkerRest(ORMBaseModel):

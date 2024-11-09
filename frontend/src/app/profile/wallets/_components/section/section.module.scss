@@ -1,0 +1,15 @@
+.container {
+  display: flex;
+  flex-flow: column;
+  gap: 16px;
+
+  &:not(:last-child) {
+    padding-block-end: 16px;
+    margin-block-end: 16px;
+    border-bottom: 1px var(--color-dark-60) solid;
+  }
+}
+
+.title {
+  color: var(--color-text-comment);
+}

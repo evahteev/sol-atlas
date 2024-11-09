@@ -1,0 +1,22 @@
+{{ if index .Values .Values.appName "port" }}
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ .Release.Name }}
+spec:
+  ports:
+    - name: default
+      protocol: TCP
+      port: {{ index .Values .Values.appName "port" }}
+      targetPort: {{ index .Values .Values.appName "port" }}
+      {{- if (index .Values .Values.appName "nodePort") }}
+      nodePort: {{ index .Values .Values.appName "nodePort" }}
+      {{- end }}
+  selector:
+    app: {{ .Release.Name }}
+  type: {{ index .Values .Values.appName "serviceType" | default "ClusterIP" }}
+{{ end }}

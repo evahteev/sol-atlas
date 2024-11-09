@@ -11,9 +11,10 @@ def register_middlewares(dp: Dispatcher) -> None:
     from .throttling import ThrottlingMiddleware
 
     dp.message.outer_middleware(ThrottlingMiddleware())
+    dp.callback_query.outer_middleware(ThrottlingMiddleware())
 
     dp.update.outer_middleware(LoggingMiddleware())
-
+    dp.callback_query.middleware(AuthMiddleware())
     dp.message.middleware(AuthMiddleware())
 
     dp.message.middleware(ACLMiddleware(i18n=_i18n))

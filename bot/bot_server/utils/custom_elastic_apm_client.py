@@ -3,7 +3,7 @@ from __future__ import absolute_import
 import json
 import os
 import re
-from unittest.mock import Mock
+from unittest.mock import MagicMock
 
 import elasticapm
 import elasticapm.instrumentation.control
@@ -66,7 +66,7 @@ def parse_query(query):
 
 def get_apm_client():
     if settings.DEBUG:
-        return Mock()
+        return MagicMock()
     apm_config = {
         "SERVICE_NAME": "chain-explorer",
         "SERVER_URL": os.environ.get("APM_SERVER_URL", "http://localhost:8200"),

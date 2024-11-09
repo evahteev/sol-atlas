@@ -32,7 +32,7 @@ services:
       - ${ADMIN_PORT}:${ADMIN_PORT}
     networks:
       - app
-    command: ["python", "./fa_admin/__main__.py"]
+    command: ["python", "./flow_api/__main__.py"]
     volumes:
       - ./:/usr/src/app
 

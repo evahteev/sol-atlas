@@ -1,1 +1,1 @@
-from fa_admin import resources, admin_routes  # noqa
+from flow_api import resources, admin_routes  # noqa

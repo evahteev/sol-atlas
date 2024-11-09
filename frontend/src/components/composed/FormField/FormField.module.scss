@@ -1,0 +1,176 @@
+.container {
+  text-align: start;
+}
+
+.inputable {
+  display: flex;
+  flex-flow: column;
+  gap: 2px;
+  border: 1px var(--color-dark-100) solid;
+  border-radius: 16px;
+  background: var(--color-dark-100);
+  padding: 16px;
+  transition: border 0.25s ease;
+
+  &:has(.input:focus-visible) {
+    background:
+      linear-gradient(var(--color-dark-100), var(--color-dark-100)) padding-box,
+      var(--color-brand-bg) border-box;
+    border-color: transparent;
+  }
+
+  &:has(.input:not(:placeholder-shown)) .caption {
+    color: var(--color-dark-30);
+  }
+}
+
+.caption {
+  transition: 0.25s ease;
+}
+
+.checkable {
+  display: inline-flex;
+  gap: 16px;
+}
+
+.control {
+  position: absolute;
+  margin: 12px 0 0 12px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  opacity: 0;
+
+  & ~ .caption {
+    padding-left: 40px;
+    padding: 2px 0 2px 40px;
+
+    &::before {
+      content: '';
+      display: inline-block;
+      vertical-align: middle;
+      flex: 0 0 auto;
+      width: 18px;
+      height: 18px;
+      margin: -5px 19px -3px -37px;
+      border: 2px var(--color-light) solid;
+      border-radius: 4px;
+      background: transparent center 18px no-repeat;
+      box-shadow: none;
+      transition: 0.25s ease;
+      cursor: pointer;
+    }
+  }
+
+  &[type='radio'] {
+    & ~ .caption {
+      &::before {
+        border-radius: 50%;
+      }
+    }
+  }
+
+  &:focus-within ~ .caption {
+    &::before {
+      border-color: var(--color-success);
+    }
+  }
+
+  &:checked ~ .caption {
+    &::before {
+      border-color: var(--color-success);
+      background-color: var(--color-success);
+    }
+  }
+
+  &[type='checkbox']:checked ~ .caption {
+    &::before {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 10 10' width='10' height='10'%3E%3Cpath fill='%23000' d='M3.64 6.16 1.41 3.93 0 5.35l3.77 3.77 5.7-6.84L7.95 1l-4.3 5.16Z'/%3E%3C/svg%3E");
+      background-position: center center;
+    }
+  }
+
+  &[type='radio']:checked ~ .caption {
+    &::before {
+      box-shadow: inset 0 0 0 3px var(--color-dark-05);
+    }
+  }
+}
+
+.input {
+  border: 0;
+  padding: 0;
+  margin: 0 -16px;
+  padding: 0 16px;
+  background: none;
+  color: var(--color-light);
+  outline: none;
+  font: inherit;
+  transition: 0.25s ease;
+  transition-property: color;
+
+  &:placeholder-shown {
+    color: var(--color-dark-30);
+  }
+
+  &:disabled {
+    color: var(--color-dark-30);
+  }
+
+  &:invalid {
+    color: var(--color-danger);
+  }
+
+  &::-webkit-inner-spin-button,
+  &::-webkit-outer-spin-button {
+    opacity: 1;
+    background: none;
+    margin: 0;
+  }
+
+  &::-webkit-inner-spin-button {
+    width: 24px;
+    height: 24px;
+    background: none;
+  }
+  &File {
+    visibility: hidden;
+    display: none;
+
+    &Container {
+      display: flex;
+      justify-content: center;
+    }
+
+    &Label {
+      font-size: 14px;
+      line-height: 20px;
+      font-weight: 700;
+      color: var(--color-light);
+      border: none;
+      margin: 0;
+      background-image: var(--color-brand-bg);
+      padding: 8px 16px;
+      border-radius: 16px;
+      cursor: pointer;
+    }
+  }
+}
+
+textarea.input {
+  margin-bottom: -16px;
+  padding-bottom: 16px;
+  min-height: 64px;
+  max-height: 50vh;
+  resize: vertical;
+
+  @supports (field-sizing: content) {
+    form-sizing: normal;
+    field-sizing: content;
+  }
+
+  @supports not (field-sizing: content) {
+    height: 160px;
+    height: 5lh;
+  }
+}

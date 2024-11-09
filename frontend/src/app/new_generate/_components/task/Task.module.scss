@@ -1,0 +1,65 @@
+@import '@/styles/mixins';
+
+.container {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+
+  &.active {
+    cursor: pointer;
+  }
+
+  &.pending {
+    @include element-preloader-direct-animated;
+  }
+
+  &.completed {
+    background: var(--color-dark);
+  }
+}
+
+.body {
+  flex: 1 1 0;
+  display: grid;
+  gap: 4px;
+}
+
+.footer {
+  display: grid;
+  place-items: center;
+}
+
+.title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.subtitle {
+  display: block;
+  color: var(--color-text-comment);
+}
+
+.icon {
+  transition: 0.25s ease;
+  opacity: 1;
+  width: 24px;
+  height: 24px;
+  fill: var(--color-dark-20);
+}
+
+.completed {
+  .icon {
+    fill: var(--color-success);
+  }
+}
+
+.pending {
+  .icon {
+    opacity: 0;
+  }
+
+  .title {
+    color: var(--color-text-comment);
+  }
+}

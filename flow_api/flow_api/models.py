@@ -5,9 +5,9 @@ from typing import Optional, Iterable
 from tortoise import Model, fields, BaseDBAsyncClient
 from tortoise.fields.relational import ForeignKeyRelation
 
-from fa_admin.art_models import ArtCollection, Art
-from fa_admin.enums import Status
-from fa_admin.flow_models import ExternalWorker, Strategy, Invite
+from flow_api.art_models import ArtCollection, Art
+from flow_api.enums import Status
+from flow_api.flow_models import ExternalWorker, Strategy, Invite, Flow
 from fastapi_admin.models import AbstractAdmin
 
 
@@ -53,7 +53,8 @@ class User(Model):
     is_suspicious = fields.BooleanField()
     camunda_user_id = fields.CharField(max_length=36, null=True)
     camunda_key = fields.UUIDField(default=uuid.uuid4, null=True)
-    telegram_user_id = fields.IntField(null=True)
+    telegram_user_id = fields.BigIntField(null=True)
+    discord_user_id = fields.CharField(max_length=200, null=True)
     webapp_user_id = fields.UUIDField(default=uuid.uuid4, null=True)
     is_block = fields.BooleanField()
     is_premium = fields.BooleanField()
@@ -62,12 +63,13 @@ class User(Model):
     )
     roles = fields.ManyToManyField("models.Role", related_name="user", default=[])
     strategies: ForeignKeyRelation["Strategy"]
+    flows: ForeignKeyRelation["Flow"]
     external_workers: ForeignKeyRelation["ExternalWorker"]
     arts: ForeignKeyRelation["Art"]
     art_collections: ForeignKeyRelation["ArtCollection"]
     invites: ForeignKeyRelation["Invite"]
-    web3_users: ForeignKeyRelation["Web3User"]
-    telegram_users: ForeignKeyRelation["TelegramUser"]
+    web3_wallets: ForeignKeyRelation["Web3User"]
+    telegram_accounts: ForeignKeyRelation["TelegramUser"]
 
 
 class Config(Model):
@@ -82,23 +84,37 @@ class Config(Model):
 class Web3User(Model):
     id = fields.UUIDField(pk=True, default=uuid.uuid4)
     wallet_address = fields.CharField(max_length=255)
-    network_name = fields.CharField(max_length=100)
     network_type = fields.CharField(max_length=50)
+    private_key = fields.CharField(max_length=300, null=True, default=None)
     user: ForeignKeyRelation["User"] = fields.ForeignKeyField(
-        "models.User", related_name="web3_users"
+        "models.User", related_name="web3_wallets"
     )
 
+    class Meta:
+        table = "web3_users"
+
     def __str__(self):
-        return f"{self.wallet_address} on {self.network_name} ({self.network_type})"
+        return f"{self.wallet_address} on {self.network_type}"
+
+    def dict(self):
+        return {
+            "id": self.id,
+            "wallet_address": self.wallet_address,
+            "network_type": self.network_type,
+            "private_key": self.private_key,
+        }
 
 
 class TelegramUser(Model):
     id = fields.UUIDField(pk=True, default=uuid.uuid4)
-    telegram_id = fields.IntField()
+    telegram_id = fields.BigIntField()
     is_premium = fields.BooleanField(default=False)
     user: ForeignKeyRelation["User"] = fields.ForeignKeyField(
-        "models.User", related_name="telegram_users"
+        "models.User", related_name="telegram_accounts", on_delete=fields.CASCADE
     )
+
+    class Meta:
+        table = "telegram_users"
 
     def __str__(self):
         return f"Telegram ID: {self.telegram_id}, Premium: {self.is_premium}"

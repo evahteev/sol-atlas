@@ -6,7 +6,7 @@ from starlette.requests import Request
 from starlette.responses import RedirectResponse
 from starlette.status import HTTP_303_SEE_OTHER, HTTP_404_NOT_FOUND
 
-from fa_admin.models import Config
+from flow_api.models import Config
 
 
 @app.get("/")

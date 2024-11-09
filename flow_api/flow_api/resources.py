@@ -1,7 +1,8 @@
 import os
 from typing import List
 
-from fa_admin.art_models import Event, ArtCollection, Art
+from flow_api.art_models import Event, ArtCollection, Art
+from flow_api.flow_models import NftMetadata
 from fastapi_admin.app import app
 from fastapi_admin.enums import Method
 from fastapi_admin.file_upload import FileUpload
@@ -9,15 +10,18 @@ from fastapi_admin.resources import Action, Field, Link, Model, ToolbarAction
 from fastapi_admin.widgets import filters, inputs
 from starlette.requests import Request
 
-from fa_admin import enums
-from fa_admin.constants import BASE_DIR
-from fa_admin.models import (
+from flow_api import enums
+from flow_api.constants import BASE_DIR
+from flow_api.models import (
     Admin,
     Config,
     User,
     Strategy,
+    Flow,
     ExternalWorker,
     Role,
+    Web3User,
+    TelegramUser,
 )
 
 upload = FileUpload(uploads_dir=os.path.join(BASE_DIR, "static", "uploads"))
@@ -85,6 +89,41 @@ class UsersResource(Model):
         "is_block",
         "is_premium",
         "created_at",
+    ]
+
+
+@app.register
+class FlowResource(Model):
+    label = "Flows"
+    model = Flow
+    icon = "fas fa-cogs"
+    page_pre_title = "Flows list"
+    page_title = "Flows"
+    filters = [
+        filters.Search(
+            name="name",
+            label="Name",
+            search_mode="contains",
+            placeholder="Search for name",
+        ),
+        filters.Search(
+            name="type",
+            label="Type",
+            search_mode="contains",
+            placeholder="Search for type",
+        ),
+    ]
+    fields = [
+        "id",
+        "key",
+        "name",
+        "description",
+        "img_picture",
+        "type",
+        "parent_id",
+        "user_id",
+        "reference_id",
+        "reward",
     ]
 
 
@@ -192,12 +231,38 @@ class ArtResource(Model):
         "tags",
         "name",
         "description",
+        "symbol",
         "description_prompt",
         "img_picture",
         "parent_id",
         "user_id",
         "reference_id",
         "created_at",
+    ]
+
+
+@app.register
+class NftMetadataResource(Model):
+    label = "NFT Metadata"
+    model = NftMetadata
+    icon = "fas fa-paint-brush"
+    page_pre_title = "NFT Metadata list"
+    page_title = "NFT Metadata model"
+    filters = [
+        filters.Search(
+            name="token_address",
+            label="token_address",
+            search_mode="eq",
+            placeholder="Search for token_address",
+        ),
+    ]
+    fields = [
+        "id",
+        "season_id",
+        "token_id",
+        "chain_id",
+        "token_address",
+        "art"
     ]
 
 
@@ -227,12 +292,15 @@ class ArtCollectionResource(Model):
         "id",
         "name",
         "symbol",
+        "address",
+        "parent_id",
         "base_uri",
         "type",
         "user_id",
         "arts",
         "created_at",
     ]
+
 
 @app.register
 class EventResource(Model):
@@ -405,3 +473,63 @@ class DocumentationLink(Link):
     icon = "fas fa-file-code"
     target = "_blank"
 
+
+@app.register
+class Web3WalletResource(Model):
+    label = "Web3 Wallet"
+    model = Web3User
+    icon = "fas fa-cogs"
+    page_pre_title = "Web3 Wallet list"
+    page_title = "Web3 Wallet model"
+    filters = [
+        filters.Search(
+            name="wallet_address",
+            label="Wallet Address",
+            search_mode="contains",
+            placeholder="Search for wallet address",
+        ),
+        filters.Search(
+            name="network_type",
+            label="Network Type",
+            search_mode="contains",
+            placeholder="Search for network type",
+        ),
+        filters.Date(name="created_at", label="CreatedAt"),
+    ]
+    fields = [
+        "id",
+        "wallet_address",
+        "network_type",
+        "private_key",
+        "user_id",
+    ]
+
+
+@app.register
+class TelegramAccountResource(Model):
+    label = "Telegram Account"
+    model = TelegramUser
+    icon = "fas fa-cogs"
+    page_pre_title = "Telegram Account list"
+    page_title = "Telegram Account model"
+    filters = [
+        filters.Search(
+            name="telegram_id",
+            label="Telegram ID",
+            search_mode="contains",
+            placeholder="Search for telegram id",
+        ),
+        filters.Search(
+            name="is_premium",
+            label="Is Premium",
+            search_mode="contains",
+            placeholder="Search for is premium",
+        ),
+        filters.Date(name="created_at", label="CreatedAt"),
+    ]
+    fields = [
+        "id",
+        "telegram_id",
+        "is_premium",
+        "user",
+    ]

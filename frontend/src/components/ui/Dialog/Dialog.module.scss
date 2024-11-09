@@ -1,0 +1,113 @@
+@import '@/styles/mixins';
+
+.wrapper {
+  background: rgb(0, 0, 0, 0.9);
+  pointer-events: all;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  position: fixed;
+  z-index: 101;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+
+  &::backdrop {
+    background: none;
+  }
+
+  &:not([open]) {
+    // display: none !important;
+  }
+
+  &.open {
+    animation: open 0.25s ease forwards;
+
+    @keyframes open {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+  }
+}
+
+.container {
+  background: var(--color-dark-80);
+  padding: 24px 16px 0;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-flow: column;
+  gap: 32px;
+
+  &:not(.maximized) {
+    max-height: calc(100svh - 24px);
+    border-radius: 32px 32px 0 0;
+  }
+
+  &.maximized {
+    height: 100%;
+  }
+}
+
+.wrapper[open] .container {
+  animation: reveal 0.25s ease forwards;
+
+  @keyframes reveal {
+    from {
+      transform: translateY(100px);
+    }
+
+    to {
+      transform: none;
+    }
+  }
+}
+
+body:has(.container[open]) {
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.close {
+  align-self: end;
+  padding: 8px;
+  margin: -8px 0 -32px;
+  border: 0;
+  background: var(--color-dark-100);
+  width: 40px;
+  height: 40px;
+  border-radius: 20px;
+  color: var(--color-text-comment);
+  cursor: pointer;
+
+  &:hover {
+    color: var(--color-light);
+  }
+}
+
+.body {
+  flex: 1 1 auto;
+  display: flex;
+  flex-flow: column;
+  overflow: auto;
+  margin: 0 calc(-1 * var(--page-padding));
+  padding: 0 var(--page-padding);
+
+  &::after {
+    content: '';
+    padding: 0 0 24px;
+    display: block;
+  }
+}
+
+.title {
+  margin: 0;
+}

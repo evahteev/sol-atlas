@@ -37,7 +37,9 @@ class VariableValueInfo(BaseSchema):
 
 class Variable(BaseSchema):
     type: str
-    value: Optional[Union[int, str]]  # Assuming values can be of different types based on the "type" field
+    value: Optional[
+        Union[int, float, str, list]
+    ]  # Assuming values can be of different types based on the "type" field
     valueInfo: VariableValueInfo
 
 

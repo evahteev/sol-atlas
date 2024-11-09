@@ -1,0 +1,74 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: warehouse-api
+  name: warehouse-api-db
+spec:
+  selector:
+    matchLabels:
+      app: warehouse-api-db
+  template:
+    metadata:
+      labels:
+        app: warehouse-api-db
+    spec:
+      containers:
+      - name: database
+        image: postgres:13.8-bullseye
+        resources:
+          limits:
+            memory: "300Mi"
+            cpu: "200m"
+        env:
+        - name: POSTGRES_PASSWORD
+          value: "warehouse_api"
+        - name: POSTGRES_USER
+          value: "warehouse_api"
+        - name: POSTGRES_DB
+          value: "warehouse_api"
+        ports:
+        - containerPort: 5432
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: warehouse-api
+  name: "warehouse-api-db-service"
+spec:
+  selector:
+    app: warehouse-api-db
+  ports:
+  - port: 5432
+    targetPort: 5432
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  namespace: warehouse-api
+  name: warehouse-api-migrator
+spec:
+  ttlSecondsAfterFinished: 100
+  template:
+    spec:
+      containers:
+      - name: migrator
+        image: warehouse_api:latest
+        command:
+        - "alembic"
+        - "upgrade"
+        - "head"
+        resources:
+          limits:
+            memory: "200Mi"
+            cpu: "250m"
+        env:
+        - name: "WAREHOUSE_API_DB_HOST"
+          value: "warehouse-api-db-service"
+      initContainers:
+      - name: wait-for-db
+        image: toschneck/wait-for-it:latest
+        command: ["./wait-for-it.sh", "-t", "60", "warehouse-api-db-service:5432"]
+      restartPolicy: Never
+
+---

@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_1jfmue2" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.20.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.20.0">
+  <bpmn:process id="whisper_guru_gpt" name="Whisper to Guru" isExecutable="true">
+    <bpmn:documentation>Unfiltered Crypto Chaos. Dive in.</bpmn:documentation>
+    <bpmn:startEvent id="StartEvent_1" name="Start Thread" camunda:initiator="camunda_user_id">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="def_rewardAmount" label="Rewards" type="long" defaultValue="100" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_0vqoh2x</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_0vqoh2x" sourceRef="StartEvent_1" targetRef="Activity_0adj1sy" />
+    <bpmn:serviceTask id="Activity_1jk6f7r" name="Set Up User Context" camunda:asyncBefore="true" camunda:class="ai.hhrdr.chainflow.engine.delegate.GetUserInfoDelegate">
+      <bpmn:incoming>Flow_09uogix</bpmn:incoming>
+      <bpmn:outgoing>Flow_1x3zwn7</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1x3zwn7" sourceRef="Activity_1jk6f7r" targetRef="Activity_1uqh1bk" />
+    <bpmn:userTask id="support_answer" name="Thanks for the Whisper" camunda:assignee="${camunda_user_id}">
+      <bpmn:documentation>🔥 Agree or disagree? Let’s hear it! 💥</bpmn:documentation>
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="text_reply" label="Reply" type="string" defaultValue="${gpt_reply}" />
+          <camunda:formField id="action_userClose" label="Close" type="boolean" defaultValue="true" />
+          <camunda:formField id="action_userSend" label="Send" type="boolean" defaultValue="true" />
+          <camunda:formField id="txhash_rewards" label="Transaction" type="string" defaultValue="${txhash_rewards}" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0nj4z38</bpmn:incoming>
+      <bpmn:outgoing>Flow_198r66y</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="Event_1vrsmuu">
+      <bpmn:incoming>Flow_198r66y</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_09uogix" sourceRef="Activity_04ly1fh" targetRef="Activity_1jk6f7r" />
+    <bpmn:userTask id="Activity_04ly1fh" name="Provide your Insights" camunda:assignee="${camunda_user_id}">
+      <bpmn:documentation>🔥 Got a scorching take? Share it! 💬</bpmn:documentation>
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="form_message" label="Message" type="string" defaultValue="Markets are on the GO today" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0g85f68</bpmn:incoming>
+      <bpmn:outgoing>Flow_09uogix</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_10wmf01" sourceRef="Activity_1uqh1bk" targetRef="Activity_0arnf27" />
+    <bpmn:serviceTask id="Activity_0adj1sy" name="Set Default Variables with def_ prefix if not specified" camunda:class="ai.hhrdr.chainflow.engine.delegate.SetDefaultVariablesDelegate">
+      <bpmn:incoming>Flow_0vqoh2x</bpmn:incoming>
+      <bpmn:outgoing>Flow_0g85f68</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0g85f68" sourceRef="Activity_0adj1sy" targetRef="Activity_04ly1fh" />
+    <bpmn:serviceTask id="Activity_1uqh1bk" name="GPT to Answer User" camunda:type="external" camunda:topic="guru_gpt_index">
+      <bpmn:incoming>Flow_1x3zwn7</bpmn:incoming>
+      <bpmn:outgoing>Flow_10wmf01</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_0arnf27" name="Add rewards" camunda:type="external" camunda:topic="finance_send_rewards">
+      <bpmn:incoming>Flow_10wmf01</bpmn:incoming>
+      <bpmn:outgoing>Flow_0nj4z38</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0nj4z38" sourceRef="Activity_0arnf27" targetRef="support_answer" />
+    <bpmn:sequenceFlow id="Flow_198r66y" sourceRef="support_answer" targetRef="Event_1vrsmuu" />
+    <bpmn:textAnnotation id="TextAnnotation_0czdbn4">
+      <bpmn:text>Injesting user_id, telegram_user_id, user_is_premium, user_is_premium, web3_wallets into process instance context</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:textAnnotation id="TextAnnotation_0k2yffd">
+      <bpmn:text>Set all def_ prefixed  variables into the execution context of process instance</bpmn:text>
+    </bpmn:textAnnotation>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="whisper_guru_gpt">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="122" y="232" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="111" y="275" width="61" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1gh9b6s_di" bpmnElement="Activity_1jk6f7r">
+        <dc:Bounds x="550" y="210" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1b95ljm_di" bpmnElement="Activity_04ly1fh">
+        <dc:Bounds x="410" y="210" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0stqx66_di" bpmnElement="Activity_0adj1sy">
+        <dc:Bounds x="250" y="210" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1dbo0u3_di" bpmnElement="Activity_1uqh1bk">
+        <dc:Bounds x="710" y="210" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1vrsmuu_di" bpmnElement="Event_1vrsmuu">
+        <dc:Bounds x="1312" y="82" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1qmqegz" bpmnElement="Activity_0arnf27">
+        <dc:Bounds x="930" y="210" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_017y2lk_di" bpmnElement="support_answer">
+        <dc:Bounds x="1120" y="210" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0czdbn4_di" bpmnElement="TextAnnotation_0czdbn4">
+        <dc:Bounds x="550" y="90" width="170" height="98" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0k2yffd_di" bpmnElement="TextAnnotation_0k2yffd">
+        <dc:Bounds x="240" y="330" width="180" height="58" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0vqoh2x_di" bpmnElement="Flow_0vqoh2x">
+        <di:waypoint x="158" y="250" />
+        <di:waypoint x="250" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1x3zwn7_di" bpmnElement="Flow_1x3zwn7">
+        <di:waypoint x="650" y="250" />
+        <di:waypoint x="710" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_09uogix_di" bpmnElement="Flow_09uogix">
+        <di:waypoint x="510" y="250" />
+        <di:waypoint x="550" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_10wmf01_di" bpmnElement="Flow_10wmf01">
+        <di:waypoint x="810" y="250" />
+        <di:waypoint x="930" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0g85f68_di" bpmnElement="Flow_0g85f68">
+        <di:waypoint x="350" y="250" />
+        <di:waypoint x="410" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0nj4z38_di" bpmnElement="Flow_0nj4z38">
+        <di:waypoint x="1030" y="240" />
+        <di:waypoint x="1075" y="240" />
+        <di:waypoint x="1075" y="250" />
+        <di:waypoint x="1120" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_198r66y_di" bpmnElement="Flow_198r66y">
+        <di:waypoint x="1220" y="250" />
+        <di:waypoint x="1330" y="250" />
+        <di:waypoint x="1330" y="118" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

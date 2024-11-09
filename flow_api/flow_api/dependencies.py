@@ -1,21 +1,26 @@
+from typing import Optional, Union
+
 from fastapi import HTTPException, Depends
 from starlette.requests import Request
 
 from async_fastapi_jwt_auth import AuthJWT
 from async_fastapi_jwt_auth.auth_jwt import AuthJWTBearer
 from configs.app_config import settings
-from fa_admin.settings import ENVIRONMENT, SYS_KEY
+from flow_api.settings import ENVIRONMENT, SYS_KEY
 
 auth_dependency = AuthJWTBearer()
 
 
 class SysKeyAuth(AuthJWT):
+    USER = settings.ENGINE_USERNAME
+    KEY = settings.ENGINE_PASSWORD
+
     async def get_raw_jwt(
         self, encoded_token: str | None = None
     ) -> dict[str, str | int | bool] | None:
         return {
-            "camunda_user_id": settings.ENGINE_USERNAME,
-            "camunda_key": settings.ENGINE_PASSWORD,
+            "camunda_user_id": self.USER,
+            "camunda_key": self.KEY,
         }
 
     async def jwt_required(self, *args, **kwargs) -> None:

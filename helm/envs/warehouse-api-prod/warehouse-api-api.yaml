@@ -1,0 +1,55 @@
+app:
+  replicas:
+    default: 1
+  port: 8000
+  serviceType: NodePort
+  limitsCpu: 1
+  limitsMemory: 1G
+  requestsCpu: 1
+  requestsMemory: 1G
+  strategyType: 'RollingUpdate'
+  readnessProbe:
+    path: '/api/health'
+    port: '8000'
+  livenessProbe:
+    path: '/api/health'
+    port: '8000'
+  env:
+    SERVICE_NAME: "warehouse-api"
+    WAREHOUSE_API_FLOW_API: "http://nft-mania-flow-api.nft-mania.svc.cluster.local:8000"
+    WAREHOUSE_API_SYS_KEY: "secret"
+   # Camunda Engine
+    ENGINE_URL:  "http://nft-mania-engine-api.nft-mania.svc.cluster.local:8080/engine-rest"
+    ENGINE_USERNAME: "demo"
+    ENGINE_PASSWORD: "demo"
+    # Redis (for FSM and Cache) Settings
+    WAREHOUSE_URL: "https://warehouse.dex.guru"
+    WAREHOUSE_API_DB_HOST: "postgres-postgresql"
+    WAREHOUSE_API_DB_PORT: "5432"
+    WAREHOUSE_API_DB_USER: "postgres"
+    WAREHOUSE_API_DB_PASS: "SuperSecretPassword"
+    WAREHOUSE_API_DB_BASE: "warehouse_api"
+
+    USERS_SECRET: "secret"
+    WAREHOUSE_API_RABBIT_HOST: "rabbitmq"
+    WAREHOUSE_API_RABBIT_VHOST: "/"
+    WAREHOUSE_API_RABBIT_USER: "user"
+    WAREHOUSE_API_RABBIT_PASS: "secret"
+    WAREHOUSE_API_RABBIT_EXCHANGE: 'nft_mania_app_engine'
+    WAREHOUSE_API_RABBIT_QUEUE: 'nft_mania_app_engine'
+    WAREHOUSE_API_RABBIT_ROUTING_KEY: 'nft_mania_app_engine'
+
+    WAREHOUSE_API_REDIS_HOST: "redis-master"
+    WAREHOUSE_API_REDIS_BASE: "6"
+    WAREHOUSE_API_HOST: "0.0.0.0"
+    WAREHOUSE_API_WORKERS_COUNT: 1
+    WAREHOUSE_API_LOG_LEVEL: 'INFO'
+
+    WAREHOUSE_API_RELOAD: 'False'
+    WAREHOUSE_API_ELASTICSEARCH_URL: 'http://10.0.200.184:9200'
+
+
+  ingressHosts:
+  - name: "warehouse-api-nft-mania"
+    host: "nft-mania-warehouse.apps.dexguru.net"
+

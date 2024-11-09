@@ -21,5 +21,6 @@ def find_command_argument(message: str | None) -> str | None:
 
     if not is_command(message):
         return None
-
+    if message.startswith("/generate"):
+        return None
     return message.split()[1] if " " in message else None

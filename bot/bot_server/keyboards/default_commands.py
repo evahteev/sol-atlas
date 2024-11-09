@@ -24,7 +24,8 @@ if TYPE_CHECKING:
 users_commands: dict[str, dict[str, str]] = {
     "en": {
         "start": "Start the bot",
-        "generate": "Generate Meme",
+        "faucet": "Testnet Network Faucet",
+        "guru": "Guru GPT",
         # "help": "help",
         # "automations": "Web3 Automations",
         # "strategy": "DeFi Strategies",
@@ -39,7 +40,8 @@ users_commands: dict[str, dict[str, str]] = {
     },
     "uk": {
         "start": "Start the bot",
-        "generate": "Generate Meme",
+        "faucet": "Testnet Network Faucet",
+        "guru": "Guru GPT",
         # "help": "help",
         # "automations": "Web3 Automations",
         # "strategy": "DeFi Strategies",

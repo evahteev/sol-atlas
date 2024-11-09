@@ -212,4 +212,3 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 Contributions are highly encouraged! Please consult the CONTRIBUTING.md document for details on our code of conduct, and
 the process for submitting pull requests to the project.
-

@@ -1,0 +1,120 @@
+version: '3.9'
+
+services:
+  api: &main_app
+    build:
+      context: .
+      dockerfile: ./deploy/Dockerfile
+      target: prod
+    image: warehouse_api:${WAREHOUSE_API_VERSION:-latest}
+    restart: always
+    env_file:
+    - .env
+    labels:
+      # Enables traefik for this container.
+    - traefik.enable=true
+    - traefik.http.routers.warehouse_api.rule=Host(`${WAREHOUSE_API_TRAEFIK_HOST:-warehouse_api.localhost}`)
+    - traefik.http.routers.warehouse_api.entrypoints=http
+    - traefik.http.routers.warehouse_api.service=warehouse_api
+    - traefik.http.services.warehouse_api.loadbalancer.server.port=${WAREHOUSE_API_PORT:-8000}
+    networks:
+    - default
+    - traefik-shared
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rmq:
+        condition: service_healthy
+    environment:
+      WAREHOUSE_API_HOST: 0.0.0.0
+      WAREHOUSE_API_DB_HOST: warehouse_api-db
+      WAREHOUSE_API_DB_PORT: 5432
+      WAREHOUSE_API_DB_USER: warehouse_api
+      WAREHOUSE_API_DB_PASS: warehouse_api
+      WAREHOUSE_API_DB_BASE: warehouse_api
+      WAREHOUSE_API_RABBIT_HOST: warehouse_api-rmq
+      WAREHOUSE_API_REDIS_HOST: warehouse_api-redis
+
+  taskiq-worker:
+    <<: *main_app
+    labels: []
+    command:
+    - taskiq
+    - worker
+    - warehouse_api.tkq:broker
+
+  db:
+    image: postgres:13.8-bullseye
+    hostname: warehouse_api-db
+    ports:
+    - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: "warehouse_api"
+      POSTGRES_USER: "warehouse_api"
+      POSTGRES_DB: "warehouse_api"
+    volumes:
+    - warehouse_api-db-data:/var/lib/postgresql/data
+    restart: always
+    healthcheck:
+      test: pg_isready -U warehouse_api
+      interval: 2s
+      timeout: 3s
+      retries: 40
+
+  migrator:
+    image: warehouse_api:${WAREHOUSE_API_VERSION:-latest}
+    restart: "no"
+    command: alembic upgrade head
+    environment:
+      WAREHOUSE_API_DB_HOST: warehouse_api-db
+      WAREHOUSE_API_DB_PORT: 5432
+      WAREHOUSE_API_DB_USER: warehouse_api
+      WAREHOUSE_API_DB_PASS: warehouse_api
+      WAREHOUSE_API_DB_BASE: warehouse_api
+    depends_on:
+      db:
+        condition: service_healthy
+
+  redis:
+    image: bitnami/redis:6.2.5
+    hostname: "warehouse_api-redis"
+    restart: always
+    ports:
+    - "6379:6379"
+    environment:
+      ALLOW_EMPTY_PASSWORD: "yes"
+    healthcheck:
+      test: redis-cli ping
+      interval: 1s
+      timeout: 3s
+      retries: 50
+
+  rmq:
+    image: rabbitmq:3.9.16-alpine
+    hostname: "warehouse_api-rmq"
+    restart: always
+    ports:
+    - "15672:15672"
+    - "5672:5672"
+    environment:
+      RABBITMQ_DEFAULT_USER: "guest"
+      RABBITMQ_DEFAULT_PASS: "guest"
+      RABBITMQ_DEFAULT_VHOST: "/"
+    healthcheck:
+      test: rabbitmq-diagnostics check_running -q
+      interval: 3s
+      timeout: 3s
+      retries: 50
+
+
+
+volumes:
+  warehouse_api-db-data:
+    name: warehouse_api-db-data
+
+networks:
+  # Network for traefik.
+  traefik-shared:
+    name: traefik-shared

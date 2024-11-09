@@ -21,6 +21,7 @@ class Art(Model):
         "models.User", related_name="art", on_delete=fields.CASCADE
     )
     reference_id = fields.UUIDField(default=uuid.uuid4)
+    symbol = fields.CharField(max_length=32, null=True, server_default="")
 
     def _pre_save(
         self,
@@ -37,6 +38,10 @@ class ArtCollection(Model):
     name = fields.CharField(max_length=200)
     symbol = fields.CharField(max_length=200, null=True)
     base_uri = fields.CharField(max_length=200, null=True)
+
+    address = fields.CharField(max_length=200)
+    parent_id = fields.UUIDField(default=uuid.uuid4)
+
     type = fields.CharField(max_length=20)
     created_at = fields.DatetimeField(
         auto_now_add=True, default=datetime.datetime.utcnow

@@ -22,9 +22,6 @@ RUN curl -sSL https://install.python-poetry.org | python3 -
 # Install project dependencies with Poetry
 RUN poetry install --without dev --no-root
 
-# Compile translations
-RUN pybabel compile -d bot/locales
-
 # Cleanup unnecessary files and cache
 RUN rm -rf /root/.cache && rm -rf $POETRY_CACHE_DIR
 

@@ -1,0 +1,77 @@
+.container {
+  border: 1px transparent solid;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  transition: 0.25s ease;
+  border-radius: 16px;
+  overflow: hidden;
+
+  --_card-border-radius: 0;
+}
+
+.header {
+  padding: 16px;
+  border-radius: 16px;
+  border: 1px var(--color-dark-60) solid;
+  border-radius: 16px;
+  background: var(--color-dark-60);
+  padding: 16px;
+  display: grid;
+  grid-template-columns: [icon-start] 40px [icon-end] 24px [header-start] 1fr [header-end] 24px [action-start] auto [action-start];
+  align-items: center;
+
+  &:not(.hasTasks) {
+    border-radius: 16px;
+  }
+
+  &.hasTasks {
+    border-radius: 16px 16px 0 0;
+  }
+
+  &.active:not(.hasTasks),
+  &.active.custom {
+    --_angle: 0deg;
+
+    background:
+      linear-gradient(var(--color-dark-60), var(--color-dark-60)) padding-box,
+      linear-gradient(var(--_angle, 0deg), #ffcf14 0%, #ff4747 50%, #0085ff 100%) border-box;
+    background-position: center;
+    background-size: 100%;
+    border-color: transparent;
+
+    animation: rotate 2.5s linear infinite;
+
+    @keyframes rotate {
+      from {
+        --_angle: 0deg;
+      }
+
+      to {
+        --_angle: 360deg;
+      }
+    }
+  }
+}
+
+.illustration {
+  grid-area: icon;
+  flex: 0 0 auto;
+  width: 40px;
+  height: 40px;
+}
+
+.title {
+  grid-area: header;
+  display: block;
+  margin-right: auto;
+}
+
+.subtitle {
+  display: block;
+  color: var(--color-text-comment);
+}
+
+.action {
+  grid-area: action;
+}

@@ -5,6 +5,7 @@ from collections import defaultdict
 from typing import Sequence
 
 import httpx
+
 # import sentry_sdk
 import uvloop
 
@@ -17,7 +18,10 @@ from bot_server.core.config import settings
 from bot_server.core.loader import app, bot, dp
 from bot_server.handlers import get_handlers_router
 from bot_server.handlers.metrics import MetricsView
-from bot_server.keyboards.default_commands import remove_default_commands, set_default_commands
+from bot_server.keyboards.default_commands import (
+    remove_default_commands,
+    set_default_commands,
+)
 from bot_server.keyboards.inline.task import task_keyboard
 from bot_server.middlewares import register_middlewares
 from bot_server.middlewares.prometheus import prometheus_middleware_factory
@@ -36,7 +40,7 @@ if settings.USE_WEBHOOK:
 
 
 async def fetch_camunda_tasks() -> Sequence[dict]:
-    pass # till user
+    pass  # till user
     # async with httpx.AsyncHTTPTransport() as transport:
     #
     #     camunda_client = CamundaEngineClient(
@@ -68,20 +72,23 @@ async def fetch_camunda_task_and_send_notification() -> dict:
     if tasks:
         tasks_dict = defaultdict(list)
         for task in tasks:
-            if task['telegram_user_id']:
-                tasks_dict[task['telegram_user_id']].append(task)
+            if task["telegram_user_id"]:
+                tasks_dict[task["telegram_user_id"]].append(task)
 
         for user_id, tasks in tasks_dict.items():
-            await bot.send_message(chat_id=user_id, text="Tasks available in tasklist:",
-                                   reply_markup=task_keyboard(tasks))
+            await bot.send_message(
+                chat_id=user_id,
+                text="Tasks available in tasklist:",
+                reply_markup=task_keyboard(tasks),
+            )
 
 
-async def check_for_camunda_tasks(dispatcher):
-    while True:
-        # Assume you have a list of user IDs to poll tasks for
-        await fetch_camunda_task_and_send_notification()
-
-        await asyncio.sleep(300)  # Check every 60 seconds, adjust as needed
+# async def check_for_camunda_tasks(dispatcher):
+#     while True:
+#         # Assume you have a list of user IDs to poll tasks for
+#         await fetch_camunda_task_and_send_notification()
+#
+#         await asyncio.sleep(300)  # Check every 60 seconds, adjust as needed
 
 
 async def on_startup() -> None:
@@ -96,7 +103,7 @@ async def on_startup() -> None:
         app.router.add_route("GET", "/metrics", MetricsView)
 
     await set_default_commands(bot)
-    asyncio.create_task(check_for_camunda_tasks(dp))  # Start the polling task
+    # asyncio.create_task(check_for_camunda_tasks(dp))  # Start the polling task
 
     bot_info = await bot.get_me()
 
@@ -122,10 +129,11 @@ async def on_shutdown() -> None:
 
     await remove_default_commands(bot)
 
+    await bot.delete_webhook()
+    await bot.close()
     await dp.storage.close()
     await dp.fsm.storage.close()
 
-    await bot.delete_webhook()
     await bot.session.close()
 
     logger.info("bot stopped")
@@ -179,7 +187,7 @@ async def handle_mention_message(message: Message):
         "message_id": message.message_id,
         "from_user": message.from_user.id,
         "text": message.text,
-        "date": message.date.isoformat()
+        "date": message.date.isoformat(),
     }
     await message.answer("Mention saved!")
 

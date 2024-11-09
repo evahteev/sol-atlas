@@ -1,0 +1,78 @@
+.link {
+  display: block;
+  text-decoration: none;
+  color: currentColor;
+}
+
+.container {
+  display: grid;
+  grid-template-columns: 144px 1fr;
+  gap: 16px;
+  overflow: hidden;
+}
+
+.illustration {
+  position: relative;
+  min-height: 160px;
+  margin: -16px 0px;
+  margin-left: -16px;
+}
+
+.body {
+  display: grid;
+  gap: 16px;
+}
+
+.title {
+  display: flex;
+  width: 100%;
+  overflow: hidden;
+  align-items: center;
+  &__caption {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+    flex: 1 1 0;
+  }
+}
+
+.description {
+  display: flex;
+  width: 100%;
+  overflow: hidden;
+  align-items: center;
+}
+
+.generating {
+  display: flex;
+  width: 100%;
+  overflow: hidden;
+  align-items: center;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 16px;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  color: var(--color-text-comment);
+}
+
+.ratio {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.green {
+  color: var(--color-success);
+}
+
+.red {
+  color: var(--color-danger);
+}

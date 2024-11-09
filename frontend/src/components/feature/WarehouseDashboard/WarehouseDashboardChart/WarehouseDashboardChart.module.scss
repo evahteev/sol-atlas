@@ -1,0 +1,111 @@
+.container {
+}
+
+.chart {
+  flex: 1 0 0;
+  width: auto !important;
+  height: auto !important;
+}
+
+.pie {
+  flex: 1 0 240px;
+  display: flex;
+  gap: 16px;
+  align-items: center;
+
+  &Chart {
+    flex: 3 0 240px;
+    min-height: 240px;
+  }
+
+  &Legend {
+    flex: 1 1 auto;
+    display: flex;
+    flex-flow: column;
+    gap: 4px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    max-height: 100%;
+    overflow: auto;
+  }
+
+  &Entry {
+    display: flex;
+    gap: 4px;
+    color: var(--color);
+    line-height: 1;
+
+    &::before {
+      content: '';
+      flex: 0 0 auto;
+      width: 0.8em;
+      height: 0.8em;
+      margin: 0.1em 0;
+      border-radius: 50%;
+      background: var(--color);
+    }
+  }
+}
+
+.tooltip {
+  background: var(--color-dark-60) !important;
+  color: var(--color-light);
+  padding: 8px;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 16px;
+  display: flex;
+  flex-flow: column;
+  gap: 8px;
+  border: 0 !important;
+
+  &Label {
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: 400;
+    color: var(--color-comment);
+
+    &:empty {
+      display: none;
+    }
+  }
+
+  &List {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-flow: column;
+    gap: 4px;
+  }
+
+  &Entry {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+
+    &:before {
+      content: '';
+      width: 1em;
+      height: 1em;
+      background: currentColor;
+      border-radius: 50%;
+      margin: 0.2em;
+    }
+
+    &Name {
+      font-weight: 400;
+      font-size: 12px;
+      line-height: 16px;
+    }
+
+    &Value {
+      margin-left: auto;
+      color: var(--color-light);
+    }
+  }
+}
+.suspense {
+  margin: auto;
+}

@@ -2,13 +2,13 @@ import asyncio
 from asyncio import AbstractEventLoop
 from hashlib import md5
 
-from aiocache import Cache
+from aiocache import Cache, caches
 from aiocache.serializers import PickleSerializer
 from fastapi import Request
 
 from async_fastapi_jwt_auth import AuthJWT
 from async_fastapi_jwt_auth.auth_jwt import AuthJWTBearer
-from fa_admin.settings import CACHE, REDIS_PORT, REDIS_HOST, REDIS_DATABASE
+from flow_api.settings import CACHE, REDIS_PORT, REDIS_HOST, REDIS_DATABASE
 
 
 def make_update_dict(**kwargs):
@@ -77,18 +77,28 @@ if CACHE == "redis":
         "cache": Cache.REDIS,
         "endpoint": REDIS_HOST,
         "port": REDIS_PORT,
+        "serializer": {"class": "aiocache.serializers.PickleSerializer"},
+        "db": REDIS_DATABASE,
+    }
+    DECORATOR_CACHE_CONFIG = {
+        "cache": Cache.REDIS,
+        "endpoint": REDIS_HOST,
+        "port": REDIS_PORT,
         "serializer": PickleSerializer(),
         "db": REDIS_DATABASE,
         "key_builder": key_from_filtered_args,
-        # "skip_cache_func": skip_cache_func,
     }
 else:
     CACHE_CONFIG = {
         "cache": Cache.MEMORY,
+        "serializer": {"class": "aiocache.serializers.PickleSerializer"},
+    }
+    DECORATOR_CACHE_CONFIG = {
+        "cache": Cache.MEMORY,
         "serializer": PickleSerializer(),
         "key_builder": key_from_filtered_args,
-        # "skip_cache_func": skip_cache_func,
     }
+caches.add("default", CACHE_CONFIG)
 
 
 def create_background_task(all_tasks: set, coro):
