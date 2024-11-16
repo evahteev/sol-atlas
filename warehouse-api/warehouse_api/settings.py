@@ -56,11 +56,11 @@ class Settings(BaseSettings):
     redis_base: Optional[int] = None
 
     # Variables for RabbitMQ
-    rabbit_host: str = "10.0.100.25"
+    rabbit_host: str = "localhost"
     rabbit_port: int = 5672
-    rabbit_user: str = "admin"
-    rabbit_pass: str = "irPT6oNUT83ekQ"
-    rabbit_vhost: str = "burning_meme"
+    rabbit_user: str = "guest"
+    rabbit_pass: str = "guest"
+    rabbit_vhost: str = "/"
 
     rabbit_pool_size: int = 2
     rabbit_channel_pool_size: int = 10
