@@ -13,31 +13,50 @@
 
 ## Introduction
 
-Welcome to the Guru Framework, your ultimate toolkit for building sophisticated Web3 applications. Built on the robust Guru Network, our framework empowers developers with advanced tools for AI orchestration and Web3 automation. Whether you're working on DeFi applications, automated trading, or blockchain integration, the Guru Framework simplifies and enhances your development process.
+## What is Guru Framework?
 
-**Key Features:**
-- **Data-Driven Decision Making:** Leverage comprehensive data warehouse feeds for informed automation decisions.
-- **Seamless Integration with DeFi:** Automate complex financial workflows and optimize investment strategies.
-- **User-Centric Automation:** Create personalized automation flows for various financial activities and operations.
-- **Advanced AI Orchestration:** Integrate on-chain and off-chain elements seamlessly with AI-driven orchestration.
+![guru_framework.png](guru_framework.png)
 
+The **Guru Framework** is a next-generation development platform combining AI automation, Web3 integrations, and traditional business workflow orchestration into a unified, low-code experience.
+
+Powered by top-tier open-source technologies—**Redash** (analytics), **Camunda BPMN** (workflow orchestration), **Thirdweb** (blockchain & wallets), **Next.js** (dynamic interfaces), and **Ethereum ETL** (data pipelines)—Guru enables developers to quickly build intelligent, event-driven applications and autonomous agent workflows.
+
+### Guru Famework, how it looks?:
+
+The best way to check and see for yourself: [dex.guru](https://dex.guru/)
+
+What you see in DexGuru is not a custom monolith—it’s a reproducible application powered entirely by the Guru Framework. This means:
+- **You can build your own DexGuru-grade apps** by combining analytics, AI agents, and Web3 logic using the same low-code system.
+- The **data warehouse, agent orchestration, and UI** are all modular and open for you to use.
+- Every builder has access to the same tools, flow engine, and runtime powering DexGuru.
+
+Explore the demo, imagine the possibilities, and start building.
+
+### Key Developer Benefits:
+
+- **Rapid Prototyping:** Quickly assemble powerful workflows with intuitive low-code tools.
+- **Reduced Complexity:** Focus on business logic and innovation, not infrastructure.
+- **Future-Proof & AI-Ready:** Integrates seamlessly with emerging standards like the **Model Context Protocol (MCP)**, preparing your apps for agent-to-agent (A2A) interactions.
+- **Unified Ecosystem:** Guru apps automatically become part of the broader **GURU Network**, benefiting from shared resources, interoperability, and ecosystem growth.
+
+Build smarter, scale faster, and stay ahead with Guru Framework.
 
 ## Components
 
-### BBPA Engine
+###  Engine
 Located in the `engine` directory, this is the core of the framework, managing the automation and orchestration of blockchain business processes.
-
-### Smart Contracts
-Found in the `contracts` directory, these handle secure and efficient decentralized application operations.
-
-### GUI
-The `gui` directory contains the user interface components, offering an intuitive graphical interface for managing processes.
 
 ### Flow API
 The Flow API in the `flow_api` directory provides endpoints for creating and managing workflows programmatically.
 
 ### Telegram Bot Unified Composer
 Integrated into the framework, this tool allows the creation of Telegram bots to control and manage processes.
+
+### Smart Contracts
+Found in the `contracts` directory, these handle secure and efficient decentralized application operations.
+
+### GUI
+The `gui` directory contains the user interface components, offering an intuitive graphical interface for managing processes.
 
 ### External Workers
 Defined in the `external_workers` directory, these provide non-custodial execution and compute services.
