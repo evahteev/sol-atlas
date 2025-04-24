@@ -74,6 +74,16 @@ default password: demo
 ```
 
 ---
+## 📝 Editing / Creating BPMN diagrams
+
+* Use the **Camunda Modeler** desktop app for drag-and-drop authoring.  
+* Download it here → <https://camunda.com/download/modeler/>  
+* Save your `.bpmn` files in `engine/src/main/resources/bpmn/` (or any folder you prefer).  
+* Deploy at runtime with:
+
+![depoloy_modeler.png](deploy_modeler.png)
+
+---
 
 ## Upload a BPMN diagram
 
