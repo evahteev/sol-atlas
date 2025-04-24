@@ -1,0 +1,459 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_1e9gp8v" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.31.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.20.0">
+  <bpmn:process id="agent_chatReply" name="Agent Chat Reply" isExecutable="true">
+    <bpmn:scriptTask id="Activity_0hlucnn" name="Answering Placeholder" scriptFormat="JavaScript">
+      <bpmn:incoming>Flow_1w9pqb9</bpmn:incoming>
+      <bpmn:outgoing>Flow_0bxrxwq</bpmn:outgoing>
+      <bpmn:script>execution.setVariable("form_answer", null);
+</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:userTask id="llm_reply_generic" name="Texting to user..." camunda:assignee="${camunda_user_id}">
+      <bpmn:documentation>${ form_answer == null || form_answer.isEmpty() ? "¯\\_(ツ)_/¯" : form_answer }</bpmn:documentation>
+      <bpmn:extensionElements>
+        <camunda:taskListener class="ai.hhrdr.chainflow.engine.listener.UserDMNotificationListener" event="create">
+          <camunda:field name="telegramUserIdExp">
+            <camunda:expression>${config_chatID}</camunda:expression>
+          </camunda:field>
+          <camunda:field name="parseModeExp">
+            <camunda:string>MarkdownV2</camunda:string>
+          </camunda:field>
+          <camunda:field name="sendTaskButtonExp">
+            <camunda:expression>${false}</camunda:expression>
+          </camunda:field>
+          <camunda:field name="completeTaskExp">
+            <camunda:expression>${true}</camunda:expression>
+          </camunda:field>
+          <camunda:field name="buttonLinkExp">
+            <camunda:expression>${buttonLink}</camunda:expression>
+          </camunda:field>
+          <camunda:field name="buttonTextExp">
+            <camunda:expression>${buttonText}</camunda:expression>
+          </camunda:field>
+          <camunda:field name="telegramThreadIdExp">
+            <camunda:expression>${config_threadID}</camunda:expression>
+          </camunda:field>
+        </camunda:taskListener>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0bxrxwq</bpmn:incoming>
+      <bpmn:incoming>Flow_03rna51</bpmn:incoming>
+      <bpmn:outgoing>Flow_08s26vm</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="Event_0xhmkpu">
+      <bpmn:incoming>Flow_08s26vm</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_08s26vm" sourceRef="llm_reply_generic" targetRef="Event_0xhmkpu" />
+    <bpmn:sequenceFlow id="Flow_0bxrxwq" sourceRef="Activity_0hlucnn" targetRef="llm_reply_generic" />
+    <bpmn:scriptTask id="Activity_1i33kc1" name="Shape the answer..." scriptFormat="JavaScript">
+      <bpmn:incoming>Flow_1kfcoob</bpmn:incoming>
+      <bpmn:outgoing>Flow_03rna51</bpmn:outgoing>
+      <bpmn:script>// Get the form_answer variable from the execution context
+var formAnswer = execution.getVariable("form_answer");
+
+// Prepare a regular expression to match all &lt;think&gt;...&lt;/think&gt; blocks
+    var thinkRegex = /&lt;think&gt;([\s\S]*?)&lt;\/think&gt;/g;
+
+// Array to collect all &lt;think&gt; contents
+var thinkBlocks = [];
+
+// Replace the &lt;think&gt;...&lt;/think&gt; blocks in formAnswer with an empty string
+// and push the content (captured group) into thinkBlocks array.
+var cleanedAnswer = formAnswer.replace(thinkRegex, function(match, capturedGroup) {
+      thinkBlocks.push(capturedGroup.trim());
+        return ""; 
+    });
+// Save the modified text (with &lt;think&gt; blocks removed) back to form_answer
+execution.setVariable("form_answer", cleanedAnswer.trim());
+
+// Convert all the extracted &lt;think&gt; content into a single string
+// For example, join with newline or space:
+var llmThinkString = thinkBlocks.join(" ");
+// Save the combined text in a separate variable
+execution.setVariable("llm_think", llmThinkString);
+</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_03rna51" sourceRef="Activity_1i33kc1" targetRef="llm_reply_generic" />
+    <bpmn:userTask id="chatbot_answer" name="Shaping The Answer..." camunda:asyncAfter="true">
+      <bpmn:documentation>Internal Instructions:
+Hey, you are the Personal Assistant. You are receiving information compiled from previous agents' reports that addressed the user's initial question. Your task is to review this aggregated information and produce a comprehensive, clear, and concise summary that directly answers the user's query. Use Telegram Markdown formatting without any code blocks, and provide your answer in a single paragraph of 5–7 sentences. You should NEVER respond with greetings and internal instructions—focus solely on delivering a neat and informative summary. 
+
+Message:
+${chatbotMessage} 
+</bpmn:documentation>
+      <bpmn:extensionElements>
+        <camunda:taskListener class="ai.hhrdr.chainflow.engine.listener.LLMTaskListener" event="create">
+          <camunda:field name="chatId">
+            <camunda:expression>${config_chatID}</camunda:expression>
+          </camunda:field>
+          <camunda:field name="userId">
+            <camunda:expression>${config_chatID}</camunda:expression>
+          </camunda:field>
+          <camunda:field name="threadId">
+            <camunda:expression>${config_threadID}</camunda:expression>
+          </camunda:field>
+          <camunda:field name="outputVar">
+            <camunda:string>form_answer</camunda:string>
+          </camunda:field>
+        </camunda:taskListener>
+        <camunda:formData>
+          <camunda:formField id="form_answer" label="LLM Ans" type="string" />
+        </camunda:formData>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="chatName">${form_chatName}</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1a1u76x</bpmn:incoming>
+      <bpmn:outgoing>Flow_1kfcoob</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_1kfcoob" sourceRef="chatbot_answer" targetRef="Activity_1i33kc1" />
+    <bpmn:boundaryEvent id="Event_01fcgp6" attachedToRef="chatbot_answer">
+      <bpmn:outgoing>Flow_0yn35bk</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_1o1n5og">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT120S</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_0yn35bk" sourceRef="Event_01fcgp6" targetRef="llm_reply_timout" />
+    <bpmn:userTask id="llm_reply_timout" name="Was thinking too long" camunda:assignee="${camunda_user_id}">
+      <bpmn:documentation>Agent can't reply on time.</bpmn:documentation>
+      <bpmn:extensionElements>
+        <camunda:taskListener class="ai.hhrdr.chainflow.engine.listener.UserDMNotificationListener" event="create">
+          <camunda:field name="telegramUserIdExp">
+            <camunda:expression>${config_chatID}</camunda:expression>
+          </camunda:field>
+          <camunda:field name="parseModeExp">
+            <camunda:string>MarkdownV2</camunda:string>
+          </camunda:field>
+          <camunda:field name="sendTaskButtonExp">
+            <camunda:expression>${false}</camunda:expression>
+          </camunda:field>
+          <camunda:field name="completeTaskExp">
+            <camunda:expression>${true}</camunda:expression>
+          </camunda:field>
+          <camunda:field name="buttonLinkExp">
+            <camunda:expression>${null}</camunda:expression>
+          </camunda:field>
+          <camunda:field name="buttonTextExp">
+            <camunda:expression>${null}</camunda:expression>
+          </camunda:field>
+          <camunda:field name="telegramThreadIdExp">
+            <camunda:expression>${config_threadID}</camunda:expression>
+          </camunda:field>
+        </camunda:taskListener>
+        <camunda:formData />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0yn35bk</bpmn:incoming>
+      <bpmn:outgoing>Flow_1w9pqb9</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_1w9pqb9" sourceRef="llm_reply_timout" targetRef="Activity_0hlucnn" />
+    <bpmn:startEvent id="StartEvent_1" name="Start" camunda:initiator="camunda_user_id">
+      <bpmn:extensionElements>
+        <camunda:formData businessKey="">
+          <camunda:formField id="form_chatName" label="Chat Slug" type="string" defaultValue="dm" />
+          <camunda:formField id="form_question" label="Question" type="string" />
+          <camunda:formField id="config_threadID" label="Thread ID" type="string" />
+          <camunda:formField id="form_replyMessageType" label="Reply Message Type" type="string" defaultValue="REPLY" />
+          <camunda:formField id="config_chatHumanName" label="Chat Human Name" type="string" />
+          <camunda:formField id="config_chatID" label="Chat ID" type="string" />
+          <camunda:formField id="form_directSend" label="Direct Send?" type="boolean" defaultValue="false" />
+        </camunda:formData>
+        <camunda:executionListener class="ai.hhrdr.chainflow.engine.listener.SetStartVariablesListener" event="start" />
+        <camunda:properties>
+          <camunda:property name="config_chatbotStyle" value="When answering, dont do any greetings, just go straight to the answer. You MUST use the Markdown markup styling it for Telegram Messages. No Code BLOCKS! NO EMOJI, NO HASHTAGS! Try focus on providing SHORT ANSWERS -  one paragraph 5-7 sentences max." />
+        </camunda:properties>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_1ikrapk</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_1d5khu1" messageRef="Message_3up3j7j" />
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="Activity_1lwiczx" name="ChatbotWebhookTokenDelegate" camunda:class="ai.hhrdr.chainflow.engine.delegate.ChatbotWebhookTokenDelegate">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="chatName">${chatName}</camunda:inputParameter>
+          <camunda:outputParameter name="chatbotWebhookToken">${chatbotWebhookToken}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_08k55db</bpmn:incoming>
+      <bpmn:outgoing>Flow_0tars6h</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0tars6h" sourceRef="Activity_1lwiczx" targetRef="Gateway_14u88jn" />
+    <bpmn:startEvent id="Event_0bayn2k" name="Start" camunda:initiator="camunda_user_id">
+      <bpmn:extensionElements>
+        <camunda:formData businessKey="">
+          <camunda:formField id="form_chatName" label="Chat Slug" type="string" defaultValue="dm" />
+          <camunda:formField id="form_question" label="Question" type="string" />
+          <camunda:formField id="config_threadID" label="Thread ID" type="string" />
+          <camunda:formField id="form_replyMessageType" label="Reply Message Type" type="string" defaultValue="REPLY" />
+          <camunda:formField id="config_chatHumanName" label="Chat Human Name" type="string" />
+          <camunda:formField id="config_chatID" label="Chat ID" type="string" />
+          <camunda:formField id="form_directSend" label="Direct Send?" type="boolean" defaultValue="false" />
+        </camunda:formData>
+        <camunda:executionListener class="ai.hhrdr.chainflow.engine.listener.SetStartVariablesListener" event="start" />
+        <camunda:properties>
+          <camunda:property name="config_chatbotStyle" value="When answering, dont do any greetings, just go straight to the answer. You MUST use the Markdown markup styling it for Telegram Messages. No Code BLOCKS! NO EMOJI, NO HASHTAGS! Try focus on providing SHORT ANSWERS -  one paragraph 5-7 sentences max." />
+        </camunda:properties>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_0xvquvz</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="set_chatbot_name" name="Set chatbot name" camunda:asyncAfter="true" camunda:class="ai.hhrdr.chainflow.engine.delegate.ChatbotDefaultsSetupDelegate">
+      <bpmn:incoming>Flow_0xvquvz</bpmn:incoming>
+      <bpmn:incoming>Flow_1ikrapk</bpmn:incoming>
+      <bpmn:outgoing>Flow_01qh9ez</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_01qh9ez" sourceRef="set_chatbot_name" targetRef="Gateway_0wri488" />
+    <bpmn:exclusiveGateway id="Gateway_14u88jn" default="Flow_1a1u76x">
+      <bpmn:incoming>Flow_0tars6h</bpmn:incoming>
+      <bpmn:outgoing>Flow_1a1u76x</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1efs3wo</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_1a1u76x" sourceRef="Gateway_14u88jn" targetRef="chatbot_answer" />
+    <bpmn:userTask id="llm_reply_chatbot_not_found" name="Chatbot Not Found" camunda:assignee="${camunda_user_id}">
+      <bpmn:documentation>Chatbot Not Found</bpmn:documentation>
+      <bpmn:extensionElements>
+        <camunda:taskListener class="ai.hhrdr.chainflow.engine.listener.UserDMNotificationListener" event="create">
+          <camunda:field name="telegramUserIdExp">
+            <camunda:expression>${config_chatID}</camunda:expression>
+          </camunda:field>
+          <camunda:field name="parseModeExp">
+            <camunda:string>MarkdownV2</camunda:string>
+          </camunda:field>
+          <camunda:field name="sendTaskButtonExp">
+            <camunda:expression>${false}</camunda:expression>
+          </camunda:field>
+          <camunda:field name="completeTaskExp">
+            <camunda:expression>${true}</camunda:expression>
+          </camunda:field>
+          <camunda:field name="buttonLinkExp">
+            <camunda:expression>${buttonLink}</camunda:expression>
+          </camunda:field>
+          <camunda:field name="buttonTextExp">
+            <camunda:expression>${buttonText}</camunda:expression>
+          </camunda:field>
+          <camunda:field name="telegramThreadIdExp">
+            <camunda:expression>${config_threadID}</camunda:expression>
+          </camunda:field>
+        </camunda:taskListener>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1efs3wo</bpmn:incoming>
+      <bpmn:outgoing>Flow_1pvzonf</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_1efs3wo" name="chatbotWebhookToken == null" sourceRef="Gateway_14u88jn" targetRef="llm_reply_chatbot_not_found">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${chatbotWebhookToken == null}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:endEvent id="Event_0janl4m">
+      <bpmn:incoming>Flow_1pvzonf</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1pvzonf" sourceRef="llm_reply_chatbot_not_found" targetRef="Event_0janl4m" />
+    <bpmn:userTask id="Activity_0sh82n9" name="Texting to user..." camunda:assignee="${camunda_user_id}">
+      <bpmn:documentation>${chatbotMessage} </bpmn:documentation>
+      <bpmn:extensionElements>
+        <camunda:taskListener class="ai.hhrdr.chainflow.engine.listener.UserDMNotificationListener" event="create">
+          <camunda:field name="telegramUserIdExp">
+            <camunda:expression>${config_chatID}</camunda:expression>
+          </camunda:field>
+          <camunda:field name="parseModeExp">
+            <camunda:string>MarkdownV2</camunda:string>
+          </camunda:field>
+          <camunda:field name="sendTaskButtonExp">
+            <camunda:expression>${false}</camunda:expression>
+          </camunda:field>
+          <camunda:field name="completeTaskExp">
+            <camunda:expression>${true}</camunda:expression>
+          </camunda:field>
+          <camunda:field name="buttonLinkExp">
+            <camunda:expression>${buttonLink}</camunda:expression>
+          </camunda:field>
+          <camunda:field name="buttonTextExp">
+            <camunda:expression>${buttonText}</camunda:expression>
+          </camunda:field>
+          <camunda:field name="telegramThreadIdExp">
+            <camunda:expression>${config_threadID}</camunda:expression>
+          </camunda:field>
+        </camunda:taskListener>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_19y6p5x</bpmn:incoming>
+      <bpmn:outgoing>Flow_0chr3wl</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_0xvquvz" sourceRef="Event_0bayn2k" targetRef="set_chatbot_name" />
+    <bpmn:sequenceFlow id="Flow_1ikrapk" sourceRef="StartEvent_1" targetRef="set_chatbot_name" />
+    <bpmn:exclusiveGateway id="Gateway_0wri488" default="Flow_08k55db">
+      <bpmn:incoming>Flow_01qh9ez</bpmn:incoming>
+      <bpmn:outgoing>Flow_08k55db</bpmn:outgoing>
+      <bpmn:outgoing>Flow_19y6p5x</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_08k55db" sourceRef="Gateway_0wri488" targetRef="Activity_1lwiczx" />
+    <bpmn:sequenceFlow id="Flow_19y6p5x" sourceRef="Gateway_0wri488" targetRef="Activity_0sh82n9">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${form_directSend}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:endEvent id="Event_0qrsbb1">
+      <bpmn:incoming>Flow_0chr3wl</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0chr3wl" sourceRef="Activity_0sh82n9" targetRef="Event_0qrsbb1" />
+    <bpmn:textAnnotation id="TextAnnotation_0p75464">
+      <bpmn:text>In case DirectSend was set skipping chatbot</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_03591d3" associationDirection="None" sourceRef="Flow_19y6p5x" targetRef="TextAnnotation_0p75464" />
+    <bpmn:textAnnotation id="TextAnnotation_1cnquhh">
+      <bpmn:text>chatbotMessage is delivered along with parameters how to process it ChatName, Buttons etc</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_1q89uw5" associationDirection="None" sourceRef="Event_0bayn2k" targetRef="TextAnnotation_1cnquhh" />
+  </bpmn:process>
+  <bpmn:error id="Error_1slv2me" name="Error_1m0iqcr" errorCode="UPDATE_KB_FAIL" />
+  <bpmn:message id="Message_39l3bj5" name="embed_kb" />
+  <bpmn:message id="Message_3up3j7j" name="MESSAGE_CHATBOT" />
+  <bpmn:signal id="Signal_3qfb79c" name="user_updated" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="agent_chatReply">
+      <bpmndi:BPMNShape id="BPMNShape_0sl4too" bpmnElement="Activity_0hlucnn">
+        <dc:Bounds x="1190" y="310" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0synrz2" bpmnElement="llm_reply_generic">
+        <dc:Bounds x="1190" y="420" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0xhmkpu_di" bpmnElement="Event_0xhmkpu">
+        <dc:Bounds x="1352" y="442" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0kcn275" bpmnElement="Activity_1i33kc1">
+        <dc:Bounds x="990" y="420" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1234rs0" bpmnElement="chatbot_answer">
+        <dc:Bounds x="790" y="310" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0prbel9" bpmnElement="llm_reply_timout">
+        <dc:Bounds x="990" y="310" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1hdc450" bpmnElement="Activity_1lwiczx">
+        <dc:Bounds x="540" y="310" width="100" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="558" y="395" width="74" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_14u88jn_di" bpmnElement="Gateway_14u88jn" isMarkerVisible="true">
+        <dc:Bounds x="685" y="325" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1nsf137" bpmnElement="llm_reply_chatbot_not_found">
+        <dc:Bounds x="660" y="480" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0janl4m_di" bpmnElement="Event_0janl4m">
+        <dc:Bounds x="812" y="502" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1hih8cf_di" bpmnElement="StartEvent_1">
+        <dc:Bounds x="152" y="332" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="160" y="375" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1lo01gd" bpmnElement="Event_0bayn2k">
+        <dc:Bounds x="152" y="252" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="160" y="295" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0wom8sx" bpmnElement="Activity_0sh82n9">
+        <dc:Bounds x="650" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0l429yb_di" bpmnElement="set_chatbot_name">
+        <dc:Bounds x="290" y="310" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0wri488_di" bpmnElement="Gateway_0wri488" isMarkerVisible="true">
+        <dc:Bounds x="435" y="325" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0qrsbb1_di" bpmnElement="Event_0qrsbb1">
+        <dc:Bounds x="922" y="102" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_03591d3_di" bpmnElement="Association_03591d3">
+        <di:waypoint x="460" y="127.5" />
+        <di:waypoint x="543" y="200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1q89uw5_di" bpmnElement="Association_1q89uw5">
+        <di:waypoint x="180" y="255" />
+        <di:waypoint x="203" y="220" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_1em6j7e_di" bpmnElement="Event_01fcgp6">
+        <dc:Bounds x="872" y="332" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1w9pqb9_di" bpmnElement="Flow_1w9pqb9">
+        <di:waypoint x="1090" y="350" />
+        <di:waypoint x="1190" y="350" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0bxrxwq_di" bpmnElement="Flow_0bxrxwq">
+        <di:waypoint x="1240" y="390" />
+        <di:waypoint x="1240" y="420" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_03rna51_di" bpmnElement="Flow_03rna51">
+        <di:waypoint x="1090" y="460" />
+        <di:waypoint x="1190" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_08s26vm_di" bpmnElement="Flow_08s26vm">
+        <di:waypoint x="1290" y="460" />
+        <di:waypoint x="1352" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1kfcoob_di" bpmnElement="Flow_1kfcoob">
+        <di:waypoint x="887" y="387" />
+        <di:waypoint x="920" y="460" />
+        <di:waypoint x="990" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1a1u76x_di" bpmnElement="Flow_1a1u76x">
+        <di:waypoint x="735" y="350" />
+        <di:waypoint x="790" y="350" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0yn35bk_di" bpmnElement="Flow_0yn35bk">
+        <di:waypoint x="908" y="350" />
+        <di:waypoint x="990" y="350" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_08k55db_di" bpmnElement="Flow_08k55db">
+        <di:waypoint x="485" y="350" />
+        <di:waypoint x="540" y="350" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0tars6h_di" bpmnElement="Flow_0tars6h">
+        <di:waypoint x="640" y="350" />
+        <di:waypoint x="685" y="350" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1efs3wo_di" bpmnElement="Flow_1efs3wo">
+        <di:waypoint x="710" y="375" />
+        <di:waypoint x="710" y="480" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="725" y="425" width="90" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1pvzonf_di" bpmnElement="Flow_1pvzonf">
+        <di:waypoint x="760" y="520" />
+        <di:waypoint x="812" y="520" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ikrapk_di" bpmnElement="Flow_1ikrapk">
+        <di:waypoint x="188" y="350" />
+        <di:waypoint x="290" y="350" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0xvquvz_di" bpmnElement="Flow_0xvquvz">
+        <di:waypoint x="188" y="270" />
+        <di:waypoint x="340" y="270" />
+        <di:waypoint x="340" y="310" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_19y6p5x_di" bpmnElement="Flow_19y6p5x">
+        <di:waypoint x="460" y="325" />
+        <di:waypoint x="460" y="120" />
+        <di:waypoint x="650" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0chr3wl_di" bpmnElement="Flow_0chr3wl">
+        <di:waypoint x="750" y="120" />
+        <di:waypoint x="922" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_01qh9ez_di" bpmnElement="Flow_01qh9ez">
+        <di:waypoint x="390" y="350" />
+        <di:waypoint x="435" y="350" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="TextAnnotation_0p75464_di" bpmnElement="TextAnnotation_0p75464">
+        <dc:Bounds x="510" y="200" width="99.99156545209178" height="70.17543859649123" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1cnquhh_di" bpmnElement="TextAnnotation_1cnquhh">
+        <dc:Bounds x="190" y="150" width="189.99873481781378" height="70.17543859649123" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

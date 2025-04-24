@@ -1,0 +1,352 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:color="http://www.omg.org/spec/BPMN/non-normative/color/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0gfhesn" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.31.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.22.0">
+  <bpmn:process id="admin_sendTokensToWallet" name="Transfer" isExecutable="true">
+    <bpmn:documentation>{
+        "description": "Transfer funds to external wallet",
+        "img_picture": "",
+        "type": "admin_quest",
+        "reward": 0.0
+}</bpmn:documentation>
+    <bpmn:startEvent id="StartEvent_1" camunda:asyncBefore="true" camunda:asyncAfter="true" camunda:initiator="camunda_user_id">
+      <bpmn:outgoing>Flow_15hi1rt</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="get_user_info" name="Get user info by caminda_user_id" camunda:asyncBefore="true" camunda:asyncAfter="true" camunda:class="ai.hhrdr.chainflow.engine.delegate.GetUserInfoDelegate">
+      <bpmn:incoming>Flow_15hi1rt</bpmn:incoming>
+      <bpmn:outgoing>Flow_13qk9mx</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_15hi1rt" sourceRef="StartEvent_1" targetRef="get_user_info" />
+    <bpmn:sequenceFlow id="Flow_13qk9mx" sourceRef="get_user_info" targetRef="form_choose_token" />
+    <bpmn:userTask id="form_choose_token" name="Choose token" camunda:asyncBefore="true" camunda:asyncAfter="true" camunda:assignee="${camunda_user_id}">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="token_id" label="Choose token" type="string" />
+          <camunda:formField id="form_amount" label="Amount" type="string" />
+          <camunda:formField id="form_to_address" label="Transfer to" type="string" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_13qk9mx</bpmn:incoming>
+      <bpmn:outgoing>Flow_1qrjw34</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:serviceTask id="connector_resolve_network" name="Resolve token network into chain_id" camunda:asyncAfter="true">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="method">GET</camunda:inputParameter>
+            <camunda:inputParameter name="url">https://api-prod-lax.dexguru.biz/v3/chain/network_to_chain_id/${token_network}</camunda:inputParameter>
+            <camunda:inputParameter name="headers">
+              <camunda:map />
+            </camunda:inputParameter>
+            <camunda:inputParameter name="payload">{}</camunda:inputParameter>
+            <camunda:outputParameter name="chain_id">${response}</camunda:outputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_068efk0</bpmn:incoming>
+      <bpmn:outgoing>Flow_0dnttcv</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0dnttcv" sourceRef="connector_resolve_network" targetRef="script_prepare_transaction" />
+    <bpmn:scriptTask id="script_prepare_transaction" name="Prepare transaction" camunda:asyncBefore="true" camunda:asyncAfter="true" scriptFormat="javascript">
+      <bpmn:extensionElements />
+      <bpmn:incoming>Flow_0dnttcv</bpmn:incoming>
+      <bpmn:outgoing>Flow_0zp02x5</bpmn:outgoing>
+      <bpmn:script>const chainId = execution.getVariable("chain_id"); // Blockchain network ID
+const tokenAddress = execution.getVariable("token_address");
+const recipientAddress = execution.getVariable("form_to_address");
+const fromAddress = execution.getVariable("wallet_address");
+const amountToken = execution.getVariable("form_amount");
+const tokenDecimals = execution.getVariable("token_decimals");
+const amountWei = BigInt(amountToken * Math.pow(10, tokenDecimals));
+
+
+// If sending native token (ETH, MATIC, BNB, etc.)
+if (tokenAddress === null || tokenAddress === "" || tokenAddress === "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee") {
+    execution.setVariable("to", recipientAddress);
+    execution.setVariable("value", amountWei);
+    execution.setVariable("chain_id", chainId);
+    execution.setVariable("data","0x");
+    execution.setVariable("gas", 21000);
+} else {
+    // ERC-20 Token transfer (calls `transfer(recipient, amount)`)
+    const erc20TransferMethodId = "0xa9059cbb"; // Method ID for transfer(address,uint256)
+    const recipientPadded = recipientAddress.toLowerCase().replace("0x", "").padStart(64, "0");
+    const amountPadded = BigInt(amountWei).toString(16).padStart(64, "0");
+    execution.setVariable("to", tokenAddress);
+    execution.setVariable("value", "0");
+    execution.setVariable("chain_id", chainId);
+    execution.setVariable("data", erc20TransferMethodId + recipientPadded + amountPadded);
+}
+</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="script_set_status" name="Status: Waiting for TX" camunda:asyncBefore="true" camunda:asyncAfter="true" scriptFormat="javascript">
+      <bpmn:incoming>Flow_1n0m9hz</bpmn:incoming>
+      <bpmn:outgoing>Flow_0gwe4bz</bpmn:outgoing>
+      <bpmn:script>  execution.setVariable('status_message', 'Transfer in progress');
+</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:scriptTask id="script_clear_status" name="Clear status" camunda:asyncBefore="true" camunda:asyncAfter="true" scriptFormat="javascript">
+      <bpmn:incoming>Flow_0iu5lh9</bpmn:incoming>
+      <bpmn:outgoing>Flow_1mt0omm</bpmn:outgoing>
+      <bpmn:script>execution.setVariable('status_message', null);
+</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:endEvent id="Event_0835fok">
+      <bpmn:incoming>Flow_1mdn7gu</bpmn:incoming>
+      <bpmn:incoming>Flow_0ncfzy3</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:serviceTask id="execute_transaction" name="Execute Transaction" camunda:asyncAfter="true" camunda:type="external" camunda:topic="execute_transaction">
+      <bpmn:incoming>Flow_08yreah</bpmn:incoming>
+      <bpmn:outgoing>Flow_0412xcj</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:boundaryEvent id="Event_0eobe36" attachedToRef="execute_transaction">
+      <bpmn:outgoing>Flow_0iu5lh9</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_0qj18nf" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_1mt0omm" sourceRef="script_clear_status" targetRef="form_review_error" />
+    <bpmn:sequenceFlow id="Flow_0zp02x5" sourceRef="script_prepare_transaction" targetRef="Gateway_1egbjee" />
+    <bpmn:parallelGateway id="Gateway_1egbjee">
+      <bpmn:incoming>Flow_0zp02x5</bpmn:incoming>
+      <bpmn:outgoing>Flow_08yreah</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1n0m9hz</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:sequenceFlow id="Flow_08yreah" sourceRef="Gateway_1egbjee" targetRef="execute_transaction" />
+    <bpmn:sequenceFlow id="Flow_1n0m9hz" sourceRef="Gateway_1egbjee" targetRef="script_set_status" />
+    <bpmn:parallelGateway id="Gateway_03cr4bd">
+      <bpmn:incoming>Flow_0412xcj</bpmn:incoming>
+      <bpmn:incoming>Flow_0gwe4bz</bpmn:incoming>
+      <bpmn:outgoing>Flow_15147qa</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:sequenceFlow id="Flow_0412xcj" sourceRef="execute_transaction" targetRef="Gateway_03cr4bd" />
+    <bpmn:sequenceFlow id="Flow_0gwe4bz" sourceRef="script_set_status" targetRef="Gateway_03cr4bd" />
+    <bpmn:sequenceFlow id="Flow_15147qa" sourceRef="Gateway_03cr4bd" targetRef="Activity_19sa3fw" />
+    <bpmn:userTask id="form_review_error" name="Review error" camunda:asyncBefore="true" camunda:asyncAfter="true" camunda:assignee="${camunda_user_id}">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="message_error" label="Can&#39;t transfer" type="string" defaultValue="${error}" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1mt0omm</bpmn:incoming>
+      <bpmn:outgoing>Flow_1vqqp2u</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_0iu5lh9" sourceRef="Event_0eobe36" targetRef="script_clear_status" />
+    <bpmn:sequenceFlow id="Flow_1vqqp2u" sourceRef="form_review_error" targetRef="Event_0ci6med" />
+    <bpmn:endEvent id="Event_0ci6med">
+      <bpmn:incoming>Flow_1vqqp2u</bpmn:incoming>
+      <bpmn:terminateEventDefinition id="TerminateEventDefinition_0xmdha4" />
+    </bpmn:endEvent>
+    <bpmn:scriptTask id="Activity_06ye0e6" name="Build explorer link" camunda:asyncBefore="true" camunda:asyncAfter="true" scriptFormat="javascript">
+      <bpmn:incoming>Flow_0loopob</bpmn:incoming>
+      <bpmn:outgoing>Flow_0dxw1um</bpmn:outgoing>
+      <bpmn:script>const chain_id = execution.getVariable("chain_id");
+const tx_hash = execution.getVariable("tx_hash")
+
+const chain_id_to_block_explorer = {
+    "1": "etherscan.io",
+    "56": "bscscan.com",
+    "42161": "arbiscan.io",
+    "137": "polygonscan.com",
+    "8453": "basescan.org",
+    "7565164": "solscan.io",
+    "260": "blockscout.gurunetwork.ai",
+    "261": "sepolia.gurunetwork.ai",
+    "10": "optimistic.etherscan.io",
+    "146": "sonicscan.org"
+}
+
+// build tx link like 
+const tx_link = `https://${chain_id_to_block_explorer[chain_id]}/tx/${tx_hash}`;
+execution.setVariable("tx_link", tx_link);</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:userTask id="form_review_swap" name="View Transaction" camunda:asyncBefore="true" camunda:asyncAfter="true" camunda:assignee="${camunda_user_id}">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="message_txhash" label="View Transaction" type="string" defaultValue="${tx_link}" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0dxw1um</bpmn:incoming>
+      <bpmn:outgoing>Flow_1mdn7gu</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_0dxw1um" sourceRef="Activity_06ye0e6" targetRef="form_review_swap" />
+    <bpmn:sequenceFlow id="Flow_1mdn7gu" sourceRef="form_review_swap" targetRef="Event_0835fok" />
+    <bpmn:scriptTask id="Activity_19sa3fw" name="Clear status" camunda:asyncBefore="true" camunda:asyncAfter="true" scriptFormat="javascript">
+      <bpmn:incoming>Flow_15147qa</bpmn:incoming>
+      <bpmn:outgoing>Flow_0loopob</bpmn:outgoing>
+      <bpmn:script>execution.setVariable('status_message', null);
+</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_0loopob" sourceRef="Activity_19sa3fw" targetRef="Activity_06ye0e6" />
+    <bpmn:boundaryEvent id="Event_02k4h0f" attachedToRef="form_review_swap">
+      <bpmn:outgoing>Flow_0ncfzy3</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_004k9in">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT5M</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_0ncfzy3" sourceRef="Event_02k4h0f" targetRef="Event_0835fok" />
+    <bpmn:serviceTask id="Activity_1jl3jt1" name="Get Token Info" camunda:asyncAfter="true" camunda:class="ai.hhrdr.chainflow.engine.delegate.GetTokenInfoDelegate">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="form_tokenAddress">${token_id}</camunda:inputParameter>
+          <camunda:outputParameter name="token_network">${token_network}</camunda:outputParameter>
+          <camunda:outputParameter name="token_address">${token_address}</camunda:outputParameter>
+          <camunda:outputParameter name="token_decimals">${token_decimals}</camunda:outputParameter>
+          <camunda:outputParameter name="token_price">${token_price}</camunda:outputParameter>
+          <camunda:outputParameter name="token_symbol">${token_symbol}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1qrjw34</bpmn:incoming>
+      <bpmn:outgoing>Flow_068efk0</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1qrjw34" sourceRef="form_choose_token" targetRef="Activity_1jl3jt1" />
+    <bpmn:sequenceFlow id="Flow_068efk0" sourceRef="Activity_1jl3jt1" targetRef="connector_resolve_network" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="admin_sendTokensToWallet">
+      <bpmndi:BPMNShape id="StartEvent_1_di" bpmnElement="StartEvent_1">
+        <dc:Bounds x="152" y="502" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1gh9b6s_di" bpmnElement="get_user_info" color:background-color="" color:border-color="">
+        <dc:Bounds x="260" y="480" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0xnfqme_di" bpmnElement="form_choose_token">
+        <dc:Bounds x="460" y="480" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0hmm0fe" bpmnElement="connector_resolve_network">
+        <dc:Bounds x="820" y="480" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0achjov_di" bpmnElement="script_prepare_transaction">
+        <dc:Bounds x="990" y="480" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_04dpvvx" bpmnElement="script_set_status">
+        <dc:Bounds x="1220" y="580" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0kmgmaj" bpmnElement="script_clear_status">
+        <dc:Bounds x="1220" y="210" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0835fok_di" bpmnElement="Event_0835fok">
+        <dc:Bounds x="1882" y="502" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1cxeqr0_di" bpmnElement="execute_transaction">
+        <dc:Bounds x="1220" y="358" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1iqqluo_di" bpmnElement="Gateway_1egbjee">
+        <dc:Bounds x="1125" y="495" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_187yc4u" bpmnElement="Gateway_03cr4bd">
+        <dc:Bounds x="1355" y="495" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1qm9r2l_di" bpmnElement="form_review_error">
+        <dc:Bounds x="1220" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_05npr9m_di" bpmnElement="Event_0ci6med">
+        <dc:Bounds x="1372" y="102" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1fg60d2_di" bpmnElement="Activity_06ye0e6">
+        <dc:Bounds x="1580" y="480" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_18qudwk_di" bpmnElement="form_review_swap">
+        <dc:Bounds x="1730" y="480" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0e6mdx9" bpmnElement="Activity_19sa3fw">
+        <dc:Bounds x="1440" y="480" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0rkrr1u" bpmnElement="Activity_1jl3jt1">
+        <dc:Bounds x="650" y="480" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0cmhalc_di" bpmnElement="Event_02k4h0f">
+        <dc:Bounds x="1762" y="542" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_04w4j5o" bpmnElement="Event_0eobe36">
+        <dc:Bounds x="1252" y="340" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_15hi1rt_di" bpmnElement="Flow_15hi1rt">
+        <di:waypoint x="188" y="520" />
+        <di:waypoint x="260" y="520" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_13qk9mx_di" bpmnElement="Flow_13qk9mx">
+        <di:waypoint x="360" y="520" />
+        <di:waypoint x="460" y="520" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0dnttcv_di" bpmnElement="Flow_0dnttcv">
+        <di:waypoint x="920" y="520" />
+        <di:waypoint x="990" y="520" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1mt0omm_di" bpmnElement="Flow_1mt0omm">
+        <di:waypoint x="1270" y="210" />
+        <di:waypoint x="1270" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0zp02x5_di" bpmnElement="Flow_0zp02x5">
+        <di:waypoint x="1090" y="520" />
+        <di:waypoint x="1125" y="520" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_08yreah_di" bpmnElement="Flow_08yreah">
+        <di:waypoint x="1150" y="495" />
+        <di:waypoint x="1150" y="398" />
+        <di:waypoint x="1220" y="398" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1n0m9hz_di" bpmnElement="Flow_1n0m9hz">
+        <di:waypoint x="1150" y="545" />
+        <di:waypoint x="1150" y="620" />
+        <di:waypoint x="1220" y="620" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0412xcj_di" bpmnElement="Flow_0412xcj">
+        <di:waypoint x="1320" y="398" />
+        <di:waypoint x="1380" y="398" />
+        <di:waypoint x="1380" y="495" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0gwe4bz_di" bpmnElement="Flow_0gwe4bz">
+        <di:waypoint x="1320" y="620" />
+        <di:waypoint x="1380" y="620" />
+        <di:waypoint x="1380" y="545" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_15147qa_di" bpmnElement="Flow_15147qa">
+        <di:waypoint x="1405" y="520" />
+        <di:waypoint x="1440" y="520" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0iu5lh9_di" bpmnElement="Flow_0iu5lh9">
+        <di:waypoint x="1270" y="340" />
+        <di:waypoint x="1270" y="290" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1vqqp2u_di" bpmnElement="Flow_1vqqp2u">
+        <di:waypoint x="1320" y="120" />
+        <di:waypoint x="1372" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0dxw1um_di" bpmnElement="Flow_0dxw1um">
+        <di:waypoint x="1680" y="520" />
+        <di:waypoint x="1730" y="520" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1mdn7gu_di" bpmnElement="Flow_1mdn7gu">
+        <di:waypoint x="1830" y="520" />
+        <di:waypoint x="1882" y="520" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0loopob_di" bpmnElement="Flow_0loopob">
+        <di:waypoint x="1540" y="520" />
+        <di:waypoint x="1580" y="520" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ncfzy3_di" bpmnElement="Flow_0ncfzy3">
+        <di:waypoint x="1780" y="578" />
+        <di:waypoint x="1780" y="598" />
+        <di:waypoint x="1900" y="598" />
+        <di:waypoint x="1900" y="538" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1qrjw34_di" bpmnElement="Flow_1qrjw34">
+        <di:waypoint x="560" y="520" />
+        <di:waypoint x="650" y="520" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_068efk0_di" bpmnElement="Flow_068efk0">
+        <di:waypoint x="750" y="520" />
+        <di:waypoint x="820" y="520" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

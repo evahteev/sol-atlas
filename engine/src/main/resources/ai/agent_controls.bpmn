@@ -1,0 +1,463 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_1e9gp8v" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.31.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.20.0">
+  <bpmn:process id="agent_controls" name="Agent Controls" isExecutable="true">
+    <bpmn:serviceTask id="Activity_0ryruy6" name="Delete Chatbot Agent, KB and Skill" camunda:class="ai.hhrdr.chainflow.engine.delegate.AgentDeleteDelegate">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="config_chatbotName">${chatName}</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_197mr5c</bpmn:incoming>
+      <bpmn:outgoing>Flow_135ny37</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:userTask id="control_agentTerminate" name="Restart Agent" camunda:asyncAfter="true" camunda:assignee="${camunda_user_id}">
+      <bpmn:documentation>Remove agent and message history</bpmn:documentation>
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="action_stop" label="Restart" type="boolean" defaultValue="false" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0uzcyl4</bpmn:incoming>
+      <bpmn:outgoing>Flow_197mr5c</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="control_agentEdit" name="Edit ${chatbotHumanName} Agent" camunda:assignee="${camunda_user_id}">
+      <bpmn:documentation>Modify an AI trading agent’s skills, persona, model, and other configurable settings within the DeFi trading terminal.</bpmn:documentation>
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="config_agentModel" label="Agent Model" type="string" defaultValue="${config_agentModel}" />
+          <camunda:formField id="form_agentPrompt" label="Agent Prompt" type="string" defaultValue="${config_agentPrompt}">
+            <camunda:properties />
+            <camunda:validation />
+          </camunda:formField>
+          <camunda:formField id="config_agentProvider" label="Agent Provider" type="string" defaultValue="${config_agentProvider}" />
+          <camunda:formField id="form_agentLanguage" label="Agent Language" type="string" defaultValue="${config_agentLanguage}" />
+          <camunda:formField id="form_replyAllMessages" label="Reply All Messages" type="boolean" defaultValue="${false}" />
+          <camunda:formField id="action_editAgent" label="Edit Agent" type="boolean" defaultValue="true" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0qf5nie</bpmn:incoming>
+      <bpmn:outgoing>Flow_08g4r2m</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="Event_0yk54cf">
+      <bpmn:incoming>Flow_135ny37</bpmn:incoming>
+      <bpmn:terminateEventDefinition id="TerminateEventDefinition_1fvjpj2" />
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_197mr5c" sourceRef="control_agentTerminate" targetRef="Activity_0ryruy6" />
+    <bpmn:sequenceFlow id="Flow_135ny37" sourceRef="Activity_0ryruy6" targetRef="Event_0yk54cf" />
+    <bpmn:userTask id="Activity_04vkq4e" name="Agent Created Notification" camunda:assignee="${camunda_user_id}">
+      <bpmn:documentation>🎉 Congrats! 🎉
+
+We've successfully created your ${config_agentName} Agent in the ${applicationName} context! 🚀
+Prompt:
+${config_agentPrompt}
+Feel free to use /agent to make any changes. 🤖</bpmn:documentation>
+      <bpmn:extensionElements>
+        <camunda:taskListener class="ai.hhrdr.chainflow.engine.listener.UserDMNotificationListener" event="create">
+          <camunda:field name="telegramUserIdExp">
+            <camunda:expression>${config_chatID}</camunda:expression>
+          </camunda:field>
+          <camunda:field name="parseModeExp">
+            <camunda:string>MarkdownV2</camunda:string>
+          </camunda:field>
+          <camunda:field name="sendTaskButtonExp">
+            <camunda:expression>${false}</camunda:expression>
+          </camunda:field>
+          <camunda:field name="completeTaskExp">
+            <camunda:expression>${true}</camunda:expression>
+          </camunda:field>
+          <camunda:field name="buttonLinkExp">
+            <camunda:expression>${null}</camunda:expression>
+          </camunda:field>
+          <camunda:field name="buttonTextExp">
+            <camunda:expression>${null}</camunda:expression>
+          </camunda:field>
+          <camunda:field name="telegramThreadIdExp">
+            <camunda:expression>${config_threadID}</camunda:expression>
+          </camunda:field>
+        </camunda:taskListener>
+        <camunda:formData />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1jvtn41</bpmn:incoming>
+      <bpmn:outgoing>Flow_0qf5nie</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_0qf5nie" sourceRef="Activity_04vkq4e" targetRef="control_agentEdit" />
+    <bpmn:userTask id="control_agentKBUpdate" name="Update ${chatbotHumanName}  Agent Knowledge Base" camunda:assignee="${camunda_user_id}">
+      <bpmn:documentation>Refresh and enhance the AI trading agent’s information repository with the latest market data, strategies, and insights to optimize trading performance within the DeFi trading terminal.</bpmn:documentation>
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="text_updateAgent" label="Update ${config_agentName} Agent Knowledge Base" type="string" />
+          <camunda:formField id="form_textToAdd" label="Context To Add" type="string" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1wu1whi</bpmn:incoming>
+      <bpmn:outgoing>Flow_0cejf8w</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:serviceTask id="Activity_0r626gp" name="Knowledge Embedding..." camunda:class="ai.hhrdr.chainflow.engine.delegate.EmbedKnowledgeBaseDelegate">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="form_reply">${form_textToAdd}</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0cejf8w</bpmn:incoming>
+      <bpmn:outgoing>Flow_1wu1whi</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0cejf8w" sourceRef="control_agentKBUpdate" targetRef="Activity_0r626gp" />
+    <bpmn:sequenceFlow id="Flow_1wu1whi" sourceRef="Activity_0r626gp" targetRef="control_agentKBUpdate" />
+    <bpmn:serviceTask id="Activity_1rc4orw" name="Update/Get Agent,  User KB and Skills" camunda:asyncBefore="true" camunda:class="ai.hhrdr.chainflow.engine.delegate.AgentUpdateDelegate">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="agentModel">${form_agentModel}</camunda:inputParameter>
+          <camunda:inputParameter name="agentPrompt">${form_agentPrompt}</camunda:inputParameter>
+          <camunda:inputParameter name="agentPromptAdj">${form_agentPromptAdj}</camunda:inputParameter>
+          <camunda:inputParameter name="agentProvider">${form_agentProvider}</camunda:inputParameter>
+          <camunda:inputParameter name="agentSkills">${form_agentSkills}</camunda:inputParameter>
+          <camunda:inputParameter name="agentLanguage">${form_agentLanguage}</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_08g4r2m</bpmn:incoming>
+      <bpmn:outgoing>Flow_1jvtn41</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_08g4r2m" sourceRef="control_agentEdit" targetRef="Activity_1rc4orw" />
+    <bpmn:sequenceFlow id="Flow_1jvtn41" sourceRef="Activity_1rc4orw" targetRef="Activity_04vkq4e" />
+    <bpmn:endEvent id="Event_1xbhwog">
+      <bpmn:incoming>duplicate_in_runtime</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:exclusiveGateway id="Gateway_1cx0ipf" camunda:asyncBefore="true" default="Flow_1dhoqim">
+      <bpmn:incoming>Flow_1tqhxeb</bpmn:incoming>
+      <bpmn:outgoing>Flow_1dhoqim</bpmn:outgoing>
+      <bpmn:outgoing>duplicate_in_runtime</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_1dhoqim" sourceRef="Gateway_1cx0ipf" targetRef="Gateway_0o6q5nw" />
+    <bpmn:sequenceFlow id="duplicate_in_runtime" name="Exit if duplicate with Business key already exists in Runtime" sourceRef="Gateway_1cx0ipf" targetRef="Event_1xbhwog">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${isDuplicate}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_06d422z" sourceRef="Gateway_0o6q5nw" targetRef="Activity_0oziqe0" />
+    <bpmn:parallelGateway id="Gateway_0o6q5nw">
+      <bpmn:incoming>Flow_1dhoqim</bpmn:incoming>
+      <bpmn:outgoing>Flow_06d422z</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0uzcyl4</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:sequenceFlow id="Flow_0uzcyl4" sourceRef="Gateway_0o6q5nw" targetRef="control_agentTerminate" />
+    <bpmn:userTask id="llm_reply_creating_chatbot" name="Creating the chatbot" camunda:assignee="${camunda_user_id}">
+      <bpmn:documentation>Setting up your ${chatName} assistant, please stand by...</bpmn:documentation>
+      <bpmn:extensionElements>
+        <camunda:taskListener class="ai.hhrdr.chainflow.engine.listener.UserDMNotificationListener" event="create">
+          <camunda:field name="telegramUserIdExp">
+            <camunda:expression>${config_chatID}</camunda:expression>
+          </camunda:field>
+          <camunda:field name="parseModeExp">
+            <camunda:string>MarkdownV2</camunda:string>
+          </camunda:field>
+          <camunda:field name="sendTaskButtonExp">
+            <camunda:expression>${false}</camunda:expression>
+          </camunda:field>
+          <camunda:field name="completeTaskExp">
+            <camunda:expression>${true}</camunda:expression>
+          </camunda:field>
+          <camunda:field name="buttonLinkExp">
+            <camunda:expression>${null}</camunda:expression>
+          </camunda:field>
+          <camunda:field name="buttonTextExp">
+            <camunda:expression>${null}</camunda:expression>
+          </camunda:field>
+          <camunda:field name="telegramThreadIdExp">
+            <camunda:expression>${config_threadID}</camunda:expression>
+          </camunda:field>
+        </camunda:taskListener>
+        <camunda:formData />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_07bezyg</bpmn:incoming>
+      <bpmn:outgoing>Flow_1tjv842</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:serviceTask id="Activity_0oziqe0" name="ChatbotWebhookTokenDelegate" camunda:asyncBefore="true" camunda:class="ai.hhrdr.chainflow.engine.delegate.ChatbotWebhookTokenDelegate">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="chatName">${chatName}</camunda:inputParameter>
+          <camunda:outputParameter name="chatbotWebhookToken">${chatbotWebhookToken}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_06d422z</bpmn:incoming>
+      <bpmn:outgoing>Flow_1cuvfon</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1cuvfon" sourceRef="Activity_0oziqe0" targetRef="Gateway_1t9k0u2" />
+    <bpmn:exclusiveGateway id="Gateway_1t9k0u2" default="Flow_07bezyg">
+      <bpmn:incoming>Flow_1cuvfon</bpmn:incoming>
+      <bpmn:outgoing>Flow_07bezyg</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0orbg58</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_07bezyg" sourceRef="Gateway_1t9k0u2" targetRef="llm_reply_creating_chatbot" />
+    <bpmn:sequenceFlow id="Flow_0orbg58" sourceRef="Gateway_1t9k0u2" targetRef="llm_reply_update">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${chatbotWebhookToken != null}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:userTask id="llm_reply_update" name="Updating the chatbot" camunda:assignee="${camunda_user_id}">
+      <bpmn:documentation>Updating your ${chatName} assistant, please stand by...</bpmn:documentation>
+      <bpmn:extensionElements>
+        <camunda:taskListener class="ai.hhrdr.chainflow.engine.listener.UserDMNotificationListener" event="create">
+          <camunda:field name="telegramUserIdExp">
+            <camunda:expression>${config_chatID}</camunda:expression>
+          </camunda:field>
+          <camunda:field name="parseModeExp">
+            <camunda:string>MarkdownV2</camunda:string>
+          </camunda:field>
+          <camunda:field name="sendTaskButtonExp">
+            <camunda:expression>${false}</camunda:expression>
+          </camunda:field>
+          <camunda:field name="completeTaskExp">
+            <camunda:expression>${true}</camunda:expression>
+          </camunda:field>
+          <camunda:field name="buttonLinkExp">
+            <camunda:expression>${null}</camunda:expression>
+          </camunda:field>
+          <camunda:field name="buttonTextExp">
+            <camunda:expression>${null}</camunda:expression>
+          </camunda:field>
+          <camunda:field name="telegramThreadIdExp">
+            <camunda:expression>${config_threadID}</camunda:expression>
+          </camunda:field>
+        </camunda:taskListener>
+        <camunda:formData />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0orbg58</bpmn:incoming>
+      <bpmn:outgoing>Flow_08mre17</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sendTask id="Activity_1pbr8v3" name="ChatBot Provisioned -&#62; Agent" camunda:asyncBefore="true" camunda:class="ai.hhrdr.chainflow.engine.delegate.ChatbotProvisionedDelegate">
+      <bpmn:extensionElements />
+      <bpmn:incoming>Flow_0r5ye83</bpmn:incoming>
+      <bpmn:incoming>Flow_08mre17</bpmn:incoming>
+      <bpmn:outgoing>Flow_1g6uwzz</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:endEvent id="Event_043e5dj">
+      <bpmn:incoming>Flow_1g6uwzz</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1g6uwzz" sourceRef="Activity_1pbr8v3" targetRef="Event_043e5dj" />
+    <bpmn:serviceTask id="Activity_0fwk1pl" name="ProcessInstanceDeduplicationFlagDelegate" camunda:asyncBefore="true" camunda:class="ai.hhrdr.chainflow.engine.delegate.ProcessInstanceDeduplicationFlagDelegate">
+      <bpmn:incoming>Flow_0mc86hx</bpmn:incoming>
+      <bpmn:outgoing>Flow_1tqhxeb</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1tqhxeb" sourceRef="Activity_0fwk1pl" targetRef="Gateway_1cx0ipf" />
+    <bpmn:serviceTask id="Activity_1c9ks9m" name="Create/Get Agent,  User KB and Skills" camunda:asyncBefore="true" camunda:class="ai.hhrdr.chainflow.engine.delegate.ChatbotCreateDelegate">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="chatName">${chatName}</camunda:inputParameter>
+          <camunda:inputParameter name="agentName">${form_modelsAgentName}</camunda:inputParameter>
+          <camunda:outputParameter name="chatbotWebhookToken">${chatbotWebhookToken}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1tjv842</bpmn:incoming>
+      <bpmn:outgoing>Flow_0r5ye83</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1tjv842" sourceRef="llm_reply_creating_chatbot" targetRef="Activity_1c9ks9m" />
+    <bpmn:startEvent id="Event_0bayn2k" name="Start" camunda:initiator="camunda_user_id">
+      <bpmn:extensionElements>
+        <camunda:formData businessKey="">
+          <camunda:formField id="form_question" label="Question" type="string" />
+          <camunda:formField id="config_threadID" label="Thread ID" type="string" />
+          <camunda:formField id="form_replyMessageType" label="Reply Message Type" type="string" defaultValue="REPLY" />
+          <camunda:formField id="config_chatHumanName" label="Chat Human Name" type="string" />
+          <camunda:formField id="config_chatID" label="Chat ID" type="string" />
+          <camunda:formField id="form_modelsAgentName" label="Agent Model Name" type="string" defaultValue="tulu3_chatbot_agent" />
+        </camunda:formData>
+        <camunda:executionListener class="ai.hhrdr.chainflow.engine.listener.SetStartVariablesListener" event="start" />
+        <camunda:properties>
+          <camunda:property name="config_chatbotStyle" value="When answering, dont do any greetings, just go straight to the answer. You MUST use the Markdown markup styling it for Telegram Messages. No Code BLOCKS! NO EMOJI, NO HASHTAGS! Try focus on providing SHORT ANSWERS -  one paragraph 5-7 sentences max." />
+        </camunda:properties>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_0mc86hx</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_0mc86hx" sourceRef="Event_0bayn2k" targetRef="Activity_0fwk1pl" />
+    <bpmn:sequenceFlow id="Flow_0r5ye83" sourceRef="Activity_1c9ks9m" targetRef="Activity_1pbr8v3" />
+    <bpmn:sequenceFlow id="Flow_08mre17" sourceRef="llm_reply_update" targetRef="Activity_1pbr8v3" />
+    <bpmn:textAnnotation id="TextAnnotation_1lj1mgh">
+      <bpmn:text>Send Message to Agent that Chatbot was provisioned</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_1phgede" associationDirection="None" sourceRef="Activity_1pbr8v3" targetRef="TextAnnotation_1lj1mgh" />
+  </bpmn:process>
+  <bpmn:error id="Error_1slv2me" name="Error_1m0iqcr" errorCode="UPDATE_KB_FAIL" />
+  <bpmn:message id="Message_39l3bj5" name="embed_kb" />
+  <bpmn:message id="Message_3up3j7j" name="MESSAGE_CHATBOT" />
+  <bpmn:signal id="Signal_3qfb79c" name="user_updated" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="agent_controls">
+      <bpmndi:BPMNShape id="BPMNShape_16gzm9w" bpmnElement="Activity_0ryruy6">
+        <dc:Bounds x="920" y="820" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_05j6wcx" bpmnElement="control_agentEdit">
+        <dc:Bounds x="730" y="250" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_19ajiqa_di" bpmnElement="Event_0yk54cf">
+        <dc:Bounds x="1074" y="842" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0zlki3h" bpmnElement="Activity_04vkq4e">
+        <dc:Bounds x="920" y="350" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1xy55il" bpmnElement="control_agentKBUpdate">
+        <dc:Bounds x="730" y="140" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1wno8e4" bpmnElement="Activity_0r626gp">
+        <dc:Bounds x="920" y="140" width="100" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="938" y="225" width="74" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1qo1nuh" bpmnElement="Activity_1rc4orw">
+        <dc:Bounds x="920" y="250" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1xbhwog_di" bpmnElement="Event_1xbhwog">
+        <dc:Bounds x="552" y="1292" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1cx0ipf_di" bpmnElement="Gateway_1cx0ipf" isMarkerVisible="true">
+        <dc:Bounds x="425" y="1055" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_16sstc2_di" bpmnElement="Gateway_0o6q5nw">
+        <dc:Bounds x="695" y="1055" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0cjuw3b" bpmnElement="llm_reply_creating_chatbot">
+        <dc:Bounds x="960" y="1040" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1ayypcr" bpmnElement="Activity_0oziqe0">
+        <dc:Bounds x="770" y="1040" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1t9k0u2_di" bpmnElement="Gateway_1t9k0u2" isMarkerVisible="true">
+        <dc:Bounds x="885" y="1055" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_07z5rtz" bpmnElement="llm_reply_update">
+        <dc:Bounds x="960" y="1190" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_13ftisj_di" bpmnElement="Activity_1pbr8v3">
+        <dc:Bounds x="1290" y="1130" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_043e5dj_di" bpmnElement="Event_043e5dj">
+        <dc:Bounds x="1522" y="1152" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0y5gixc" bpmnElement="Activity_0fwk1pl">
+        <dc:Bounds x="237" y="1040" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_075ru4e_di" bpmnElement="Activity_1c9ks9m">
+        <dc:Bounds x="1090" y="1040" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1lo01gd" bpmnElement="Event_0bayn2k">
+        <dc:Bounds x="152" y="1062" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="160" y="1105" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1j3tz0j_di" bpmnElement="control_agentTerminate">
+        <dc:Bounds x="789" y="820" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1lj1mgh_di" bpmnElement="TextAnnotation_1lj1mgh">
+        <dc:Bounds x="1410" y="1200" width="100" height="70" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_197mr5c_di" bpmnElement="Flow_197mr5c">
+        <di:waypoint x="889" y="860" />
+        <di:waypoint x="920" y="860" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_135ny37_di" bpmnElement="Flow_135ny37">
+        <di:waypoint x="1020" y="860" />
+        <di:waypoint x="1074" y="860" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0qf5nie_di" bpmnElement="Flow_0qf5nie">
+        <di:waypoint x="920" y="390" />
+        <di:waypoint x="780" y="390" />
+        <di:waypoint x="780" y="330" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0cejf8w_di" bpmnElement="Flow_0cejf8w">
+        <di:waypoint x="830" y="180" />
+        <di:waypoint x="920" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1wu1whi_di" bpmnElement="Flow_1wu1whi">
+        <di:waypoint x="970" y="140" />
+        <di:waypoint x="970" y="80" />
+        <di:waypoint x="780" y="80" />
+        <di:waypoint x="780" y="140" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_08g4r2m_di" bpmnElement="Flow_08g4r2m">
+        <di:waypoint x="830" y="290" />
+        <di:waypoint x="920" y="290" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1jvtn41_di" bpmnElement="Flow_1jvtn41">
+        <di:waypoint x="970" y="330" />
+        <di:waypoint x="970" y="350" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1dhoqim_di" bpmnElement="Flow_1dhoqim">
+        <di:waypoint x="475" y="1080" />
+        <di:waypoint x="695" y="1080" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_07nzqai_di" bpmnElement="duplicate_in_runtime">
+        <di:waypoint x="450" y="1105" />
+        <di:waypoint x="450" y="1180" />
+        <di:waypoint x="570" y="1180" />
+        <di:waypoint x="570" y="1292" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="446" y="1203" width="88" height="53" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_06d422z_di" bpmnElement="Flow_06d422z">
+        <di:waypoint x="745" y="1080" />
+        <di:waypoint x="770" y="1080" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0uzcyl4_di" bpmnElement="Flow_0uzcyl4">
+        <di:waypoint x="723" y="1058" />
+        <di:waypoint x="750" y="860" />
+        <di:waypoint x="789" y="860" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1cuvfon_di" bpmnElement="Flow_1cuvfon">
+        <di:waypoint x="870" y="1080" />
+        <di:waypoint x="885" y="1080" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_07bezyg_di" bpmnElement="Flow_07bezyg">
+        <di:waypoint x="935" y="1080" />
+        <di:waypoint x="960" y="1080" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0orbg58_di" bpmnElement="Flow_0orbg58">
+        <di:waypoint x="910" y="1105" />
+        <di:waypoint x="910" y="1230" />
+        <di:waypoint x="960" y="1230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1g6uwzz_di" bpmnElement="Flow_1g6uwzz">
+        <di:waypoint x="1390" y="1170" />
+        <di:waypoint x="1522" y="1170" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1tqhxeb_di" bpmnElement="Flow_1tqhxeb">
+        <di:waypoint x="337" y="1080" />
+        <di:waypoint x="425" y="1080" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1tjv842_di" bpmnElement="Flow_1tjv842">
+        <di:waypoint x="1060" y="1080" />
+        <di:waypoint x="1090" y="1080" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0mc86hx_di" bpmnElement="Flow_0mc86hx">
+        <di:waypoint x="188" y="1080" />
+        <di:waypoint x="237" y="1080" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0r5ye83_di" bpmnElement="Flow_0r5ye83">
+        <di:waypoint x="1190" y="1080" />
+        <di:waypoint x="1240" y="1080" />
+        <di:waypoint x="1240" y="1170" />
+        <di:waypoint x="1290" y="1170" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_08mre17_di" bpmnElement="Flow_08mre17">
+        <di:waypoint x="1060" y="1230" />
+        <di:waypoint x="1175" y="1230" />
+        <di:waypoint x="1175" y="1200" />
+        <di:waypoint x="1290" y="1200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1phgede_di" bpmnElement="Association_1phgede">
+        <di:waypoint x="1390" y="1189" />
+        <di:waypoint x="1420" y="1200" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

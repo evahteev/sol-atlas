@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_106l7vc" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.31.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.20.0">
+  <bpmn:process id="tokens_get_token_info" name="Get Token Info" isExecutable="true" camunda:historyTimeToLive="3000">
+    <bpmn:startEvent id="Event_061opqw" camunda:initiator="camunda_user_id">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="form_tokenAddress" label="Token Address " type="string" defaultValue="0x525574c899a7c877a11865339e57376092168258-eth" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_07lr7tl</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_07lr7tl" sourceRef="Event_061opqw" targetRef="Activity_1qnvnx9" />
+    <bpmn:endEvent id="Event_1gyuwgv">
+      <bpmn:incoming>Flow_1ojirz9</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:serviceTask id="Activity_1qnvnx9" name="Get Token For The token Widget" camunda:class="ai.hhrdr.chainflow.engine.delegate.GetTokenInfoDelegate">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="form_tokenAddress">${form_tokenAddress}</camunda:inputParameter>
+          <camunda:inputParameter name="message_parseMode">MarkdownV2</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_07lr7tl</bpmn:incoming>
+      <bpmn:outgoing>Flow_1nerkr0</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sendTask id="Activity_1pbr8v3" name="Send Message to Chatbot DM" camunda:class="ai.hhrdr.chainflow.engine.delegate.ChatbotMessageDelegate">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="chatbotMessage">${token_notification_message}</camunda:inputParameter>
+          <camunda:inputParameter name="buttonLink">${applicationUrl.concat(
+  '/token/',
+  form_tokenAddress.split('-')[1],
+  '/',
+  form_tokenAddress.split('-')[0]
+)}</camunda:inputParameter>
+          <camunda:inputParameter name="buttonText">${token_name.concat(' Charts')}</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1nerkr0</bpmn:incoming>
+      <bpmn:outgoing>Flow_1ojirz9</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:sequenceFlow id="Flow_1nerkr0" sourceRef="Activity_1qnvnx9" targetRef="Activity_1pbr8v3" />
+    <bpmn:sequenceFlow id="Flow_1ojirz9" sourceRef="Activity_1pbr8v3" targetRef="Event_1gyuwgv" />
+    <bpmn:textAnnotation id="TextAnnotation_0k2yffd">
+      <bpmn:text>Set all def_ prefixed  variables into the execution context of process instance</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:textAnnotation id="TextAnnotation_03z4yds">
+      <bpmn:text>The process implements quest, where user can boost the telegram channel and get rewards, only premium allowed</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_093vsp8" associationDirection="None" sourceRef="Event_061opqw" targetRef="TextAnnotation_03z4yds" />
+  </bpmn:process>
+  <bpmn:message id="Message_2svg384" name="MESSAGE_CHATBOT" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="tokens_get_token_info">
+      <bpmndi:BPMNShape id="BPMNShape_019tsbs" bpmnElement="Event_061opqw">
+        <dc:Bounds x="232" y="232" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1rbboci" bpmnElement="Event_1gyuwgv">
+        <dc:Bounds x="772" y="232" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0avejyz" bpmnElement="Activity_1qnvnx9">
+        <dc:Bounds x="340" y="210" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_13ftisj_di" bpmnElement="Activity_1pbr8v3">
+        <dc:Bounds x="550" y="210" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0k2yffd_di" bpmnElement="TextAnnotation_0k2yffd">
+        <dc:Bounds x="160" y="330" width="180" height="58" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_03z4yds_di" bpmnElement="TextAnnotation_03z4yds">
+        <dc:Bounds x="250" y="74" width="150" height="92" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_07lr7tl_di" bpmnElement="Flow_07lr7tl">
+        <di:waypoint x="268" y="250" />
+        <di:waypoint x="340" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1nerkr0_di" bpmnElement="Flow_1nerkr0">
+        <di:waypoint x="440" y="250" />
+        <di:waypoint x="550" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ojirz9_di" bpmnElement="Flow_1ojirz9">
+        <di:waypoint x="650" y="250" />
+        <di:waypoint x="772" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_093vsp8_di" bpmnElement="Association_093vsp8">
+        <di:waypoint x="257" y="234" />
+        <di:waypoint x="291" y="166" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

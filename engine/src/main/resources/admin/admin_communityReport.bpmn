@@ -1,0 +1,348 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_1i2gsp8" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.31.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.20.0">
+  <bpmn:process id="admin_communityReport" name="Admin: Community Reports" isExecutable="true">
+    <bpmn:documentation>{
+        "description": "Reports in Group on Community activity",
+        "img_picture": "https://assets-stage.dex.guru/icons/grandhuntriddle.svg",
+        "type": "admin_restart",
+        "reward": 0.0
+}</bpmn:documentation>
+    <bpmn:extensionElements>
+      <camunda:executionListener class="ai.hhrdr.chainflow.engine.listener.SetStartVariablesListener" event="start" />
+    </bpmn:extensionElements>
+    <bpmn:startEvent id="StartEvent_1" camunda:asyncAfter="true" camunda:initiator="camunda_user_id">
+      <bpmn:extensionElements>
+        <camunda:executionListener class="ai.hhrdr.chainflow.engine.listener.SetStartVariablesListener" event="start" />
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_0uyhf9a</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="Activity_1jk6f7r" name="Get telegram ID" camunda:asyncBefore="true" camunda:class="ai.hhrdr.chainflow.engine.delegate.GetUserInfoDelegate">
+      <bpmn:incoming>Flow_0uyhf9a</bpmn:incoming>
+      <bpmn:outgoing>Flow_1gtoflp</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1gtoflp" sourceRef="Activity_1jk6f7r" targetRef="Gateway_16hkh7y" />
+    <bpmn:userTask id="user_providePostingParams" name="Choose the posting parameters" camunda:assignee="${camunda_user_id}">
+      <bpmn:documentation>Please provide the settings for community reports</bpmn:documentation>
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="form_chatID" label="Channel ID/Group Chat ID" type="long" defaultValue="-1001902150742" />
+          <camunda:formField id="action_setupPosting" label="Setup Posting" type="boolean" defaultValue="false" />
+          <camunda:formField id="form_dashboardID" label="Dashboard slug to generate reports from" type="string" defaultValue="internal_activity_leaderboard" />
+          <camunda:formField id="from_scheduleDuration" label="Time Duration Between Posts" type="string" defaultValue="PT24H" />
+          <camunda:formField id="form_threadID" label="Thread ID" type="long" defaultValue="30200" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0kwjoxk</bpmn:incoming>
+      <bpmn:outgoing>Flow_0c7z1oa</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="Gateway_16hkh7y" default="Flow_0kwjoxk">
+      <bpmn:incoming>Flow_1gtoflp</bpmn:incoming>
+      <bpmn:outgoing>Flow_0kwjoxk</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0ap6bvf</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0kwjoxk" sourceRef="Gateway_16hkh7y" targetRef="user_providePostingParams" />
+    <bpmn:endEvent id="Event_1txs6p2">
+      <bpmn:incoming>Flow_1vbfo4x</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0ap6bvf" sourceRef="Gateway_16hkh7y" targetRef="Activity_0k8m91a">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${!user_is_admin}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:userTask id="Activity_0k8m91a" name="Sorry, Only for admins" camunda:assignee="${camunda_user_id}">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="text_admins" label="Restricted" type="string" defaultValue="Sorry, anly for admins" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0ap6bvf</bpmn:incoming>
+      <bpmn:outgoing>Flow_1vbfo4x</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_1vbfo4x" sourceRef="Activity_0k8m91a" targetRef="Event_1txs6p2" />
+    <bpmn:sequenceFlow id="Flow_0uyhf9a" sourceRef="StartEvent_1" targetRef="Activity_1jk6f7r" />
+    <bpmn:userTask id="Activity_0b709ur" name="LLM Task: Analyze ${form_dashboardID} dashboard" camunda:asyncBefore="true" camunda:assignee="LLM">
+      <bpmn:documentation>You are a community manager with a task to engage commumnity memebers. Using dashboard_slug=${form_dashboardID}, create a brief (10 sentances max) daily activity report post based on the messages_texts. You must highlight trending topics, mention top contributors. Keep it playful, but provide concise, data-backed insights that spark curiosity. Encourage friendly competition by highlighting user achievements and rankings</bpmn:documentation>
+      <bpmn:extensionElements>
+        <camunda:taskListener class="ai.hhrdr.chainflow.engine.listener.AgentTaskListenerOutputV" event="create">
+          <camunda:field name="agentName">
+            <camunda:string>dashboard_agent</camunda:string>
+          </camunda:field>
+          <camunda:field name="systemPrompt">
+            <camunda:string>Be a helpful assistant.</camunda:string>
+          </camunda:field>
+          <camunda:field name="outputVar">
+            <camunda:string>dashboard_agent_answer</camunda:string>
+          </camunda:field>
+        </camunda:taskListener>
+        <camunda:formData>
+          <camunda:formField id="dashboard_agent_answer" label="Analyze Dashboard Answer" type="string" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1o7wjad</bpmn:incoming>
+      <bpmn:incoming>Flow_0zoghgg</bpmn:incoming>
+      <bpmn:incoming>Flow_1h55b6t</bpmn:incoming>
+      <bpmn:incoming>Flow_0l97sag</bpmn:incoming>
+      <bpmn:outgoing>Flow_0p803b1</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="Activity_096346m" name="Approve Community Report" camunda:asyncBefore="true" camunda:assignee="${camunda_user_id}">
+      <bpmn:documentation>Please check/Edit and approve.</bpmn:documentation>
+      <bpmn:extensionElements>
+        <camunda:taskListener class="ai.hhrdr.chainflow.engine.listener.UserNotificationListener" event="create">
+          <camunda:field name="telegramUserIdExp">
+            <camunda:expression>${telegram_user_id}</camunda:expression>
+          </camunda:field>
+          <camunda:field name="parseModeExp">
+            <camunda:string>MarkdownV2</camunda:string>
+          </camunda:field>
+          <camunda:field name="sendTaskButtonExp">
+            <camunda:expression>${false}</camunda:expression>
+          </camunda:field>
+          <camunda:field name="completeTaskExp">
+            <camunda:expression>${false}</camunda:expression>
+          </camunda:field>
+          <camunda:field name="buttonLinkExp">
+            <camunda:expression>${null}</camunda:expression>
+          </camunda:field>
+          <camunda:field name="buttonTextExp">
+            <camunda:expression>${null}</camunda:expression>
+          </camunda:field>
+          <camunda:field name="telegramThreadIdExp">
+            <camunda:expression>${null}</camunda:expression>
+          </camunda:field>
+        </camunda:taskListener>
+        <camunda:formData>
+          <camunda:formField id="form_discard" label="Discard Post" type="boolean" defaultValue="false" />
+          <camunda:formField id="text_post" label="Post:" type="string" defaultValue="${dashboard_agent_answer}  Analytics Powered By:  https://dex.guru/leaderboard" />
+          <camunda:formField id="formmultiline_dashboard_agent_answer" label="Edit Dashboard Report" type="string" defaultValue="${dashboard_agent_answer} " />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0quxrpt</bpmn:incoming>
+      <bpmn:outgoing>Flow_0bx9x4f</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="Activity_1abucjy" name="Send Dashboard Analytics to channel" camunda:assignee="${camunda_user_id}">
+      <bpmn:documentation>${formmultiline_dashboard_agent_answer}
+
+Analytics Powered By: https://dex.guru/leaderboard</bpmn:documentation>
+      <bpmn:extensionElements>
+        <camunda:taskListener class="ai.hhrdr.chainflow.engine.listener.UserNotificationListener" event="create">
+          <camunda:field name="telegramUserIdExp">
+            <camunda:expression>${form_chatID}</camunda:expression>
+          </camunda:field>
+          <camunda:field name="parseModeExp">
+            <camunda:string>MarkdownV2</camunda:string>
+          </camunda:field>
+          <camunda:field name="sendTaskButtonExp">
+            <camunda:expression>${false}</camunda:expression>
+          </camunda:field>
+          <camunda:field name="completeTaskExp">
+            <camunda:expression>${true}</camunda:expression>
+          </camunda:field>
+          <camunda:field name="buttonLinkExp">
+            <camunda:expression>${null}</camunda:expression>
+          </camunda:field>
+          <camunda:field name="buttonTextExp">
+            <camunda:expression>${null}</camunda:expression>
+          </camunda:field>
+          <camunda:field name="telegramThreadIdExp">
+            <camunda:expression>${form_threadID}</camunda:expression>
+          </camunda:field>
+        </camunda:taskListener>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0r43zc2</bpmn:incoming>
+      <bpmn:outgoing>Flow_1yxwvxe</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_0c7z1oa" sourceRef="user_providePostingParams" targetRef="Gateway_1gpzeok" />
+    <bpmn:intermediateCatchEvent id="Event_0y5qlrj">
+      <bpmn:incoming>Flow_1yxwvxe</bpmn:incoming>
+      <bpmn:outgoing>Flow_0zoghgg</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_19aehzk">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">${from_scheduleDuration}</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:intermediateCatchEvent>
+    <bpmn:sequenceFlow id="Flow_0zoghgg" sourceRef="Event_0y5qlrj" targetRef="Activity_0b709ur" />
+    <bpmn:exclusiveGateway id="Gateway_0vakbzk" default="Flow_0r43zc2">
+      <bpmn:incoming>Flow_0bx9x4f</bpmn:incoming>
+      <bpmn:outgoing>Flow_0r43zc2</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0l97sag</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="Gateway_0cfhr36" default="Flow_1o7wjad">
+      <bpmn:incoming>Flow_0p803b1</bpmn:incoming>
+      <bpmn:outgoing>Flow_1o7wjad</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0quxrpt</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_1o7wjad" sourceRef="Gateway_0cfhr36" targetRef="Activity_0b709ur" />
+    <bpmn:sequenceFlow id="Flow_0p803b1" sourceRef="Activity_0b709ur" targetRef="Gateway_0cfhr36" />
+    <bpmn:sequenceFlow id="Flow_0quxrpt" sourceRef="Gateway_0cfhr36" targetRef="Activity_096346m">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${dashboard_agent_answer != null}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0bx9x4f" sourceRef="Activity_096346m" targetRef="Gateway_0vakbzk" />
+    <bpmn:sequenceFlow id="Flow_0r43zc2" sourceRef="Gateway_0vakbzk" targetRef="Activity_1abucjy" />
+    <bpmn:sequenceFlow id="Flow_1yxwvxe" sourceRef="Activity_1abucjy" targetRef="Event_0y5qlrj" />
+    <bpmn:sequenceFlow id="Flow_1h55b6t" sourceRef="Gateway_1gpzeok" targetRef="Activity_0b709ur" />
+    <bpmn:parallelGateway id="Gateway_1gpzeok">
+      <bpmn:incoming>Flow_0c7z1oa</bpmn:incoming>
+      <bpmn:outgoing>Flow_1h55b6t</bpmn:outgoing>
+      <bpmn:outgoing>Flow_00vr3ct</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:userTask id="Activity_1lfb80b" name="Cancel Posting" camunda:assignee="${camunda_user_id}">
+      <bpmn:documentation>Stop the posting activities</bpmn:documentation>
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="action_cancelPosting" label="Cancel Posting" type="boolean" defaultValue="false" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_00vr3ct</bpmn:incoming>
+      <bpmn:outgoing>Flow_1w1tyy7</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_00vr3ct" sourceRef="Gateway_1gpzeok" targetRef="Activity_1lfb80b" />
+    <bpmn:sequenceFlow id="Flow_1w1tyy7" sourceRef="Activity_1lfb80b" targetRef="Event_08b8gpb" />
+    <bpmn:endEvent id="Event_08b8gpb">
+      <bpmn:incoming>Flow_1w1tyy7</bpmn:incoming>
+      <bpmn:terminateEventDefinition id="TerminateEventDefinition_0tfbkn3" />
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0l97sag" sourceRef="Gateway_0vakbzk" targetRef="Activity_0b709ur">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${form_discard}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:textAnnotation id="TextAnnotation_0czdbn4">
+      <bpmn:text>Injesting user_id, telegram_user_id, user_is_premium, user_is_admin, web3_wallets into process instance context</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_1heumbr" associationDirection="None" sourceRef="Activity_1jk6f7r" targetRef="TextAnnotation_0czdbn4" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="admin_communityReport">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="152" y="472" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1gh9b6s_di" bpmnElement="Activity_1jk6f7r">
+        <dc:Bounds x="270" y="450" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1fsevzp_di" bpmnElement="user_providePostingParams">
+        <dc:Bounds x="480" y="450" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_16hkh7y_di" bpmnElement="Gateway_16hkh7y" isMarkerVisible="true">
+        <dc:Bounds x="395" y="465" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1txs6p2_di" bpmnElement="Event_1txs6p2">
+        <dc:Bounds x="562" y="632" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0kkta6o_di" bpmnElement="Activity_0k8m91a">
+        <dc:Bounds x="380" y="610" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1jc23kb" bpmnElement="Activity_0b709ur">
+        <dc:Bounds x="720" y="450" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_17qhezi" bpmnElement="Activity_096346m">
+        <dc:Bounds x="990" y="440" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1ce3bkt" bpmnElement="Activity_1abucjy">
+        <dc:Bounds x="1280" y="440" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_09yavo6" bpmnElement="Event_0y5qlrj">
+        <dc:Bounds x="792" y="272" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0vakbzk_di" bpmnElement="Gateway_0vakbzk" isMarkerVisible="true">
+        <dc:Bounds x="1145" y="455" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0cfhr36_di" bpmnElement="Gateway_0cfhr36" isMarkerVisible="true">
+        <dc:Bounds x="875" y="455" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1ujsd1m_di" bpmnElement="Gateway_1gpzeok">
+        <dc:Bounds x="625" y="465" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1wz3lgw" bpmnElement="Activity_1lfb80b">
+        <dc:Bounds x="730" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0j7bdn6_di" bpmnElement="Event_08b8gpb">
+        <dc:Bounds x="932" y="102" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0czdbn4_di" bpmnElement="TextAnnotation_0czdbn4">
+        <dc:Bounds x="250" y="310" width="170" height="99" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1gtoflp_di" bpmnElement="Flow_1gtoflp">
+        <di:waypoint x="370" y="490" />
+        <di:waypoint x="395" y="490" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0kwjoxk_di" bpmnElement="Flow_0kwjoxk">
+        <di:waypoint x="445" y="490" />
+        <di:waypoint x="480" y="490" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ap6bvf_di" bpmnElement="Flow_0ap6bvf">
+        <di:waypoint x="420" y="515" />
+        <di:waypoint x="420" y="610" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1vbfo4x_di" bpmnElement="Flow_1vbfo4x">
+        <di:waypoint x="480" y="650" />
+        <di:waypoint x="562" y="650" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0uyhf9a_di" bpmnElement="Flow_0uyhf9a">
+        <di:waypoint x="188" y="490" />
+        <di:waypoint x="270" y="490" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0c7z1oa_di" bpmnElement="Flow_0c7z1oa">
+        <di:waypoint x="580" y="490" />
+        <di:waypoint x="625" y="490" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0zoghgg_di" bpmnElement="Flow_0zoghgg">
+        <di:waypoint x="792" y="290" />
+        <di:waypoint x="740" y="290" />
+        <di:waypoint x="740" y="450" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1o7wjad_di" bpmnElement="Flow_1o7wjad">
+        <di:waypoint x="900" y="455" />
+        <di:waypoint x="900" y="350" />
+        <di:waypoint x="770" y="350" />
+        <di:waypoint x="770" y="450" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0p803b1_di" bpmnElement="Flow_0p803b1">
+        <di:waypoint x="820" y="480" />
+        <di:waypoint x="875" y="480" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0quxrpt_di" bpmnElement="Flow_0quxrpt">
+        <di:waypoint x="925" y="480" />
+        <di:waypoint x="990" y="480" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0bx9x4f_di" bpmnElement="Flow_0bx9x4f">
+        <di:waypoint x="1090" y="480" />
+        <di:waypoint x="1145" y="480" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0r43zc2_di" bpmnElement="Flow_0r43zc2">
+        <di:waypoint x="1195" y="480" />
+        <di:waypoint x="1280" y="480" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1yxwvxe_di" bpmnElement="Flow_1yxwvxe">
+        <di:waypoint x="1330" y="440" />
+        <di:waypoint x="1330" y="290" />
+        <di:waypoint x="828" y="290" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1h55b6t_di" bpmnElement="Flow_1h55b6t">
+        <di:waypoint x="675" y="490" />
+        <di:waypoint x="720" y="490" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_00vr3ct_di" bpmnElement="Flow_00vr3ct">
+        <di:waypoint x="650" y="465" />
+        <di:waypoint x="650" y="120" />
+        <di:waypoint x="730" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1w1tyy7_di" bpmnElement="Flow_1w1tyy7">
+        <di:waypoint x="830" y="120" />
+        <di:waypoint x="932" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0l97sag_di" bpmnElement="Flow_0l97sag">
+        <di:waypoint x="1170" y="505" />
+        <di:waypoint x="1170" y="630" />
+        <di:waypoint x="770" y="630" />
+        <di:waypoint x="770" y="530" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1heumbr_di" bpmnElement="Association_1heumbr">
+        <di:waypoint x="313" y="450" />
+        <di:waypoint x="305" y="409" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

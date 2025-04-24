@@ -76,7 +76,6 @@ public class CamundaApplication extends SpringBootServletInitializer {
   @Primary
   @ConfigurationProperties(prefix="camunda.bpm.datasource")
   public DataSource camundaDataSource() {
-    System.out.println("camunda.bpm.datasource");
     return DataSourceBuilder.create().build();
   }
 

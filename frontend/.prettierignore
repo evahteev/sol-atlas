@@ -1,7 +1,0 @@
-public
-yarn.lock
-package-lock.json
-lib
-
-*.yml
-*.yaml

@@ -1,0 +1,386 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_1jfmue2" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.31.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.20.0">
+  <bpmn:process id="app_support" name="Application Feedback" isExecutable="true">
+    <bpmn:documentation>{
+        "description": "We appreciate your feedback, feel free to drop your Support Requests here!",
+        "img_picture": "https://assets-stage.dex.guru/icons/process/support.svg",
+        "type": "quest_restart",
+        "reward": 0.0
+}</bpmn:documentation>
+    <bpmn:startEvent id="StartEvent_1" name="Start Thread" camunda:initiator="camunda_user_id">
+      <bpmn:extensionElements />
+      <bpmn:outgoing>Flow_0vqoh2x</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_0vqoh2x" sourceRef="StartEvent_1" targetRef="Activity_1bojth3" />
+    <bpmn:userTask id="reply_from_support" name="Answer to request #${def_responseCount}" camunda:candidateGroups="support">
+      <bpmn:documentation>#support_request #user_${telegram_user_id}
+
+"${form_message}"
+
+NOTE: Your reply to this message will be sent directly to the user.
+</bpmn:documentation>
+      <bpmn:extensionElements>
+        <camunda:taskListener class="ai.hhrdr.chainflow.engine.listener.UserNotificationListener" event="create">
+          <camunda:field name="telegramUserIdExp">
+            <camunda:expression>${def_adminChatId}</camunda:expression>
+          </camunda:field>
+          <camunda:field name="parseModeExp">
+            <camunda:string>HTML</camunda:string>
+          </camunda:field>
+          <camunda:field name="sendTaskButtonExp">
+            <camunda:expression>${true}</camunda:expression>
+          </camunda:field>
+          <camunda:field name="completeTaskExp">
+            <camunda:expression>${false}</camunda:expression>
+          </camunda:field>
+          <camunda:field name="buttonTextExp">
+            <camunda:expression>${null}</camunda:expression>
+          </camunda:field>
+          <camunda:field name="buttonLinkExp">
+            <camunda:expression>${null}</camunda:expression>
+          </camunda:field>
+          <camunda:field name="telegramThreadIdExp">
+            <camunda:expression>${def_adminThreadId}</camunda:expression>
+          </camunda:field>
+        </camunda:taskListener>
+        <camunda:formData>
+          <camunda:formField id="action_supportClose" label="Close" type="boolean" defaultValue="false" />
+          <camunda:formField id="form_supportReply" label="reply" type="string" defaultValue="Hi, thank you for your interest in Guru Era App!" />
+          <camunda:formField id="action_send" label="Send" type="boolean" defaultValue="true" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1uy9l71</bpmn:incoming>
+      <bpmn:outgoing>Flow_0fp5vhc</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:serviceTask id="Activity_1jk6f7r" name="Set Up User Context" camunda:asyncBefore="true" camunda:class="ai.hhrdr.chainflow.engine.delegate.GetUserInfoDelegate">
+      <bpmn:incoming>Flow_1ad6v64</bpmn:incoming>
+      <bpmn:outgoing>Flow_0iokcin</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:userTask id="support_request" name="Send Your Request" camunda:assignee="${camunda_user_id}">
+      <bpmn:documentation>🔥 Got a scorching take? Share it! 💬</bpmn:documentation>
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="form_message" label="Your  message" type="string" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1ra27nn</bpmn:incoming>
+      <bpmn:incoming>Flow_0iokcin</bpmn:incoming>
+      <bpmn:outgoing>Flow_0p7iasn</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_0misaud" sourceRef="Activity_1h1vcsy" targetRef="Activity_0d8cc5z" />
+    <bpmn:scriptTask id="Activity_1h1vcsy" name="Increase Reponse Count" scriptFormat="JavaScript">
+      <bpmn:incoming>Flow_0p7iasn</bpmn:incoming>
+      <bpmn:outgoing>Flow_0misaud</bpmn:outgoing>
+      <bpmn:script>// Check if the variable 'def_responseCount' already exists in the execution context
+if (execution.hasVariable('def_responseCount')) {
+    // If it exists, increment the variable by 1
+    var currentCount = execution.getVariable('def_responseCount');
+    execution.setVariable('def_responseCount', currentCount + 1);
+} else {
+    // If it doesn't exist, initialize it with 1
+    execution.setVariable('def_responseCount', 1);
+}
+</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:serviceTask id="Activity_0adj1sy" name="Set Default Variables with def_ prefix if not specified" camunda:class="ai.hhrdr.chainflow.engine.delegate.SetDefaultVariablesDelegate">
+      <bpmn:extensionElements />
+      <bpmn:incoming>Flow_1hqwtfq</bpmn:incoming>
+      <bpmn:outgoing>Flow_1ad6v64</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:scriptTask id="Activity_0d8cc5z" name="Wait for Support response" scriptFormat="javascript">
+      <bpmn:extensionElements />
+      <bpmn:incoming>Flow_0misaud</bpmn:incoming>
+      <bpmn:outgoing>Flow_1ggixd3</bpmn:outgoing>
+      <bpmn:script>  execution.setVariable('status_message', 'Please wait for answer');
+</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_1ggixd3" sourceRef="Activity_0d8cc5z" targetRef="Gateway_0wlzl6g" />
+    <bpmn:scriptTask id="Activity_04qen9i" name="Wait for Support response" scriptFormat="javascript">
+      <bpmn:incoming>Flow_0fp5vhc</bpmn:incoming>
+      <bpmn:outgoing>Flow_1d8o2oy</bpmn:outgoing>
+      <bpmn:script>   execution.setVariable('status_message', null);
+</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_0fp5vhc" sourceRef="reply_from_support" targetRef="Activity_04qen9i" />
+    <bpmn:sequenceFlow id="Flow_1uy9l71" sourceRef="Gateway_0wlzl6g" targetRef="reply_from_support" />
+    <bpmn:parallelGateway id="Gateway_0wlzl6g">
+      <bpmn:incoming>Flow_1ggixd3</bpmn:incoming>
+      <bpmn:outgoing>Flow_1uy9l71</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1e15ki5</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:sequenceFlow id="Flow_1e15ki5" sourceRef="Gateway_0wlzl6g" targetRef="Event_0a86yl5" />
+    <bpmn:intermediateCatchEvent id="Event_0a86yl5" name="1m">
+      <bpmn:incoming>Flow_1e15ki5</bpmn:incoming>
+      <bpmn:outgoing>Flow_1ra27nn</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_0685ivn">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT1M</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:intermediateCatchEvent>
+    <bpmn:endEvent id="Event_1wer5yn">
+      <bpmn:incoming>Flow_157a88n</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1ra27nn" sourceRef="Event_0a86yl5" targetRef="support_request" />
+    <bpmn:sequenceFlow id="Flow_1ad6v64" sourceRef="Activity_0adj1sy" targetRef="Activity_1jk6f7r" />
+    <bpmn:sequenceFlow id="Flow_0iokcin" sourceRef="Activity_1jk6f7r" targetRef="support_request" />
+    <bpmn:sequenceFlow id="Flow_0p7iasn" sourceRef="support_request" targetRef="Activity_1h1vcsy" />
+    <bpmn:boundaryEvent id="Event_1gbid47" name="2 days" attachedToRef="support_request">
+      <bpmn:outgoing>Flow_0erzpua</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_0xj7y7i">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">P2D</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_0erzpua" sourceRef="Event_1gbid47" targetRef="Event_0icydsv" />
+    <bpmn:endEvent id="Event_0icydsv">
+      <bpmn:incoming>Flow_0erzpua</bpmn:incoming>
+      <bpmn:terminateEventDefinition id="TerminateEventDefinition_1i9x73m" />
+    </bpmn:endEvent>
+    <bpmn:userTask id="tg_response_to_user" name="Check Response from our Support Team" camunda:assignee="${camunda_user_id}">
+      <bpmn:documentation>#support_replies
+
+❔ Your request: "${form_message}"
+
+ 💬 Support reply: "${form_supportReply}"
+
+You can reply this message to continue conversation.</bpmn:documentation>
+      <bpmn:extensionElements>
+        <camunda:taskListener class="ai.hhrdr.chainflow.engine.listener.UserNotificationListener" event="create">
+          <camunda:field name="telegramUserIdExp">
+            <camunda:expression>${telegram_user_id}</camunda:expression>
+          </camunda:field>
+          <camunda:field name="parseModeExp">
+            <camunda:string>HTML</camunda:string>
+          </camunda:field>
+          <camunda:field name="sendTaskButtonExp">
+            <camunda:expression>${false}</camunda:expression>
+          </camunda:field>
+          <camunda:field name="completeTaskExp">
+            <camunda:expression>${false}</camunda:expression>
+          </camunda:field>
+          <camunda:field name="telegramThreadIdExp">
+            <camunda:expression>${null}</camunda:expression>
+          </camunda:field>
+        </camunda:taskListener>
+        <camunda:formData>
+          <camunda:formField id="text_RequestAndAnswer" label="Support Chat History" type="string" defaultValue="Keep in mind, you can always view the entire chat history with our support team in the telegram bot. " />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1d8o2oy</bpmn:incoming>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_1d8o2oy" sourceRef="Activity_04qen9i" targetRef="tg_response_to_user" />
+    <bpmn:sequenceFlow id="Flow_157a88n" sourceRef="Event_0em5wrp" targetRef="Event_1wer5yn" />
+    <bpmn:boundaryEvent id="Event_0em5wrp" name="1 day" attachedToRef="tg_response_to_user">
+      <bpmn:outgoing>Flow_157a88n</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_01wtled">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">P1D</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:boundaryEvent>
+    <bpmn:serviceTask id="Activity_1bojth3" name="Set Default Variables" camunda:expression="true">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:outputParameter name="def_responseCount">0</camunda:outputParameter>
+          <camunda:outputParameter name="def_adminChatId">-1001902150742</camunda:outputParameter>
+          <camunda:outputParameter name="def_adminThreadId">57205</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0vqoh2x</bpmn:incoming>
+      <bpmn:outgoing>Flow_1hyq2uz</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1hyq2uz" sourceRef="Activity_1bojth3" targetRef="Activity_1kc7838" />
+    <bpmn:scriptTask id="Activity_1kc7838" name="Convert vars to Long" scriptFormat="JavaScript">
+      <bpmn:incoming>Flow_1hyq2uz</bpmn:incoming>
+      <bpmn:outgoing>Flow_1hqwtfq</bpmn:outgoing>
+      <bpmn:script>// Convert 'def_responseCount' to Long
+var responseCount = execution.getVariable('def_responseCount');
+execution.setVariable('def_responseCount', Number(responseCount));
+
+// Convert 'def_adminChatId' to Long
+var adminChatId = execution.getVariable('def_adminChatId');
+execution.setVariable('def_adminChatId', Number(adminChatId));
+
+// Convert 'def_adminThreadId' to Long
+var adminThreadId = execution.getVariable('def_adminThreadId');
+execution.setVariable('def_adminThreadId', Number(adminThreadId));
+</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_1hqwtfq" sourceRef="Activity_1kc7838" targetRef="Activity_0adj1sy" />
+    <bpmn:textAnnotation id="TextAnnotation_0czdbn4">
+      <bpmn:text>Injesting user_id, telegram_user_id, user_is_premium, user_is_premium, web3_wallets into process instance context</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:textAnnotation id="TextAnnotation_0k2yffd">
+      <bpmn:text>Set all def_ prefixed  variables into the execution context of process instance</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:textAnnotation id="TextAnnotation_0i3i1so">
+      <bpmn:text>Send user's request to admins on create task</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_10e60zg" sourceRef="reply_from_support" targetRef="TextAnnotation_0i3i1so" />
+    <bpmn:textAnnotation id="TextAnnotation_0mdh2i2">
+      <bpmn:text>Keep response visible to user in app for 1 day before it disappears</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_05ao6wa" associationDirection="None" sourceRef="Event_0em5wrp" targetRef="TextAnnotation_0mdh2i2" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="app_support">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="162" y="242" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="151" y="285" width="61" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_01dkf5j_di" bpmnElement="reply_from_support">
+        <dc:Bounds x="1460" y="370" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1gh9b6s_di" bpmnElement="Activity_1jk6f7r">
+        <dc:Bounds x="720" y="220" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1b95ljm_di" bpmnElement="support_request">
+        <dc:Bounds x="880" y="220" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0lbw5u7_di" bpmnElement="Activity_1h1vcsy">
+        <dc:Bounds x="1050" y="220" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0stqx66_di" bpmnElement="Activity_0adj1sy">
+        <dc:Bounds x="580" y="220" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1rt3iwe_di" bpmnElement="Activity_0d8cc5z">
+        <dc:Bounds x="1220" y="220" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0fvix68" bpmnElement="Activity_04qen9i">
+        <dc:Bounds x="1610" y="370" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0x44nce_di" bpmnElement="Gateway_0wlzl6g">
+        <dc:Bounds x="1375" y="235" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1foq7cy_di" bpmnElement="Event_0a86yl5">
+        <dc:Bounds x="1082" y="82" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1093" y="125" width="16" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1wer5yn_di" bpmnElement="Event_1wer5yn">
+        <dc:Bounds x="1982" y="392" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0un88cg_di" bpmnElement="Event_0icydsv">
+        <dc:Bounds x="1002" y="362" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0b8jfxj" bpmnElement="tg_response_to_user">
+        <dc:Bounds x="1760" y="370" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1bojth3_di" bpmnElement="Activity_1bojth3">
+        <dc:Bounds x="300" y="220" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1kc7838_di" bpmnElement="Activity_1kc7838">
+        <dc:Bounds x="440" y="220" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0czdbn4_di" bpmnElement="TextAnnotation_0czdbn4">
+        <dc:Bounds x="710" y="90" width="170" height="98" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0k2yffd_di" bpmnElement="TextAnnotation_0k2yffd">
+        <dc:Bounds x="560" y="320" width="180" height="58" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0i3i1so_di" bpmnElement="TextAnnotation_0i3i1so">
+        <dc:Bounds x="1460" y="258" width="100" height="70" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0mdh2i2_di" bpmnElement="TextAnnotation_0mdh2i2">
+        <dc:Bounds x="1840" y="251" width="99.9959660068847" height="83.99445998278831" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_01o0u21" bpmnElement="Event_0em5wrp">
+        <dc:Bounds x="1842" y="392" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1847" y="435" width="27" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0c0ns9b_di" bpmnElement="Event_1gbid47">
+        <dc:Bounds x="912" y="282" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="914" y="325" width="33" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0vqoh2x_di" bpmnElement="Flow_0vqoh2x">
+        <di:waypoint x="198" y="260" />
+        <di:waypoint x="300" y="260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0misaud_di" bpmnElement="Flow_0misaud">
+        <di:waypoint x="1150" y="260" />
+        <di:waypoint x="1220" y="260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ggixd3_di" bpmnElement="Flow_1ggixd3">
+        <di:waypoint x="1320" y="260" />
+        <di:waypoint x="1375" y="260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0fp5vhc_di" bpmnElement="Flow_0fp5vhc">
+        <di:waypoint x="1560" y="410" />
+        <di:waypoint x="1610" y="410" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1uy9l71_di" bpmnElement="Flow_1uy9l71">
+        <di:waypoint x="1400" y="285" />
+        <di:waypoint x="1400" y="410" />
+        <di:waypoint x="1460" y="410" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1e15ki5_di" bpmnElement="Flow_1e15ki5">
+        <di:waypoint x="1400" y="235" />
+        <di:waypoint x="1400" y="100" />
+        <di:waypoint x="1118" y="100" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ra27nn_di" bpmnElement="Flow_1ra27nn">
+        <di:waypoint x="1082" y="100" />
+        <di:waypoint x="930" y="100" />
+        <di:waypoint x="930" y="220" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ad6v64_di" bpmnElement="Flow_1ad6v64">
+        <di:waypoint x="680" y="260" />
+        <di:waypoint x="720" y="260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0iokcin_di" bpmnElement="Flow_0iokcin">
+        <di:waypoint x="820" y="260" />
+        <di:waypoint x="880" y="260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0p7iasn_di" bpmnElement="Flow_0p7iasn">
+        <di:waypoint x="980" y="260" />
+        <di:waypoint x="1050" y="260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0erzpua_di" bpmnElement="Flow_0erzpua">
+        <di:waypoint x="930" y="318" />
+        <di:waypoint x="930" y="380" />
+        <di:waypoint x="1002" y="380" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1d8o2oy_di" bpmnElement="Flow_1d8o2oy">
+        <di:waypoint x="1710" y="410" />
+        <di:waypoint x="1760" y="410" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_157a88n_di" bpmnElement="Flow_157a88n">
+        <di:waypoint x="1878" y="410" />
+        <di:waypoint x="1982" y="410" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1hyq2uz_di" bpmnElement="Flow_1hyq2uz">
+        <di:waypoint x="400" y="260" />
+        <di:waypoint x="440" y="260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1hqwtfq_di" bpmnElement="Flow_1hqwtfq">
+        <di:waypoint x="540" y="260" />
+        <di:waypoint x="580" y="260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_10e60zg_di" bpmnElement="Association_10e60zg">
+        <di:waypoint x="1480" y="370" />
+        <di:waypoint x="1480" y="328" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_05ao6wa_di" bpmnElement="Association_05ao6wa">
+        <di:waypoint x="1864" y="393" />
+        <di:waypoint x="1876" y="335" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

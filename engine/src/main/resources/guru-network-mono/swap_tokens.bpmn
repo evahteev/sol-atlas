@@ -1,0 +1,2044 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:color="http://www.omg.org/spec/BPMN/non-normative/color/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_1137qid" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.15.2" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.20.0">
+  <bpmn:process id="swap_tokens" name="Swap Tokens" isExecutable="true">
+    <bpmn:documentation>{
+"description": "Swap tokens on your operational wallet",
+        "img_picture": "https://assets-stage.dex.guru/icons/process/exchange.svg",
+        "type": "admin_quest",
+        "reward": 0.0
+}</bpmn:documentation>
+    <bpmn:startEvent id="StartEvent_1" camunda:initiator="camunda_user_id">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="question" label="User Question" type="string" defaultValue="${null}" />
+          <camunda:formField id="chatName" label="Chat Name" type="string" defaultValue="dm" />
+        </camunda:formData>
+        <camunda:executionListener class="ai.hhrdr.chainflow.engine.listener.SetStartVariablesListener" event="start" />
+        <camunda:properties>
+          <camunda:property name="reward_amount" value="50" />
+        </camunda:properties>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_05qpio5</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="get_user_info" name="Get user info by caminda_user_id" camunda:asyncAfter="true" camunda:class="ai.hhrdr.chainflow.engine.delegate.GetUserInfoDelegate">
+      <bpmn:incoming>Flow_0u7cgkq</bpmn:incoming>
+      <bpmn:outgoing>Flow_06mwvgo</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="external_approve_token" name="Approve Token" camunda:asyncAfter="true" camunda:type="external" camunda:topic="approve_token_for_user">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="token_address">${sell_token_address}</camunda:inputParameter>
+          <camunda:inputParameter name="spender_address">${spender_address}</camunda:inputParameter>
+          <camunda:inputParameter name="chain_id">${chain_id}</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_17xqqww</bpmn:incoming>
+      <bpmn:outgoing>Flow_09f6i3b</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:userTask id="form_confirm_swap" name="Confirm Swap" camunda:asyncBefore="true" camunda:asyncAfter="true" camunda:assignee="${camunda_user_id}">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="action_swap" label="Swap" type="boolean" defaultValue="${true}" />
+          <camunda:formField id="action_cancel" label="Cancel" type="boolean" defaultValue="${false}" />
+          <camunda:formField id="message_sell_amount" label="Sell ${sell_token_symbol}" type="string" defaultValue="${sell_amount_token} ~$(${sell_usd})" />
+          <camunda:formField id="message_buy_amount" label="Get ${buy_token_symbol}" type="string" defaultValue="${buy_amount_token} ~$(${buy_usd})" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1c2wb3k</bpmn:incoming>
+      <bpmn:outgoing>Flow_1ay1f04</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:serviceTask id="execute_transaction" name="Execute Transaction" camunda:asyncBefore="true" camunda:asyncAfter="true" camunda:type="external" camunda:topic="execute_transaction">
+      <bpmn:extensionElements />
+      <bpmn:incoming>Flow_0njeuli</bpmn:incoming>
+      <bpmn:outgoing>Flow_0mln6wm</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0mln6wm" sourceRef="execute_transaction" targetRef="Activity_06ye0e6" />
+    <bpmn:userTask id="form_review_swap" name="View Transaction" camunda:asyncBefore="true" camunda:asyncAfter="true" camunda:assignee="${camunda_user_id}">
+      <bpmn:documentation>Transaction executed - ${tx_link} and ${reward_amount} ${applicationToken} rewards points transfered ${treasury_txhash}.</bpmn:documentation>
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="message_txhash" label="View Transaction" type="string" defaultValue="${tx_link}" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0w2twlf</bpmn:incoming>
+      <bpmn:outgoing>Flow_1vtbvhp</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="Event_1ig5s4p">
+      <bpmn:incoming>Flow_12cl8bl</bpmn:incoming>
+      <bpmn:incoming>Flow_1vtbvhp</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1vtbvhp" sourceRef="form_review_swap" targetRef="Event_1ig5s4p" />
+    <bpmn:serviceTask id="connector_get_quote" name="Get Quote" camunda:asyncBefore="true" camunda:asyncAfter="true">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="headers">
+              <camunda:map />
+            </camunda:inputParameter>
+            <camunda:inputParameter name="method">GET</camunda:inputParameter>
+            <camunda:inputParameter name="url">https://api-trading.dex.guru/v1/market/${chain_id}/quote?buyToken=${buy_token_address}&amp;sellAmount=${sell_amount_wei}&amp;sellToken=${sell_token_address}&amp;feeRecipient=0x720c9244473Dfc596547c1f7B6261c7112A3dad4&amp;takerAddress=${wallet_address}&amp;provider=${provider}&amp;slippagePercentage=${form_max_slippage_percentage / 100}&amp;buyTokenPercentageFee=0.01</camunda:inputParameter>
+            <camunda:inputParameter name="payload">{}</camunda:inputParameter>
+            <camunda:outputParameter name="gas">3000000</camunda:outputParameter>
+            <camunda:outputParameter name="to">${S(response).hasProp("to") ? S(response).prop("to").stringValue() : null}</camunda:outputParameter>
+            <camunda:outputParameter name="data">${S(response).hasProp("data") ? S(response).prop("data").stringValue() : null}</camunda:outputParameter>
+            <camunda:outputParameter name="gas_price">${S(response).hasProp("gas_price") ? S(response).prop("gas_price").stringValue() : 0}</camunda:outputParameter>
+            <camunda:outputParameter name="value">${S(response).hasProp("value") ? S(response).prop("value").stringValue() : null}</camunda:outputParameter>
+            <camunda:outputParameter name="error">${S(response).hasProp("reason") ? S(response).prop("reason").toString() : S(response).hasProp("detail") ? S(response).prop("detail").stringValue() : null}</camunda:outputParameter>
+            <camunda:outputParameter name="status_code">${statusCode}</camunda:outputParameter>
+            <camunda:outputParameter name="buy_amount">${S(response).hasProp("buy_amount") ? S(response).prop("buy_amount").stringValue() : null}</camunda:outputParameter>
+            <camunda:outputParameter name="sell_amount">${S(response).hasProp("sell_amount") ? S(response).prop("sell_amount").stringValue() : null}</camunda:outputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_09f6i3b</bpmn:incoming>
+      <bpmn:incoming>Flow_0vyiu02</bpmn:incoming>
+      <bpmn:outgoing>Flow_1ilz1fr</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_09f6i3b" sourceRef="external_approve_token" targetRef="connector_get_quote" />
+    <bpmn:exclusiveGateway id="Gateway_183ylij" default="Flow_0njeuli">
+      <bpmn:incoming>Flow_1ay1f04</bpmn:incoming>
+      <bpmn:incoming>Flow_1kpb068</bpmn:incoming>
+      <bpmn:outgoing>Flow_0njeuli</bpmn:outgoing>
+      <bpmn:outgoing>Flow_02qa83b</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_1ay1f04" sourceRef="form_confirm_swap" targetRef="Gateway_183ylij" />
+    <bpmn:sequenceFlow id="Flow_0njeuli" sourceRef="Gateway_183ylij" targetRef="execute_transaction" />
+    <bpmn:sequenceFlow id="Flow_02qa83b" sourceRef="Gateway_183ylij" targetRef="Event_04kxm7k">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${action_cancel == true}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:scriptTask id="script_convert_wei" name="Conver tokens into Weis" camunda:asyncBefore="true" camunda:asyncAfter="true" scriptFormat="javascript">
+      <bpmn:incoming>Flow_14c5ncq</bpmn:incoming>
+      <bpmn:outgoing>Flow_1k3attr</bpmn:outgoing>
+      <bpmn:script>var tokenSellDecimals = execution.getVariable("sell_token_decimals");
+var sellAmount = execution.getVariable("form_sell_amount");
+var sellAmountWei =  Math.floor(Number(Number(sellAmount) * Math.pow(10, tokenSellDecimals))).toString();
+execution.setVariable("sell_amount_wei", sellAmountWei);
+
+// Convert balances
+var sellTokenBalanceHex = execution.getVariable("sell_token_balance");
+var sellTokenBalanceWei = Number(sellTokenBalanceHex, 16); // Convert hex to integer
+
+var nativeTokenBalanceHex = execution.getVariable("native_token_balance");
+var nativeTokenBalanceWei = Number(nativeTokenBalanceHex, 16); // Convert hex to integer
+
+
+execution.setVariable("sell_token_balance_wei", sellTokenBalanceWei);
+execution.setVariable("native_token_balance_wei", nativeTokenBalanceWei);
+</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:exclusiveGateway id="Gateway_165p6w5" default="Flow_1ru9qh8">
+      <bpmn:incoming>Flow_1r9bs67</bpmn:incoming>
+      <bpmn:outgoing>Flow_1ru9qh8</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0tpzidf</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="delegate_get_token_info" name="Get Sell Token Info" camunda:class="ai.hhrdr.chainflow.engine.delegate.GetTokenInfoDelegate">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="form_tokenAddress">${token_sell}</camunda:inputParameter>
+          <camunda:outputParameter name="sell_token_network">${token_network}</camunda:outputParameter>
+          <camunda:outputParameter name="sell_token_address">${token_address}</camunda:outputParameter>
+          <camunda:outputParameter name="sell_token_decimals">${token_decimals}</camunda:outputParameter>
+          <camunda:outputParameter name="sell_token_price">${token_price}</camunda:outputParameter>
+          <camunda:outputParameter name="sell_token_symbol">${token_symbol}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0f4aebz</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ez6b1j</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:boundaryEvent id="Event_1aw02ph" attachedToRef="form_review_swap">
+      <bpmn:outgoing>Flow_12cl8bl</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_0m4rb5l">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT1M</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_12cl8bl" sourceRef="Event_1aw02ph" targetRef="Event_1ig5s4p" />
+    <bpmn:boundaryEvent id="Event_0v6yd2v" attachedToRef="execute_transaction">
+      <bpmn:outgoing>Flow_12me6sa</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_161ogr7">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT10M</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:boundaryEvent>
+    <bpmn:boundaryEvent id="Event_1n8ics3" attachedToRef="external_approve_token">
+      <bpmn:outgoing>Flow_0hns7tl</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_0fxo048">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT10M</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_0hns7tl" sourceRef="Event_1n8ics3" targetRef="Gateway_10daigj" />
+    <bpmn:endEvent id="Event_1vq0hrm">
+      <bpmn:incoming>Flow_1nz74jx</bpmn:incoming>
+      <bpmn:incoming>Flow_15ttld3</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:userTask id="crosschain_get_price_review_error" name="Review Error" camunda:assignee="${camunda_user_id}">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="message_error" label="Can&#39;t swap" type="string" defaultValue="${error}" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_10t5n38</bpmn:incoming>
+      <bpmn:outgoing>Flow_15ttld3</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:serviceTask id="Activity_0s4mny8" name="Get Quote" camunda:asyncBefore="true" camunda:asyncAfter="true">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="headers">
+              <camunda:map />
+            </camunda:inputParameter>
+            <camunda:inputParameter name="method">GET</camunda:inputParameter>
+            <camunda:inputParameter name="url">https://api-trading.dex.guru/v1/crosschain/quote?buyToken=${buy_token_address}&amp;sellAmount=${sell_amount_wei}&amp;sellToken=${sell_token_address}&amp;takerAddress=${wallet_address}&amp;slippagePercentage=${form_max_slippage_percentage / 100}&amp;chainIdFrom=${chain_id}&amp;chainIdTo=${dst_chain_id}&amp;provider=dln</camunda:inputParameter>
+            <camunda:inputParameter name="payload">{}</camunda:inputParameter>
+            <camunda:outputParameter name="gas">3000000</camunda:outputParameter>
+            <camunda:outputParameter name="to">${S(response).hasProp("to") ? S(response).prop("to").stringValue() : null}</camunda:outputParameter>
+            <camunda:outputParameter name="data">${S(response).hasProp("data") ? S(response).prop("data").stringValue() : null}</camunda:outputParameter>
+            <camunda:outputParameter name="gas_price">${S(response).hasProp("gas_price") ? S(response).prop("gas_price").stringValue() : null}</camunda:outputParameter>
+            <camunda:outputParameter name="value">${S(response).hasProp("value") ? S(response).prop("value").stringValue() : null}</camunda:outputParameter>
+            <camunda:outputParameter name="error">${S(response).hasProp("reason") ? S(response).prop("reason").toString() : S(response).hasProp("detail") ? S(response).prop("detail").stringValue() : null}</camunda:outputParameter>
+            <camunda:outputParameter name="status_code">${statusCode}</camunda:outputParameter>
+            <camunda:outputParameter name="buy_amount">${S(response).hasProp("buy_amount") ? S(response).prop("buy_amount").stringValue() : null}</camunda:outputParameter>
+            <camunda:outputParameter name="sell_amount">${S(response).hasProp("sell_amount") ? S(response).prop("sell_amount").stringValue() : null}</camunda:outputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1pagg6l</bpmn:incoming>
+      <bpmn:incoming>Flow_1s99jgv</bpmn:incoming>
+      <bpmn:outgoing>Flow_0rnm7ot</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_1xdn8ag" name="Approve Token" camunda:asyncAfter="true" camunda:type="external" camunda:topic="approve_token_for_user">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="token_address">${sell_token_address}</camunda:inputParameter>
+          <camunda:inputParameter name="spender_address">${spender_address}</camunda:inputParameter>
+          <camunda:inputParameter name="chain_id">${chain_id}</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1czjxxa</bpmn:incoming>
+      <bpmn:outgoing>Flow_1pagg6l</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:boundaryEvent id="Event_0mcidqi" attachedToRef="crosschain_get_price_review_error">
+      <bpmn:outgoing>Flow_1nz74jx</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_0l83bv6">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT10M</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:boundaryEvent>
+    <bpmn:boundaryEvent id="Event_0r9nkua" attachedToRef="Activity_1xdn8ag">
+      <bpmn:extensionElements>
+        <camunda:executionListener event="start">
+          <camunda:script scriptFormat="javascript">execution.setVariable("exception", execution.getVariable("errorMessage"));</camunda:script>
+        </camunda:executionListener>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_0bdjnd3</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_0n97qjv" />
+    </bpmn:boundaryEvent>
+    <bpmn:boundaryEvent id="Event_046tdkt" attachedToRef="Activity_1xdn8ag">
+      <bpmn:outgoing>Flow_0cfhz4v</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_198g74y">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT10M</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_0bdjnd3" sourceRef="Event_0r9nkua" targetRef="Gateway_0e5lx56" />
+    <bpmn:sequenceFlow id="Flow_0cfhz4v" sourceRef="Event_046tdkt" targetRef="Gateway_0e5lx56" />
+    <bpmn:sequenceFlow id="Flow_1k3attr" sourceRef="script_convert_wei" targetRef="script_validate_balance" />
+    <bpmn:parallelGateway id="Gateway_0pl9ufl">
+      <bpmn:incoming>Flow_0z3nn0t</bpmn:incoming>
+      <bpmn:outgoing>Flow_0f4aebz</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0bypmjv</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:sequenceFlow id="Flow_0f4aebz" sourceRef="Gateway_0pl9ufl" targetRef="delegate_get_token_info" />
+    <bpmn:serviceTask id="Activity_1jl3jt1" name="Get Buy Token Info" camunda:asyncAfter="true" camunda:class="ai.hhrdr.chainflow.engine.delegate.GetTokenInfoDelegate">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="form_tokenAddress">${token_buy}</camunda:inputParameter>
+          <camunda:outputParameter name="buy_token_network">${token_network}</camunda:outputParameter>
+          <camunda:outputParameter name="buy_token_address">${token_address}</camunda:outputParameter>
+          <camunda:outputParameter name="buy_token_decimals">${token_decimals}</camunda:outputParameter>
+          <camunda:outputParameter name="buy_token_price">${token_price}</camunda:outputParameter>
+          <camunda:outputParameter name="buy_token_symbol">${token_symbol}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0bypmjv</bpmn:incoming>
+      <bpmn:outgoing>Flow_044mqgx</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0bypmjv" sourceRef="Gateway_0pl9ufl" targetRef="Activity_1jl3jt1" />
+    <bpmn:sequenceFlow id="Flow_044mqgx" sourceRef="Activity_1jl3jt1" targetRef="Activity_0o6zpw5" />
+    <bpmn:sequenceFlow id="Flow_0ez6b1j" sourceRef="delegate_get_token_info" targetRef="Activity_11zlxxu" />
+    <bpmn:userTask id="get_price_review_error" name="Review Error" camunda:assignee="${camunda_user_id}">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="message_error" label="Error" type="string" defaultValue="${error}" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0mho4ev</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ezwhrt</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:boundaryEvent id="Event_02xv5ne" attachedToRef="get_price_review_error">
+      <bpmn:outgoing>Flow_1twq1xy</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_0sttqko">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT10M</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:boundaryEvent>
+    <bpmn:endEvent id="Event_1ym1j1p">
+      <bpmn:incoming>Flow_0ezwhrt</bpmn:incoming>
+      <bpmn:incoming>Flow_1twq1xy</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:exclusiveGateway id="Gateway_12x47mt" default="Flow_135p3tc">
+      <bpmn:incoming>Flow_07ol1c0</bpmn:incoming>
+      <bpmn:incoming>Flow_0b89zmn</bpmn:incoming>
+      <bpmn:outgoing>Flow_135p3tc</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0quullu</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_1ilz1fr" sourceRef="connector_get_quote" targetRef="Gateway_0l4oxbq" />
+    <bpmn:boundaryEvent id="Event_1u9vs4e" attachedToRef="external_approve_token">
+      <bpmn:extensionElements>
+        <camunda:executionListener event="start">
+          <camunda:script scriptFormat="javascript">execution.setVariable("exception", execution.getVariable("errorMessage"));</camunda:script>
+        </camunda:executionListener>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_0aizoat</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_11y5y40" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_0aizoat" sourceRef="Event_1u9vs4e" targetRef="Gateway_10daigj" />
+    <bpmn:boundaryEvent id="Event_0eobe36" attachedToRef="execute_transaction">
+      <bpmn:extensionElements />
+      <bpmn:outgoing>Flow_1xflfdr</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_0qj18nf" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_1c2wb3k" sourceRef="Activity_0wnwfjx" targetRef="form_confirm_swap" />
+    <bpmn:scriptTask id="Activity_0wnwfjx" name="Prepare Amounts for Review" camunda:asyncBefore="true" camunda:asyncAfter="true" scriptFormat="javascript">
+      <bpmn:incoming>Flow_135p3tc</bpmn:incoming>
+      <bpmn:outgoing>Flow_1c2wb3k</bpmn:outgoing>
+      <bpmn:script>const buy_amount_wei = execution.getVariable("buy_amount");
+const buy_price = execution.getVariable("buy_token_price");
+const sell_amount_wei = execution.getVariable("sell_amount");
+const sell_price = execution.getVariable("sell_token_price");
+const sell_token_decimals = execution.getVariable("sell_token_decimals");
+const buy_token_decimals = execution.getVariable("buy_token_decimals");
+
+const buy_amount = Number(buy_amount_wei) / Math.pow(10, buy_token_decimals);
+const sell_amount = Number(sell_amount_wei) / Math.pow(10, sell_token_decimals);
+
+const buy_usd = buy_amount * buy_price;
+const sell_usd = sell_amount * sell_price;
+
+execution.setVariable("buy_usd", buy_usd.toFixed(4));
+execution.setVariable("sell_usd", sell_usd.toFixed(4));
+execution.setVariable("buy_amount_token", buy_amount.toString());
+execution.setVariable("sell_amount_token", sell_amount.toString());
+</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_135p3tc" sourceRef="Gateway_12x47mt" targetRef="Activity_0wnwfjx" />
+    <bpmn:sequenceFlow id="Flow_0quullu" sourceRef="Gateway_12x47mt" targetRef="autoconfirm_swap">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${form_autoconfirm_swap == true}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:userTask id="tx_failed_review_error" name="Review Error" camunda:assignee="${camunda_user_id}">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="message_error" label="Error" type="string" defaultValue="${error}" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_09xoxg9</bpmn:incoming>
+      <bpmn:outgoing>Flow_1r8isdz</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="Event_06jm28h">
+      <bpmn:incoming>Flow_1r8isdz</bpmn:incoming>
+      <bpmn:incoming>Flow_1aqklya</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:boundaryEvent id="Event_1r7j8k3" attachedToRef="tx_failed_review_error">
+      <bpmn:outgoing>Flow_1aqklya</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_1oozq54">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT10M</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_1r8isdz" sourceRef="tx_failed_review_error" targetRef="Event_06jm28h" />
+    <bpmn:sequenceFlow id="Flow_1aqklya" sourceRef="Event_1r7j8k3" targetRef="Event_06jm28h" />
+    <bpmn:sequenceFlow id="Flow_1pagg6l" sourceRef="Activity_1xdn8ag" targetRef="Activity_0s4mny8" />
+    <bpmn:sequenceFlow id="Flow_1nz74jx" sourceRef="Event_0mcidqi" targetRef="Event_1vq0hrm" />
+    <bpmn:sequenceFlow id="Flow_15ttld3" sourceRef="crosschain_get_price_review_error" targetRef="Event_1vq0hrm" />
+    <bpmn:sequenceFlow id="Flow_0ezwhrt" sourceRef="get_price_review_error" targetRef="Event_1ym1j1p" />
+    <bpmn:sequenceFlow id="Flow_1twq1xy" sourceRef="Event_02xv5ne" targetRef="Event_1ym1j1p" />
+    <bpmn:exclusiveGateway id="Gateway_1x98o08" default="Flow_0vyiu02">
+      <bpmn:incoming>Flow_1j0t192</bpmn:incoming>
+      <bpmn:outgoing>Flow_0vyiu02</bpmn:outgoing>
+      <bpmn:outgoing>Flow_17xqqww</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0vyiu02" sourceRef="Gateway_1x98o08" targetRef="connector_get_quote" />
+    <bpmn:sequenceFlow id="Flow_17xqqww" sourceRef="Gateway_1x98o08" targetRef="external_approve_token">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${is_allowed == false}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:serviceTask id="connector_get_price" name="Get Price" camunda:asyncBefore="true" camunda:asyncAfter="true">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="method">GET</camunda:inputParameter>
+            <camunda:inputParameter name="url">https://api-trading.dex.guru/v1/market/${chain_id}/price?buyToken=${buy_token_address}&amp;sellAmount=${sell_amount_wei}&amp;sellToken=${sell_token_address}&amp;feeRecipient=0x720c9244473Dfc596547c1f7B6261c7112A3dad4&amp;takerAddress=${wallet_address}&amp;slippagePercentage=${form_max_slippage_percentage / 100}&amp;buyTokenPercentageFee=0.005</camunda:inputParameter>
+            <camunda:inputParameter name="headers">
+              <camunda:map />
+            </camunda:inputParameter>
+            <camunda:inputParameter name="payload">{}</camunda:inputParameter>
+            <camunda:outputParameter name="is_allowed">${S(response).hasProp("is_allowed") ? S(response).prop("is_allowed").boolValue() : null}</camunda:outputParameter>
+            <camunda:outputParameter name="provider">${S(response).hasProp("provider") ? S(response).prop("provider").stringValue() : null}</camunda:outputParameter>
+            <camunda:outputParameter name="status_code">${statusCode}</camunda:outputParameter>
+            <camunda:outputParameter name="error">${statusCode &gt;= 400 
+    ? (S(response).hasProp("reason") 
+        ? S(response).prop("reason").elements().get(0).prop("errorMessage").stringValue() 
+        : (S(response).hasProp("detail") 
+            ? response 
+            : response.toString())) 
+    : null}</camunda:outputParameter>
+            <camunda:outputParameter name="spender_address">${S(response).hasProp("price_response") ? 
+S(response).prop("price_response").prop("allowance_target").stringValue() : null}</camunda:outputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1ru9qh8</bpmn:incoming>
+      <bpmn:outgoing>Flow_1wyvt9r</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0gr2hhf" name="error" sourceRef="Gateway_1dyyf5v" targetRef="Gateway_10daigj">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${status_code &gt;= 400}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:exclusiveGateway id="Gateway_0orq0ls" default="Flow_1s99jgv">
+      <bpmn:incoming>Flow_0kyfhjo</bpmn:incoming>
+      <bpmn:outgoing>Flow_1s99jgv</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1czjxxa</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_1s99jgv" sourceRef="Gateway_0orq0ls" targetRef="Activity_0s4mny8" />
+    <bpmn:sequenceFlow id="Flow_1czjxxa" sourceRef="Gateway_0orq0ls" targetRef="Activity_1xdn8ag">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${is_allowed == false}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:serviceTask id="Activity_0czfwr2" name="Get Price" camunda:asyncBefore="true" camunda:asyncAfter="true">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="method">GET</camunda:inputParameter>
+            <camunda:inputParameter name="url">https://api-trading.dex.guru/v1/crosschain/price?buyToken=${buy_token_address}&amp;sellAmount=${sell_amount_wei}&amp;sellToken=${sell_token_address}&amp;feeRecipient=0x720c9244473Dfc596547c1f7B6261c7112A3dad4&amp;takerAddress=${wallet_address}&amp;slippagePercentage=${form_max_slippage_percentage / 100}&amp;chainIdFrom=${chain_id}&amp;chainIdTo=${dst_chain_id}&amp;provider=dln</camunda:inputParameter>
+            <camunda:inputParameter name="headers">
+              <camunda:map />
+            </camunda:inputParameter>
+            <camunda:inputParameter name="payload">{}</camunda:inputParameter>
+            <camunda:outputParameter name="is_allowed">${S(response).hasProp("is_allowed") ? S(response).prop("is_allowed").boolValue() : null}</camunda:outputParameter>
+            <camunda:outputParameter name="provider">${S(response).hasProp("provider") ? S(response).prop("provider").stringValue() : null}</camunda:outputParameter>
+            <camunda:outputParameter name="status_code">${statusCode}</camunda:outputParameter>
+            <camunda:outputParameter name="spender_address">${S(response).hasProp("price_response") ? 
+S(response).prop("price_response").prop("allowance_target").stringValue() : null}</camunda:outputParameter>
+            <camunda:outputParameter name="error">${statusCode &gt;= 400 
+    ? (S(response).hasProp("reason") 
+        ? S(response).prop("reason").elements().get(0).prop("errorMessage").stringValue() 
+        : (S(response).hasProp("detail") 
+            ? response 
+            : response.toString())) 
+    : null}</camunda:outputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0tpzidf</bpmn:incoming>
+      <bpmn:outgoing>Flow_0eka6yj</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0fxx702" sourceRef="Gateway_09nbo6d" targetRef="Gateway_0e5lx56">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${status_code &gt;= 400}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1jn2hnm" sourceRef="Gateway_14v1dqi" targetRef="Gateway_0e5lx56">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${status_code &gt;= 400}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1kpb068" sourceRef="autoconfirm_swap" targetRef="Gateway_183ylij" />
+    <bpmn:scriptTask id="autoconfirm_swap" name="Autoconfirm Swap" camunda:asyncBefore="true" camunda:asyncAfter="true" scriptFormat="javascript">
+      <bpmn:incoming>Flow_0quullu</bpmn:incoming>
+      <bpmn:outgoing>Flow_1kpb068</bpmn:outgoing>
+      <bpmn:script>execution.setVariable("action_cancel", false)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_1xe8u6p" sourceRef="Activity_06ye0e6" targetRef="woker_trasnferSwapReward" />
+    <bpmn:scriptTask id="Activity_06ye0e6" name="Build explorer link" camunda:asyncAfter="true" scriptFormat="javascript">
+      <bpmn:incoming>Flow_0mln6wm</bpmn:incoming>
+      <bpmn:outgoing>Flow_1xe8u6p</bpmn:outgoing>
+      <bpmn:script>const chain_id = execution.getVariable("chain_id");
+const tx_hash = execution.getVariable("tx_hash")
+
+const chain_id_to_block_explorer = {
+    "1": "etherscan.io",
+    "56": "bscscan.com",
+    "42161": "arbiscan.io",
+    "137": "polygonscan.com",
+    "8453": "basescan.org",
+    "7565164": "solscan.io",
+    "260": "blockscout.gurunetwork.ai",
+    "261": "sepolia.gurunetwork.ai",
+    "10": "optimistic.etherscan.io",
+    "146": "sonicscan.org"
+}
+
+// build tx link like 
+const tx_link = `https://${chain_id_to_block_explorer[chain_id]}/tx/${tx_hash}`;
+execution.setVariable("tx_link", tx_link);</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:serviceTask id="Activity_0o6zpw5" name="Resolve buy token network into chain_id" camunda:asyncAfter="true">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="method">GET</camunda:inputParameter>
+            <camunda:inputParameter name="url">https://api-prod-lax.dexguru.biz/v3/chain/network_to_chain_id/${buy_token_network}</camunda:inputParameter>
+            <camunda:inputParameter name="headers">
+              <camunda:map />
+            </camunda:inputParameter>
+            <camunda:inputParameter name="payload">{}</camunda:inputParameter>
+            <camunda:outputParameter name="dst_chain_id">${response}</camunda:outputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_044mqgx</bpmn:incoming>
+      <bpmn:outgoing>Flow_0e6kdh2</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_11zlxxu" name="Resolve sell token network into chain_id" camunda:asyncAfter="true">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="method">GET</camunda:inputParameter>
+            <camunda:inputParameter name="url">https://api-prod-lax.dexguru.biz/v3/chain/network_to_chain_id/${sell_token_network}</camunda:inputParameter>
+            <camunda:inputParameter name="headers">
+              <camunda:map />
+            </camunda:inputParameter>
+            <camunda:inputParameter name="payload">{}</camunda:inputParameter>
+            <camunda:outputParameter name="chain_id">${response}</camunda:outputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0ez6b1j</bpmn:incoming>
+      <bpmn:outgoing>Flow_1r75odl</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:scriptTask id="script_validate_balance" name="Validate balance" camunda:asyncBefore="true" camunda:asyncAfter="true" scriptFormat="javascript">
+      <bpmn:incoming>Flow_1k3attr</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ztxp2w</bpmn:outgoing>
+      <bpmn:script>// Get variables
+var sellAmount = parseFloat(execution.getVariable("sell_amount_wei"));
+var sellTokenBalance = parseFloat(execution.getVariable("sell_token_balance_wei"));
+var nativeTokenBalance = parseFloat(execution.getVariable("native_token_balance_wei"));
+var sellTokenSymbol = execution.getVariable("sell_token_symbol");
+var srcChainId = execution.getVariable("chain_id");
+var dstChainId = execution.getVariable("dst_chain_id");
+
+// Basic validations
+if (sellAmount &gt; sellTokenBalance) {
+  execution.setVariable("error", "Not enough " + sellTokenSymbol);
+} else if (nativeTokenBalance &lt; 0.001 * Math.pow(10, 18) &amp;&amp; srcChainId !== dstChainId &amp;&amp; dstChainId !== null) {
+  var needed = 0.001;
+  var current = nativeTokenBalance / Math.pow(10, 18);
+  var msg = "Not enough native token for cross chain swap. Needed: " + needed + " Balance: " + current.toFixed(6);
+  execution.setVariable("error", msg);
+} else if (nativeTokenBalance === 0) {
+  execution.setVariable("error", "Not enough native token for gas. Fund your wallet first.");
+}</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_1ru9qh8" sourceRef="Gateway_165p6w5" targetRef="connector_get_price" />
+    <bpmn:sequenceFlow id="Flow_0tpzidf" sourceRef="Gateway_165p6w5" targetRef="Activity_0czfwr2">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${dst_chain_id != null &amp;&amp; chain_id != dst_chain_id}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:exclusiveGateway id="Gateway_0pn5euv" default="Flow_1r9bs67">
+      <bpmn:incoming>Flow_0ztxp2w</bpmn:incoming>
+      <bpmn:incoming>Flow_1vyfwb0</bpmn:incoming>
+      <bpmn:outgoing>Flow_1r9bs67</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0974e6e</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0ztxp2w" sourceRef="script_validate_balance" targetRef="Gateway_0pn5euv" />
+    <bpmn:sequenceFlow id="Flow_1r9bs67" sourceRef="Gateway_0pn5euv" targetRef="Gateway_165p6w5" />
+    <bpmn:userTask id="balance_review_error" name="Review Error" camunda:assignee="${camunda_user_id}">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="message_error" label="Error" type="string" defaultValue="${error}" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0zt3igo</bpmn:incoming>
+      <bpmn:outgoing>Flow_150zn4u</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:boundaryEvent id="Event_1s5cnlm" attachedToRef="balance_review_error">
+      <bpmn:outgoing>Flow_1083gq7</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_1gsw2gc">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT10M</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:boundaryEvent>
+    <bpmn:endEvent id="Event_01p17sm">
+      <bpmn:incoming>Flow_150zn4u</bpmn:incoming>
+      <bpmn:incoming>Flow_1083gq7</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_150zn4u" sourceRef="balance_review_error" targetRef="Event_01p17sm" />
+    <bpmn:sequenceFlow id="Flow_1083gq7" sourceRef="Event_1s5cnlm" targetRef="Event_01p17sm" />
+    <bpmn:sequenceFlow id="Flow_05qpio5" sourceRef="StartEvent_1" targetRef="Activity_0fwk1pl" />
+    <bpmn:sequenceFlow id="Flow_06mwvgo" sourceRef="get_user_info" targetRef="Activity_138vnzs" />
+    <bpmn:userTask id="user_swap_form" name="Swap Tokens" camunda:asyncAfter="true" camunda:assignee="${camunda_user_id}">
+      <bpmn:documentation>${question}
+
+    User retrieved balances: 
+    ${warehouse_query_result != null ? warehouse_query_result.toString() : "No balances found"}
+
+</bpmn:documentation>
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="token_sell" label="Sell" type="string" />
+          <camunda:formField id="token_buy" label="Buy" type="string" />
+          <camunda:formField id="form_sell_amount" label="Sell Amount" type="string" />
+          <camunda:formField id="form_max_slippage_percentage" label="Max Slippage (%)" type="string" defaultValue="0.5" />
+          <camunda:formField id="form_autoconfirm_swap" label="Confirm Swap Automatically" type="boolean" defaultValue="${false}" />
+          <camunda:formField id="chain_id" label="Chain ID" type="long" defaultValue="${null}" />
+          <camunda:formField id="dst_chain_id" label="Destination chain" type="long" defaultValue="${null}" />
+        </camunda:formData>
+        <camunda:taskListener class="ai.hhrdr.chainflow.engine.listener.AgentTaskCompleteListenerFormBased" event="create">
+          <camunda:field name="agentName">
+            <camunda:string>form_completion_agent</camunda:string>
+          </camunda:field>
+          <camunda:field name="systemPrompt">
+            <camunda:string>Be a helpful assistant.</camunda:string>
+          </camunda:field>
+          <camunda:field name="outputVar">
+            <camunda:string>completion_agent_answer</camunda:string>
+          </camunda:field>
+          <camunda:field name="formFieldsNames">
+            <camunda:string>token_sell,token_buy,form_sell_amount,form_max_slippage_percentage,form_autoconfirm_swap,chain_id,dst_chain_id</camunda:string>
+          </camunda:field>
+        </camunda:taskListener>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0km84cj</bpmn:incoming>
+      <bpmn:outgoing>Flow_1c9z810</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="Gateway_0tnd4rz" camunda:asyncBefore="true" camunda:asyncAfter="true" default="Flow_0ttowrp">
+      <bpmn:incoming>Flow_05abxr1</bpmn:incoming>
+      <bpmn:outgoing>Flow_0z3nn0t</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0ttowrp</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_1c9z810" sourceRef="user_swap_form" targetRef="Activity_1pbr8v3" />
+    <bpmn:sequenceFlow id="Flow_0z3nn0t" sourceRef="Gateway_0tnd4rz" targetRef="Gateway_0pl9ufl">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${token_sell != null &amp;&amp; token_sell.startsWith("0x") &amp;&amp; token_sell.length() &gt; 41}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0ttowrp" sourceRef="Gateway_0tnd4rz" targetRef="Activity_0331d0b" />
+    <bpmn:serviceTask id="Activity_0nddc72" name="Get NATIVE token balance" camunda:asyncBefore="true" camunda:asyncAfter="true">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="method">POST</camunda:inputParameter>
+            <camunda:inputParameter name="url">http://new-rpc-gw-prod.dexguru.biz/full/${chain_id}</camunda:inputParameter>
+            <camunda:inputParameter name="headers">
+              <camunda:map>
+                <camunda:entry key="Content-Type">application/json</camunda:entry>
+              </camunda:map>
+            </camunda:inputParameter>
+            <camunda:inputParameter name="payload">{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "eth_getBalance",
+  "params": [
+    "${wallet_address}",
+    "latest"
+  ]
+}
+</camunda:inputParameter>
+            <camunda:outputParameter name="native_token_balance">${S(response).hasProp("result") ? S(response).prop("result").stringValue() : null}</camunda:outputParameter>
+            <camunda:outputParameter name="status_code">${statusCode}</camunda:outputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0maw6ln</bpmn:incoming>
+      <bpmn:outgoing>Flow_0qnw6xr</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_1cjzw9l" name="Get SELL token balance" camunda:asyncBefore="true" camunda:asyncAfter="true">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="method">POST</camunda:inputParameter>
+            <camunda:inputParameter name="url">http://new-rpc-gw-prod.dexguru.biz/full/${chain_id}</camunda:inputParameter>
+            <camunda:inputParameter name="headers">
+              <camunda:map>
+                <camunda:entry key="Content-Type">application/json</camunda:entry>
+              </camunda:map>
+            </camunda:inputParameter>
+            <camunda:inputParameter name="payload">{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "eth_call",
+  "params": [
+    {
+      "to": "${sell_token_address}",
+      "data": "0x70a08231000000000000000000000000${wallet_address.substring(2)}"
+    },
+    "latest"
+  ]
+}
+</camunda:inputParameter>
+            <camunda:outputParameter name="sell_token_balance">${S(response).hasProp("result") ? S(response).prop("result").stringValue() : null}</camunda:outputParameter>
+            <camunda:outputParameter name="status_code">${statusCode}</camunda:outputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1jhynz3</bpmn:incoming>
+      <bpmn:outgoing>Flow_18207bb</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0qnw6xr" sourceRef="Activity_0nddc72" targetRef="Gateway_1vsxlfh" />
+    <bpmn:parallelGateway id="Gateway_1vsxlfh">
+      <bpmn:incoming>Flow_0qnw6xr</bpmn:incoming>
+      <bpmn:incoming>Flow_18207bb</bpmn:incoming>
+      <bpmn:outgoing>Flow_14c5ncq</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:sequenceFlow id="Flow_18207bb" sourceRef="Activity_1cjzw9l" targetRef="Gateway_1vsxlfh" />
+    <bpmn:sequenceFlow id="Flow_14c5ncq" sourceRef="Gateway_1vsxlfh" targetRef="script_convert_wei" />
+    <bpmn:parallelGateway id="Gateway_0yzueik">
+      <bpmn:incoming>Flow_1gjxp18</bpmn:incoming>
+      <bpmn:outgoing>Flow_1nu6r99</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1y83eba</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:sequenceFlow id="Flow_1nu6r99" sourceRef="Gateway_0yzueik" targetRef="Activity_06m5nmq" />
+    <bpmn:sequenceFlow id="Flow_1y83eba" sourceRef="Gateway_0yzueik" targetRef="Activity_0cq886p" />
+    <bpmn:serviceTask id="Activity_0cq886p" name="Get sell token by symbol" camunda:asyncBefore="true" camunda:asyncAfter="true">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="method">GET</camunda:inputParameter>
+            <camunda:inputParameter name="url">https://api-prod-lax.dexguru.biz/v3/tokens/search/${token_sell}?chain_id=${chain_id}&amp;include_native=true</camunda:inputParameter>
+            <camunda:inputParameter name="headers">
+              <camunda:map />
+            </camunda:inputParameter>
+            <camunda:inputParameter name="payload">{}</camunda:inputParameter>
+            <camunda:outputParameter name="sell_token_address">${S(response).prop("data").elements()[0].prop("address").stringValue()}</camunda:outputParameter>
+            <camunda:outputParameter name="sell_token_symbol">${S(response).prop("data").elements()[0].prop("symbols").elements()[0].stringValue()}</camunda:outputParameter>
+            <camunda:outputParameter name="sell_token_decimals">${S(response).prop("data").elements()[0].prop("decimals").numberValue()}</camunda:outputParameter>
+            <camunda:outputParameter name="sell_token_price">${S(response).prop("data").elements()[0].prop("priceUSD").numberValue()}</camunda:outputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1y83eba</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ba7e6v</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_06m5nmq" name="Get buy token by symbol" camunda:asyncBefore="true" camunda:asyncAfter="true">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="method">GET</camunda:inputParameter>
+            <camunda:inputParameter name="url">https://api-prod-lax.dexguru.biz/v3/tokens/search/${token_buy}?chain_id=${dst_chain_id != null ? dst_chain_id : chain_id}&amp;include_native=true</camunda:inputParameter>
+            <camunda:inputParameter name="headers">
+              <camunda:map />
+            </camunda:inputParameter>
+            <camunda:inputParameter name="payload">{}</camunda:inputParameter>
+            <camunda:outputParameter name="buy_token_address">${S(response).prop("data").elements()[0].prop("address").stringValue()}</camunda:outputParameter>
+            <camunda:outputParameter name="buy_token_symbol">${S(response).prop("data").elements()[0].prop("symbols").elements()[0].stringValue()}</camunda:outputParameter>
+            <camunda:outputParameter name="buy_token_decimals">${S(response).prop("data").elements()[0].prop("decimals").numberValue()}</camunda:outputParameter>
+            <camunda:outputParameter name="buy_token_price">${S(response).prop("data").elements()[0].prop("priceUSD").numberValue()}</camunda:outputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1nu6r99</bpmn:incoming>
+      <bpmn:outgoing>Flow_12478lx</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:parallelGateway id="Gateway_0ipyyhj">
+      <bpmn:incoming>Flow_1r75odl</bpmn:incoming>
+      <bpmn:incoming>Flow_0e6kdh2</bpmn:incoming>
+      <bpmn:outgoing>Flow_11mqw9y</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:sequenceFlow id="Flow_1r75odl" sourceRef="Activity_11zlxxu" targetRef="Gateway_0ipyyhj" />
+    <bpmn:sequenceFlow id="Flow_0e6kdh2" sourceRef="Activity_0o6zpw5" targetRef="Gateway_0ipyyhj" />
+    <bpmn:parallelGateway id="Gateway_0ic0yip">
+      <bpmn:incoming>Flow_06aovmm</bpmn:incoming>
+      <bpmn:outgoing>Flow_1jhynz3</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0maw6ln</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:sequenceFlow id="Flow_1jhynz3" sourceRef="Gateway_0ic0yip" targetRef="Activity_1cjzw9l" />
+    <bpmn:sequenceFlow id="Flow_0maw6ln" sourceRef="Gateway_0ic0yip" targetRef="Activity_0nddc72" />
+    <bpmn:sequenceFlow id="Flow_11mqw9y" sourceRef="Gateway_0ipyyhj" targetRef="Gateway_1d38zhm" />
+    <bpmn:parallelGateway id="Gateway_0bjeqmr">
+      <bpmn:incoming>Flow_0ba7e6v</bpmn:incoming>
+      <bpmn:incoming>Flow_12478lx</bpmn:incoming>
+      <bpmn:outgoing>Flow_1xgqooe</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:sequenceFlow id="Flow_0ba7e6v" sourceRef="Activity_0cq886p" targetRef="Gateway_0bjeqmr" />
+    <bpmn:sequenceFlow id="Flow_12478lx" sourceRef="Activity_06m5nmq" targetRef="Gateway_0bjeqmr" />
+    <bpmn:sequenceFlow id="Flow_1xgqooe" sourceRef="Gateway_0bjeqmr" targetRef="Gateway_1d38zhm" />
+    <bpmn:exclusiveGateway id="Gateway_1d38zhm">
+      <bpmn:incoming>Flow_1xgqooe</bpmn:incoming>
+      <bpmn:incoming>Flow_11mqw9y</bpmn:incoming>
+      <bpmn:outgoing>Flow_1ui62tl</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_1ui62tl" sourceRef="Gateway_1d38zhm" targetRef="Gateway_0a8ve82" />
+    <bpmn:sequenceFlow id="Flow_1luae0n" sourceRef="Activity_138vnzs" targetRef="Activity_1buuhp2" />
+    <bpmn:serviceTask id="Activity_138vnzs" name="Get balances from warehouse" camunda:asyncAfter="true" camunda:class="ai.hhrdr.chainflow.engine.delegate.WarehouseQueryDelegate">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="query_id">token_balances_for_wallet_across_all_chains</camunda:inputParameter>
+          <camunda:inputParameter name="parameters">{"parameters": { "holder_address": "${wallet_address}" } }</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_06mwvgo</bpmn:incoming>
+      <bpmn:outgoing>Flow_1luae0n</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:boundaryEvent id="Event_0u0uiqi" attachedToRef="user_swap_form">
+      <bpmn:outgoing>Flow_091cr38</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_10zzfrs" />
+    </bpmn:boundaryEvent>
+    <bpmn:endEvent id="Event_01v9sn0">
+      <bpmn:incoming>Flow_0l9yfc7</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sendTask id="Activity_1pbr8v3" name="Send Message to Chatbot DM" camunda:asyncAfter="true" camunda:class="ai.hhrdr.chainflow.engine.delegate.ChatbotMessageDelegate">
+      <bpmn:documentation>${completion_agent_answer}</bpmn:documentation>
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="chatbotMessage">Try to execute swap with following variables: 
+
+Token to sell: ${token_sell}
+Token to buy: ${token_buy}
+Amount: ${form_sell_amount}
+Max slippage: ${form_max_slippage_percentage} %
+
+Note: The destination chain ID (dst_chain_id) is optional. A value of  null means this is a same-chain swap and no bridging is required.
+
+AI: ${completion_agent_answer}</camunda:inputParameter>
+          <camunda:inputParameter name="chatName">${chatName}</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1c9z810</bpmn:incoming>
+      <bpmn:incoming>Flow_0brldox</bpmn:incoming>
+      <bpmn:outgoing>Flow_05abxr1</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:sequenceFlow id="Flow_05abxr1" sourceRef="Activity_1pbr8v3" targetRef="Gateway_0tnd4rz" />
+    <bpmn:sendTask id="Activity_0v0usj1" name="Send Message to Chatbot DM" camunda:class="ai.hhrdr.chainflow.engine.delegate.ChatbotMessageDelegate">
+      <bpmn:documentation>${completion_agent_answer}</bpmn:documentation>
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="chatbotMessage">${completion_agent_answer}</camunda:inputParameter>
+          <camunda:inputParameter name="chatName">${chatName}</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_091cr38</bpmn:incoming>
+      <bpmn:outgoing>Flow_0l9yfc7</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:sequenceFlow id="Flow_0l9yfc7" sourceRef="Activity_0v0usj1" targetRef="Event_01v9sn0" />
+    <bpmn:scriptTask id="Activity_1buuhp2" name="Fill defaults" camunda:asyncAfter="true" scriptFormat="javascript">
+      <bpmn:incoming>Flow_1luae0n</bpmn:incoming>
+      <bpmn:outgoing>Flow_1oe26ky</bpmn:outgoing>
+      <bpmn:script>execution.setVariable("form_max_slippage_percentage", 0.5)
+// execution.setVariable("form_autoconfirm_swap", false)
+execution.setVariable("dst_chain_id", null)
+execution.setVariable("error", null)
+var question = execution.getVariable("question")
+if (!question){
+    execution.setVariable("question", null)
+}
+execution.setVariable("completion_agent_answer", null)
+var query_result = execution.getVariable("warehouse_query_result")
+if (!query_result){
+    execution.setVariable("warehouse_query_result", null)
+}</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_1oe26ky" sourceRef="Activity_1buuhp2" targetRef="Gateway_0k4j7q2" />
+    <bpmn:sendTask id="Activity_19txqjk" name="Send Message to Chatbot DM" camunda:asyncBefore="true" camunda:asyncAfter="true" camunda:class="ai.hhrdr.chainflow.engine.delegate.ChatbotMessageDelegate">
+      <bpmn:documentation>Error: ${error}</bpmn:documentation>
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="chatbotMessage">Error: ${error}</camunda:inputParameter>
+          <camunda:inputParameter name="chatName">${chatName}</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0974e6e</bpmn:incoming>
+      <bpmn:outgoing>Flow_0zt3igo</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:sequenceFlow id="Flow_0zt3igo" sourceRef="Activity_19txqjk" targetRef="balance_review_error" />
+    <bpmn:sendTask id="Activity_00v82ic" name="Send Message to Chatbot DM" camunda:asyncAfter="true" camunda:class="ai.hhrdr.chainflow.engine.delegate.ChatbotMessageDelegate">
+      <bpmn:documentation>${error}</bpmn:documentation>
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="chatbotMessage">${error}</camunda:inputParameter>
+          <camunda:inputParameter name="chatName">${chatName}</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0f9saj8</bpmn:incoming>
+      <bpmn:outgoing>Flow_0mho4ev</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:sequenceFlow id="Flow_0mho4ev" sourceRef="Activity_00v82ic" targetRef="get_price_review_error" />
+    <bpmn:sendTask id="Activity_149hrd7" name="Send Message to Chatbot DM" camunda:asyncAfter="true" camunda:class="ai.hhrdr.chainflow.engine.delegate.ChatbotMessageDelegate">
+      <bpmn:documentation>${error}</bpmn:documentation>
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="chatbotMessage">${error}</camunda:inputParameter>
+          <camunda:inputParameter name="chatName">${chatName}</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_10n6uqr</bpmn:incoming>
+      <bpmn:outgoing>Flow_10t5n38</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:sequenceFlow id="Flow_10t5n38" sourceRef="Activity_149hrd7" targetRef="crosschain_get_price_review_error" />
+    <bpmn:sendTask id="Activity_0tey70z" name="Send Message to Chatbot DM" camunda:asyncAfter="true" camunda:class="ai.hhrdr.chainflow.engine.delegate.ChatbotMessageDelegate">
+      <bpmn:documentation>Error: ${error}</bpmn:documentation>
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="chatbotMessage">Error: ${error}</camunda:inputParameter>
+          <camunda:inputParameter name="chatName">${chatName}</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1xflfdr</bpmn:incoming>
+      <bpmn:incoming>Flow_12me6sa</bpmn:incoming>
+      <bpmn:outgoing>Flow_09xoxg9</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:sequenceFlow id="Flow_09xoxg9" sourceRef="Activity_0tey70z" targetRef="tx_failed_review_error" />
+    <bpmn:sendTask id="Activity_1mj0094" name="Send Message to Chatbot DM" camunda:asyncBefore="true" camunda:asyncAfter="true" camunda:class="ai.hhrdr.chainflow.engine.delegate.ChatbotMessageDelegate">
+      <bpmn:documentation>You are an AI trading assistant for a Web3 trading terminal.
+
+Objective: Generate a concise and energetic success message after an AI-powered trade is executed and the user receives reward points.
+
+Input Variables:
+- tx_link: a URL to the executed trade transaction (e.g., https://basescan.org/tx/0x...)
+- reward_amount: a number representing the amount of reward points earned (e.g., 50)
+- applicationToken: the token symbol of the reward (e.g., tGURU)
+- treasury_txhash: the transaction hash for the rewards transfer (e.g., 0xb1bd...e8)
+
+Instructions:
+1. Begin with a celebratory confirmation, such as: “Transaction executed successfully! 🎉”
+2. Mention the executed trade and link to it using `tx_link`. Format: “Check it out here (tx_link).”
+3. Acknowledge the rewards earned by the user:
+   - Include the `reward_amount` and `applicationToken`
+   - Provide a separate link to the reward transfer using the format: https://sepolia.gurunetwork.ai/tx/{treasury_txhash}
+   Example: “Also, 50 tGURU rewards points were transferred, details here (https://sepolia.gurunetwork.ai/tx/...).”
+4. Close with a motivational phrase such as: “Keep stacking those rewards! 🚀💼”
+
+Output Formatting Rules:
+- Keep the tone energetic, professional, and concise.
+- Do not mix up `tx_link` and `treasury_txhash`.
+- Always use parentheses for URLs and place them right after the relevant context.
+- Output must be a well-structured sentence or two, no fragments.
+
+Example Output:
+Transaction executed successfully! 🎉 Check it out here (https://basescan.org/tx/0x4342b1a373d0f316e7cb939786147b6d05c9e4408907771fa63ce68e2fb53099). Also, 50 tGURU rewards points were transferred, details here (https://sepolia.gurunetwork.ai/tx/0xb1bd5bfb9da5e21c316ed1847d763a2bc3a67211b55d904dc19aa3277bbfd1e8). Keep stacking those rewards! 🚀💼
+
+Here there are input variables:
+
+tx_link = ${tx_link} 
+reward_amount  = ${reward_amount} 
+applicationToken = ${applicationToken} 
+treasury_txhash = ${treasury_txhash}</bpmn:documentation>
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="chatbotMessage">Transaction executed - ${tx_link}, ${reward_amount} ${applicationToken} rewards points transfered ${treasury_txhash}.</camunda:inputParameter>
+          <camunda:inputParameter name="chatName">${chatName}</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_01qb0n8</bpmn:incoming>
+      <bpmn:incoming>Flow_0y8mgdh</bpmn:incoming>
+      <bpmn:outgoing>Flow_0w2twlf</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:serviceTask id="woker_trasnferSwapReward" name="Transfer Swap Reward" camunda:asyncBefore="true" camunda:asyncAfter="true" camunda:type="external" camunda:topic="wallet_treasury_transfer">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="chain_id">261</camunda:inputParameter>
+          <camunda:inputParameter name="transfer_amount">${reward_amount}</camunda:inputParameter>
+          <camunda:inputParameter name="camunda_user_id">${camunda_user_id}</camunda:inputParameter>
+          <camunda:outputParameter name="treasury_txhash">${treasury_txhash}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1xe8u6p</bpmn:incoming>
+      <bpmn:outgoing>Flow_01qb0n8</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_01qb0n8" sourceRef="woker_trasnferSwapReward" targetRef="Activity_1mj0094" />
+    <bpmn:exclusiveGateway id="Gateway_14v1dqi" default="Flow_07ol1c0">
+      <bpmn:incoming>Flow_0rnm7ot</bpmn:incoming>
+      <bpmn:outgoing>Flow_07ol1c0</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1jn2hnm</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0rnm7ot" sourceRef="Activity_0s4mny8" targetRef="Gateway_14v1dqi" />
+    <bpmn:sequenceFlow id="Flow_07ol1c0" sourceRef="Gateway_14v1dqi" targetRef="Gateway_12x47mt" />
+    <bpmn:exclusiveGateway id="Gateway_0l4oxbq" default="Flow_0b89zmn">
+      <bpmn:incoming>Flow_1ilz1fr</bpmn:incoming>
+      <bpmn:outgoing>Flow_0b89zmn</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1k18nhx</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0b89zmn" sourceRef="Gateway_0l4oxbq" targetRef="Gateway_12x47mt" />
+    <bpmn:sequenceFlow id="Flow_1k18nhx" sourceRef="Gateway_0l4oxbq" targetRef="Gateway_10daigj">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${status_code &gt;= 400}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:exclusiveGateway id="Gateway_0k4j7q2" default="Flow_0km84cj">
+      <bpmn:incoming>Flow_1oe26ky</bpmn:incoming>
+      <bpmn:outgoing>Flow_0km84cj</bpmn:outgoing>
+      <bpmn:outgoing>Flow_048ll6z</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0km84cj" sourceRef="Gateway_0k4j7q2" targetRef="user_swap_form" />
+    <bpmn:sequenceFlow id="Flow_048ll6z" sourceRef="Gateway_0k4j7q2" targetRef="user_swap_manual_form">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${question == null}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:userTask id="user_swap_manual_form" name="Swap Tokens" camunda:asyncAfter="true" camunda:assignee="${camunda_user_id}">
+      <bpmn:documentation>${question}</bpmn:documentation>
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="token_sell" label="Sell" type="string" />
+          <camunda:formField id="token_buy" label="Buy" type="string" />
+          <camunda:formField id="form_sell_amount" label="Sell Amount" type="string" />
+          <camunda:formField id="form_max_slippage_percentage" label="Max Slippage (%)" type="string" defaultValue="0.5" />
+          <camunda:formField id="form_autoconfirm_swap" label="Confirm Swap Automatically" type="boolean" defaultValue="${false}" />
+          <camunda:formField id="chain_id" label="Chain ID" type="long" defaultValue="${null}" />
+          <camunda:formField id="dst_chain_id" label="Destination chain" type="long" defaultValue="${null}" />
+          <camunda:formField id="action_swap" label="Swap" type="boolean" defaultValue="${true}" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_048ll6z</bpmn:incoming>
+      <bpmn:outgoing>Flow_0brldox</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_0brldox" sourceRef="user_swap_manual_form" targetRef="Activity_1pbr8v3" />
+    <bpmn:exclusiveGateway id="Gateway_10daigj" default="Flow_0f9saj8">
+      <bpmn:incoming>Flow_0hns7tl</bpmn:incoming>
+      <bpmn:incoming>Flow_0aizoat</bpmn:incoming>
+      <bpmn:incoming>Flow_1k18nhx</bpmn:incoming>
+      <bpmn:incoming>Flow_0gr2hhf</bpmn:incoming>
+      <bpmn:outgoing>Flow_0f9saj8</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0f9saj8" sourceRef="Gateway_10daigj" targetRef="Activity_00v82ic" />
+    <bpmn:exclusiveGateway id="Gateway_0e5lx56" default="Flow_10n6uqr">
+      <bpmn:incoming>Flow_0bdjnd3</bpmn:incoming>
+      <bpmn:incoming>Flow_0cfhz4v</bpmn:incoming>
+      <bpmn:incoming>Flow_0fxx702</bpmn:incoming>
+      <bpmn:incoming>Flow_1jn2hnm</bpmn:incoming>
+      <bpmn:outgoing>Flow_10n6uqr</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_10n6uqr" sourceRef="Gateway_0e5lx56" targetRef="Activity_149hrd7" />
+    <bpmn:sequenceFlow id="Flow_1gjxp18" sourceRef="Activity_0331d0b" targetRef="Gateway_0yzueik" />
+    <bpmn:scriptTask id="Activity_0331d0b" name="Validate symbols" scriptFormat="javascript">
+      <bpmn:incoming>Flow_0ttowrp</bpmn:incoming>
+      <bpmn:outgoing>Flow_1gjxp18</bpmn:outgoing>
+      <bpmn:script>var sell_token_symbol = execution.getVariable('token_sell');
+var buy_token_symbol = execution.getVariable('token_buy');
+
+// trim the token symbol to remove any leading/trailing whitespace
+sell_token_symbol = sell_token_symbol.trim();
+buy_token_symbol = buy_token_symbol.trim();
+
+// check if the token symbols are empty
+if (sell_token_symbol === '' || buy_token_symbol === '') {
+  execution.setVariable('error', 'Token symbols cannot be empty');
+}</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:boundaryEvent id="Event_1fmn3mx" attachedToRef="Activity_0331d0b">
+      <bpmn:outgoing>Flow_11mb5h0</bpmn:outgoing>
+      <bpmn:conditionalEventDefinition id="ConditionalEventDefinition_0xq99bc" camunda:variableName="error" camunda:variableEvents="update">
+        <bpmn:condition xsi:type="bpmn:tFormalExpression">${error != null}</bpmn:condition>
+      </bpmn:conditionalEventDefinition>
+    </bpmn:boundaryEvent>
+    <bpmn:sendTask id="Activity_1srehh5" name="Send Message to Chatbot DM" camunda:asyncBefore="true" camunda:asyncAfter="true" camunda:class="ai.hhrdr.chainflow.engine.delegate.ChatbotMessageDelegate">
+      <bpmn:documentation>Error: ${error}</bpmn:documentation>
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="chatbotMessage">Error: ${error}</camunda:inputParameter>
+          <camunda:inputParameter name="chatName">${chatName}</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_11mb5h0</bpmn:incoming>
+      <bpmn:outgoing>Flow_0kk9h02</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:endEvent id="Event_0os6cfa">
+      <bpmn:incoming>Flow_03zyxg6</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_03zyxg6" sourceRef="invalid_symbols_review_error" targetRef="Event_0os6cfa" />
+    <bpmn:userTask id="invalid_symbols_review_error" name="Invalid symbols" camunda:assignee="${camunda_user_id}">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="message_error" label="Error" type="string" defaultValue="${error}" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0kk9h02</bpmn:incoming>
+      <bpmn:outgoing>Flow_03zyxg6</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="Event_04kxm7k">
+      <bpmn:incoming>Flow_02qa83b</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:boundaryEvent id="Event_1e9nkzp" attachedToRef="form_confirm_swap">
+      <bpmn:outgoing>Flow_1vyfwb0</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_1rr3j5i">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT15S</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_1vyfwb0" sourceRef="Event_1e9nkzp" targetRef="Gateway_0pn5euv" />
+    <bpmn:serviceTask id="Activity_0fwk1pl" name="ProcessInstanceDeduplicationFlagDelegate" camunda:asyncBefore="true" camunda:class="ai.hhrdr.chainflow.engine.delegate.ProcessInstanceDeduplicationFlagDelegate">
+      <bpmn:incoming>Flow_05qpio5</bpmn:incoming>
+      <bpmn:outgoing>Flow_0vqvipx</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0vqvipx" sourceRef="Activity_0fwk1pl" targetRef="Gateway_1cx0ipf" />
+    <bpmn:exclusiveGateway id="Gateway_1cx0ipf" camunda:asyncBefore="true" default="Flow_0u7cgkq">
+      <bpmn:incoming>Flow_0vqvipx</bpmn:incoming>
+      <bpmn:outgoing>Flow_0u7cgkq</bpmn:outgoing>
+      <bpmn:outgoing>Flow_17tsqp5</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0u7cgkq" sourceRef="Gateway_1cx0ipf" targetRef="get_user_info" />
+    <bpmn:endEvent id="Event_1xbhwog">
+      <bpmn:incoming>Flow_17tsqp5</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_17tsqp5" sourceRef="Gateway_1cx0ipf" targetRef="Event_1xbhwog">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${isDuplicate}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_091cr38" sourceRef="Event_0u0uiqi" targetRef="Activity_0v0usj1" />
+    <bpmn:sequenceFlow id="Flow_11mb5h0" sourceRef="Event_1fmn3mx" targetRef="Activity_1srehh5" />
+    <bpmn:sequenceFlow id="Flow_0kk9h02" sourceRef="Activity_1srehh5" targetRef="invalid_symbols_review_error" />
+    <bpmn:sequenceFlow id="Flow_0974e6e" sourceRef="Gateway_0pn5euv" targetRef="Activity_19txqjk">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${error != null}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1xflfdr" sourceRef="Event_0eobe36" targetRef="Activity_0tey70z" />
+    <bpmn:sequenceFlow id="Flow_12me6sa" sourceRef="Event_0v6yd2v" targetRef="Activity_0tey70z" />
+    <bpmn:sequenceFlow id="Flow_0w2twlf" sourceRef="Activity_1mj0094" targetRef="form_review_swap" />
+    <bpmn:boundaryEvent id="Event_1uxojg1" attachedToRef="woker_trasnferSwapReward">
+      <bpmn:outgoing>Flow_1duigzn</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_1ou7kti" errorRef="Error_01gl6d9" />
+    </bpmn:boundaryEvent>
+    <bpmn:sendTask id="Activity_1yhzshl" name="Send Message to Chatbot DM" camunda:asyncAfter="true" camunda:class="ai.hhrdr.chainflow.engine.delegate.ChatbotMessageDelegate">
+      <bpmn:documentation>FAILED_TO_TRANSFER_REWARDS</bpmn:documentation>
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="chatbotMessage">Error: ${error}</camunda:inputParameter>
+          <camunda:inputParameter name="chatName">${chatName}</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1duigzn</bpmn:incoming>
+      <bpmn:outgoing>Flow_1cfgw6r</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:sequenceFlow id="Flow_1duigzn" sourceRef="Event_1uxojg1" targetRef="Activity_1yhzshl" />
+    <bpmn:scriptTask id="Activity_0tzo8b6" name="set tresuary hash null" camunda:asyncAfter="true" scriptFormat="javascript">
+      <bpmn:incoming>Flow_1cfgw6r</bpmn:incoming>
+      <bpmn:outgoing>Flow_0y8mgdh</bpmn:outgoing>
+      <bpmn:script>execution.setVariable("treasury_txhash", null)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_1cfgw6r" sourceRef="Activity_1yhzshl" targetRef="Activity_0tzo8b6" />
+    <bpmn:sequenceFlow id="Flow_0y8mgdh" sourceRef="Activity_0tzo8b6" targetRef="Activity_1mj0094" />
+    <bpmn:exclusiveGateway id="Gateway_0a8ve82" default="Flow_06aovmm">
+      <bpmn:incoming>Flow_1ui62tl</bpmn:incoming>
+      <bpmn:outgoing>Flow_06aovmm</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1mj99jg</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_06aovmm" sourceRef="Gateway_0a8ve82" targetRef="Gateway_0ic0yip" />
+    <bpmn:sendTask id="Activity_1nn58l8" name="Send Message to Chatbot DM" camunda:asyncBefore="true" camunda:asyncAfter="true" camunda:class="ai.hhrdr.chainflow.engine.delegate.ChatbotMessageDelegate">
+      <bpmn:documentation>Error: Cannot swap a token for itself. Please choose different tokens.</bpmn:documentation>
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="chatbotMessage">Error: ${error}</camunda:inputParameter>
+          <camunda:inputParameter name="chatName">${chatName}</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1mj99jg</bpmn:incoming>
+      <bpmn:outgoing>Flow_105besm</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:sequenceFlow id="Flow_1mj99jg" sourceRef="Gateway_0a8ve82" targetRef="Activity_1nn58l8">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${buy_token_address == sell_token_address &amp;&amp; dst_chain_id == null}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:userTask id="Activity_1ct1gbx" name="Review Error" camunda:assignee="${camunda_user_id}">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="message_error" label="Error" type="string" defaultValue="Error: Cannot swap a token for itself. Please choose different tokens." />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_105besm</bpmn:incoming>
+      <bpmn:outgoing>Flow_1i8jrgl</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:boundaryEvent id="Event_1wlphul" attachedToRef="Activity_1ct1gbx">
+      <bpmn:outgoing>Flow_1j32uxi</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_0f3koba">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT10M</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_105besm" sourceRef="Activity_1nn58l8" targetRef="Activity_1ct1gbx" />
+    <bpmn:endEvent id="Event_0k5j8c6">
+      <bpmn:incoming>Flow_1i8jrgl</bpmn:incoming>
+      <bpmn:incoming>Flow_1j32uxi</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1i8jrgl" sourceRef="Activity_1ct1gbx" targetRef="Event_0k5j8c6" />
+    <bpmn:sequenceFlow id="Flow_1j32uxi" sourceRef="Event_1wlphul" targetRef="Event_0k5j8c6" />
+    <bpmn:exclusiveGateway id="Gateway_1dyyf5v" default="Flow_1j0t192">
+      <bpmn:incoming>Flow_1wyvt9r</bpmn:incoming>
+      <bpmn:outgoing>Flow_1j0t192</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0gr2hhf</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_1wyvt9r" sourceRef="connector_get_price" targetRef="Gateway_1dyyf5v" />
+    <bpmn:sequenceFlow id="Flow_1j0t192" sourceRef="Gateway_1dyyf5v" targetRef="Gateway_1x98o08" />
+    <bpmn:exclusiveGateway id="Gateway_09nbo6d" default="Flow_0kyfhjo">
+      <bpmn:incoming>Flow_0eka6yj</bpmn:incoming>
+      <bpmn:outgoing>Flow_0kyfhjo</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0fxx702</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0eka6yj" sourceRef="Activity_0czfwr2" targetRef="Gateway_09nbo6d" />
+    <bpmn:sequenceFlow id="Flow_0kyfhjo" sourceRef="Gateway_09nbo6d" targetRef="Gateway_0orq0ls" />
+    <bpmn:textAnnotation id="TextAnnotation_0ugsea1">
+      <bpmn:text>Cancel</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_06vhhlv" associationDirection="None" sourceRef="Flow_02qa83b" targetRef="TextAnnotation_0ugsea1" />
+    <bpmn:group id="Group_0g2oxnw" categoryValueRef="CategoryValue_0bp135d" />
+    <bpmn:group id="Group_16n5ljn" />
+    <bpmn:textAnnotation id="TextAnnotation_0596kqj">
+      <bpmn:text>Crosschain</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:textAnnotation id="TextAnnotation_160g4j3">
+      <bpmn:text>Single chain</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:textAnnotation id="TextAnnotation_0kjxy2q">
+      <bpmn:text>Token is address</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_1xm2a2v" associationDirection="None" sourceRef="Flow_0z3nn0t" targetRef="TextAnnotation_0kjxy2q" />
+    <bpmn:textAnnotation id="TextAnnotation_13s9n43">
+      <bpmn:text>Token is symbol</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_1ij8t15" associationDirection="None" sourceRef="Flow_1gjxp18" targetRef="TextAnnotation_13s9n43" />
+  </bpmn:process>
+  <bpmn:category id="Category_0aqx260">
+    <bpmn:categoryValue id="CategoryValue_0bp135d" />
+  </bpmn:category>
+  <bpmn:message id="Message_3qn3gqc" name="Message_3qn3gqc" />
+  <bpmn:message id="Message_3up3j7j" name="MESSAGE_CHATBOT" />
+  <bpmn:error id="Error_01gl6d9" name="Error_3uvaqm1" errorCode="FAILED_TO_TRANSFER_REWARDS" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="swap_tokens">
+      <bpmndi:BPMNShape id="StartEvent_1_di" bpmnElement="StartEvent_1">
+        <dc:Bounds x="152" y="1132" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1gh9b6s_di" bpmnElement="get_user_info" color:background-color="" color:border-color="">
+        <dc:Bounds x="840" y="1110" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0k559l0_di" bpmnElement="external_approve_token">
+        <dc:Bounds x="3420" y="1329" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1sm4bkw_di" bpmnElement="form_confirm_swap">
+        <dc:Bounds x="4120" y="1110" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1cxeqr0_di" bpmnElement="execute_transaction">
+        <dc:Bounds x="4350" y="1110" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_18qudwk_di" bpmnElement="form_review_swap">
+        <dc:Bounds x="4990" y="1030" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1ig5s4p_di" bpmnElement="Event_1ig5s4p">
+        <dc:Bounds x="5202" y="1132" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0h2syu4" bpmnElement="connector_get_quote">
+        <dc:Bounds x="3570" y="1210" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_183ylij_di" bpmnElement="Gateway_183ylij" isMarkerVisible="true">
+        <dc:Bounds x="4245" y="1125" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_13chpx2_di" bpmnElement="script_convert_wei">
+        <dc:Bounds x="2690" y="1110" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_165p6w5_di" bpmnElement="Gateway_165p6w5" isMarkerVisible="true">
+        <dc:Bounds x="3200" y="1125" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1a5qyu8" bpmnElement="delegate_get_token_info">
+        <dc:Bounds x="1870" y="710" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1yfnug9" bpmnElement="Event_1vq0hrm">
+        <dc:Bounds x="3452" y="182" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1hhc3ds" bpmnElement="crosschain_get_price_review_error">
+        <dc:Bounds x="3420" y="300" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0pu8ru3" bpmnElement="Activity_0s4mny8">
+        <dc:Bounds x="3570" y="980" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1l12up7" bpmnElement="Activity_1xdn8ag">
+        <dc:Bounds x="3420" y="861" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0vjlumd_di" bpmnElement="Gateway_0pl9ufl">
+        <dc:Bounds x="1780" y="935" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0rkrr1u" bpmnElement="Activity_1jl3jt1">
+        <dc:Bounds x="1870" y="920" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_166yu86" bpmnElement="get_price_review_error">
+        <dc:Bounds x="3420" y="1740" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1ym1j1p_di" bpmnElement="Event_1ym1j1p">
+        <dc:Bounds x="3452" y="1902" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_12x47mt_di" bpmnElement="Gateway_12x47mt" isMarkerVisible="true">
+        <dc:Bounds x="3755" y="1125" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_08433xh_di" bpmnElement="Activity_0wnwfjx">
+        <dc:Bounds x="3850" y="1110" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1thlqcm" bpmnElement="tx_failed_review_error">
+        <dc:Bounds x="4350" y="1440" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1lj9rc0" bpmnElement="Event_06jm28h">
+        <dc:Bounds x="4382" y="1852" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1x98o08_di" bpmnElement="Gateway_1x98o08" isMarkerVisible="true">
+        <dc:Bounds x="3445" y="1225" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1wmo58n_di" bpmnElement="connector_get_price">
+        <dc:Bounds x="3175" y="1210" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_18zh71n" bpmnElement="Gateway_0orq0ls" isMarkerVisible="true">
+        <dc:Bounds x="3445" y="995" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_03reiju" bpmnElement="Activity_0czfwr2">
+        <dc:Bounds x="3175" y="980" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0zt0dfo_di" bpmnElement="autoconfirm_swap">
+        <dc:Bounds x="3990" y="1210" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1fg60d2_di" bpmnElement="Activity_06ye0e6">
+        <dc:Bounds x="4480" y="1110" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0p4elis" bpmnElement="Activity_0o6zpw5">
+        <dc:Bounds x="2050" y="920" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0hmm0fe" bpmnElement="Activity_11zlxxu">
+        <dc:Bounds x="2050" y="710" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1je4v2y_di" bpmnElement="script_validate_balance">
+        <dc:Bounds x="2880" y="1110" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0pn5euv_di" bpmnElement="Gateway_0pn5euv" isMarkerVisible="true">
+        <dc:Bounds x="3035" y="1125" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0qasacq" bpmnElement="balance_review_error">
+        <dc:Bounds x="3010" y="1341" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_01p17sm_di" bpmnElement="Event_01p17sm">
+        <dc:Bounds x="3042" y="1525" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1rx8nps_di" bpmnElement="user_swap_form">
+        <dc:Bounds x="1350" y="1110" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0tnd4rz_di" bpmnElement="Gateway_0tnd4rz" isMarkerVisible="true">
+        <dc:Bounds x="1780" y="1125" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_15bw5zj" bpmnElement="Activity_0nddc72">
+        <dc:Bounds x="2420" y="1210" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0tcs5yz" bpmnElement="Activity_1cjzw9l">
+        <dc:Bounds x="2420" y="980" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_02l5atk_di" bpmnElement="Gateway_1vsxlfh">
+        <dc:Bounds x="2605" y="1125" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1sycaic" bpmnElement="Gateway_0yzueik">
+        <dc:Bounds x="1780" y="1535" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1isw1hi" bpmnElement="Activity_0cq886p">
+        <dc:Bounds x="1870" y="1520" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0zgq0yq" bpmnElement="Activity_06m5nmq">
+        <dc:Bounds x="1870" y="1687" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_014o66u" bpmnElement="Gateway_0ipyyhj">
+        <dc:Bounds x="2175" y="935" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_12rt9ag_di" bpmnElement="Gateway_0ic0yip">
+        <dc:Bounds x="2375" y="1125" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1v3gnzo" bpmnElement="Gateway_0bjeqmr">
+        <dc:Bounds x="2175" y="1535" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1d38zhm_di" bpmnElement="Gateway_1d38zhm" isMarkerVisible="true">
+        <dc:Bounds x="2175" y="1125" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0fmohgs_di" bpmnElement="Activity_138vnzs">
+        <dc:Bounds x="970" y="1110" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_01v9sn0_di" bpmnElement="Event_01v9sn0">
+        <dc:Bounds x="1382" y="1512" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_13ftisj_di" bpmnElement="Activity_1pbr8v3">
+        <dc:Bounds x="1530" y="1110" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0un13rs" bpmnElement="Activity_0v0usj1">
+        <dc:Bounds x="1350" y="1369" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0sc2ygg" bpmnElement="Activity_1buuhp2">
+        <dc:Bounds x="1120" y="1110" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0ohbjmb" bpmnElement="Activity_19txqjk">
+        <dc:Bounds x="3010" y="1222" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_01iky9r" bpmnElement="Activity_00v82ic">
+        <dc:Bounds x="3420" y="1620" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_00t805d" bpmnElement="Activity_149hrd7">
+        <dc:Bounds x="3420" y="430" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1srsnnt" bpmnElement="Activity_0tey70z">
+        <dc:Bounds x="4350" y="1270" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1yweso0" bpmnElement="Activity_1mj0094">
+        <dc:Bounds x="4750" y="1110" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_09x2x31_di" bpmnElement="woker_trasnferSwapReward">
+        <dc:Bounds x="4620" y="1110" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_14v1dqi_di" bpmnElement="Gateway_14v1dqi" isMarkerVisible="true">
+        <dc:Bounds x="3715" y="995" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0o1vysw" bpmnElement="Gateway_0l4oxbq" isMarkerVisible="true">
+        <dc:Bounds x="3715" y="1225" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0k4j7q2_di" bpmnElement="Gateway_0k4j7q2" isMarkerVisible="true">
+        <dc:Bounds x="1255" y="1125" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1ak4t08" bpmnElement="user_swap_manual_form">
+        <dc:Bounds x="1350" y="980" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_10daigj_di" bpmnElement="Gateway_10daigj" isMarkerVisible="true">
+        <dc:Bounds x="3445" y="1525" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0e5lx56_di" bpmnElement="Gateway_0e5lx56" isMarkerVisible="true">
+        <dc:Bounds x="3445" y="605" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1oaeimp_di" bpmnElement="Activity_0331d0b">
+        <dc:Bounds x="1755" y="1354" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_18lhyt3" bpmnElement="Activity_1srehh5">
+        <dc:Bounds x="1890" y="1354" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0os6cfa_di" bpmnElement="Event_0os6cfa">
+        <dc:Bounds x="2142" y="1376" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1ripkv1_di" bpmnElement="invalid_symbols_review_error">
+        <dc:Bounds x="2000" y="1354" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_07g0npx" bpmnElement="Event_04kxm7k">
+        <dc:Bounds x="4252" y="957" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0y5gixc" bpmnElement="Activity_0fwk1pl">
+        <dc:Bounds x="340" y="1110" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1cx0ipf_di" bpmnElement="Gateway_1cx0ipf" isMarkerVisible="true">
+        <dc:Bounds x="645" y="1125" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1xbhwog_di" bpmnElement="Event_1xbhwog">
+        <dc:Bounds x="652" y="1262" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0qw9f7n" bpmnElement="Activity_1yhzshl">
+        <dc:Bounds x="4620" y="1270" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0ymspei" bpmnElement="Activity_0tzo8b6">
+        <dc:Bounds x="4620" y="1400" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0a8ve82_di" bpmnElement="Gateway_0a8ve82" isMarkerVisible="true">
+        <dc:Bounds x="2275" y="1125" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1yd2x1j" bpmnElement="Activity_1nn58l8">
+        <dc:Bounds x="2250" y="1240" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_08xptfc" bpmnElement="Activity_1ct1gbx">
+        <dc:Bounds x="2250" y="1381" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_103qgsb" bpmnElement="Event_0k5j8c6">
+        <dc:Bounds x="2282" y="1567" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0qcurdm" bpmnElement="Gateway_1dyyf5v" isMarkerVisible="true">
+        <dc:Bounds x="3315" y="1225" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0qnbmjv" bpmnElement="Gateway_09nbo6d" isMarkerVisible="true">
+        <dc:Bounds x="3315" y="995" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0ugsea1_di" bpmnElement="TextAnnotation_0ugsea1">
+        <dc:Bounds x="4310" y="1005" width="100" height="30" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Group_0g2oxnw_di" bpmnElement="Group_0g2oxnw">
+        <dc:Bounds x="3159" y="130" width="642" height="980" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Group_16n5ljn_di" bpmnElement="Group_16n5ljn">
+        <dc:Bounds x="3159" y="1190" width="642" height="790" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0596kqj_di" bpmnElement="TextAnnotation_0596kqj">
+        <dc:Bounds x="3190" y="655" width="110" height="30" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1bf4ep0" bpmnElement="TextAnnotation_160g4j3">
+        <dc:Bounds x="3170" y="1480" width="110" height="30" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0kjxy2q_di" bpmnElement="TextAnnotation_0kjxy2q">
+        <dc:Bounds x="1630" y="1068" width="130" height="40" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_13s9n43_di" bpmnElement="TextAnnotation_13s9n43">
+        <dc:Bounds x="1550" y="1524" width="100" height="40" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1imjrzy" bpmnElement="Event_1wlphul">
+        <dc:Bounds x="2302" y="1443" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_039idri_di" bpmnElement="Event_1uxojg1">
+        <dc:Bounds x="4652" y="1172" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_08yu3tn_di" bpmnElement="Event_1e9nkzp">
+        <dc:Bounds x="4152" y="1092" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1x1q7yo_di" bpmnElement="Event_1fmn3mx">
+        <dc:Bounds x="1837" y="1376" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1x6myb9_di" bpmnElement="Event_0u0uiqi">
+        <dc:Bounds x="1382" y="1172" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_062pgve" bpmnElement="Event_1s5cnlm">
+        <dc:Bounds x="3062" y="1403" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0dfhfb9" bpmnElement="Event_1r7j8k3">
+        <dc:Bounds x="4402" y="1502" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_04w4j5o" bpmnElement="Event_0eobe36">
+        <dc:Bounds x="4362" y="1172" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0nfgzup" bpmnElement="Event_1u9vs4e">
+        <dc:Bounds x="3432" y="1391" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1jjbj6w" bpmnElement="Event_02xv5ne">
+        <dc:Bounds x="3472" y="1802" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_14pr1a8" bpmnElement="Event_046tdkt">
+        <dc:Bounds x="3472" y="843" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0hiob6i" bpmnElement="Event_0r9nkua">
+        <dc:Bounds x="3432" y="843" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0922jlc" bpmnElement="Event_0mcidqi">
+        <dc:Bounds x="3432" y="282" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0werolc" bpmnElement="Event_1n8ics3">
+        <dc:Bounds x="3472" y="1391" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0s6gq12" bpmnElement="Event_0v6yd2v">
+        <dc:Bounds x="4402" y="1172" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1ohmdhs" bpmnElement="Event_1aw02ph">
+        <dc:Bounds x="5022" y="1092" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0mln6wm_di" bpmnElement="Flow_0mln6wm">
+        <di:waypoint x="4450" y="1150" />
+        <di:waypoint x="4480" y="1150" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1vtbvhp_di" bpmnElement="Flow_1vtbvhp">
+        <di:waypoint x="5090" y="1070" />
+        <di:waypoint x="5220" y="1070" />
+        <di:waypoint x="5220" y="1132" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_09f6i3b_di" bpmnElement="Flow_09f6i3b">
+        <di:waypoint x="3520" y="1369" />
+        <di:waypoint x="3545" y="1369" />
+        <di:waypoint x="3545" y="1250" />
+        <di:waypoint x="3570" y="1250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ay1f04_di" bpmnElement="Flow_1ay1f04">
+        <di:waypoint x="4220" y="1150" />
+        <di:waypoint x="4245" y="1150" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0njeuli_di" bpmnElement="Flow_0njeuli">
+        <di:waypoint x="4295" y="1150" />
+        <di:waypoint x="4350" y="1150" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_02qa83b_di" bpmnElement="Flow_02qa83b">
+        <di:waypoint x="4270" y="1125" />
+        <di:waypoint x="4270" y="993" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_12cl8bl_di" bpmnElement="Flow_12cl8bl">
+        <di:waypoint x="5040" y="1128" />
+        <di:waypoint x="5040" y="1150" />
+        <di:waypoint x="5202" y="1150" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0hns7tl_di" bpmnElement="Flow_0hns7tl">
+        <di:waypoint x="3490" y="1427" />
+        <di:waypoint x="3490" y="1470" />
+        <di:waypoint x="3470" y="1470" />
+        <di:waypoint x="3470" y="1525" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_0wf33rd" bpmnElement="Flow_0bdjnd3">
+        <di:waypoint x="3450" y="843" />
+        <di:waypoint x="3450" y="749" />
+        <di:waypoint x="3470" y="749" />
+        <di:waypoint x="3470" y="655" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_1vm1dm0" bpmnElement="Flow_0cfhz4v">
+        <di:waypoint x="3490" y="843" />
+        <di:waypoint x="3490" y="749" />
+        <di:waypoint x="3470" y="749" />
+        <di:waypoint x="3470" y="655" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1k3attr_di" bpmnElement="Flow_1k3attr">
+        <di:waypoint x="2790" y="1150" />
+        <di:waypoint x="2880" y="1150" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0f4aebz_di" bpmnElement="Flow_0f4aebz">
+        <di:waypoint x="1805" y="935" />
+        <di:waypoint x="1805" y="750" />
+        <di:waypoint x="1870" y="750" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0bypmjv_di" bpmnElement="Flow_0bypmjv">
+        <di:waypoint x="1830" y="960" />
+        <di:waypoint x="1870" y="960" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_044mqgx_di" bpmnElement="Flow_044mqgx">
+        <di:waypoint x="1970" y="960" />
+        <di:waypoint x="2050" y="960" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ez6b1j_di" bpmnElement="Flow_0ez6b1j">
+        <di:waypoint x="1970" y="750" />
+        <di:waypoint x="2050" y="750" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ilz1fr_di" bpmnElement="Flow_1ilz1fr">
+        <di:waypoint x="3670" y="1250" />
+        <di:waypoint x="3715" y="1250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0aizoat_di" bpmnElement="Flow_0aizoat">
+        <di:waypoint x="3450" y="1427" />
+        <di:waypoint x="3450" y="1470" />
+        <di:waypoint x="3470" y="1470" />
+        <di:waypoint x="3470" y="1525" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1c2wb3k_di" bpmnElement="Flow_1c2wb3k">
+        <di:waypoint x="3950" y="1150" />
+        <di:waypoint x="4120" y="1150" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_135p3tc_di" bpmnElement="Flow_135p3tc">
+        <di:waypoint x="3805" y="1150" />
+        <di:waypoint x="3850" y="1150" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0quullu_di" bpmnElement="Flow_0quullu">
+        <di:waypoint x="3780" y="1175" />
+        <di:waypoint x="3780" y="1250" />
+        <di:waypoint x="3990" y="1250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_1x2lp21" bpmnElement="Flow_1r8isdz">
+        <di:waypoint x="4380" y="1520" />
+        <di:waypoint x="4380" y="1694" />
+        <di:waypoint x="4400" y="1694" />
+        <di:waypoint x="4400" y="1852" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_06ttgo2" bpmnElement="Flow_1aqklya">
+        <di:waypoint x="4420" y="1538" />
+        <di:waypoint x="4420" y="1703" />
+        <di:waypoint x="4400" y="1703" />
+        <di:waypoint x="4400" y="1852" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_0dg37hp" bpmnElement="Flow_1pagg6l">
+        <di:waypoint x="3520" y="901" />
+        <di:waypoint x="3540" y="901" />
+        <di:waypoint x="3540" y="1020" />
+        <di:waypoint x="3570" y="1020" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1nz74jx_di" bpmnElement="Flow_1nz74jx">
+        <di:waypoint x="3450" y="282" />
+        <di:waypoint x="3450" y="250" />
+        <di:waypoint x="3470" y="250" />
+        <di:waypoint x="3470" y="218" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_15ttld3_di" bpmnElement="Flow_15ttld3">
+        <di:waypoint x="3490" y="300" />
+        <di:waypoint x="3490" y="250" />
+        <di:waypoint x="3470" y="250" />
+        <di:waypoint x="3470" y="218" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ezwhrt_di" bpmnElement="Flow_0ezwhrt">
+        <di:waypoint x="3450" y="1820" />
+        <di:waypoint x="3450" y="1861" />
+        <di:waypoint x="3470" y="1861" />
+        <di:waypoint x="3470" y="1900" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1twq1xy_di" bpmnElement="Flow_1twq1xy">
+        <di:waypoint x="3490" y="1838" />
+        <di:waypoint x="3490" y="1860" />
+        <di:waypoint x="3470" y="1860" />
+        <di:waypoint x="3470" y="1902" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0vyiu02_di" bpmnElement="Flow_0vyiu02">
+        <di:waypoint x="3495" y="1250" />
+        <di:waypoint x="3570" y="1250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_17xqqww_di" bpmnElement="Flow_17xqqww">
+        <di:waypoint x="3470" y="1275" />
+        <di:waypoint x="3470" y="1329" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0gr2hhf_di" bpmnElement="Flow_0gr2hhf">
+        <di:waypoint x="3340" y="1275" />
+        <di:waypoint x="3340" y="1550" />
+        <di:waypoint x="3445" y="1550" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3343" y="1410" width="24" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_1vnglug" bpmnElement="Flow_1s99jgv">
+        <di:waypoint x="3495" y="1020" />
+        <di:waypoint x="3570" y="1020" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_0i6muxr" bpmnElement="Flow_1czjxxa">
+        <di:waypoint x="3470" y="995" />
+        <di:waypoint x="3470" y="941" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_1c9jux4" bpmnElement="Flow_0fxx702">
+        <di:waypoint x="3340" y="990" />
+        <di:waypoint x="3340" y="630" />
+        <di:waypoint x="3445" y="630" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1jn2hnm_di" bpmnElement="Flow_1jn2hnm">
+        <di:waypoint x="3740" y="995" />
+        <di:waypoint x="3740" y="630" />
+        <di:waypoint x="3495" y="630" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1kpb068_di" bpmnElement="Flow_1kpb068">
+        <di:waypoint x="4090" y="1250" />
+        <di:waypoint x="4270" y="1250" />
+        <di:waypoint x="4270" y="1175" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1xe8u6p_di" bpmnElement="Flow_1xe8u6p">
+        <di:waypoint x="4580" y="1150" />
+        <di:waypoint x="4620" y="1150" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ru9qh8_di" bpmnElement="Flow_1ru9qh8">
+        <di:waypoint x="3225" y="1175" />
+        <di:waypoint x="3225" y="1210" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0tpzidf_di" bpmnElement="Flow_0tpzidf">
+        <di:waypoint x="3225" y="1125" />
+        <di:waypoint x="3225" y="1060" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ztxp2w_di" bpmnElement="Flow_0ztxp2w">
+        <di:waypoint x="2980" y="1150" />
+        <di:waypoint x="3035" y="1150" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1r9bs67_di" bpmnElement="Flow_1r9bs67">
+        <di:waypoint x="3085" y="1150" />
+        <di:waypoint x="3200" y="1150" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_150zn4u_di" bpmnElement="Flow_150zn4u">
+        <di:waypoint x="3040" y="1421" />
+        <di:waypoint x="3040" y="1473" />
+        <di:waypoint x="3060" y="1473" />
+        <di:waypoint x="3060" y="1525" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1083gq7_di" bpmnElement="Flow_1083gq7">
+        <di:waypoint x="3080" y="1439" />
+        <di:waypoint x="3080" y="1472" />
+        <di:waypoint x="3060" y="1472" />
+        <di:waypoint x="3060" y="1525" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_05qpio5_di" bpmnElement="Flow_05qpio5">
+        <di:waypoint x="188" y="1150" />
+        <di:waypoint x="340" y="1150" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_06mwvgo_di" bpmnElement="Flow_06mwvgo">
+        <di:waypoint x="940" y="1150" />
+        <di:waypoint x="970" y="1150" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1c9z810_di" bpmnElement="Flow_1c9z810">
+        <di:waypoint x="1450" y="1150" />
+        <di:waypoint x="1530" y="1150" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0z3nn0t_di" bpmnElement="Flow_0z3nn0t">
+        <di:waypoint x="1805" y="1125" />
+        <di:waypoint x="1805" y="985" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ttowrp_di" bpmnElement="Flow_0ttowrp">
+        <di:waypoint x="1805" y="1175" />
+        <di:waypoint x="1805" y="1354" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0qnw6xr_di" bpmnElement="Flow_0qnw6xr">
+        <di:waypoint x="2520" y="1250" />
+        <di:waypoint x="2630" y="1250" />
+        <di:waypoint x="2630" y="1175" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_18207bb_di" bpmnElement="Flow_18207bb">
+        <di:waypoint x="2520" y="1020" />
+        <di:waypoint x="2630" y="1020" />
+        <di:waypoint x="2630" y="1125" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_14c5ncq_di" bpmnElement="Flow_14c5ncq">
+        <di:waypoint x="2655" y="1150" />
+        <di:waypoint x="2690" y="1150" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1nu6r99_di" bpmnElement="Flow_1nu6r99">
+        <di:waypoint x="1805" y="1585" />
+        <di:waypoint x="1805" y="1727" />
+        <di:waypoint x="1870" y="1727" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1y83eba_di" bpmnElement="Flow_1y83eba">
+        <di:waypoint x="1830" y="1560" />
+        <di:waypoint x="1870" y="1560" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1r75odl_di" bpmnElement="Flow_1r75odl">
+        <di:waypoint x="2150" y="750" />
+        <di:waypoint x="2200" y="750" />
+        <di:waypoint x="2200" y="935" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0e6kdh2_di" bpmnElement="Flow_0e6kdh2">
+        <di:waypoint x="2150" y="960" />
+        <di:waypoint x="2175" y="960" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1jhynz3_di" bpmnElement="Flow_1jhynz3">
+        <di:waypoint x="2400" y="1125" />
+        <di:waypoint x="2400" y="1020" />
+        <di:waypoint x="2420" y="1020" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0maw6ln_di" bpmnElement="Flow_0maw6ln">
+        <di:waypoint x="2400" y="1175" />
+        <di:waypoint x="2400" y="1250" />
+        <di:waypoint x="2420" y="1250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_11mqw9y_di" bpmnElement="Flow_11mqw9y">
+        <di:waypoint x="2200" y="985" />
+        <di:waypoint x="2200" y="1125" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ba7e6v_di" bpmnElement="Flow_0ba7e6v">
+        <di:waypoint x="1970" y="1560" />
+        <di:waypoint x="2175" y="1560" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_12478lx_di" bpmnElement="Flow_12478lx">
+        <di:waypoint x="1970" y="1727" />
+        <di:waypoint x="2200" y="1727" />
+        <di:waypoint x="2200" y="1585" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1xgqooe_di" bpmnElement="Flow_1xgqooe">
+        <di:waypoint x="2200" y="1535" />
+        <di:waypoint x="2200" y="1175" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ui62tl_di" bpmnElement="Flow_1ui62tl">
+        <di:waypoint x="2225" y="1150" />
+        <di:waypoint x="2275" y="1150" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1luae0n_di" bpmnElement="Flow_1luae0n">
+        <di:waypoint x="1070" y="1150" />
+        <di:waypoint x="1120" y="1150" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_05abxr1_di" bpmnElement="Flow_05abxr1">
+        <di:waypoint x="1630" y="1150" />
+        <di:waypoint x="1780" y="1150" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0l9yfc7_di" bpmnElement="Flow_0l9yfc7">
+        <di:waypoint x="1400" y="1449" />
+        <di:waypoint x="1400" y="1512" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1oe26ky_di" bpmnElement="Flow_1oe26ky">
+        <di:waypoint x="1220" y="1150" />
+        <di:waypoint x="1255" y="1150" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0zt3igo_di" bpmnElement="Flow_0zt3igo">
+        <di:waypoint x="3060" y="1302" />
+        <di:waypoint x="3060" y="1341" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0mho4ev_di" bpmnElement="Flow_0mho4ev">
+        <di:waypoint x="3470" y="1700" />
+        <di:waypoint x="3470" y="1740" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_10t5n38_di" bpmnElement="Flow_10t5n38">
+        <di:waypoint x="3470" y="430" />
+        <di:waypoint x="3470" y="380" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_09xoxg9_di" bpmnElement="Flow_09xoxg9">
+        <di:waypoint x="4400" y="1350" />
+        <di:waypoint x="4400" y="1440" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_01qb0n8_di" bpmnElement="Flow_01qb0n8">
+        <di:waypoint x="4720" y="1150" />
+        <di:waypoint x="4750" y="1150" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0rnm7ot_di" bpmnElement="Flow_0rnm7ot">
+        <di:waypoint x="3670" y="1020" />
+        <di:waypoint x="3715" y="1020" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_07ol1c0_di" bpmnElement="Flow_07ol1c0">
+        <di:waypoint x="3740" y="1045" />
+        <di:waypoint x="3740" y="1150" />
+        <di:waypoint x="3755" y="1150" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0b89zmn_di" bpmnElement="Flow_0b89zmn">
+        <di:waypoint x="3740" y="1225" />
+        <di:waypoint x="3740" y="1150" />
+        <di:waypoint x="3755" y="1150" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1k18nhx_di" bpmnElement="Flow_1k18nhx">
+        <di:waypoint x="3740" y="1275" />
+        <di:waypoint x="3740" y="1550" />
+        <di:waypoint x="3495" y="1550" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0km84cj_di" bpmnElement="Flow_0km84cj">
+        <di:waypoint x="1305" y="1150" />
+        <di:waypoint x="1350" y="1150" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_048ll6z_di" bpmnElement="Flow_048ll6z">
+        <di:waypoint x="1280" y="1125" />
+        <di:waypoint x="1280" y="1020" />
+        <di:waypoint x="1350" y="1020" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0brldox_di" bpmnElement="Flow_0brldox">
+        <di:waypoint x="1450" y="1020" />
+        <di:waypoint x="1570" y="1020" />
+        <di:waypoint x="1570" y="1110" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0f9saj8_di" bpmnElement="Flow_0f9saj8">
+        <di:waypoint x="3470" y="1575" />
+        <di:waypoint x="3470" y="1620" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_10n6uqr_di" bpmnElement="Flow_10n6uqr">
+        <di:waypoint x="3470" y="605" />
+        <di:waypoint x="3470" y="510" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1gjxp18_di" bpmnElement="Flow_1gjxp18">
+        <di:waypoint x="1805" y="1434" />
+        <di:waypoint x="1805" y="1535" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_03zyxg6_di" bpmnElement="Flow_03zyxg6">
+        <di:waypoint x="2100" y="1394" />
+        <di:waypoint x="2142" y="1394" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1vyfwb0_di" bpmnElement="Flow_1vyfwb0">
+        <di:waypoint x="4170" y="1092" />
+        <di:waypoint x="4170" y="80" />
+        <di:waypoint x="3060" y="80" />
+        <di:waypoint x="3060" y="1125" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0vqvipx_di" bpmnElement="Flow_0vqvipx">
+        <di:waypoint x="440" y="1150" />
+        <di:waypoint x="645" y="1150" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0u7cgkq_di" bpmnElement="Flow_0u7cgkq">
+        <di:waypoint x="695" y="1150" />
+        <di:waypoint x="840" y="1150" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_17tsqp5_di" bpmnElement="Flow_17tsqp5">
+        <di:waypoint x="670" y="1175" />
+        <di:waypoint x="670" y="1262" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_091cr38_di" bpmnElement="Flow_091cr38">
+        <di:waypoint x="1400" y="1208" />
+        <di:waypoint x="1400" y="1369" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_11mb5h0_di" bpmnElement="Flow_11mb5h0">
+        <di:waypoint x="1873" y="1394" />
+        <di:waypoint x="1890" y="1394" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0kk9h02_di" bpmnElement="Flow_0kk9h02">
+        <di:waypoint x="1940" y="1354" />
+        <di:waypoint x="1940" y="1334" />
+        <di:waypoint x="2050" y="1334" />
+        <di:waypoint x="2050" y="1354" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0974e6e_di" bpmnElement="Flow_0974e6e">
+        <di:waypoint x="3060" y="1175" />
+        <di:waypoint x="3060" y="1222" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1xflfdr_di" bpmnElement="Flow_1xflfdr">
+        <di:waypoint x="4380" y="1208" />
+        <di:waypoint x="4380" y="1239" />
+        <di:waypoint x="4400" y="1239" />
+        <di:waypoint x="4400" y="1270" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_12me6sa_di" bpmnElement="Flow_12me6sa">
+        <di:waypoint x="4420" y="1208" />
+        <di:waypoint x="4420" y="1239" />
+        <di:waypoint x="4400" y="1239" />
+        <di:waypoint x="4400" y="1270" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0w2twlf_di" bpmnElement="Flow_0w2twlf">
+        <di:waypoint x="4850" y="1150" />
+        <di:waypoint x="4920" y="1150" />
+        <di:waypoint x="4920" y="1070" />
+        <di:waypoint x="4990" y="1070" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1duigzn_di" bpmnElement="Flow_1duigzn">
+        <di:waypoint x="4670" y="1208" />
+        <di:waypoint x="4670" y="1270" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1cfgw6r_di" bpmnElement="Flow_1cfgw6r">
+        <di:waypoint x="4670" y="1350" />
+        <di:waypoint x="4670" y="1400" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0y8mgdh_di" bpmnElement="Flow_0y8mgdh">
+        <di:waypoint x="4720" y="1440" />
+        <di:waypoint x="4800" y="1440" />
+        <di:waypoint x="4800" y="1190" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_06aovmm_di" bpmnElement="Flow_06aovmm">
+        <di:waypoint x="2325" y="1150" />
+        <di:waypoint x="2375" y="1150" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1mj99jg_di" bpmnElement="Flow_1mj99jg">
+        <di:waypoint x="2300" y="1175" />
+        <di:waypoint x="2300" y="1240" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_105besm_di" bpmnElement="Flow_105besm">
+        <di:waypoint x="2300" y="1320" />
+        <di:waypoint x="2300" y="1381" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1i8jrgl_di" bpmnElement="Flow_1i8jrgl">
+        <di:waypoint x="2290" y="1461" />
+        <di:waypoint x="2290" y="1570" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1j32uxi_di" bpmnElement="Flow_1j32uxi">
+        <di:waypoint x="2320" y="1479" />
+        <di:waypoint x="2320" y="1523" />
+        <di:waypoint x="2300" y="1523" />
+        <di:waypoint x="2300" y="1567" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1wyvt9r_di" bpmnElement="Flow_1wyvt9r">
+        <di:waypoint x="3275" y="1250" />
+        <di:waypoint x="3315" y="1250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1j0t192_di" bpmnElement="Flow_1j0t192">
+        <di:waypoint x="3365" y="1250" />
+        <di:waypoint x="3445" y="1250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0eka6yj_di" bpmnElement="Flow_0eka6yj">
+        <di:waypoint x="3275" y="1020" />
+        <di:waypoint x="3315" y="1020" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0kyfhjo_di" bpmnElement="Flow_0kyfhjo">
+        <di:waypoint x="3365" y="1020" />
+        <di:waypoint x="3445" y="1020" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_06vhhlv_di" bpmnElement="Association_06vhhlv">
+        <di:waypoint x="4270" y="1050" />
+        <di:waypoint x="4310" y="1026" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1xm2a2v_di" bpmnElement="Association_1xm2a2v">
+        <di:waypoint x="1805" y="1065" />
+        <di:waypoint x="1695" y="1065" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1ij8t15_di" bpmnElement="Association_1ij8t15">
+        <di:waypoint x="1805" y="1481" />
+        <di:waypoint x="1650" y="1531" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

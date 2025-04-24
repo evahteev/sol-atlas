@@ -17,7 +17,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-@Component
+//@Component
 public class InscriptionHistoricalEventsHandler implements HistoryEventHandler {
 
     private static final Logger LOG = LoggerFactory.getLogger(InscriptionHistoricalEventsHandler.class);
@@ -48,7 +48,7 @@ public class InscriptionHistoricalEventsHandler implements HistoryEventHandler {
         if (inscriptionsHistoryEnabled && shouldHandleEvent(historyEvent)) {
             inscriptionSender.send(historyEvent, historyEvent.getEventType());
         } else {
-            LOG.info("Inscriptions are disabled or event type not configured to handle. Event not handled: " + historyEvent.getEventType());
+            LOG.debug("Inscriptions are disabled or event type not configured to handle. Event not handled: " + historyEvent.getEventType());
         }
     }
 
@@ -61,7 +61,7 @@ public class InscriptionHistoricalEventsHandler implements HistoryEventHandler {
                 }
             }
         } else {
-            LOG.info("Inscriptions are disabled. Events not handled.");
+            LOG.debug("Inscriptions are disabled. Events not handled.");
         }
     }
 

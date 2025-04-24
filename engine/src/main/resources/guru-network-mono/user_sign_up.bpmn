@@ -1,0 +1,339 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:color="http://www.omg.org/spec/BPMN/non-normative/color/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_05c6zbf" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.31.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.20.0">
+  <bpmn:process id="user_sign_up" name="User Sign Up" isExecutable="true" camunda:historyTimeToLive="P180D">
+    <bpmn:startEvent id="startEvent_" name="User started sign up process (with ref link or not)" camunda:initiator="camunda_user_id">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="ref_user_id" label="ref_user_id" type="string" />
+          <camunda:formField id="chatName" label="Chat Name" type="string" defaultValue="dm" />
+        </camunda:formData>
+        <camunda:executionListener class="ai.hhrdr.chainflow.engine.listener.SetStartVariablesListener" event="start" />
+        <camunda:properties>
+          <camunda:property name="reward_amount" value="100" />
+          <camunda:property name="ref_reward_amount" value="10" />
+        </camunda:properties>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_1yrpets</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_1yrpets" sourceRef="startEvent_" targetRef="Activity_0fwk1pl" />
+    <bpmn:serviceTask id="woker_signUp_generateWallet" name="Generate Wallet /Save/Resolve Ref" camunda:asyncAfter="true" camunda:type="external" camunda:topic="wallet_generate">
+      <bpmn:incoming>Flow_1dzhk28</bpmn:incoming>
+      <bpmn:outgoing>Flow_1x0czl5</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="Event_0eqzqua">
+      <bpmn:incoming>Flow_19isptm</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:inclusiveGateway id="Gateway_12247qy">
+      <bpmn:incoming>Flow_0o8vixs</bpmn:incoming>
+      <bpmn:incoming>Flow_1r1bdlc</bpmn:incoming>
+      <bpmn:outgoing>Flow_1l97c87</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0lt3xyp</bpmn:outgoing>
+    </bpmn:inclusiveGateway>
+    <bpmn:inclusiveGateway id="Gateway_1n4b5pe">
+      <bpmn:incoming>Flow_1ffs758</bpmn:incoming>
+      <bpmn:incoming>Flow_0lt3xyp</bpmn:incoming>
+      <bpmn:outgoing>Flow_1ql6cxk</bpmn:outgoing>
+    </bpmn:inclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_1l97c87" name="${ref_user_id != null}" sourceRef="Gateway_12247qy" targetRef="worker_signUp_sendReferralRewards">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${execution.hasVariable('ref_wallet_address') &amp;&amp; ref_wallet_address != null}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1ffs758" sourceRef="worker_signUp_sendReferralRewards" targetRef="Gateway_1n4b5pe" />
+    <bpmn:serviceTask id="worker_signUp_sendReferralRewards" name="Transfer Ref Rewards" camunda:asyncBefore="true" camunda:asyncAfter="true" camunda:type="external" camunda:topic="wallet_native_transfer">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="chain_id">261</camunda:inputParameter>
+          <camunda:inputParameter name="transfer_amount">${ref_reward_amount}</camunda:inputParameter>
+          <camunda:inputParameter name="transfer_to">${ref_wallet_address}</camunda:inputParameter>
+          <camunda:inputParameter name="camunda_user_id">${camunda_user_id}</camunda:inputParameter>
+          <camunda:outputParameter name="transfer_txhash">${transfer_txhash}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1l97c87</bpmn:incoming>
+      <bpmn:outgoing>Flow_1ffs758</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0o8vixs" sourceRef="woker_signUp_transferSocialsRewards" targetRef="Gateway_12247qy" />
+    <bpmn:serviceTask id="woker_signUp_transferSocialsRewards" name="Transfer Initial rewards" camunda:asyncBefore="true" camunda:asyncAfter="true" camunda:type="external" camunda:topic="wallet_treasury_transfer">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="chain_id">261</camunda:inputParameter>
+          <camunda:inputParameter name="transfer_amount">${reward_amount}</camunda:inputParameter>
+          <camunda:inputParameter name="camunda_user_id">${camunda_user_id}</camunda:inputParameter>
+          <camunda:outputParameter name="treasury_txhash">${treasury_txhash}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1x0czl5</bpmn:incoming>
+      <bpmn:outgoing>Flow_0o8vixs</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="Gateway_1cx0ipf" camunda:asyncBefore="true" default="Flow_0jo6h92">
+      <bpmn:incoming>Flow_1vf79b6</bpmn:incoming>
+      <bpmn:outgoing>Flow_07nzqai</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0jo6h92</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:endEvent id="Event_1xbhwog">
+      <bpmn:incoming>Flow_07nzqai</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_07nzqai" name="Exit if duplicate with Business key already exists" sourceRef="Gateway_1cx0ipf" targetRef="Event_1xbhwog">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${isDuplicate}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:serviceTask id="Activity_0o89zi2" name="UnblockUserDelegate" camunda:asyncBefore="true" camunda:class="ai.hhrdr.chainflow.engine.delegate.UnblockUserDelegate">
+      <bpmn:incoming>Flow_1ql6cxk</bpmn:incoming>
+      <bpmn:outgoing>Flow_1urqtbk</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:boundaryEvent id="Event_1j0b790" name="user_exists_error" attachedToRef="woker_signUp_generateWallet">
+      <bpmn:outgoing>Flow_1r1bdlc</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_0yu9rxe" camunda:errorCodeVariable="USER_EXISTS" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_1r1bdlc" name="User exists" sourceRef="Event_1j0b790" targetRef="Gateway_12247qy" />
+    <bpmn:sequenceFlow id="Flow_1urqtbk" sourceRef="Activity_0o89zi2" targetRef="Gateway_165lc8o" />
+    <bpmn:parallelGateway id="Gateway_165lc8o">
+      <bpmn:incoming>Flow_1urqtbk</bpmn:incoming>
+      <bpmn:outgoing>Flow_06lis5m</bpmn:outgoing>
+      <bpmn:outgoing>Flow_15r59mm</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:sequenceFlow id="Flow_06lis5m" sourceRef="Gateway_165lc8o" targetRef="Activity_1dpee53" />
+    <bpmn:sequenceFlow id="Flow_19isptm" sourceRef="Gateway_1r6ix91" targetRef="Event_0eqzqua" />
+    <bpmn:parallelGateway id="Gateway_1r6ix91">
+      <bpmn:incoming>Flow_08tgnvz</bpmn:incoming>
+      <bpmn:incoming>Flow_0k0un3i</bpmn:incoming>
+      <bpmn:outgoing>Flow_19isptm</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:serviceTask id="Activity_0beqj07" name="Start invite friends" camunda:class="ai.hhrdr.chainflow.engine.delegate.StartProcessDelegate">
+      <bpmn:extensionElements>
+        <camunda:properties>
+          <camunda:property name="targetProcessDefinitionKey" value="invite_friends" />
+        </camunda:properties>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_15r59mm</bpmn:incoming>
+      <bpmn:outgoing>Flow_08tgnvz</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_15r59mm" sourceRef="Gateway_165lc8o" targetRef="Activity_0beqj07" />
+    <bpmn:sequenceFlow id="Flow_08tgnvz" sourceRef="Activity_0beqj07" targetRef="Gateway_1r6ix91" />
+    <bpmn:sequenceFlow id="Flow_1x0czl5" sourceRef="woker_signUp_generateWallet" targetRef="woker_signUp_transferSocialsRewards" />
+    <bpmn:sequenceFlow id="Flow_1ql6cxk" sourceRef="Gateway_1n4b5pe" targetRef="Activity_0o89zi2" />
+    <bpmn:sendTask id="Activity_1pbr8v3" name="Hello and Welcome!" camunda:class="ai.hhrdr.chainflow.engine.delegate.ChatbotMessageDelegate">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="chatbotMessage">**✨ Welcome to ${applicationName}! ✨**\n
+\n
+We're setting up your **operational wallet** and processing:\n
+🔹 **Your initial rewards** 💰\n
+🔹 **Referral bonuses** 🎁\n
+🔹 **Secure asset transfer** 🔐\n
+\n
+⏳ This will only take a moment. Please hold on...</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0jo6h92</bpmn:incoming>
+      <bpmn:outgoing>Flow_1dzhk28</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:sendTask id="Activity_1dpee53" name="Wallet and Balance Provisioned!" camunda:class="ai.hhrdr.chainflow.engine.delegate.ChatbotMessageDelegate">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="chatbotMessage">**🎉 Your wallet is ready! 🎉**&lt;br /&gt;
+&lt;br /&gt;
+🔗 **Wallet Address:** [${wallet_address}](https://sepolia.gurunetwork.ai/address/${wallet_address})&lt;br /&gt;
+&lt;br /&gt;
+💎 You've received **${reward_amount} ${applicationToken} points**!&lt;br /&gt;</camunda:inputParameter>
+          <camunda:inputParameter name="buttonLink">${applicationUrl}</camunda:inputParameter>
+          <camunda:inputParameter name="buttonText">Launch app</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_06lis5m</bpmn:incoming>
+      <bpmn:outgoing>Flow_0k0un3i</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:sequenceFlow id="Flow_0k0un3i" sourceRef="Activity_1dpee53" targetRef="Gateway_1r6ix91" />
+    <bpmn:sequenceFlow id="Flow_0lt3xyp" sourceRef="Gateway_12247qy" targetRef="Gateway_1n4b5pe" />
+    <bpmn:sequenceFlow id="Flow_1dzhk28" sourceRef="Activity_1pbr8v3" targetRef="woker_signUp_generateWallet" />
+    <bpmn:serviceTask id="Activity_0fwk1pl" name="ProcessInstanceDeduplicationFlagDelegate" camunda:asyncBefore="true" camunda:class="ai.hhrdr.chainflow.engine.delegate.ProcessInstanceDeduplicationFlagDelegate">
+      <bpmn:extensionElements />
+      <bpmn:incoming>Flow_1yrpets</bpmn:incoming>
+      <bpmn:outgoing>Flow_1vf79b6</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1vf79b6" sourceRef="Activity_0fwk1pl" targetRef="Gateway_1cx0ipf" />
+    <bpmn:sequenceFlow id="Flow_0jo6h92" sourceRef="Gateway_1cx0ipf" targetRef="Activity_1pbr8v3" />
+    <bpmn:textAnnotation id="TextAnnotation_17112yq">
+      <bpmn:text>User Get's to Process Instances Launchpad</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_06oybcc" associationDirection="None" sourceRef="Event_0eqzqua" targetRef="TextAnnotation_17112yq" />
+    <bpmn:textAnnotation id="TextAnnotation_1xva6h9">
+      <bpmn:text>wallet address and passphrase saved in flow API</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_1fvzt0a" associationDirection="None" sourceRef="woker_signUp_generateWallet" targetRef="TextAnnotation_1xva6h9" />
+  </bpmn:process>
+  <bpmn:signal id="Signal_2otjtql" name="walletTrade" />
+  <bpmn:message id="Message_0lrohl9" name="CHATBOT_PROVISIONED" />
+  <bpmn:signal id="Signal_1sh794a" name="user_updated" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="user_sign_up">
+      <bpmndi:BPMNShape id="Event_067nuzj_di" bpmnElement="startEvent_">
+        <dc:Bounds x="182" y="222" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="158" y="265" width="84" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1o985ok_di" bpmnElement="woker_signUp_generateWallet">
+        <dc:Bounds x="640" y="200" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0eqzqua_di" bpmnElement="Event_0eqzqua">
+        <dc:Bounds x="1712" y="222" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0trljy3_di" bpmnElement="Gateway_12247qy">
+        <dc:Bounds x="965" y="215" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0dux3v4_di" bpmnElement="Gateway_1n4b5pe">
+        <dc:Bounds x="1115" y="215" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0uistrf_di" bpmnElement="worker_signUp_sendReferralRewards">
+        <dc:Bounds x="1030" y="310" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_09x2x31_di" bpmnElement="woker_signUp_transferSocialsRewards">
+        <dc:Bounds x="810" y="200" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1cx0ipf_di" bpmnElement="Gateway_1cx0ipf" isMarkerVisible="true">
+        <dc:Bounds x="395" y="215" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1xbhwog_di" bpmnElement="Event_1xbhwog">
+        <dc:Bounds x="402" y="402" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1ma2r4g_di" bpmnElement="Activity_0o89zi2">
+        <dc:Bounds x="1210" y="200" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_129sx4m_di" bpmnElement="Gateway_165lc8o">
+        <dc:Bounds x="1355" y="215" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1el203z_di" bpmnElement="Gateway_1r6ix91">
+        <dc:Bounds x="1625" y="215" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_07gc4ui" bpmnElement="Activity_0beqj07">
+        <dc:Bounds x="1460" y="420" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_13ftisj_di" bpmnElement="Activity_1pbr8v3">
+        <dc:Bounds x="490" y="200" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0pryjrh" bpmnElement="Activity_1dpee53">
+        <dc:Bounds x="1470" y="200" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0y5gixc" bpmnElement="Activity_0fwk1pl">
+        <dc:Bounds x="260" y="200" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_17112yq_di" bpmnElement="TextAnnotation_17112yq">
+        <dc:Bounds x="1680" y="105" width="100" height="70" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1xva6h9_di" bpmnElement="TextAnnotation_1xva6h9">
+        <dc:Bounds x="640" y="330" width="100" height="70" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1j0b790_di" bpmnElement="Event_1j0b790">
+        <dc:Bounds x="692" y="182" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="717" y="153" width="86" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1yrpets_di" bpmnElement="Flow_1yrpets">
+        <di:waypoint x="218" y="240" />
+        <di:waypoint x="260" y="240" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1l97c87_di" bpmnElement="Flow_1l97c87" color:border-color="#212121">
+        <di:waypoint x="990" y="265" />
+        <di:waypoint x="990" y="350" />
+        <di:waypoint x="1030" y="350" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="962" y="305" width="78" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ffs758_di" bpmnElement="Flow_1ffs758">
+        <di:waypoint x="1080" y="310" />
+        <di:waypoint x="1080" y="288" />
+        <di:waypoint x="1140" y="288" />
+        <di:waypoint x="1140" y="265" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0o8vixs_di" bpmnElement="Flow_0o8vixs">
+        <di:waypoint x="910" y="240" />
+        <di:waypoint x="965" y="240" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_07nzqai_di" bpmnElement="Flow_07nzqai">
+        <di:waypoint x="420" y="265" />
+        <di:waypoint x="420" y="402" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="326" y="310" width="88" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1r1bdlc_di" bpmnElement="Flow_1r1bdlc">
+        <di:waypoint x="710" y="182" />
+        <di:waypoint x="710" y="100" />
+        <di:waypoint x="990" y="100" />
+        <di:waypoint x="990" y="215" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="822" y="82" width="55" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1urqtbk_di" bpmnElement="Flow_1urqtbk">
+        <di:waypoint x="1310" y="240" />
+        <di:waypoint x="1355" y="240" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_06lis5m_di" bpmnElement="Flow_06lis5m">
+        <di:waypoint x="1405" y="240" />
+        <di:waypoint x="1470" y="240" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_19isptm_di" bpmnElement="Flow_19isptm">
+        <di:waypoint x="1675" y="240" />
+        <di:waypoint x="1712" y="240" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_15r59mm_di" bpmnElement="Flow_15r59mm">
+        <di:waypoint x="1380" y="265" />
+        <di:waypoint x="1380" y="460" />
+        <di:waypoint x="1460" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_08tgnvz_di" bpmnElement="Flow_08tgnvz">
+        <di:waypoint x="1560" y="460" />
+        <di:waypoint x="1650" y="460" />
+        <di:waypoint x="1650" y="265" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1x0czl5_di" bpmnElement="Flow_1x0czl5">
+        <di:waypoint x="740" y="240" />
+        <di:waypoint x="810" y="240" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ql6cxk_di" bpmnElement="Flow_1ql6cxk">
+        <di:waypoint x="1165" y="240" />
+        <di:waypoint x="1210" y="240" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0k0un3i_di" bpmnElement="Flow_0k0un3i">
+        <di:waypoint x="1570" y="240" />
+        <di:waypoint x="1625" y="240" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0lt3xyp_di" bpmnElement="Flow_0lt3xyp">
+        <di:waypoint x="1015" y="240" />
+        <di:waypoint x="1115" y="240" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1dzhk28_di" bpmnElement="Flow_1dzhk28">
+        <di:waypoint x="590" y="240" />
+        <di:waypoint x="640" y="240" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1vf79b6_di" bpmnElement="Flow_1vf79b6">
+        <di:waypoint x="360" y="240" />
+        <di:waypoint x="395" y="240" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0jo6h92_di" bpmnElement="Flow_0jo6h92">
+        <di:waypoint x="445" y="240" />
+        <di:waypoint x="490" y="240" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_06oybcc_di" bpmnElement="Association_06oybcc">
+        <di:waypoint x="1732" y="222" />
+        <di:waypoint x="1731" y="175" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1fvzt0a_di" bpmnElement="Association_1fvzt0a">
+        <di:waypoint x="688" y="280" />
+        <di:waypoint x="688" y="330" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
