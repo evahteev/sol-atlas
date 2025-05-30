@@ -42,12 +42,12 @@ def handle_task(task: ExternalTask):
     # Retrieve the raw transfer amount and check if it exists.
     transfer_amount_raw = task.get_variable("transfer_amount")
     if transfer_amount_raw is None:
-        raise ValueError("transfer amount is required")
+        return task.bpmn_error("INVALID_AMOUNT", "transfer amount is required")
 
     # Convert transfer_amount to a float to support fractional values.
     transfer_amount = float(transfer_amount_raw)
     if transfer_amount == 0:
-        raise ValueError("transfer amount is required")
+        return task.bpmn_error("INVALID_AMOUNT", "transfer amount is required")
 
     if not camunda_user_id:
         raise ValueError("Camunda user ID is required")

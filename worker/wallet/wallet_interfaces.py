@@ -58,6 +58,9 @@ class WalletI(Protocol):
     def send_raw_transaction(self, signed_tx: HexStr | bytes) -> HexStr:
         pass
 
+    def send_batch_raw_transaction(self, txs: list[dict]) -> [str, None]:
+        pass
+
 
 class Wallet:
 
@@ -114,6 +117,10 @@ class Wallet:
         account = Account.from_key(private_key)
         address = account.address
         return GuruWallet(address, private_key, chain_id)
+
+    @classmethod
+    def admin(cls, chain_id: int) -> WalletI:
+        return ThirdwebAdminWallet(chain_id=chain_id)
 
 
 class GuruWallet:
@@ -239,6 +246,11 @@ class GuruWallet:
         tx["gasPrice"] = self.w3.eth.gas_price + 2 * 10**9  # 1 Gwei
         return self.send_transaction(tx)
 
+    def send_batch_raw_transaction(self, txs: list[dict]) -> [str, None]:
+        raise NotImplementedError(
+            "Batch raw transaction sending is not implemented for GuruWallet."
+        )
+
 
 class ThirdWebWallet:
     import httpx
@@ -354,7 +366,12 @@ class ThirdWebWallet:
 
     @property
     def nonce(self) -> int:
-        return self.w3.eth.get_transaction_count(self.address)
+        resp = self.client.get(
+            f"backend-wallet/{self.chain_id}/{self.address}/get-nonce",
+        )
+        resp.raise_for_status()
+        data = resp.json()
+        return int(data["result"]["nonce"])
 
     @classmethod
     def create(cls, camunda_user_id: str, chain_id: int | None = None) -> WalletI:
@@ -398,6 +415,54 @@ class ThirdWebWallet:
             headers={
                 "X-Backend-Wallet-Address": worker_settings.THIRDWEB_BACKEND_WALLET,
                 "X-Account-Address": self.address,
+            },
+        )
+        resp.raise_for_status()
+        data = resp.json()
+        queue_id = data["result"]["queueId"]
+        tx_hash = self._wait_tx_task_done(queue_id)
+        receipt = self.w3.eth.wait_for_transaction_receipt(tx_hash)
+        if receipt.status != 1:
+            raise Exception("Transaction failed")
+        return tx_hash
+
+    def send_batch_raw_transaction(self, txs: list[dict]) -> [str, None]:
+        raise NotImplementedError(
+            "Batch raw transaction sending is not implemented for ThirdWebWallet."
+        )
+
+
+class ThirdwebAdminWallet(ThirdWebWallet):
+    def __init__(self, chain_id: int):
+        super().__init__(worker_settings.THIRDWEB_BACKEND_WALLET, chain_id)
+
+    def send_transaction(self, tx: dict) -> HexStr:
+        tw_tx = self._convert_web3_tx_to_thirdweb(tx)
+        resp = self.client.post(
+            f"backend-wallet/{self.chain_id}/send-transaction",
+            json=tw_tx,
+            headers={
+                "X-Backend-Wallet-Address": worker_settings.THIRDWEB_BACKEND_WALLET,
+            },
+        )
+        resp.raise_for_status()
+        data = resp.json()
+        queue_id = data["result"]["queueId"]
+        tx_hash = self._wait_tx_task_done(queue_id)
+        receipt = self.w3.eth.wait_for_transaction_receipt(tx_hash)
+        if receipt.status != 1:
+            raise Exception("Transaction failed")
+        return tx_hash
+
+    def send_batch_raw_transaction(self, txs: list[dict]) -> [str, None]:
+        if not txs:
+            return None
+        tw_txs = [self._convert_web3_tx_to_thirdweb(tx) for tx in txs]
+        resp = self.client.post(
+            f"backend-wallet/{self.chain_id}/send-transaction-batch",
+            json=tw_txs,
+            headers={
+                "X-Backend-Wallet-Address": worker_settings.THIRDWEB_BACKEND_WALLET,
             },
         )
         resp.raise_for_status()

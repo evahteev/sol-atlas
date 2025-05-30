@@ -3,25 +3,24 @@ import logging
 from camunda.external_task.external_task import ExternalTask
 
 from settings.worker import worker_settings as settings
-from common.utils import setup_worker, get_web3_client_by_chain_id
-
+from common.utils import setup_worker
+from wallet.utils import (
+    get_web3_client_by_chain_id,
+)
 from wallet.wallet_interfaces import Wallet
 
-TOPIC = "execute_transaction"
+ADMIN_TOPIC = "execute_admin_transaction"  # Execute tx from thirdweb backend wallet
+EXECUTE_TOPIC = "execute_transaction"
+TOPICS = [EXECUTE_TOPIC, ADMIN_TOPIC]
 
 
 def validate_transaction_data(data: dict):
     """
-    Validate the transaction data for required fields.
-
+    Validate the transaction data
     Args:
-        data (dict): The transaction data.
-
+        data (dict): The transaction data
     Returns:
-        dict: The validated transaction data.
-
-    Raises:
-        ValueError: If any required field is missing.
+        dict: The validated transaction data
     """
     required_fields = ["camunda_user_id", "to", "data", "chain_id"]
     for field in required_fields:
@@ -31,18 +30,6 @@ def validate_transaction_data(data: dict):
 
 
 def handle_task(task: ExternalTask):
-    """
-    Entry point for the execute transaction worker.
-
-    Loads transaction parameters from the task, validates them, prepares and sends
-    the transaction, and handles all error cases.
-
-    Args:
-        task (ExternalTask): The Camunda external task.
-
-    Returns:
-        Result of task.complete or task.bpmn_error.
-    """
     variables = task.get_variables()
     camunda_user_id = variables.get("camunda_user_id")
     to_address = variables.get("to")
@@ -76,9 +63,12 @@ def handle_task(task: ExternalTask):
             variables={"error": str(e)},
         )
 
-    account = Wallet.from_user_id(
-        camunda_user_id, "camunda_user_id", chain_id, wallet_type
-    )
+    if task.get_topic_name() == ADMIN_TOPIC:
+        account = Wallet.admin(chain_id)
+    else:
+        account = Wallet.from_user_id(
+            camunda_user_id, "camunda_user_id", chain_id, wallet_type
+        )
     if not account:
         logging.error(f"wallet for user {camunda_user_id} not found")
         return task.bpmn_error(
@@ -89,30 +79,11 @@ def handle_task(task: ExternalTask):
     try:
         w3 = get_web3_client_by_chain_id(chain_id)
 
-        # Handle error in to_checksum_address
-        try:
-            to_checksum = w3.to_checksum_address(to_address)
-        except Exception as e:
-            logging.error(f"Invalid to address: {e}")
-            return task.bpmn_error(
-                "INVALID_TO_ADDRESS",
-                str(e),
-                variables={"error": str(e)},
-            )
-
         if not gas_price:
-            try:
-                gas_price = w3.eth.gas_price
-            except Exception as e:
-                logging.error(f"Failed to fetch gas price: {e}")
-                return task.bpmn_error(
-                    "GAS_PRICE_FAILED",
-                    str(e),
-                    variables={"error": str(e)},
-                )
+            gas_price = w3.eth.gas_price
 
         tx = {
-            "to": to_checksum,
+            "to": w3.to_checksum_address(to_address),
             "from": account.address,
             "value": value,
             "nonce": account.nonce,
@@ -154,4 +125,4 @@ def handle_task(task: ExternalTask):
 
 
 if __name__ == "__main__":
-    setup_worker(TOPIC, handle_task)
+    setup_worker(TOPICS, handle_task)
