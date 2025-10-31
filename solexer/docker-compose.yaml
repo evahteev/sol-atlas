@@ -1,0 +1,71 @@
+services:
+  db: 
+    image: postgres:15
+    environment:
+      POSTGRES_DB: "${DB_NAME}"
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "${DB_PORT}:5432"
+    networks:
+      - squid-network
+
+  clickhouse:
+    image: clickhouse/clickhouse-server:latest
+    ports:
+      - "8123:8123"   # HTTP interface
+      - "9000:9000"   # Native client
+    environment:
+      CLICKHOUSE_DB: ${CLICKHOUSE_DATABASE}
+      CLICKHOUSE_USER: default
+      CLICKHOUSE_PASSWORD: "PASS"
+    ulimits:
+      nofile:
+        soft: 262144
+        hard: 262144
+    volumes:
+      - clickhouse_data:/var/lib/clickhouse
+    networks:
+      - squid-network
+
+  indexer:
+    build: .
+    environment:
+      # ClickHouse configuration
+      CLICKHOUSE_HOST: http://clickhouse:8123
+      CLICKHOUSE_USER: default
+      CLICKHOUSE_PASSWORD: PASS
+      CLICKHOUSE_DATABASE: solana_indexer
+      
+      # Processing configuration
+      BATCH_SIZE: 100
+      BALANCE_CHANGES_TTL_DAYS: 90
+      
+      # Block range configuration (optional)
+      # START_BLOCK: ${START_BLOCK:-}
+      # END_BLOCK: ${END_BLOCK:-}
+      
+      # Storage flags
+      STORE_BLOCKS: "false"
+      STORE_TRANSACTIONS: "false"
+      STORE_LOGS: "false"
+      STORE_TRANSFERS: "true"
+      STORE_NATIVE_BALANCES: "true"
+      STORE_BALANCE_INCREASES: "true"
+      STORE_BALANCE_DECREASES: "true"
+      
+      # Network configuration (set these via .env file)
+      GATEWAY_URL: ${GATEWAY_URL}
+      RPC_URL: ${RPC_URL}
+      RPC_RATE_LIMIT: ${RPC_RATE_LIMIT:-10}
+    depends_on:
+      - clickhouse
+    networks:
+      - squid-network
+    restart: unless-stopped
+
+volumes:
+  clickhouse_data:
+
+networks:
+  squid-network:
+    driver: bridge

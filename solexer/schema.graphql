@@ -1,0 +1,6 @@
+type Block @entity {
+    id: ID!
+    from: String! @index
+    to: String! @index
+    value: BigInt!
+}

@@ -1,0 +1,17 @@
+# Core ClickHouse packages
+clickhouse-connect==0.7.16
+clickhouse-driver==0.2.7
+clickhouse-sqlalchemy==0.2.4
+
+# Database migrations
+alembic==1.13.1
+SQLAlchemy==1.4.47
+
+# Required dependencies
+click==8.1.7
+python-dateutil==2.8.2
+typing_extensions==4.11.0
+Mako==1.3.2
+
+# Optional but useful
+PyYAML==6.0.1
