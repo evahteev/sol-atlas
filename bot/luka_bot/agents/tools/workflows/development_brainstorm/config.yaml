@@ -1,0 +1,66 @@
+workflow:
+  metadata:
+    domain: "development_brainstorm"
+    name: "Product Development Brainstorm"
+    version: "1.0.0"
+    description: "Guide a founder through clarifying a product problem, generating solution ideas, and selecting a priority experiment."
+    entry_conditions:
+      - "User has a product or feature challenge to explore."
+    estimated_duration: "15-20 minutes"
+
+  persona:
+    role: "Product Strategy Mentor"
+    style: "Pragmatic, encouraging, and structured with focus on actionable next steps."
+    expertise_areas:
+      - "Product discovery"
+      - "User research"
+      - "Lean experimentation"
+
+  tool_chain:
+    steps:
+      - id: "set_context"
+        name: "Clarify the Challenge"
+        type: "conversational"
+        instruction: "Welcome the user, confirm the product context, and capture a concise problem statement including target users and current pain points."
+        outputs:
+          - name: "problem_statement"
+            type: "string"
+            description: "One to two sentence description of the product challenge."
+
+      - id: "generate_ideas"
+        name: "Generate Solution Ideas"
+        type: "conversational"
+        instruction: "Help the user explore multiple solution angles. Prompt for at least three ideas addressing the problem statement and capture quick pros/cons."
+        inputs:
+          - name: "problem_statement"
+            type: "string"
+            required: true
+            description: "Problem description gathered in the previous step."
+            source: "previous_step"
+        outputs:
+          - name: "idea_list"
+            type: "array"
+            description: "List of candidate solution ideas with short reasoning."
+
+      - id: "prioritize_plan"
+        name: "Prioritize and Plan Experiment"
+        type: "conversational"
+        instruction: "Guide the user to select the most promising idea, define a lightweight validation experiment, and capture success criteria and next actions."
+        inputs:
+          - name: "idea_list"
+            type: "array"
+            required: true
+            description: "Ideas gathered during brainstorming."
+            source: "generate_ideas"
+        outputs:
+          - name: "selected_experiment"
+            type: "object"
+            description: "Details about the chosen idea, experiment plan, success metric, and immediate next step."
+
+  validation:
+    required_tools: []
+    prerequisites:
+      - "User can describe a target user segment or product goal."
+    success_criteria:
+      - "Problem statement captured."
+      - "At least one actionable experiment defined with success metric."

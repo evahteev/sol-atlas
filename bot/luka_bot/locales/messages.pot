@@ -1,0 +1,1519 @@
+# Translations template for PROJECT.
+# Copyright (C) 2025 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2025-10-05 19:55+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.15.0\n"
+
+#: bot_server/agents/main_agent.py:40 luka_bot/agents/agent_factory.py:42
+msgid "agent_base_prompt"
+msgstr ""
+
+#: bot_server/agents/main_agent.py:78 luka_bot/agents/agent_factory.py:80
+msgid "dynamic_tasks_prompt"
+msgstr ""
+
+#: bot_server/agents/main_agent.py:442 luka_bot/agents/agent_factory.py:448
+msgid "agent_fallback_prompt"
+msgstr ""
+
+#: bot_server/agents/main_agent.py:502 luka_bot/agents/agent_factory.py:508
+msgid "agent_simple_prompt"
+msgstr ""
+
+#: bot_server/agents/tools/camunda_tools.py:217
+msgid "here are available tasks"
+msgstr ""
+
+#: bot_server/agents/tools/camunda_tools.py:218
+msgid "show tasks how to execute"
+msgstr ""
+
+#: bot_server/agents/tools/camunda_tools.py:227
+msgid "show tasks no tasks available"
+msgstr ""
+
+#: bot_server/agents/tools/camunda_tools.py:231
+msgid "show tasks error fetching"
+msgstr ""
+
+#: bot_server/agents/tools/camunda_tools.py:343
+msgid "camunda_tools_prompt"
+msgstr ""
+
+#: bot_server/agents/tools/knowledge_base_tools.py:286
+msgid "knowledge_base_tools_prompt"
+msgstr ""
+
+#: bot_server/agents/tools/support_tools.py:120
+msgid "support_tools_prompt"
+msgstr ""
+
+#: bot_server/agents/tools/workflow_tools.py:15
+msgid "workflow_tools_prompt"
+msgstr ""
+
+#: bot_server/agents/tools/workflow_tools.py:48
+msgid "No workflows are currently available."
+msgstr ""
+
+#: bot_server/agents/tools/workflow_tools.py:50
+msgid "Available workflows:"
+msgstr ""
+
+#: bot_server/agents/tools/workflow_tools.py:60
+msgid ""
+"\n"
+"Use the execute_workflow tool with the domain name to run a workflow."
+msgstr ""
+
+#: bot_server/agents/tools/workflow_tools.py:68
+msgid "Failed to list available workflows. Please try again later."
+msgstr ""
+
+#: bot_server/agents/tools/workflow_tools.py:133
+msgid "Failed to get workflow details. Please try again later."
+msgstr ""
+
+#: bot_server/agents/tools/workflow_tools.py:198
+msgid "The workflow will continue processing. You can check its status later."
+msgstr ""
+
+#: bot_server/agents/tools/workflow_tools.py:209
+msgid "This workflow has {count} total steps:"
+msgstr ""
+
+#: bot_server/agents/tools/workflow_tools.py:214
+msgid "   ... and {count} more steps"
+msgstr ""
+
+#: bot_server/agents/tools/workflow_tools.py:216
+msgid ""
+"You can ask me about the workflow progress or request specific guidance "
+"for each step!"
+msgstr ""
+
+#: bot_server/agents/tools/youtube_tools.py:116
+#: bot_server/agents/tools/youtube_tools.py:297
+msgid "youtube_tool_disabled"
+msgstr ""
+
+#: bot_server/agents/tools/youtube_tools.py:131
+msgid "youtube_invalid_url"
+msgstr ""
+
+#: bot_server/agents/tools/youtube_tools.py:159
+msgid "youtube_video_not_found"
+msgstr ""
+
+#: bot_server/agents/tools/youtube_tools.py:180
+msgid "youtube_transcript_unavailable"
+msgstr ""
+
+#: bot_server/agents/tools/youtube_tools.py:224
+#: bot_server/agents/tools/youtube_tools.py:383
+msgid "youtube_quota_exceeded"
+msgstr ""
+
+#: bot_server/agents/tools/youtube_tools.py:238
+#: bot_server/agents/tools/youtube_tools.py:397
+msgid "youtube_api_error"
+msgstr ""
+
+#: bot_server/agents/tools/youtube_tools.py:252
+#: bot_server/agents/tools/youtube_tools.py:411
+msgid "youtube_unexpected_error"
+msgstr ""
+
+#: bot_server/agents/tools/youtube_tools.py:342
+msgid "youtube_no_search_results"
+msgstr ""
+
+#: bot_server/agents/tools/youtube_tools.py:437
+msgid "youtube_tools_prompt"
+msgstr ""
+
+#: bot_server/filters/task_dialog.py:20
+#: bot_server/handlers/ai/streaming_chat.py:794
+#: bot_server/handlers/ai/streaming_chat_handlers.py:199
+msgid "task button prefix"
+msgstr ""
+
+#: bot_server/filters/task_dialog.py:42
+msgid "back button format"
+msgstr ""
+
+#: bot_server/filters/task_dialog.py:112
+msgid "task dialog prefix"
+msgstr ""
+
+#: bot_server/handlers/ai/menu_handler_no_sleeps.py:74
+msgid "menu restored"
+msgstr ""
+
+#: bot_server/handlers/ai/menu_handler_no_sleeps.py:78
+msgid "Failed to load tasks. Please try again."
+msgstr ""
+
+#: bot_server/handlers/ai/menu_handler_no_sleeps.py:82
+#: bot_server/handlers/ai/streaming_chat.py:723
+#: bot_server/handlers/ai/streaming_chat.py:776
+#: bot_server/handlers/ai/streaming_chat.py:872
+#: bot_server/handlers/ai/streaming_chat.py:905
+#: bot_server/handlers/ai/streaming_chat.py:974
+#: bot_server/handlers/ai/streaming_chat.py:1148
+#: bot_server/handlers/ai/streaming_chat_handlers.py:129
+#: bot_server/handlers/ai/streaming_chat_handlers.py:184
+#: bot_server/handlers/ai/streaming_chat_handlers.py:266
+#: bot_server/handlers/ai/streaming_chat_handlers.py:292
+#: bot_server/handlers/ai/streaming_chat_handlers.py:339
+#: bot_server/handlers/ai/streaming_chat_handlers.py:465
+msgid "Please use /start to register first"
+msgstr ""
+
+#: bot_server/handlers/ai/menu_handler_no_sleeps.py:86
+msgid "An error occurred. Please try again."
+msgstr ""
+
+#: bot_server/handlers/ai/streaming_chat.py:405
+msgid ""
+"🔄 Session reset complete!\n"
+"\n"
+"✅ Conversation history cleared\n"
+"✅ Session cache cleared\n"
+"✅ Infinite TTL session terminated\n"
+"✅ Task dialogs cleared\n"
+"\n"
+"Your session has been completely reset. Use /start to create a new "
+"infinite session!"
+msgstr ""
+
+#: bot_server/handlers/ai/streaming_chat.py:417
+msgid "Please use /start to register first, then you can use /reset"
+msgstr ""
+
+#: bot_server/handlers/ai/streaming_chat.py:423
+msgid ""
+"❌ An error occurred during reset. Some data may not have been cleared "
+"completely. Please try /start to reinitialize your session."
+msgstr ""
+
+#: bot_server/handlers/ai/streaming_chat.py:719
+#: bot_server/handlers/ai/streaming_chat_handlers.py:119
+msgid "🔄 Task menu refreshed!"
+msgstr ""
+
+#: bot_server/handlers/ai/streaming_chat.py:727
+#: bot_server/handlers/ai/streaming_chat_handlers.py:133
+msgid "I encountered an error refreshing the menu. Please try again."
+msgstr ""
+
+#: bot_server/handlers/ai/streaming_chat.py:740
+#: bot_server/handlers/ai/streaming_chat_handlers.py:147
+msgid "menu closed with restore info"
+msgstr ""
+
+#: bot_server/handlers/ai/streaming_chat.py:746
+#: bot_server/handlers/ai/streaming_chat.py:780
+#: bot_server/handlers/ai/streaming_chat.py:978
+#: bot_server/handlers/ai/streaming_chat_handlers.py:153
+#: bot_server/handlers/ai/streaming_chat_handlers.py:188
+#: bot_server/handlers/ai/streaming_chat_handlers.py:343
+msgid "I encountered an error. Please try again."
+msgstr ""
+
+#: bot_server/handlers/ai/streaming_chat.py:769
+#: bot_server/handlers/ai/streaming_chat_handlers.py:177
+msgid "Cannot go back at this stage."
+msgstr ""
+
+#: bot_server/handlers/ai/streaming_chat.py:772
+#: bot_server/handlers/ai/streaming_chat_handlers.py:180
+msgid ""
+"⬅️ No active task to go back from. Please select a task from the menu or "
+"chat with me!"
+msgstr ""
+
+#: bot_server/handlers/ai/streaming_chat.py:876
+#: bot_server/handlers/ai/streaming_chat_handlers.py:270
+msgid "I encountered an error executing the task. Please try again."
+msgstr ""
+
+#: bot_server/handlers/ai/streaming_chat.py:909
+#: bot_server/handlers/ai/streaming_chat_handlers.py:296
+msgid "I encountered an error processing your response. Please try again."
+msgstr ""
+
+#: bot_server/handlers/ai/streaming_chat.py:1048
+#: bot_server/handlers/ai/streaming_chat_handlers.py:406
+msgid "Please start a private conversation with me first using /start"
+msgstr ""
+
+#: bot_server/handlers/ai/streaming_chat.py:1053
+#: bot_server/handlers/ai/streaming_chat.py:1156
+#: bot_server/handlers/ai/streaming_chat_handlers.py:410
+msgid "I encountered an error. Please try again or use /support for assistance."
+msgstr ""
+
+#: bot_server/handlers/ai/streaming_chat.py:1067
+msgid "session required message"
+msgstr ""
+
+#: bot_server/handlers/ai/streaming_chat_handlers.py:402
+msgid "I received your mention. Full functionality will be available soon!"
+msgstr ""
+
+#: bot_server/handlers/ai/streaming_chat_handlers.py:461
+msgid "I received your message. Full functionality will be available soon!"
+msgstr ""
+
+#: bot_server/handlers/ai/streaming_chat_handlers.py:470
+msgid ""
+"I encountered a critical error. Please try again or use /support for "
+"assistance."
+msgstr ""
+
+#: bot_server/handlers/ai/voice_message.py:73
+msgid "🎤 Processing voice message..."
+msgstr ""
+
+#: bot_server/handlers/ai/voice_message.py:80
+msgid "⏰ Voice message is too long. Please keep it under 5 minutes."
+msgstr ""
+
+#: bot_server/handlers/ai/voice_message.py:118
+#: bot_server/handlers/ai/voice_message.py:126
+msgid "❌ Sorry, I couldn't understand the audio clearly."
+msgstr ""
+
+#: bot_server/handlers/ai/voice_message.py:248
+msgid "❌ Failed to download voice message. Please try again."
+msgstr ""
+
+#: bot_server/handlers/ai/voice_message.py:252
+msgid "⚠️ Voice processing is temporarily unavailable."
+msgstr ""
+
+#: bot_server/handlers/ai/voice_message.py:256
+msgid "❌ Sorry, I couldn't process your voice message. Please try again."
+msgstr ""
+
+#: bot_server/handlers/common/knowledge.py:107
+msgid ""
+"🧠 **Knowledge Mode Activated**\n"
+"\n"
+"I'm now in knowledge base mode! I can help you with:\n"
+"• Searching our knowledge base\n"
+"• Adding information to the knowledge base\n"
+"• Knowledge-related tasks and processes\n"
+"\n"
+"Ask me anything about our knowledge base or use /start to return to "
+"general chat mode."
+msgstr ""
+
+#: bot_server/handlers/common/knowledge.py:134
+msgid "I'm ready to help with knowledge base tasks. What would you like to know?"
+msgstr ""
+
+#: bot_server/handlers/common/knowledge.py:148
+msgid "❌ Sorry, I couldn't activate knowledge mode. Please try again later."
+msgstr ""
+
+#: bot_server/handlers/common/knowledge.py:178
+msgid "Knowledge service is not available right now."
+msgstr ""
+
+#: bot_server/handlers/common/knowledge.py:183
+msgid "❌ Sorry, I couldn't process your knowledge query. Please try again."
+msgstr ""
+
+#: bot_server/handlers/common/shared_callbacks.py:311
+msgid "submitted"
+msgstr ""
+
+#: bot_server/handlers/common/shared_callbacks.py:506
+msgid "yes option"
+msgstr ""
+
+#: bot_server/handlers/common/shared_callbacks.py:513
+msgid "no option"
+msgstr ""
+
+#: bot_server/handlers/common/shared_callbacks.py:522
+msgid "variable changed"
+msgstr ""
+
+#: bot_server/handlers/common/shared_callbacks.py:594
+#: bot_server/handlers/common/shared_callbacks.py:598
+msgid "task processing error try later"
+msgstr ""
+
+#: bot_server/handlers/common/shared_callbacks.py:669
+msgid "error deleting message"
+msgstr ""
+
+#: bot_server/handlers/common/shared_callbacks.py:687
+msgid "Failed to start authentication process. Please try /axioma_auth command."
+msgstr ""
+
+#: bot_server/handlers/common/start.py:40
+msgid "default chat question"
+msgstr ""
+
+#: bot_server/handlers/common/start.py:263
+msgid "welcome tasks available"
+msgstr ""
+
+#: bot_server/handlers/common/start.py:274
+msgid "welcome starting up"
+msgstr ""
+
+#: bot_server/handlers/common/start.py:528
+msgid "launch app button caption"
+msgstr ""
+
+#: bot_server/handlers/common/tools_command.py:32
+msgid "Active"
+msgstr ""
+
+#: bot_server/handlers/common/tools_command.py:34
+msgid "Authentication Required"
+msgstr ""
+
+#: bot_server/handlers/common/tools_command.py:36
+msgid "Error"
+msgstr ""
+
+#: bot_server/handlers/common/tools_command.py:38
+msgid "Inactive"
+msgstr ""
+
+#: bot_server/handlers/common/tools_command.py:83
+msgid ""
+"🔧 <b>Tools Management</b>\n"
+"\n"
+"Configure AI assistant tools to enhance your conversations. Enable tools "
+"to give the AI new capabilities.\n"
+"\n"
+"<b>Available Tools:</b>\n"
+msgstr ""
+
+#: bot_server/handlers/content/dialog_callback_handler.py:51
+msgid "Invalid dialog data"
+msgstr ""
+
+#: bot_server/handlers/content/dialog_callback_handler.py:66
+msgid "No knowledge base selected"
+msgstr ""
+
+#: bot_server/handlers/content/dialog_callback_handler.py:76
+#: bot_server/services/content_addition_dialog_service.py:171
+msgid "Knowledge base selected"
+msgstr ""
+
+#: bot_server/handlers/content/dialog_callback_handler.py:92
+msgid "Failed to select knowledge base"
+msgstr ""
+
+#: bot_server/handlers/content/dialog_callback_handler.py:98
+#: bot_server/services/content_addition_dialog_service.py:178
+msgid "Content addition cancelled"
+msgstr ""
+
+#: bot_server/handlers/content/dialog_callback_handler.py:103
+msgid "❌ Content addition cancelled by user"
+msgstr ""
+
+#: bot_server/handlers/content/dialog_callback_handler.py:108
+#: bot_server/handlers/content/dialog_callback_handler.py:130
+msgid "Session not found"
+msgstr ""
+
+#: bot_server/handlers/content/dialog_callback_handler.py:128
+msgid "Cannot go back"
+msgstr ""
+
+#: bot_server/handlers/content/dialog_callback_handler.py:134
+msgid "Unknown action"
+msgstr ""
+
+#: bot_server/handlers/content/dialog_callback_handler.py:138
+#: bot_server/services/content_addition_dialog_service.py:190
+msgid "Dialog error occurred"
+msgstr ""
+
+#: bot_server/handlers/content/message_addition_handler.py:215
+msgid "📨 Processing forwarded message for knowledge base..."
+msgstr ""
+
+#: bot_server/handlers/content/message_addition_handler.py:217
+msgid "📝 Processing message for knowledge base addition..."
+msgstr ""
+
+#: bot_server/handlers/content/message_addition_handler.py:257
+msgid "🔄 Starting forwarded message addition workflow..."
+msgstr ""
+
+#: bot_server/handlers/content/message_addition_handler.py:259
+msgid "🔄 Starting message addition workflow..."
+msgstr ""
+
+#: bot_server/handlers/content/message_addition_handler.py:282
+#: bot_server/handlers/content/universal_content_handler.py:409
+msgid "❌ No knowledge bases available for this thread"
+msgstr ""
+
+#: bot_server/handlers/content/message_addition_handler.py:290
+msgid "❌ Failed to start message addition workflow. Please try again."
+msgstr ""
+
+#: bot_server/handlers/content/message_addition_handler.py:299
+msgid "❌ Message content validation failed. Please check your message."
+msgstr ""
+
+#: bot_server/handlers/content/message_addition_handler.py:303
+msgid "❌ Message content is invalid. Please provide proper text content."
+msgstr ""
+
+#: bot_server/handlers/content/message_addition_handler.py:307
+msgid ""
+"❌ Sorry, I couldn't process your message for knowledge base addition. "
+"Please try again."
+msgstr ""
+
+#: bot_server/handlers/content/message_addition_handler.py:324
+msgid "❌ Please provide content after the command: /add_to_kb <your content>"
+msgstr ""
+
+#: bot_server/handlers/content/universal_content_handler.py:417
+msgid "❌ Failed to start content addition workflow. Please try again."
+msgstr ""
+
+#: bot_server/handlers/profile/language_settings.py:38
+#: bot_server/handlers/profile/language_settings.py:119
+#: bot_server/handlers/profile/profile_menu.py:131
+#: bot_server/handlers/profile/profile_menu.py:146
+msgid "An error occurred."
+msgstr ""
+
+#: bot_server/handlers/profile/language_settings.py:54
+msgid "Invalid language selection."
+msgstr ""
+
+#: bot_server/handlers/profile/language_settings.py:60
+#: bot_server/handlers/profile/profile_menu.py:97
+msgid "Profile not found."
+msgstr ""
+
+#: bot_server/handlers/profile/language_settings.py:76
+msgid "Language updated successfully!"
+msgstr ""
+
+#: bot_server/handlers/profile/language_settings.py:112
+msgid "Failed to update language. Please try again."
+msgstr ""
+
+#: bot_server/handlers/profile/profile_menu.py:68
+msgid "Profile not found. Please use /start to register."
+msgstr ""
+
+#: bot_server/handlers/profile/profile_menu.py:85
+msgid "An error occurred while loading your profile."
+msgstr ""
+
+#: bot_server/handlers/profile/profile_menu.py:142
+msgid "Returned to main menu"
+msgstr ""
+
+#: bot_server/keyboards/inline/app_keyboard.py:14
+#: bot_server/keyboards/inline/app_keyboard.py:45
+msgid "🚀 Launch Web App"
+msgstr ""
+
+#: bot_server/keyboards/inline/app_keyboard.py:20
+#: bot_server/keyboards/inline/app_keyboard.py:51
+msgid "🚀 Launch App"
+msgstr ""
+
+#: bot_server/keyboards/inline/app_keyboard.py:26
+msgid "🌐 Open Web Portal"
+msgstr ""
+
+#: bot_server/keyboards/inline/app_keyboard.py:58
+msgid "🤝 Support"
+msgstr ""
+
+#: bot_server/keyboards/inline/app_keyboard.py:65
+msgid "🔐 Axioma Auth"
+msgstr ""
+
+#: bot_server/keyboards/inline/profile.py:16
+msgid "🌐 Change Language"
+msgstr ""
+
+#: bot_server/keyboards/inline/profile.py:23
+msgid "↩️ Back to Menu"
+msgstr ""
+
+#: bot_server/keyboards/inline/profile.py:51
+msgid "↩️ Back"
+msgstr ""
+
+#: bot_server/keyboards/inline/task.py:14
+msgid "🔄 Refresh Tasks"
+msgstr ""
+
+#: bot_server/keyboards/inline/task.py:37
+msgid "🔄 Refresh"
+msgstr ""
+
+#: bot_server/keyboards/inline/task.py:41
+#: bot_server/keyboards/inline/task.py:74
+msgid "❌ Close"
+msgstr ""
+
+#: bot_server/keyboards/inline/task.py:56
+msgid "🛑 Stop Agent"
+msgstr ""
+
+#: bot_server/keyboards/inline/task.py:63
+msgid "🚀 Start Agent"
+msgstr ""
+
+#: bot_server/keyboards/inline/task.py:70
+msgid "⚙️ Configure"
+msgstr ""
+
+#: bot_server/keyboards/inline/task_actions.py:80
+#: bot_server/keyboards/inline/task_actions.py:158
+msgid "← Back"
+msgstr ""
+
+#: bot_server/keyboards/inline/task_actions.py:113
+msgid "💡 Tell me more"
+msgstr ""
+
+#: bot_server/keyboards/inline/task_actions.py:122
+msgid "📋 Explain options"
+msgstr ""
+
+#: bot_server/keyboards/inline/task_actions.py:136
+msgid "🔄 Show alternatives"
+msgstr ""
+
+#: bot_server/keyboards/inline/task_actions.py:145
+msgid "❓ General help"
+msgstr ""
+
+#: bot_server/keyboards/inline/task_actions.py:190
+msgid "🔄 Retry"
+msgstr ""
+
+#: bot_server/keyboards/inline/task_actions.py:201
+msgid "🏠 Main Menu"
+msgstr ""
+
+#: bot_server/keyboards/inline/task_actions.py:254
+msgid "💬 Ask question"
+msgstr ""
+
+#: bot_server/keyboards/inline/youtube_setup.py:25
+msgid "✅ YouTube Connected"
+msgstr ""
+
+#: bot_server/keyboards/inline/youtube_setup.py:29
+msgid "🔄 Refresh Access"
+msgstr ""
+
+#: bot_server/keyboards/inline/youtube_setup.py:33
+msgid "❌ Disconnect"
+msgstr ""
+
+#: bot_server/keyboards/inline/youtube_setup.py:41
+msgid "🔐 Connect YouTube Account"
+msgstr ""
+
+#: bot_server/keyboards/inline/youtube_setup.py:45
+msgid "ℹ️ Why Connect?"
+msgstr ""
+
+#: bot_server/keyboards/inline/youtube_setup.py:52
+#: bot_server/keyboards/inline/youtube_setup.py:192
+#: bot_server/keyboards/inline/youtube_setup.py:201
+msgid "🔙 Back to Tools"
+msgstr ""
+
+#: bot_server/keyboards/inline/youtube_setup.py:61
+msgid "🔐 Start Setup"
+msgstr ""
+
+#: bot_server/keyboards/inline/youtube_setup.py:62
+#: bot_server/keyboards/inline/youtube_setup.py:77
+#: bot_server/keyboards/inline/youtube_setup.py:102
+#: bot_server/keyboards/inline/youtube_setup.py:118
+#: bot_server/keyboards/inline/youtube_setup.py:142
+#: bot_server/keyboards/inline/youtube_setup.py:172
+#: bot_server/keyboards/inline/youtube_setup.py:210
+msgid "🔙 Back"
+msgstr ""
+
+#: bot_server/keyboards/inline/youtube_setup.py:70
+msgid "🌐 Language"
+msgstr ""
+
+#: bot_server/keyboards/inline/youtube_setup.py:71
+msgid "🎬 Video Prefs"
+msgstr ""
+
+#: bot_server/keyboards/inline/youtube_setup.py:74
+msgid "📝 Subtitles"
+msgstr ""
+
+#: bot_server/keyboards/inline/youtube_setup.py:75
+msgid "🚫 Blocked Channels"
+msgstr ""
+
+#: bot_server/keyboards/inline/youtube_setup.py:171
+msgid "💾 Save Changes"
+msgstr ""
+
+#: bot_server/keyboards/inline/youtube_setup.py:181
+msgid "🔗 Authorize YouTube Access"
+msgstr ""
+
+#: bot_server/keyboards/inline/youtube_setup.py:182
+msgid "❓ Having Issues?"
+msgstr ""
+
+#: bot_server/keyboards/inline/youtube_setup.py:183
+msgid "🔙 Cancel"
+msgstr ""
+
+#: bot_server/keyboards/inline/youtube_setup.py:190
+msgid "✅ Great! Test Connection"
+msgstr ""
+
+#: bot_server/keyboards/inline/youtube_setup.py:191
+msgid "⚙️ Configure Settings"
+msgstr ""
+
+#: bot_server/keyboards/inline/youtube_setup.py:199
+msgid "🔄 Try Again"
+msgstr ""
+
+#: bot_server/keyboards/inline/youtube_setup.py:200
+msgid "💬 Get Help"
+msgstr ""
+
+#: bot_server/keyboards/inline/youtube_setup.py:208
+msgid "🎬 Test Video Search"
+msgstr ""
+
+#: bot_server/keyboards/inline/youtube_setup.py:209
+msgid "📊 Check API Status"
+msgstr ""
+
+#: bot_server/keyboards/reply/chatbot_tasks.py:73
+msgid "task button format"
+msgstr ""
+
+#: bot_server/keyboards/reply/chatbot_tasks.py:97
+msgid "type message or select task"
+msgstr ""
+
+#: bot_server/keyboards/reply/chatbot_tasks.py:128
+msgid "type message"
+msgstr ""
+
+#: bot_server/middlewares/session_middleware.py:97
+msgid "session expired message"
+msgstr ""
+
+#: bot_server/services/content_addition_dialog_service.py:162
+msgid "Dialog session expired"
+msgstr ""
+
+#: bot_server/services/content_addition_dialog_service.py:173
+msgid "Invalid selection"
+msgstr ""
+
+#: bot_server/services/content_addition_dialog_service.py:331
+msgid "❌ Cancel"
+msgstr ""
+
+#: bot_server/services/content_addition_dialog_service.py:345
+msgid "Available knowledge bases:"
+msgstr ""
+
+#: bot_server/services/content_addition_dialog_service.py:379
+msgid "Please wait while we add your content to the knowledge base."
+msgstr ""
+
+#: bot_server/services/content_addition_dialog_service.py:398
+msgid "✅ Content successfully added to knowledge base!\n"
+msgstr ""
+
+#: bot_server/services/content_addition_dialog_service.py:429
+msgid "❌ Content addition cancelled"
+msgstr ""
+
+#: bot_server/services/content_addition_dialog_service.py:443
+msgid "Already at first step"
+msgstr ""
+
+#: bot_server/services/content_addition_dialog_service.py:452
+msgid "Returned to knowledge base selection"
+msgstr ""
+
+#: bot_server/services/credential_service.py:133
+msgid "authentication error restart bot"
+msgstr ""
+
+#: bot_server/services/credential_service.py:134
+msgid "camunda authentication error restart bot"
+msgstr ""
+
+#: bot_server/services/credential_service.py:135
+#: bot_server/services/task_service.py:178
+#: bot_server/services/task_service.py:484
+#: bot_server/services/task_service.py:489
+#: bot_server/services/task_service.py:519
+#: bot_server/services/task_service.py:625
+msgid "error processing task try again later"
+msgstr ""
+
+#: bot_server/services/credential_service.py:136
+#: bot_server/services/menu_service.py:87
+#: bot_server/services/menu_service.py:117
+msgid "error showing menu"
+msgstr ""
+
+#: bot_server/services/dialog_service.py:67
+#: bot_server/services/dialog_service.py:145
+#: bot_server/services/dialog_service.py:209
+#: bot_server/services/dialog_service.py:411
+msgid "task dialog error"
+msgstr ""
+
+#: bot_server/services/dialog_service.py:92
+msgid "task dialog cancelled action completed"
+msgstr ""
+
+#: bot_server/services/dialog_service.py:128
+msgid "task dialog variable confirmed"
+msgstr ""
+
+#: bot_server/services/dialog_service.py:241
+msgid "Cannot go back from the first variable."
+msgstr ""
+
+#: bot_server/services/dialog_service.py:261
+msgid "Error going back in dialog."
+msgstr ""
+
+#: bot_server/services/dialog_service.py:285
+#: bot_server/services/dialog_service.py:289
+msgid "task dialog variable prompt"
+msgstr ""
+
+#: bot_server/services/dialog_service.py:434
+msgid "yes responses"
+msgstr ""
+
+#: bot_server/services/dialog_service.py:435
+msgid "no responses"
+msgstr ""
+
+#: bot_server/services/menu_service.py:81
+#: bot_server/services/menu_service.py:110
+msgid "no tasks available chat freely"
+msgstr ""
+
+#: bot_server/services/menu_service.py:106
+msgid "menu updated tasks available"
+msgstr ""
+
+#: bot_server/services/menu_service.py:124
+msgid "menu closed chat normally"
+msgstr ""
+
+#: bot_server/services/menu_service.py:131
+msgid "error closing menu try again"
+msgstr ""
+
+#: bot_server/services/streaming_service.py:95
+#: bot_server/services/streaming_service.py:796
+msgid "🤔 Thinking..."
+msgstr ""
+
+#: bot_server/services/streaming_service.py:233
+#: bot_server/services/streaming_service.py:340
+#: bot_server/services/streaming_service.py:411
+msgid "tool searching knowledge base"
+msgstr ""
+
+#: bot_server/services/streaming_service.py:235
+#: bot_server/services/streaming_service.py:342
+msgid "tool executing task"
+msgstr ""
+
+#: bot_server/services/streaming_service.py:237
+msgid "tool contacting support"
+msgstr ""
+
+#: bot_server/services/streaming_service.py:239
+#: bot_server/services/streaming_service.py:344
+msgid "tool using generic"
+msgstr ""
+
+#: bot_server/services/streaming_service.py:242
+msgid "tool using unknown"
+msgstr ""
+
+#: bot_server/services/streaming_service.py:445
+msgid "tool search error"
+msgstr ""
+
+#: bot_server/services/streaming_service.py:450
+msgid "tool task execution processing"
+msgstr ""
+
+#: bot_server/services/streaming_service.py:578
+msgid "tool not implemented"
+msgstr ""
+
+#: bot_server/services/streaming_service.py:595
+#: bot_server/services/streaming_service.py:726
+#: bot_server/services/streaming_service.py:884
+msgid "❌ An error occurred while processing your request. Please try again."
+msgstr ""
+
+#: bot_server/services/task_service.py:450
+msgid "task completion error try later"
+msgstr ""
+
+#: bot_server/services/task_service.py:498
+#: bot_server/services/task_service.py:541
+msgid "No tasks available. Please use /menu to refresh."
+msgstr ""
+
+#: bot_server/services/task_service.py:509
+#: bot_server/services/task_service.py:552
+msgid "task not found or no longer available"
+msgstr ""
+
+#: bot_server/utils/camunda_utils.py:75
+msgid "chatbot readiness check start"
+msgstr ""
+
+#: bot_server/utils/camunda_utils.py:82
+msgid "chatbot ready after attempts"
+msgstr ""
+
+#: bot_server/utils/camunda_utils.py:96
+msgid "chatbot not ready attempt"
+msgstr ""
+
+#: bot_server/utils/camunda_utils.py:99
+msgid "chatbot not ready after attempts"
+msgstr ""
+
+#: luka_bot/handlers/chat.py:63 luka_bot/handlers/start.py:276
+msgid "chat.your_threads"
+msgstr ""
+
+#: luka_bot/handlers/chat.py:84 luka_bot/handlers/start.py:290
+msgid "chat.tip_start"
+msgstr ""
+
+#: luka_bot/handlers/keyboard_actions.py:552
+msgid "Select LLM Provider"
+msgstr ""
+
+#: luka_bot/handlers/keyboard_actions.py:553
+msgid "Choose which LLM provider to use for this thread:"
+msgstr ""
+
+#: luka_bot/handlers/keyboard_actions.py:554
+msgid "Local models, fast, free"
+msgstr ""
+
+#: luka_bot/handlers/keyboard_actions.py:555
+msgid "GPT-4 (Coming Soon)"
+msgstr ""
+
+#: luka_bot/handlers/keyboard_actions.py:556
+msgid "Claude (Coming Soon)"
+msgstr ""
+
+#: luka_bot/handlers/keyboard_actions.py:577
+msgid "Select Ollama Model"
+msgstr ""
+
+#: luka_bot/handlers/keyboard_actions.py:578
+msgid "Choose which Ollama model to use:"
+msgstr ""
+
+#: luka_bot/handlers/keyboard_actions.py:579
+msgid "Available models on your local instance:"
+msgstr ""
+
+#: luka_bot/handlers/keyboard_actions.py:596
+msgid ""
+"🚧 This provider is coming soon!\n"
+"\n"
+"Currently only Ollama is supported."
+msgstr ""
+
+#: luka_bot/handlers/keyboard_actions.py:615
+msgid "Error: User ID not found"
+msgstr ""
+
+#: luka_bot/handlers/keyboard_actions.py:623
+msgid "Thread not found"
+msgstr ""
+
+#: luka_bot/handlers/keyboard_actions.py:633
+msgid "Model Updated"
+msgstr ""
+
+#: luka_bot/handlers/keyboard_actions.py:634
+msgid "Provider"
+msgstr ""
+
+#: luka_bot/handlers/keyboard_actions.py:635
+msgid "Model"
+msgstr ""
+
+#: luka_bot/handlers/keyboard_actions.py:636
+msgid "Settings saved! Your next messages will use this model."
+msgstr ""
+
+#: luka_bot/handlers/keyboard_actions.py:646
+msgid "Model updated successfully!"
+msgstr ""
+
+#: luka_bot/handlers/profile.py:49 luka_bot/handlers/profile.py:228
+msgid "profile.onboarding_complete"
+msgstr ""
+
+#: luka_bot/handlers/profile.py:49 luka_bot/handlers/profile.py:228
+msgid "profile.onboarding_pending"
+msgstr ""
+
+#: luka_bot/handlers/profile.py:74 luka_bot/handlers/profile.py:251
+msgid "profile.btn_change_language"
+msgstr ""
+
+#: luka_bot/handlers/profile.py:75 luka_bot/handlers/profile.py:252
+msgid "profile.btn_preferences"
+msgstr ""
+
+#: luka_bot/handlers/profile.py:76 luka_bot/handlers/profile.py:253
+msgid "profile.btn_processes"
+msgstr ""
+
+#: luka_bot/handlers/profile.py:77 luka_bot/handlers/profile.py:254
+#: luka_bot/handlers/tasks.py:72
+msgid "common.close"
+msgstr ""
+
+#: luka_bot/handlers/profile.py:88
+msgid "profile.actions_prompt"
+msgstr ""
+
+#: luka_bot/handlers/profile.py:134 luka_bot/handlers/profile.py:175
+msgid "common.back"
+msgstr ""
+
+#: luka_bot/handlers/start.py:75
+msgid "actions.btn_start_chat"
+msgstr ""
+
+#: luka_bot/handlers/start.py:76
+msgid "actions.btn_view_tasks"
+msgstr ""
+
+#: luka_bot/handlers/start.py:77
+msgid "actions.btn_profile"
+msgstr ""
+
+#: luka_bot/handlers/start.py:78
+msgid "actions.btn_launch_workflow"
+msgstr ""
+
+#: luka_bot/handlers/start.py:79
+msgid "actions.btn_search_kb"
+msgstr ""
+
+#: luka_bot/handlers/start.py:93
+msgid "actions.menu_prompt"
+msgstr ""
+
+#: luka_bot/handlers/start.py:190
+msgid "onboarding.tip_start_typing"
+msgstr ""
+
+#: luka_bot/handlers/tasks.py:67 luka_bot/keyboards/mode_reply.py:64
+msgid "tasks.btn_inbox"
+msgstr ""
+
+#: luka_bot/handlers/tasks.py:68 luka_bot/keyboards/mode_reply.py:65
+msgid "tasks.btn_next"
+msgstr ""
+
+#: luka_bot/handlers/tasks.py:69 luka_bot/keyboards/mode_reply.py:68
+msgid "tasks.btn_waiting"
+msgstr ""
+
+#: luka_bot/handlers/tasks.py:70 luka_bot/keyboards/mode_reply.py:69
+msgid "tasks.btn_scheduled"
+msgstr ""
+
+#: luka_bot/handlers/tasks.py:71 luka_bot/keyboards/mode_reply.py:72
+msgid "tasks.btn_someday"
+msgstr ""
+
+#: luka_bot/handlers/tasks.py:80
+msgid "tasks.select_category"
+msgstr ""
+
+#: luka_bot/handlers/tasks.py:99
+msgid "tasks.menu_closed"
+msgstr ""
+
+#: luka_bot/handlers/tasks.py:104
+msgid "tasks.coming_soon"
+msgstr ""
+
+#: luka_bot/keyboards/mode_reply.py:31
+msgid "keyboard.btn_chat"
+msgstr ""
+
+#: luka_bot/keyboards/mode_reply.py:32
+msgid "keyboard.btn_tasks"
+msgstr ""
+
+#: luka_bot/keyboards/mode_reply.py:33
+msgid "keyboard.btn_profile"
+msgstr ""
+
+#: luka_bot/keyboards/mode_reply.py:39
+msgid "keyboard.placeholder_start"
+msgstr ""
+
+#: luka_bot/keyboards/mode_reply.py:75
+msgid "tasks.btn_tasks_chat"
+msgstr ""
+
+#: luka_bot/keyboards/mode_reply.py:81
+msgid "keyboard.placeholder_tasks"
+msgstr ""
+
+#: luka_bot/keyboards/mode_reply.py:99
+msgid "keyboard.btn_back_start"
+msgstr ""
+
+#: luka_bot/keyboards/mode_reply.py:104
+msgid "keyboard.placeholder_profile"
+msgstr ""
+
+#: luka_bot/keyboards/mode_reply.py:123 luka_bot/keyboards/mode_reply.py:148
+msgid "keyboard.btn_back"
+msgstr ""
+
+#: luka_bot/keyboards/mode_reply.py:124
+msgid "keyboard.btn_refresh"
+msgstr ""
+
+#: luka_bot/keyboards/mode_reply.py:130
+msgid "keyboard.placeholder_agents"
+msgstr ""
+
+#: luka_bot/keyboards/mode_reply.py:153
+msgid "keyboard.placeholder_stats"
+msgstr ""
+
+#: luka_bot/keyboards/threads_menu.py:47
+msgid "keyboard.btn_new_thread"
+msgstr ""
+
+#: luka_bot/keyboards/threads_menu.py:102
+msgid "keyboard.btn_start_new_chat"
+msgstr ""
+
+#: luka_bot/services/divider_service.py:103
+msgid "just now"
+msgstr ""
+
+#: luka_bot/services/divider_service.py:106
+msgid "{minutes} min ago"
+msgstr ""
+
+#: luka_bot/services/divider_service.py:109
+msgid "{hours} hours ago"
+msgstr ""
+
+#: luka_bot/services/divider_service.py:112
+msgid "{days} days ago"
+msgstr ""
+
+#: luka_bot/services/divider_service.py:118
+msgid "Switched to"
+msgstr ""
+
+#: luka_bot/services/divider_service.py:122
+msgid "Started"
+msgstr ""
+
+#: luka_bot/services/divider_service.py:126
+msgid "Continuing"
+msgstr ""
+
+#: luka_bot/services/divider_service.py:135
+msgid "{count} messages"
+msgstr ""
+
+#: luka_bot/services/divider_service.py:137
+msgid "Last: {time_ago}"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/argcomplete/packages/_argparse.py:140
+#, python-format
+msgid "not allowed with argument %s"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/argcomplete/packages/_argparse.py:201
+#: venv/lib/python3.11/site-packages/argcomplete/packages/_argparse.py:215
+#, python-format
+msgid "ignored explicit argument %r"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/argcomplete/packages/_argparse.py:317
+msgid "too few arguments"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/argcomplete/packages/_argparse.py:324
+#, python-format
+msgid "argument %s is required"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/argcomplete/packages/_argparse.py:338
+#, python-format
+msgid "one of the arguments %s is required"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/click/_termui_impl.py:608
+msgid "{editor}: Editing failed"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/click/_termui_impl.py:612
+msgid "{editor}: Editing failed: {e}"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/click/core.py:1104
+#: venv/lib/python3.11/site-packages/click/core.py:1141
+msgid "{text} {deprecated_message}"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/click/core.py:1160
+msgid "Options"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/click/core.py:1224
+msgid "Got unexpected extra argument ({args})"
+msgid_plural "Got unexpected extra arguments ({args})"
+msgstr[0] ""
+msgstr[1] ""
+
+#: venv/lib/python3.11/site-packages/click/core.py:1240
+msgid "DeprecationWarning: The command {name!r} is deprecated.{extra_message}"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/click/core.py:1425
+msgid "Aborted!"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/click/core.py:1799
+msgid "Commands"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/click/core.py:1830
+msgid "Missing command."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/click/core.py:1908
+msgid "No such command {name!r}."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/click/core.py:2332
+msgid "Value must be an iterable."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/click/core.py:2357
+msgid "Takes {nargs} values but 1 was given."
+msgid_plural "Takes {nargs} values but {len} were given."
+msgstr[0] ""
+msgstr[1] ""
+
+#: venv/lib/python3.11/site-packages/click/core.py:2504
+msgid ""
+"DeprecationWarning: The {param_type} {name!r} is "
+"deprecated.{extra_message}"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/click/core.py:2956
+msgid "env var: {var}"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/click/core.py:2959
+msgid "default: {default}"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/click/core.py:2963
+msgid "required"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/click/core.py:3023
+msgid "(dynamic)"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/click/decorators.py:465
+#, python-format
+msgid "%(prog)s, version %(version)s"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/click/decorators.py:522
+msgid "Show the version and exit."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/click/decorators.py:548
+msgid "Show this message and exit."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/click/exceptions.py:50
+#: venv/lib/python3.11/site-packages/click/exceptions.py:89
+msgid "Error: {message}"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/click/exceptions.py:81
+msgid "Try '{command} {option}' for help."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/click/exceptions.py:130
+msgid "Invalid value: {message}"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/click/exceptions.py:132
+msgid "Invalid value for {param_hint}: {message}"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/click/exceptions.py:190
+msgid "Missing argument"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/click/exceptions.py:192
+msgid "Missing option"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/click/exceptions.py:194
+msgid "Missing parameter"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/click/exceptions.py:196
+msgid "Missing {param_type}"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/click/exceptions.py:203
+msgid "Missing parameter: {param_name}"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/click/exceptions.py:223
+msgid "No such option: {name}"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/click/exceptions.py:237
+msgid "Did you mean {possibility}?"
+msgid_plural "(Possible options: {possibilities})"
+msgstr[0] ""
+msgstr[1] ""
+
+#: venv/lib/python3.11/site-packages/click/exceptions.py:282
+msgid "unknown error"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/click/exceptions.py:289
+msgid "Could not open file {filename!r}: {message}"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/click/parser.py:199
+msgid "Argument {name!r} takes {nargs} values."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/click/parser.py:381
+msgid "Option {name!r} does not take a value."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/click/parser.py:443
+msgid "Option {name!r} requires an argument."
+msgid_plural "Option {name!r} requires {nargs} arguments."
+msgstr[0] ""
+msgstr[1] ""
+
+#: venv/lib/python3.11/site-packages/click/shell_completion.py:331
+msgid "Shell completion is not supported for Bash versions older than 4.4."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/click/shell_completion.py:339
+msgid "Couldn't detect Bash version, shell completion is not supported."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/click/termui.py:162
+msgid "Repeat for confirmation"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/click/termui.py:178
+msgid "Error: The value you entered was invalid."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/click/termui.py:180
+msgid "Error: {e.message}"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/click/termui.py:191
+msgid "Error: The two entered values do not match."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/click/termui.py:247
+msgid "Error: invalid input"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/click/termui.py:866
+msgid "Press any key to continue..."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/click/types.py:332
+msgid ""
+"Choose from:\n"
+"\t{choices}"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/click/types.py:371
+msgid "{value!r} is not {choice}."
+msgid_plural "{value!r} is not one of {choices}."
+msgstr[0] ""
+msgstr[1] ""
+
+#: venv/lib/python3.11/site-packages/click/types.py:462
+msgid "{value!r} does not match the format {format}."
+msgid_plural "{value!r} does not match the formats {formats}."
+msgstr[0] ""
+msgstr[1] ""
+
+#: venv/lib/python3.11/site-packages/click/types.py:482
+msgid "{value!r} is not a valid {number_type}."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/click/types.py:538
+msgid "{value} is not in the range {range}."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/click/types.py:718
+msgid "{value!r} is not a valid boolean. Recognized values: {states}"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/click/types.py:747
+msgid "{value!r} is not a valid UUID."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/click/types.py:937
+msgid "file"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/click/types.py:939
+msgid "directory"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/click/types.py:941
+msgid "path"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/click/types.py:988
+msgid "{name} {filename!r} does not exist."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/click/types.py:997
+msgid "{name} {filename!r} is a file."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/click/types.py:1005
+msgid "{name} {filename!r} is a directory."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/click/types.py:1014
+msgid "{name} {filename!r} is not readable."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/click/types.py:1023
+msgid "{name} {filename!r} is not writable."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/click/types.py:1032
+msgid "{name} {filename!r} is not executable."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/click/types.py:1098
+msgid "{len_type} values are required, but {len_value} was given."
+msgid_plural "{len_type} values are required, but {len_value} were given."
+msgstr[0] ""
+msgstr[1] ""
+
+#: venv/lib/python3.11/site-packages/httplib2/__init__.py:407
+#, python-format
+msgid "Content purported to be compressed with %s but failed to decompress."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/httplib2/__init__.py:571
+#, python-format
+msgid "Unsupported value for qop: %s."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/httplib2/__init__.py:575
+#: venv/lib/python3.11/site-packages/httplib2/__init__.py:653
+#, python-format
+msgid "Unsupported value for algorithm: %s.algorithm"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/httplib2/__init__.py:648
+msgid "The challenge doesn't contain a server nonce, or this one is empty."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/httplib2/__init__.py:658
+#, python-format
+msgid "Unsupported value for pw-algorithm: %s.pw-algorithm"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/httplib2/__init__.py:1471
+msgid "Redirected but the response is missing a Location: header."
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/sympy/solvers/simplex.py:563
+msgid "x"
+msgstr ""
+
+#: venv/lib/python3.11/site-packages/sympy/solvers/simplex.py:564
+msgid "y"
+msgstr ""
+

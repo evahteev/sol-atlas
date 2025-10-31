@@ -1,0 +1,2062 @@
+# English translations for LukaBot.
+msgid ""
+msgstr ""
+"Project-Id-Version: LukaBot 1.MIME-Version: 1.Content-Type: text/plain; "
+"charset=utf-Content-Transfer-Encoding: 8bi\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2025-10-05 10:06+0200\n"
+"PO-Revision-Date: 2025-10-05 10:06+0200\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: en\n"
+"Language-Team: en <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.15.0\n"
+
+msgid "actions.btn_launch_workflow"
+msgstr "🚀 Launch Workflow (CS)"
+
+msgid "actions.btn_profile"
+msgstr "👤 Profile"
+
+msgid "actions.btn_search_kb"
+msgstr "📚 Search Knowledge Base (CS)"
+
+msgid "actions.btn_start_chat"
+msgstr "💬 Start Chat"
+
+msgid "actions.btn_view_tasks"
+msgstr "📋 View Tasks"
+
+msgid "actions.header"
+msgstr "<b>Quick Actions:</b>"
+
+msgid "actions.intro"
+msgstr "I'm <b>{bot_name}</b>, your AI-powered group management assistant.\n\n🎯 <b>Quick Actions:</b>\n• Manage your groups with /groups\n• Configure your settings with /profile\n• View group statistics and analytics"
+
+msgid "actions.welcome"
+msgstr "👋 <b>Welcome back, {first_name}!</b>"
+
+msgid "chat.threads_count"
+msgstr "You have <b>{count} thread(s)</b>."
+
+msgid "chat.threads_instruction"
+msgstr "Select a thread to continue, or press <b>➕ New Thread</b> to start fresh!"
+
+msgid "chat.tip_start"
+msgstr "💡 <b>Tip:</b> Just type your question below to start!"
+
+msgid "chat.title"
+msgstr "💬 <b>Conversation Threads</b>"
+
+msgid "chat.your_threads"
+msgstr "📋 <b>Your Threads:</b>"
+
+msgid "common.back"
+msgstr "◀️ Back"
+
+msgid "common.cancel"
+msgstr "❌ Cancel"
+
+msgid "common.close"
+msgstr "❌ Close"
+
+msgid "common.btn.refresh"
+msgstr "🔄 Refresh"
+
+msgid "common.btn.close"
+msgstr "❌ Close"
+
+msgid "common.btn.back_to_list"
+msgstr "◀️ Back to List"
+
+msgid "common.confirm"
+msgstr "✅ Confirm"
+
+msgid "common.menu_closed"
+msgstr "Menu closed"
+
+msgid "divider.action_continuing"
+msgstr "Continuing"
+
+msgid "divider.action_started"
+msgstr "Started"
+
+msgid "divider.action_switched"
+msgstr "Switched to"
+
+msgid "divider.last_activity"
+msgstr "Last: {time_ago}"
+
+msgid "divider.messages_count"
+msgstr "{count} messages"
+
+msgid "divider.time_days_ago"
+msgstr "{days} days ago"
+
+msgid "divider.time_hours_ago"
+msgstr "{hours} hours ago"
+
+msgid "divider.time_just_now"
+msgstr "just now"
+
+msgid "divider.time_minutes_ago"
+msgstr "{minutes} min ago"
+
+msgid "error.connection_error"
+msgstr "Connection error. Please try again later."
+
+msgid "error.generic"
+msgstr "An error occurred. Please try again."
+
+msgid "error.invalid_input"
+msgstr "Invalid input. Please try again."
+
+msgid "error.loading_error"
+msgstr "Error loading data."
+
+msgid "error.operation_failed"
+msgstr "Operation failed. Please try again."
+
+msgid "error.permission_denied"
+msgstr "Permission denied."
+
+msgid "error.profile_not_found"
+msgstr "Profile not found."
+
+msgid "error.save_error"
+msgstr "Error saving data."
+
+msgid "error.thread_not_found"
+msgstr "Thread not found or access denied."
+
+msgid "error.process_not_found"
+msgstr "❌ Process not found"
+
+msgid "error.input_processing"
+msgstr "❌ Input processing error"
+
+msgid "error.process_launch"
+msgstr "❌ Process launch error"
+
+msgid "error.user_not_found"
+msgstr "User ID not found."
+
+msgid "file_upload.error.file_too_large"
+msgstr ""
+"⚠️ <b>File is too large: {size_mb} MB</b>\n"
+"\n"
+"Telegram Bot API has a 20 MB limit.\n"
+"\n"
+"<b>💡 Solutions:</b>\n"
+"• 📦 Compress the file (ZIP)\n"
+"• ✂️ Split into smaller parts\n"
+"• ☁️ Upload to cloud storage (Google Drive, Dropbox) and send link instead"
+
+msgid "keyboard.btn_new_thread"
+msgstr "➕ New Thread"
+
+msgid "keyboard.btn_start_new_chat"
+msgstr "➕ Start New Chat"
+
+msgid "notification.language_changed"
+msgstr "✅ Language changed to {lang_name}"
+
+msgid "notification.model_updated"
+msgstr "✅ Model updated successfully"
+
+msgid "notification.prompt_updated"
+msgstr "✅ System prompt updated"
+
+msgid "notification.reset_complete"
+msgstr "✅ Reset complete"
+
+msgid "notification.settings_updated"
+msgstr "✅ Settings updated"
+
+msgid "notification.thread_created"
+msgstr "✅ Thread created: {name}"
+
+msgid "notification.thread_deleted"
+msgstr "✅ Thread deleted"
+
+msgid "notification.thread_renamed"
+msgstr "✅ Thread renamed successfully"
+
+msgid "notification.thread_switched"
+msgstr "✅ Switched to thread: {name}"
+
+msgid "onboarding.capabilities_header"
+msgstr "🎯 <b>What I can do:</b>"
+
+msgid "onboarding.capability_kb"
+msgstr "• 📚 <b>Search knowledge bases</b> - find information quickly"
+
+msgid "onboarding.capability_tasks"
+msgstr "• 📋 <b>Help with tasks and workflows</b> - GTD-style task management"
+
+msgid "onboarding.capability_threads"
+msgstr "• 💬 <b>Manage conversation threads</b> - organize your chats"
+
+msgid "onboarding.capability_workflows"
+msgstr "• 🤖 <b>Execute automated workflows</b> - Camunda BPMN integration"
+
+msgid "onboarding.choose_language"
+msgstr "🌍 <b>Choose your language:</b>"
+
+msgid "onboarding.command_chat"
+msgstr "• <code>/chat</code> — Manage threads"
+
+msgid "onboarding.command_profile"
+msgstr "• <code>/profile</code> — Your settings"
+
+msgid "onboarding.command_start"
+msgstr "• <code>/start</code> — Actions menu"
+
+msgid "onboarding.command_tasks"
+msgstr "• <code>/tasks</code> — View tasks"
+
+msgid "onboarding.commands_header"
+msgstr "📱 <b>Available commands:</b>"
+
+msgid "onboarding.complete_welcome"
+msgstr "✅ <b>Welcome!</b>"
+
+msgid "onboarding.language_set"
+msgstr "Language set to: <b>{lang_name}</b>"
+
+msgid "onboarding.ready_message"
+msgstr "You're all set! Just type your question below, and I'll create your first thread."
+
+msgid "onboarding.tip_start_typing"
+msgstr "💡 <b>Tip:</b> Start typing your question!"
+
+msgid "onboarding.welcome_intro"
+msgstr "I'm <b>{bot_name}</b>, your AI assistant in Telegram."
+
+msgid "onboarding.welcome_title"
+msgstr "👋 <b>Welcome to {bot_name}!</b>"
+
+msgid "profile.agents"
+msgstr "• 🤝 <b>Agents</b> - Configured AI agents"
+
+msgid "profile.bot_preferences"
+msgstr "• 🤖 <b>Bot Preferences</b> - System prompt, KB, default model"
+
+msgid "profile.btn_change_language"
+msgstr "🌍 Change Language"
+
+msgid "profile.btn_preferences"
+msgstr "🤖 Bot Preferences (CS)"
+
+msgid "profile.btn_processes"
+msgstr "📊 Running Processes (CS)"
+
+msgid "profile.coming_soon"
+msgstr "<b>Coming Soon:</b>"
+
+msgid "profile.current_language"
+msgstr "Current language: <b>{lang_name}</b>"
+
+msgid "profile.joined"
+msgstr "• <b>Joined:</b> {date}"
+
+msgid "profile.language"
+msgstr "• <b>Language:</b> {lang_name}"
+
+msgid "profile.language_changed"
+msgstr "✅ <b>Language Changed!</b>"
+
+msgid "profile.language_now"
+msgstr "Your language is now: <b>{lang_name}</b>"
+
+msgid "profile.language_selection"
+msgstr "🌍 <b>Language Selection</b>"
+
+msgid "profile.name"
+msgstr "• <b>Name:</b> {name}"
+
+msgid "profile.onboarding"
+msgstr "• <b>Onboarding:</b> {status}"
+
+msgid "profile.onboarding_complete"
+msgstr "✅ Complete"
+
+msgid "profile.onboarding_pending"
+msgstr "⏳ Pending"
+
+msgid "profile.running_processes"
+msgstr "• 📊 <b>Running Processes</b> - Camunda cockpit view"
+
+msgid "profile.select_language"
+msgstr "Select your preferred language:"
+
+msgid "profile.settings"
+msgstr "<b>Settings:</b>"
+
+msgid "profile.statistics"
+msgstr "<b>Statistics:</b>"
+
+msgid "profile.stats"
+msgstr "• 📈 <b>Stats</b> - Usage statistics & leaderboard"
+
+msgid "profile.title"
+msgstr "👤 <b>Your Profile</b>"
+
+msgid "profile.ui_updated"
+msgstr "All UI elements will now appear in {lang_name}."
+
+msgid "profile.user_id"
+msgstr "• <b>User ID:</b> <code>{user_id}</code>"
+
+msgid "profile.user_info"
+msgstr "<b>User Information:</b>"
+
+msgid "profile.username"
+msgstr "• <b>Username:</b> @{username}"
+
+msgid "reset.history_cleared"
+msgstr "• All conversation history cleared"
+
+msgid "reset.intro"
+msgstr "All your data has been cleared:"
+
+msgid "reset.invite"
+msgstr "Ask me anything - let's start a conversation! 💬"
+
+msgid "reset.state_reset"
+msgstr "• Session state reset"
+
+msgid "reset.threads_deleted"
+msgstr "• {count} thread(s) deleted"
+
+msgid "reset.title"
+msgstr "🔄 <b>Reset Complete!</b>"
+
+msgid "reset.welcome"
+msgstr "👋 <b>Welcome, {first_name}!</b>"
+
+msgid "reset.options_title"
+msgstr "🔄 <b>Reset Options</b>"
+
+msgid "reset.options_basic"
+msgstr "• <b>Basic Reset</b> - Clear threads, history, and session state"
+
+msgid "reset.options_full"
+msgstr "• <b>Full Reset</b> - Everything + password authentication"
+
+msgid "reset.options_auth"
+msgstr "• <b>Auth Only</b> - Clear password authentication only"
+
+msgid "reset.options_choose"
+msgstr "Choose what to reset:"
+
+msgid "reset.option_basic"
+msgstr "🔄 Basic"
+
+msgid "reset.option_full"
+msgstr "🔄 Full"
+
+msgid "reset.option_auth"
+msgstr "🔐 Auth Only"
+
+msgid "reset.option_cancel"
+msgstr "❌ Cancel"
+
+# Workflow tool localizations
+
+msgid "Domain"
+msgstr "Domain"
+
+msgid "Estimated time"
+msgstr "Estimated time"
+
+msgid "What happens next:"
+msgstr "What happens next:"
+
+msgid "Workflow started but the first step encountered issues."
+msgstr "Workflow started but the first step encountered issues."
+
+msgid "workflow.development_brainstorm.name"
+msgstr "Product Development Brainstorm"
+
+msgid "workflow.development_brainstorm.description"
+msgstr ""
+"Guide a founder through clarifying a product problem, generating solution "
+"ideas, and selecting a priority experiment."
+
+msgid "workflow.daily_reflection.name"
+msgstr "Daily Reflection & Planning"
+
+msgid "workflow.daily_reflection.description"
+msgstr ""
+"Gentle end-of-day reflection that captures highlights, lessons learned, and "
+"priorities for tomorrow."
+
+msgid "tasks.btn_inbox"
+msgstr "📥 Inbox (CS)"
+
+msgid "tasks.btn_next"
+msgstr "⏭️ Next (CS)"
+
+msgid "tasks.btn_scheduled"
+msgstr "📅 Scheduled (CS)"
+
+msgid "tasks.btn_someday"
+msgstr "💭 Someday (CS)"
+
+msgid "tasks.btn_waiting"
+msgstr "⏳ Waiting (CS)"
+
+msgid "tasks.coming_soon"
+msgstr "🚧 {action} tasks coming soon!\n\nFull GTD integration with Camunda is under development."
+
+msgid "tasks.feature_claim"
+msgstr "• Task claim from Camunda workflows"
+
+msgid "tasks.feature_llm"
+msgstr "• LLM-powered task control (/claim, /complete, etc.)"
+
+msgid "tasks.feature_switch"
+msgstr "• Auto-switch to source thread on task notification"
+
+msgid "tasks.future_header"
+msgstr "<b>Future features:</b>"
+
+msgid "tasks.gtd_header"
+msgstr "<b>GTD Organization:</b>"
+
+msgid "tasks.inbox"
+msgstr "• 📥 <b>Inbox</b> - New unprocessed tasks"
+
+msgid "tasks.menu_closed"
+msgstr "Tasks menu closed"
+
+msgid "tasks.next"
+msgstr "• ⏭️ <b>Next</b> - Ready to start"
+
+msgid "tasks.scheduled"
+msgstr "• 📅 <b>Scheduled</b> - Future dated tasks"
+
+msgid "tasks.someday"
+msgstr "• 💭 <b>Someday</b> - Future ideas"
+
+msgid "tasks.title"
+msgstr "📋 <b>Task Management (Coming Soon)</b>"
+
+msgid "tasks.under_development"
+msgstr "This feature is under active development!"
+
+msgid "tasks.waiting"
+msgstr "• ⏳ <b>Waiting</b> - Blocked/waiting on others"
+
+# Reply Keyboard Buttons (Phase 4)
+msgid "keyboard.btn_chat"
+msgstr "💬 Chat"
+
+msgid "keyboard.btn_tasks"
+msgstr "📋 Tasks"
+
+msgid "keyboard.btn_profile"
+msgstr "👤 Profile"
+
+msgid "keyboard.btn_back_start"
+msgstr "◀️ Back to Start"
+
+msgid "keyboard.btn_back"
+msgstr "◀️ Back"
+
+msgid "keyboard.btn_refresh"
+msgstr "🔄 Refresh"
+
+# Keyboard Placeholders
+msgid "keyboard.placeholder_start"
+msgstr "Quick Actions"
+
+msgid "keyboard.placeholder_tasks"
+msgstr "Select a task category..."
+
+msgid "keyboard.placeholder_profile"
+msgstr "Manage your profile..."
+
+msgid "keyboard.placeholder_agents"
+msgstr "Manage AI agents..."
+
+msgid "keyboard.placeholder_stats"
+msgstr "View statistics..."
+
+# Tasks Reply Keyboard Buttons
+msgid "tasks.btn_new_task"
+msgstr "➕ New Task"
+
+msgid "tasks.btn_inbox"
+msgstr "📥 Inbox ({count})"
+
+msgid "tasks.btn_next"
+msgstr "⏭️ Next ({count})"
+
+msgid "tasks.btn_waiting"
+msgstr "⏸️ Waiting ({count})"
+
+msgid "tasks.btn_scheduled"
+msgstr "📅 Scheduled ({count})"
+
+msgid "tasks.btn_someday"
+msgstr "💭 Someday ({count})"
+
+msgid "tasks.btn_tasks_chat"
+msgstr "🤖 Tasks Chat"
+
+msgid "tasks.select_category"
+msgstr "Select a task category below:"
+
+# Groups view translations
+msgid "groups.title"
+msgstr "👥 <b>Group Management (Coming Soon)</b>"
+
+msgid "groups.intro"
+msgstr "Talk to your Groups copilot and manage them."
+
+msgid "groups.how_to_add_header"
+msgstr "<b>How to add to a group:</b>"
+
+msgid "groups.step1"
+msgstr "1️⃣ Open your group chat"
+
+msgid "groups.step2"
+msgstr "2️⃣ Tap group name → <b>Add Members</b> → Search for <b>@GuruKeeperBot</b>"
+
+msgid "groups.step3"
+msgstr "3️⃣ Grant admin rights (optional, for full features)"
+
+msgid "groups.features_header"
+msgstr "<b>Features:</b>"
+
+msgid "groups.feature_mapping"
+msgstr "• Map group/topic → dedicated thread"
+
+msgid "groups.feature_owner"
+msgstr "• Set group owner for thread management"
+
+msgid "groups.feature_history"
+msgstr "• Import recent group history into thread"
+
+msgid "groups.feature_thread_switch"
+msgstr "• Auto-switch to group thread on notifications"
+
+msgid "groups.under_development"
+msgstr "This feature is under active development!"
+
+msgid "groups.menu_closed"
+msgstr "Groups menu closed"
+
+msgid "groups.coming_soon"
+msgstr "🚧 {action} coming soon!\n\nFull group integration is under development."
+
+# Groups Command - Main Menu
+msgid "groups.cmd.intro"
+msgstr "👥 <b>Your Groups</b>\n\n<b>How to add me to a group:</b>\n1. Open any Telegram group\n2. Click ⋮ menu → Add members\n3. Search for @{bot_username}\n4. I'll introduce myself and start learning!\n\n<b>💡 What can I do in groups:</b>\n• Answer questions when @mentioned\n• Build a searchable knowledge base\n• Track group statistics\n• Help admins with moderation (optional)"
+
+msgid "groups.cmd.no_groups"
+msgstr "\n📭 <i>You're not in any groups with me yet. Add me to a group to get started!</i>"
+
+msgid "groups.list.header"
+msgstr "\n<b>📋 Your Groups ({count})</b>\n\n"
+
+msgid "groups.list.footer"
+msgstr "<i>Click a group to view details and manage settings.</i>"
+
+msgid "groups.back.header"
+msgstr "Back to groups list"
+
+# NEW: Groups navigation (Phase 4)
+msgid "section.groups"
+msgstr "🏘 Groups"
+
+msgid "groups.intro"
+msgstr "👥 <b>Your Groups</b>\n\nYou have <b>{count} group(s)</b>."
+
+msgid "groups.no_groups"
+msgstr "You haven't added me to any groups yet.\n\n📝 To add me to a group:\n1. Add @{bot_username} to your group\n2. Make me an admin\n3. Come back here!"
+
+msgid "groups.keyboard.btn_new_group"
+msgstr "➕ New Group"
+
+msgid "groups.keyboard.btn_default_settings"
+msgstr "⚙️ Default Settings"
+
+msgid "groups.keyboard.placeholder"
+msgstr "Select a group or action..."
+
+msgid "groups.keyboard.empty_placeholder"
+msgstr "No groups yet - add me to one!"
+
+msgid "groups.add_instructions"
+msgstr "📝 <b>How to add me to a new group:</b>\n\n1. Go to your group chat\n2. Click the group name → <b>Add Members</b>\n3. Search for <b>@{bot_username}</b> and add me\n4. Make me an admin so I can work properly\n5. Come back here - your group will appear in the list!\n\n✨ I'll start indexing messages and you can chat with me about your group's discussions."
+
+msgid "groups.divider.action_switched"
+msgstr "Switched to Group"
+
+msgid "groups.divider.action_viewing"
+msgstr "Viewing Group"
+
+msgid "groups.divider.action_refreshed"
+msgstr "Refreshed Group"
+
+msgid "groups.divider.members"
+msgstr "Members"
+
+msgid "groups.divider.messages"
+msgstr "Messages"
+
+msgid "groups.divider.last_activity"
+msgstr "Last activity"
+
+msgid "groups.divider.btn_settings"
+msgstr "⚙️ Settings"
+
+msgid "groups.divider.btn_stats"
+msgstr "📊 Stats"
+
+msgid "groups.divider.btn_delete"
+msgstr "🗑️ Delete"
+
+msgid "groups.divider.actions_prompt"
+msgstr "Use the buttons above to manage this group:"
+
+msgid "forms.actions_prompt"
+msgstr "👇 Use the buttons below or tap ❌ to cancel."
+
+msgid "forms.field_count"
+msgid_plural "forms.field_count"
+msgstr[0] "field to fill"
+msgstr[1] "fields to fill"
+
+msgid "forms.file_count"
+msgid_plural "forms.file_count"
+msgstr[0] "file to upload"
+msgstr[1] "files to upload"
+
+msgid "forms.total"
+msgstr "Total"
+
+msgid "forms.upload_file_prompt"
+msgstr "Upload a file or send /cancel to cancel:"
+
+msgid "forms.default_value"
+msgstr "Default value"
+
+msgid "forms.enter_new_value_prompt"
+msgstr "Enter a new value or send /skip to use the default value:"
+
+msgid "forms.enter_value_prompt"
+msgstr "Enter a value:"
+
+msgid "forms.uploaded_successfully"
+msgstr "✅ Uploaded"
+
+msgid "forms.launch_data"
+msgstr "📋 Launch Data:"
+
+msgid "forms.submitted_data"
+msgstr "📋 Submitted Data:"
+
+msgid "forms.task_completed"
+msgstr "Task completed"
+
+msgid "groups.divider.stats_header"
+msgstr "\n📊 <b>Group Overview:</b>"
+
+msgid "groups.divider.members_label"
+msgstr "👥 Members"
+
+msgid "groups.divider.messages_label"
+msgstr "💬 Indexed Messages"
+
+msgid "groups.divider.activity_label"
+msgstr "📈 This Week"
+
+msgid "groups.divider.activity_active"
+msgstr "active"
+
+msgid "groups.divider.activity_messages"
+msgstr "messages"
+
+msgid "groups.divider.kb_label"
+msgstr "📚 Knowledge Base"
+
+msgid "groups.divider.kb_not_configured"
+msgstr "Not configured"
+
+msgid "groups.divider.features_header"
+msgstr "\n💡 <b>What you can do:</b>"
+
+msgid "groups.divider.feature_1"
+msgstr "• 💬 Chat with AI assistant that knows your group's full conversation history"
+
+msgid "groups.divider.feature_2"
+msgstr "• ⚙️ Configure moderation, filters, and AI behavior in Settings"
+
+msgid "groups.divider.feature_3"
+msgstr "• 📊 View detailed analytics and engagement insights"
+
+msgid "divider.time_just_now"
+msgstr "just now"
+
+msgid "divider.time_minutes_ago"
+msgstr "{minutes}m ago"
+
+msgid "divider.time_hours_ago"
+msgstr "{hours}h ago"
+
+msgid "divider.time_days_ago"
+msgstr "{days}d ago"
+
+msgid "groups.back.header"
+msgstr "👥 <b>Your Groups ({count})</b>\n\n"
+
+msgid "groups.back.footer"
+msgstr "\n\n💡 <i>Click a group to view details or switch context for conversation.</i>"
+
+msgid "groups.back.no_groups"
+msgstr "👥 <b>Your Groups</b>\n\n📭 <i>You're not in any groups with me yet.</i>\n\n<b>How to add me to a group:</b>\n1. Open any Telegram group\n2. Click ⋮ menu → Add members\n3. Search for @{bot_username}\n4. I'll introduce myself and start learning!\n\n<b>💡 What can I do in groups:</b>\n• Answer questions when @mentioned\n• Build a searchable knowledge base\n• Track group statistics\n• Help admins with moderation (optional)\n\n<i>Add me to a group to get started!</i>"
+
+msgid "groups.btn.default_settings"
+msgstr "⚙️ Default Settings"
+
+msgid "groups.context_switch.coming_soon"
+msgstr "🚧 Group context switching coming soon!\n\nThis will let you talk to the group's agent with full group knowledge base access from DM."
+
+msgid "groups.digest.coming_soon"
+msgstr "📊 Group Digest (Coming Soon)\n\nThis will show:\n• Top contributors\n• Popular topics\n• Message trends\n• Activity heatmap"
+
+msgid "groups.moderation_tip"
+msgstr "💡 Tip: Use /moderation command in the group for full settings"
+
+# Group View - Info Display
+msgid "groups.view.title"
+msgstr "📊 <b>{title}</b>"
+
+msgid "groups.view.setup_complete"
+msgstr "<b>Setup Complete:</b>"
+
+msgid "groups.view.type"
+msgstr "Type"
+
+msgid "groups.view.members"
+msgstr "Members"
+
+msgid "groups.view.agent"
+msgstr "Agent"
+
+msgid "groups.view.kb"
+msgstr "KB"
+
+msgid "groups.view.thread_id"
+msgstr "Thread ID"
+
+msgid "groups.view.admins"
+msgstr "Admins"
+
+msgid "groups.view.topics_title"
+msgstr "\n\n<b>📌 Connected Topics:</b>\n"
+
+msgid "groups.view.quick_actions"
+msgstr "\n\n<b>⚡️ Quick Actions:</b>"
+
+# Group Admin - Stoplist Configuration
+msgid "group.stoplist.config.title"
+msgstr "🚫 <b>Stoplist Configuration</b>"
+
+msgid "group.stoplist.config.current"
+msgstr "<b>Current stoplist ({count} words):</b>"
+
+msgid "group.stoplist.config.description"
+msgstr "<i>Messages containing these words will be automatically deleted.</i>"
+
+msgid "group.stoplist.config.tip"
+msgstr "💡 Click 'Edit Stoplist' to modify (comma-separated list)."
+
+msgid "group.stoplist.btn.edit"
+msgstr "✏️ Edit Stoplist"
+
+msgid "group.stoplist.btn.clear"
+msgstr "🗑️ Clear Stoplist"
+
+msgid "group.stoplist.edit.title"
+msgstr "✏️ <b>Edit Stoplist</b>"
+
+msgid "group.stoplist.edit.instruction"
+msgstr "Please send me the words you want in the stoplist."
+
+msgid "group.stoplist.edit.current"
+msgstr "<b>Current words:</b>"
+
+msgid "group.stoplist.edit.format"
+msgstr "<b>Format:</b> <code>word1, word2, word3</code>"
+
+msgid "group.stoplist.edit.example"
+msgstr "<b>Example:</b> <code>spam, scam, phishing, porn, drugs</code>"
+
+msgid "group.stoplist.edit.note"
+msgstr "Separate words with commas. Send /cancel to abort."
+
+# Group Admin - System Messages
+msgid "group.sys_msg.config.title"
+msgstr "🗑️ <b>System Messages Filter</b>"
+
+msgid "group.sys_msg.config.description"
+msgstr "Control which system messages are automatically deleted."
+
+msgid "group.sys_msg.legend"
+msgstr ""
+"✅ — visible\n"
+"❌ — hidden"
+
+msgid "group.sys_msg.config.current_status"
+msgstr "<b>Current Status:</b>"
+
+# Groups Reply Keyboard Buttons
+msgid "groups.btn_add_group"
+msgstr "➕ Add Group"
+
+msgid "groups.btn_my_groups"
+msgstr "📋 My Groups ({count})"
+
+msgid "groups.btn_link_group"
+msgstr "🔗 Link Group (CS)"
+
+msgid "groups.btn_set_owner"
+msgstr "👤 Set Owner (CS)"
+
+msgid "groups.btn_import_history"
+msgstr "📥 Import History (CS)"
+
+msgid "keyboard.placeholder_groups"
+msgstr "Manage your groups..."
+
+# Thread Edit Messages
+msgid "thread_edit.title"
+msgstr "✏️ <b>Edit Thread</b>"
+
+msgid "thread_edit.name"
+msgstr "<b>Name:</b>"
+
+msgid "thread_edit.messages"
+msgstr "<b>Messages:</b>"
+
+msgid "thread_edit.created"
+msgstr "<b>Created:</b>"
+
+msgid "thread_edit.last_active"
+msgstr "<b>Last Active:</b>"
+
+msgid "thread_edit.select_action"
+msgstr "Select an action below:"
+
+msgid "thread_edit.btn_rename"
+msgstr "✏️ Rename Thread"
+
+msgid "thread_edit.btn_settings"
+msgstr "⚙️ Thread Settings"
+
+msgid "thread_edit.btn_add_kb"
+msgstr "📚 Add Knowledge Base (Coming Soon)"
+
+msgid "thread_edit.btn_delete"
+msgstr "🗑️ Delete Thread"
+
+# Thread Delete Messages
+msgid "thread_delete.title"
+msgstr "🗑️ <b>Thread Deleted</b>"
+
+msgid "thread_delete.name"
+msgstr "<b>Name:</b>"
+
+msgid "thread_delete.messages"
+msgstr "<b>Messages:</b>"
+
+msgid "thread_delete.confirmation"
+msgstr "The thread and its history have been permanently deleted."
+
+# YouTube Tool Error Messages
+msgid "youtube.error_invalid_url"
+msgstr "❌ Invalid YouTube URL. Please provide a valid youtube.com or youtu.be link."
+
+msgid "youtube.error_not_available"
+msgstr "❌ Transcript is not available for this video."
+
+msgid "youtube.error_empty"
+msgstr "❌ Transcript is empty for this video."
+
+msgid "youtube.error_restricted"
+msgstr "❌ Transcript is restricted or unavailable for this video."
+
+msgid "youtube.error_no_transcript"
+msgstr "❌ No transcript found for this video."
+
+msgid "youtube.error_generic"
+msgstr "❌ Failed to retrieve transcript: {error}"
+
+# YouTube Tool UI Messages
+msgid "youtube.processed_header"
+msgstr "📹 YouTube Video Processed"
+
+msgid "youtube.title"
+msgstr "<b>Title:</b>"
+
+msgid "youtube.channel"
+msgstr "<b>Channel:</b>"
+
+msgid "youtube.duration"
+msgstr "<b>Duration:</b>"
+
+msgid "youtube.preview_header"
+msgstr "<b>Quick Preview:</b>"
+
+msgid "youtube.saved_to_history"
+msgstr "✅ <i>Full transcript saved to chat history</i>"
+
+msgid "youtube.actions_header"
+msgstr "<b>What would you like to do?</b>"
+
+msgid "youtube.action_summarize"
+msgstr "• Ask me to <b>summarize</b> the main points"
+
+msgid "youtube.action_analyze"
+msgstr "• <b>Analyze</b> specific topics or themes"
+
+msgid "youtube.action_insights"
+msgstr "• Extract <b>key insights</b> or quotes"
+
+msgid "youtube.action_search"
+msgstr "• <b>Search</b> for specific information"
+
+msgid "youtube.action_ask"
+msgstr "• Or just <b>ask any question</b> about the content!"
+
+# Actions Menu
+msgid "actions.menu_prompt"
+msgstr "Choose an action:"
+
+# /start compact menu buttons
+msgid "start.menu.btn_chats"
+msgstr "💬 Chats ({count})"
+
+msgid "start.menu.btn_tasks"
+msgstr "📋 Tasks ({count})"
+
+msgid "start.menu.btn_profile"
+msgstr "👤 Profile"
+
+msgid "start.menu.btn_groups"
+msgstr "🏘 My Groups ({count})"
+
+msgid "start.menu.btn_add_group"
+msgstr "➕ Add Bot to Group"
+
+msgid "start.menu.btn_help"
+msgstr "❓ Help & Guide"
+
+# /start reply keyboard
+msgid "start.keyboard.placeholder"
+msgstr "Ask me anything or select a prompt..."
+
+msgid "start.tasks_menu_title"
+msgstr "📋 <b>Your Tasks</b>\n\nSelect a task to begin:"
+
+msgid "start.no_tasks_available"
+msgstr "✅ No pending tasks"
+
+msgid "start.no_tasks_info"
+msgstr "You have no pending tasks. Great job! 🎉"
+
+msgid "start.admin_intro"
+msgstr "🎯 <b>Manage Your Communities</b>\n\nUse the menu below to access your groups, add me to new groups, or configure settings."
+
+msgid "start.no_groups_prompt"
+msgstr "📭 <b>No groups yet!</b>\n\nTo get started:\n1. Click <b>➕ Add Bot to Group</b> below\n2. Add me to your Telegram group as an admin\n3. I'll automatically set up AI assistance, KB indexing, and moderation\n\n<i>Or use /groups to see all your groups.</i>"
+
+msgid "start.add_group_instructions"
+msgstr "📖 <b>How to Add Me to Your Group:</b>\n\n1️⃣ Open your Telegram group\n2️⃣ Go to <b>Group Info → Administrators</b>\n3️⃣ Tap <b>Add Administrator</b>\n4️⃣ Search for <b>@{bot_username}</b> and select me\n5️⃣ Grant permissions:\n   • ✅ Delete messages (for moderation)\n   • ✅ Ban users (optional)\n   • ✅ Pin messages (optional)\n6️⃣ Done! I'll send a welcome message in your group\n\n<i>After adding me, use /groups to manage all your communities.</i>"
+
+# Onboarding Step 1 (2-step flow)
+msgid "onboarding.step1_hook"
+msgstr "👋 <b>Welcome to {bot_name}!</b>\n\nI'm your AI-powered group management assistant for Telegram communities."
+
+msgid "onboarding.step1_capabilities_header"
+msgstr "🎯 <b>What I can do for your groups:</b>"
+
+msgid "onboarding.step1_cap_threads"
+msgstr "• 🤖 <b>AI Assistant</b> - Answer questions and help members with smart, context-aware responses"
+
+msgid "onboarding.step1_cap_tasks"
+msgstr "• 📚 <b>Knowledge Base</b> - Index and search through all group messages and conversations"
+
+msgid "onboarding.step1_cap_summarize"
+msgstr "• 🛡️ <b>Smart Moderation</b> - Automatic content filtering, stopwords, and AI-powered quality scoring"
+
+msgid "onboarding.step1_cap_kb"
+msgstr "• 📊 <b>Analytics</b> - Track activity, member engagement, and generate detailed group statistics"
+
+msgid "onboarding.step1_try_now"
+msgstr "<b>🚀 Get Started:</b>"
+
+msgid "onboarding.step1_example_1"
+msgstr "1️⃣ Use /groups to manage your Telegram groups"
+
+msgid "onboarding.step1_example_2"
+msgstr "2️⃣ Add me to your group as an admin"
+
+msgid "onboarding.step1_example_3"
+msgstr "3️⃣ Configure AI assistance, moderation, and KB indexing"
+
+# Onboarding Step 2 (confirmation after first interaction)
+msgid "onboarding.step2_confirmation"
+msgstr "✅ <b>You're in!</b> I created your first chat and set it as active. Keep going — I'm here to help."
+
+# Profile Menu
+msgid "profile.actions_prompt"
+msgstr "What would you like to do?"
+
+
+# Search command
+msgid "search.header"
+msgstr "🔍 <b>Knowledge Base Search</b>"
+
+msgid "search.currently_selected"
+msgstr "Currently searching: <b>{kbs}</b>"
+
+msgid "search.none_selected"
+msgstr "No knowledge bases selected."
+
+msgid "search.instruction"
+msgstr "Select which knowledge bases to search, then press <b>Done</b> to start asking questions."
+
+msgid "search.no_kbs"
+msgstr "❌ No knowledge bases available. Create some conversations or add the bot to groups first!"
+
+msgid "search.error"
+msgstr "❌ An error occurred. Please try again."
+
+msgid "search.error_thread_not_found"
+msgstr "❌ Search thread not found. Please try /search again."
+
+msgid "search.kb_selected"
+msgstr "✅ Knowledge base selected"
+
+msgid "search.kb_deselected"
+msgstr "☐ Knowledge base deselected"
+
+msgid "search.all_selected"
+msgstr "✅ All knowledge bases selected"
+
+msgid "search.all_cleared"
+msgstr "☐ All selections cleared"
+
+msgid "search.select_at_least_one"
+msgstr "Please select at least one knowledge base to search."
+
+msgid "search.ready"
+msgstr "✅ Ready to search: <b>{kbs}</b>\n\nAsk me anything, and I'll search these knowledge bases for relevant information!"
+
+msgid "search.start_asking"
+msgstr "Start asking questions!"
+
+msgid "search.kb.personal"
+msgstr "My Messages"
+
+msgid "search.kb.personal_desc"
+msgstr "{count} messages"
+
+msgid "search.kb.group_desc"
+msgstr "{count} messages"
+
+msgid "search.button.select_all"
+msgstr "✅ Select All"
+
+msgid "search.button.clear_all"
+msgstr "☐ Clear All"
+
+msgid "search.button.done"
+msgstr "✅ Done"
+
+msgid "kb.summary_header"
+msgstr "📝 <b>Summary:</b>"
+
+msgid "kb.references_header"
+msgstr "📋 <b>References</b> ({shown} of {total} matches):"
+
+msgid "kb.tip"
+msgstr "💡 Tip: Ask me to elaborate on any of these results!"
+
+msgid "kb.no_results"
+msgstr "I couldn't find any relevant information in your message history. Try rephrasing your question or using different keywords."
+
+msgid "kb.error"
+msgstr "I encountered an error while searching your knowledge base: {error}\nPlease try again or contact support."
+
+msgid "kb.disabled"
+msgstr "Knowledge base search is not available at the moment. Please contact support."
+
+# KB Stats
+msgid "kb.stats.empty_header"
+msgstr "📊 <b>Knowledge Base: {kb_index}</b>\n⚠️ Knowledge base is empty"
+
+msgid "kb.stats.user_header"
+msgstr "📊 <b>Your Knowledge Base</b>"
+
+msgid "kb.stats.group_header"
+msgstr "📊 <b>Group: {index}</b>"
+
+msgid "kb.stats.total_messages"
+msgstr "📝 Total Messages: <b>{count:,}</b>"
+
+msgid "kb.stats.kb_size"
+msgstr "💾 KB Size: <b>{size:.2f} MB</b>"
+
+msgid "kb.stats.active_users"
+msgstr "👤 Active Users: <b>{count}</b>"
+
+msgid "kb.stats.top_users_header"
+msgstr "\n🏆 <b>Most Active Members:</b>"
+
+msgid "kb.stats.top_user_entry"
+msgstr "{medal} {name}: {count:,} messages"
+
+# Timeline
+msgid "kb.stats.timeline_header"
+msgstr "\n📈 <b>Activity Timeline ({period}):</b>"
+
+msgid "kb.stats.timeline_entry"
+msgstr "{date}: {bar} {count} messages"
+
+# Hourly Activity
+msgid "kb.stats.hourly_header"
+msgstr "\n🕐 <b>Peak Activity Hours:</b>"
+
+msgid "kb.stats.hourly_entry"
+msgstr "{medal} {hour}:00-{next_hour}:00: {count} messages"
+
+# Hashtags
+msgid "kb.stats.hashtags_header"
+msgstr "\n🏷️ <b>Most Used Hashtags:</b>"
+
+msgid "kb.stats.hashtag_entry"
+msgstr "#{tag}: {count} times"
+
+# Media Breakdown
+msgid "kb.stats.media_header"
+msgstr "\n📊 <b>Content Types:</b>"
+
+msgid "kb.stats.media_entry"
+msgstr "{icon} {type}: {count} ({percent}%)"
+
+# User Engagement
+msgid "kb.stats.engagement_header"
+msgstr "\n👥 <b>User Engagement Distribution:</b>"
+
+msgid "kb.stats.engagement_entry"
+msgstr "{icon} {level}: {count} users"
+
+msgid "kb.stats.engagement_onetime"
+msgstr "One-time contributors"
+
+msgid "kb.stats.engagement_occasional"
+msgstr "Occasional (2-5 messages)"
+
+msgid "kb.stats.engagement_regular"
+msgstr "Regular (6-20 messages)"
+
+msgid "kb.stats.engagement_active"
+msgstr "Active (21-50 messages)"
+
+msgid "kb.stats.engagement_veryactive"
+msgstr "Very Active (50+ messages)"
+
+# Unanswered Questions
+msgid "kb.stats.unanswered_header"
+msgstr "\n❓ <b>Unanswered Questions ({count}):</b>"
+
+msgid "kb.stats.unanswered_entry"
+msgstr "{num}. {sender}: \"{question}...\"\n   <i>({reason})</i>"
+
+msgid "kb.stats.no_unanswered"
+msgstr "\n✅ All recent questions have been answered!"
+
+msgid "kb.stats.error"
+msgstr "⚠️ Could not retrieve knowledge base statistics"
+
+msgid "search.thread_reset"
+msgstr "🔄 <b>Search History Cleared</b>\n\nYour search thread has been reset. Start searching again!"
+
+msgid "section.start"
+msgstr "🏠 Start"
+
+msgid "section.chat"
+msgstr "💬 Chats"
+
+msgid "section.search"
+msgstr "🔍 Search"
+
+msgid "section.tasks"
+msgstr "📋 Tasks"
+
+msgid "section.profile"
+msgstr "👤 Profile"
+
+msgid "section.groups"
+msgstr "👥 Groups"
+
+# Agent System Prompts
+msgid "agent_base_prompt"
+msgstr "You are an intelligent AI assistant integrated into Telegram.\nYou're a conversational AI that helps users with a wide range of tasks - from answering questions and having discussions, to organizing information and managing their workflow.\n\nYour core capabilities include:\n- Having natural, helpful conversations on any topic\n- Searching through users' personal and group knowledge bases to find relevant information\n- Analyzing YouTube videos by extracting and discussing their transcripts\n- Helping organize thoughts and information across multiple conversation threads\n- Assisting with task management and productivity\n- Providing information, explanations, and creative help\n\n**When to use tools:**\n- When users ask about information from their message history or knowledge base, use the search_knowledge_base tool\n- When users share YouTube links or ask about video content, use the get_youtube_transcript tool\n- Otherwise, engage naturally using your general knowledge and conversational abilities\n\n## AVAILABLE BOT COMMANDS AND FEATURES\n\nThe bot has the following commands that users can access:\n\n**Core Commands:**\n- /start - Main entry point showing Quick Actions menu with:\n  • Chats (count) - Access conversation threads\n  • Tasks (count) - View GTD-organized tasks\n  • Profile - User settings and preferences\n\n- /chat - Conversation thread management\n  • View all existing conversation threads\n  • Create new threads with custom names\n  • Switch between different conversation contexts\n  • Each thread maintains separate conversation history\n  • Threads can have custom system prompts and KB connections\n\n- /search - Knowledge Base search functionality\n  • Create/access dedicated chatbot_search thread\n  • Select which KBs to search from:\n    - Personal KB (user's own indexed content)\n    - Group KBs (from Telegram groups bot is added to)\n  • Toggle multiple KBs simultaneously\n  • Search across selected knowledge bases\n\n- /tasks - GTD (Getting Things Done) task management (Coming Soon)\n  • Inbox - New unprocessed tasks\n  • Next - Tasks ready to start\n  • Waiting - Tasks blocked/waiting on others\n  • Scheduled - Future dated tasks\n  • Someday - Future ideas and backlog\n  • Integration with Camunda workflows planned\n  • LLM-powered task control commands\n\n- /groups - Group management features (Coming Soon)\n  • Add bot to Telegram groups\n  • Map groups/topics to dedicated threads\n  • Set group owners for thread management\n  • Import recent group history into threads\n  • Auto-switch to group thread on notifications\n\n- /profile - User profile and settings\n  • View user information and statistics\n  • Change interface language (English/Russian)\n  • Bot preferences (system prompt, KB settings, default model)\n  • View running processes (Camunda integration)\n  • Access usage statistics and leaderboard\n\n- /reset - Clear all user data\n  • Delete all conversation threads\n  • Clear conversation history\n  • Reset session state\n  • Fresh start for the user\n\n**Key Features:**\n1. **Multi-threaded Conversations** - Users can maintain separate conversation contexts with different configurations\n2. **Knowledge Base Integration** - Search across personal and group knowledge bases\n3. **YouTube Integration** - Extract and analyze YouTube video transcripts\n4. **Language Support** - Interface available in English and Russian\n5. **Thread Customization** - Each thread can have custom system prompts and KB connections\n6. **Task Management** - GTD-style organization with Camunda workflow integration (in development)\n7. **Group Integration** - Connect Telegram groups to dedicated conversation threads (in development)\n\n**Your Role as Assistant:**\n- Help users navigate and use these features effectively\n- Guide them to the appropriate commands for their needs\n- Explain feature capabilities when asked\n- Use available tools (search_knowledge_base, get_youtube_transcript, etc.) to fulfill user requests\n- Be proactive in suggesting relevant features based on user needs\n- Inform users about Coming Soon features when they ask about unavailable functionality\n\nAlways be helpful, professional, and guide users toward completing their available tasks."
+
+msgid "agent_simple_prompt"
+msgstr "You are an intelligent AI assistant integrated into Telegram. Have natural, helpful conversations with users on any topic. Be friendly, informative, and creative in your responses."
+
+msgid "dynamic_tasks_prompt"
+msgstr "\n\nYou have {num_tasks} dynamic task(s) available to execute for this user. Use the appropriate task execution tools when the user requests task-related actions."
+
+# Group Admin - Scheduled Content
+msgid "group.scheduled_content.title"
+msgstr "⏰ <b>Scheduled Content</b>"
+
+msgid "group.scheduled_content.coming_soon"
+msgstr "🚧 <b>Coming Soon!</b> 🚧"
+
+msgid "group.scheduled_content.features"
+msgstr "This feature will allow:\n• Schedule announcements\n• Auto-post reminders\n• Recurring messages\n• Content calendar"
+
+msgid "group.scheduled_content.stay_tuned"
+msgstr "<i>Stay tuned for updates!</i>"
+
+# Group Admin - Import KB
+msgid "group.import_kb.title"
+msgstr "📚 <b>Import Group History</b>"
+
+msgid "group.import_kb.coming_soon"
+msgstr "🚧 <b>Coming Soon!</b> 🚧"
+
+msgid "group.import_kb.features"
+msgstr "This feature will allow:\n• Import past messages into knowledge base\n• Bulk indexing of existing conversations\n• Selective import (date ranges, users, topics)\n• Progress tracking and statistics"
+
+msgid "group.import_kb.stay_tuned"
+msgstr "<i>Stay tuned for updates!</i>"
+
+# Group Admin Menu Buttons
+msgid "group.btn.language"
+msgstr "Language"
+
+msgid "group.btn.moderation"
+msgstr "Moderation"
+
+msgid "group.btn.moderation_enabled"
+msgstr "✅ Enabled"
+
+msgid "group.btn.moderation_disabled"
+msgstr "❌ Disabled"
+
+msgid "group.btn.system_messages"
+msgstr "🗑️ System Messages"
+
+msgid "group.btn.stoplist"
+msgstr "🚫 Stoplist"
+
+msgid "group.btn.stoplist_empty"
+msgstr "🚫 Stoplist (Empty)"
+
+msgid "group.btn.stoplist_count"
+msgstr "🚫 Stoplist ({count} words)"
+
+msgid "group.btn.scheduled_content"
+msgstr "⏰ Scheduled Content"
+
+msgid "group.btn.import_history"
+msgstr "📚 Import History"
+
+msgid "group.btn.stats"
+msgstr "📊 Stats"
+
+msgid "group.btn.close"
+msgstr "❌ Close"
+
+msgid "group.btn.ai_assistant"
+msgstr "🤖 AI Assistant"
+
+msgid "group.btn.moderation_submenu"
+msgstr "🛡️ Moderation"
+
+msgid "group.btn.bot_instructions"
+msgstr "📝 Bot Instructions"
+
+msgid "group.btn.assistant_on"
+msgstr "ON"
+
+msgid "group.btn.assistant_off"
+msgstr "OFF"
+
+msgid "group.btn.kb_on"
+msgstr "ON"
+
+msgid "group.btn.kb_off"
+msgstr "OFF"
+
+msgid "group.btn.moderation_on"
+msgstr "ON"
+
+msgid "group.btn.moderation_off"
+msgstr "OFF"
+
+msgid "group.btn.moderate_admins_on"
+msgstr "ON"
+
+msgid "group.btn.moderate_admins_off"
+msgstr "OFF"
+
+msgid "group.btn.reset_to_defaults"
+msgstr "🔄 Reset to Defaults"
+
+# Group Menu Texts
+msgid "group.settings_menu.title"
+msgstr "Group Settings"
+
+msgid "group.settings_menu.description"
+msgstr "Configure your group's AI assistant, moderation, and other features."
+
+msgid "group.ai_assistant_menu.title"
+msgstr "AI Assistant Settings"
+
+msgid "group.ai_assistant_menu.description"
+msgstr "Control AI assistant behavior and knowledge base indexation.\n\n<b>Assistant:</b> Enable/disable bot responses to @mentions\n<b>Knowledge Base:</b> Index messages for searchability\n<b>Bot Instructions:</b> Customize bot behavior with custom prompts"
+
+msgid "group.moderation_menu.title"
+msgstr "Moderation Settings"
+
+msgid "group.moderation_menu.description"
+msgstr "Manage content moderation and filtering rules.\n\n<b>Moderation:</b> Enable AI-powered content analysis\n<b>Moderate Admins:</b> Apply moderation to admin messages\n<b>System Messages:</b> Filter Telegram system notifications\n<b>Content Filters:</b> Block specific content types\n<b>Stoplist:</b> Automatically filter prohibited words"
+
+# Divider Button Translations
+msgid "groups.divider.btn_scheduled_content"
+msgstr "📅 Scheduled"
+
+msgid "groups.divider.btn_stats"
+msgstr "📊 Stats"
+
+# System Messages Filter Types
+msgid "group.sys_msg.user_joined_left"
+msgstr "User joined/left"
+
+msgid "group.sys_msg.name_title_changes"
+msgstr "Name/title changes"
+
+msgid "group.sys_msg.pinned_messages"
+msgstr "Pinned messages"
+
+msgid "group.sys_msg.voice_chat_events"
+msgstr "Voice chat events"
+
+msgid "group.sys_msg.group_photo_changed"
+msgstr "Group/photo changed"
+
+# Group Settings Submenu (create_group_settings_menu - currently unused)
+msgid "group.settings.notification_settings"
+msgstr "🔔 Notification Settings"
+
+msgid "group.settings.kb_indexing_rules"
+msgstr "📝 KB Indexing Rules"
+
+msgid "group.settings.member_access"
+msgstr "👥 Member Access"
+
+msgid "group.settings.back"
+msgstr "🔙 Back"
+
+# Stoplist Messages
+msgid "group.stoplist.updated"
+msgstr "✅ <b>Stoplist updated!</b>"
+
+msgid "group.stoplist.total_words"
+msgstr "<b>Total words:</b> {count}"
+
+msgid "group.stoplist.preview"
+msgstr "<b>Preview:</b> <code>{preview}</code>"
+
+msgid "group.stoplist.auto_delete_notice"
+msgstr "Messages containing these words will be automatically deleted."
+
+msgid "group.stoplist.more_words"
+msgstr " ... (+{count} more)"
+
+msgid "group.stoplist.empty"
+msgstr "Empty"
+
+# Group Settings Inline Handlers
+msgid "group.search.tip"
+msgstr "🔍 Use /search in DM to search this group's knowledge base!"
+
+msgid "group.reset.tip"
+msgstr "⚠️ Type /reset in the group to reset all data"
+
+# Group Commands
+msgid "group.cmd.help"
+msgstr "👋 <b>Hi! I'm {bot_name}.</b>\n\n🤖 <b>In groups, I can:</b>\n• Answer questions when you mention me (<code>@{bot_username}</code>)\n• Index conversations for searchability\n• Help organize group knowledge\n\n💬 <b>For full features, start a private chat:</b>\n<a href=\"{deep_link}\">Click here to start</a>\n\n📚 <b>There you can:</b>\n• 🔍 Search this group's history\n• 💬 Manage conversation threads\n• 📋 Organize tasks\n• ⚙️ Configure settings\n\n<i>Admins can also manage group settings via DM!</i>"
+
+msgid "group.cmd.stats.not_setup"
+msgstr "⚠️ <b>Bot not fully set up in this group yet.</b>\n\nMention me or wait for a message to initialize!"
+
+msgid "group.cmd.stats.title"
+msgstr "📊 <b>Group Statistics</b>\n\n👥 <b>Group:</b> {group_title}\n🆔 <b>Group ID:</b> <code>{group_id}</code>\n📚 <b>KB Index:</b> <code>{kb_index}</code>\n✅ <b>Status:</b> Active"
+
+msgid "group.cmd.admin_only"
+msgstr "⚠️ <b>This command is only available to group admins.</b>"
+
+msgid "group.cmd.settings_sent"
+msgstr "✅ Sent settings to your DM!"
+
+msgid "group.cmd.dm_failed"
+msgstr "❌ <b>Couldn't send DM.</b>\n\nPlease start a private chat with me first!"
+
+# Group Statistics
+msgid "group.stats.title"
+msgstr "📊 <b>Group Statistics</b>"
+
+msgid "group.stats.group_id"
+msgstr "🆔 <b>Group ID:</b>"
+
+msgid "group.stats.kb_index"
+msgstr "📚 <b>KB Index:</b>"
+
+msgid "group.stats.total_messages"
+msgstr "💬 <b>Total Messages:</b>"
+
+msgid "group.stats.kb_size"
+msgstr "📦 <b>Knowledge Base Size:</b>"
+
+msgid "group.stats.loading"
+msgstr "⏳ <i>Loading statistics...</i>"
+
+msgid "group.stats.no_data"
+msgstr "📭 <i>No data yet. Start chatting to build the knowledge base!</i>"
+
+# ============================================================================
+# User Default Group Settings
+# ============================================================================
+
+msgid "user_group_defaults.title"
+msgstr "📋 <b>Default Group Settings</b>"
+
+msgid "user_group_defaults.intro"
+msgstr "These settings apply when you add me to a <b>new group</b>."
+
+msgid "user_group_defaults.current_values"
+msgstr "<b>Current Defaults:</b>"
+
+msgid "user_group_defaults.silent_addition"
+msgstr "📢 Welcome Message:"
+
+msgid "user_group_defaults.silent_addition_on"
+msgstr "Silent (in DM)"
+
+msgid "user_group_defaults.silent_addition_off"
+msgstr "Show in group"
+
+msgid "user_group_defaults.ai_assistant"
+msgstr "🤖 AI Assistant:"
+
+msgid "user_group_defaults.ai_enabled"
+msgstr "Enabled ✅"
+
+msgid "user_group_defaults.ai_disabled"
+msgstr "Disabled ❌"
+
+msgid "user_group_defaults.hint"
+msgstr "<i>💡 These are defaults for new groups. Change per-group settings in each group's admin menu.</i>"
+
+msgid "user_group_defaults.btn_toggle_welcome"
+msgstr "📢 Toggle Welcome"
+
+msgid "user_group_defaults.btn_toggle_ai"
+msgstr "🤖 Toggle AI"
+
+msgid "user_group_defaults.btn_back"
+msgstr "◀️ Back"
+
+# ============================================================================
+# Group Settings - Bot Behavior
+# ============================================================================
+
+msgid "group_settings.silent_mode"
+msgstr "🔇 Silent Mode"
+
+msgid "group_settings.silent_mode_desc"
+msgstr "Hide bot's service messages"
+
+msgid "group_settings.ai_assistant"
+msgstr "AI Assistant"
+
+msgid "group_settings.ai_assistant_desc"
+msgstr "Respond to @mentions"
+
+msgid "group_settings.ai_disabled_notice"
+msgstr "AI Assistant is disabled for this group. Contact an admin to enable it."
+
+msgid "group_settings.kb_indexation"
+msgstr "📚 KB Indexation"
+
+msgid "group_settings.moderate_admins"
+msgstr "🛡️ Moderate Admins"
+
+msgid "group_settings.delete_group"
+msgstr "🗑️ Delete Group"
+
+msgid "group_settings.delete_group_confirm_title"
+msgstr "⚠️ Confirm Group Deletion"
+
+msgid "group_settings.delete_group_confirm_text"
+msgstr "Are you sure you want to delete all data for this group?\n\nThis will:\n• Remove all messages from knowledge base\n• Delete all group settings\n• Clear reputation data\n• This action CANNOT be undone!\n\nGroup: <b>{group_title}</b>"
+
+msgid "group_settings.delete_group_confirm_yes"
+msgstr "🗑️ Yes, Delete Everything"
+
+msgid "group_settings.delete_group_confirm_no"
+msgstr "❌ Cancel"
+
+msgid "group_settings.delete_group_success"
+msgstr "✅ Group data has been deleted. The bot will reinitialize if you send a message."
+
+# ============================================================================
+# Silent Addition Onboarding (DM)
+# ============================================================================
+
+msgid "group_onboarding.silent_addition_header"
+msgstr "👋 <b>Bot Added to {group_title}</b>"
+
+msgid "group_onboarding.silent_explanation"
+msgstr "🔇 <i>You have silent addition enabled - this welcome was sent to your DM instead of the group.</i>"
+
+msgid "group_onboarding.dm_controls_info"
+msgstr "🎛️ <b>Admin Controls:</b>\nUse the buttons below to configure the group. These controls work the same as in the group itself."
+
+msgid "group_onboarding.find_in_groups"
+msgstr "📋 <i>Tip: You can also find these settings in /groups → {group_title}</i>"
+
+msgid "group_onboarding.tools_coming_soon"
+msgstr "🔮 <i>Coming soon: Manage all your groups via chat - just ask me!</i>"
+
+# ============================================================================
+# Common status strings
+# ============================================================================
+
+msgid "common.on"
+msgstr "ON"
+
+msgid "common.off"
+msgstr "OFF"
+
+msgid "common.enabled"
+msgstr "Enabled ✅"
+
+msgid "common.disabled"
+msgstr "Disabled ❌"
+
+msgid "common.on_with_count"
+msgstr "ON ({count} words)"
+
+# ============================================================================
+# User Group Defaults - Additional keys
+# ============================================================================
+
+msgid "user_group_defaults.silent_dm"
+msgstr "Silent (DM)"
+
+msgid "user_group_defaults.show_in_group"
+msgstr "Show in group"
+
+msgid "user_group_defaults.bot_behavior"
+msgstr "Bot Behavior"
+
+msgid "user_group_defaults.welcome_message"
+msgstr "Welcome Message"
+
+msgid "user_group_defaults.silent_mode_label"
+msgstr "Silent Mode"
+
+msgid "user_group_defaults.ai_assistant_label"
+msgstr "AI Assistant"
+
+msgid "user_group_defaults.moderation_section"
+msgstr "Moderation"
+
+msgid "user_group_defaults.background_moderation"
+msgstr "Background Moderation"
+
+msgid "user_group_defaults.stoplist_filter"
+msgstr "Stoplist Filter"
+
+msgid "user_group_defaults.reputation_system"
+msgstr "Reputation System"
+
+msgid "user_group_defaults.content_filters"
+msgstr "Content Filters"
+
+msgid "user_group_defaults.delete_links"
+msgstr "Delete Links"
+
+msgid "user_group_defaults.delete_images"
+msgstr "Delete Images"
+
+msgid "user_group_defaults.delete_videos"
+msgstr "Delete Videos"
+
+msgid "user_group_defaults.delete_stickers"
+msgstr "Delete Stickers"
+
+msgid "user_group_defaults.delete_forwarded"
+msgstr "Delete Forwarded"
+
+msgid "user_group_defaults.system_messages"
+msgstr "System Messages"
+
+msgid "user_group_defaults.delete_service_messages"
+msgstr "Delete Service Messages"
+
+msgid "user_group_defaults.welcome_toggle"
+msgstr "Welcome"
+
+msgid "user_group_defaults.stoplist_btn"
+msgstr "Stoplist"
+
+msgid "user_group_defaults.forwarded_btn"
+msgstr "Forwarded"
+
+msgid "user_group_defaults.system_messages_btn"
+msgstr "Service Msgs"
+
+msgid "user_group_defaults.moderation_prompt"
+msgstr "Moderation Prompt"
+
+msgid "user_group_defaults.moderation_prompt_title"
+msgstr "Default Moderation Prompt"
+
+msgid "user_group_defaults.current_prompt"
+msgstr "Current Prompt"
+
+msgid "user_group_defaults.using_default_prompt"
+msgstr "Using system default"
+
+msgid "user_group_defaults.moderation_prompt_hint"
+msgstr "Note: Custom prompt editing via group admin menu after adding bot to a group. You can reset to system default here."
+
+msgid "user_group_defaults.use_default_prompt"
+msgstr "Reset to Default"
+
+msgid "user_group_defaults.prompt_reset_success"
+msgstr "✅ Prompt reset to default"
+
+# ============================================================================
+# Additional common strings
+# ============================================================================
+
+msgid "common.status"
+msgstr "Status"
+
+msgid "common.toggle"
+msgstr "Toggle"
+
+msgid "common.empty"
+msgstr "Empty"
+
+msgid "common.words"
+msgstr "Words"
+
+msgid "common.and_more"
+msgstr "and {count} more"
+
+# ============================================================================
+# User Group Defaults - Updated keys
+# ============================================================================
+
+msgid "user_group_defaults.silent_addition_btn"
+msgstr "Silent Welcome"
+
+msgid "user_group_defaults.reputation_btn"
+msgstr "Reputation System"
+
+msgid "user_group_defaults.moderation_rules"
+msgstr "Moderation Rules"
+
+msgid "user_group_defaults.content_types"
+msgstr "Content Type Filters"
+
+msgid "user_group_defaults.allowed_content"
+msgstr "Allowed Content Types"
+
+msgid "user_group_defaults.links"
+msgstr "Links"
+
+msgid "user_group_defaults.images"
+msgstr "Images"
+
+msgid "user_group_defaults.videos"
+msgstr "Videos"
+
+msgid "user_group_defaults.stickers"
+msgstr "Stickers"
+
+msgid "user_group_defaults.forwarded"
+msgstr "Forwarded Messages"
+
+msgid "user_group_defaults.content_types_hint"
+msgstr "Toggle to delete or allow specific content types. Applied to all new groups."
+
+msgid "user_group_defaults.system_messages_hint"
+msgstr "Auto-delete system messages (user joined, left, pinned message, etc.)."
+
+msgid "user_group_defaults.stoplist_hint"
+msgstr "Full stoplist editing available in group admin menu after adding bot."
+
+msgid "user_group_defaults.stoplist_toggle"
+msgstr "Stoplist Filter"
+
+msgid "user_group_defaults.case_sensitive"
+msgstr "Case Sensitive"
+
+# ============================================================================
+# Silent Mode & AI Assistant clarifications
+# ============================================================================
+
+msgid "user_group_defaults.silent_mode_hint"
+msgstr "No system messages from bot in group (including welcome)"
+
+msgid "user_group_defaults.ai_assistant_hint"
+msgstr "When OFF: Bot collects messages & moderates but doesn't respond to mentions/replies"
+
+# ============================================================================
+# Stoplist & System Messages enhancements
+# ============================================================================
+
+msgid "user_group_defaults.system_message_types"
+msgstr "System Message Types"
+
+msgid "user_group_defaults.stoplist_description"
+msgstr "Feature Description"
+
+msgid "user_group_defaults.stoplist_desc_text"
+msgstr "Automatically delete messages containing forbidden words or patterns. Supports regex for advanced filtering."
+
+msgid "user_group_defaults.current_list"
+msgstr "Current Stoplist"
+
+msgid "user_group_defaults.regex_examples"
+msgstr "Regex Examples"
+
+msgid "user_group_defaults.regex_ex_exact"
+msgstr "Exact word match"
+
+msgid "user_group_defaults.regex_ex_contains"
+msgstr "Contains 'scam' anywhere"
+
+msgid "user_group_defaults.regex_ex_starts"
+msgstr "Starts with 'buy now'"
+
+msgid "user_group_defaults.regex_ex_multiple"
+msgstr "Multiple words (viagra OR cialis)"
+
+msgid "user_group_defaults.edit_stoplist"
+msgstr "Edit List"
+
+# ============================================================================
+# Content Types & Moderation Prompt
+# ============================================================================
+
+msgid "user_group_defaults.content_types_desc"
+msgstr "Control which types of content are automatically filtered in the group."
+
+msgid "user_group_defaults.content_types.legend"
+msgstr ""
+"✅ — visible\n"
+"❌ — hidden"
+
+msgid "user_group_defaults.content_type_status"
+msgstr "Current Status"
+
+msgid "common.will_delete"
+msgstr "Will Delete"
+
+msgid "common.allowed"
+msgstr "Allowed"
+
+msgid "user_group_defaults.moderation_prompt_desc"
+msgstr "Customize the moderation rules and guidelines for this group. The AI moderator will use these rules when evaluating messages."
+
+msgid "user_group_defaults.current_prompt"
+msgstr "Current Prompt"
+
+msgid "user_group_defaults.using_default_prompt"
+msgstr "Using default system prompt"
+
+msgid "user_group_defaults.view_full_prompt"
+msgstr "View Full Prompt"
+
+msgid "user_group_defaults.edit_prompt"
+msgstr "Edit Prompt"
+
+msgid "user_group_defaults.reset_to_default"
+msgstr "Reset to Default"
+
+# ============================================================================
+# Content Type Labels
+# ============================================================================
+
+msgid "user_group_defaults.content_links"
+msgstr "Links"
+
+msgid "user_group_defaults.content_images"
+msgstr "Images"
+
+msgid "user_group_defaults.content_videos"
+msgstr "Videos"
+
+msgid "user_group_defaults.content_stickers"
+msgstr "Stickers"
+
+msgid "user_group_defaults.content_forwarded"
+msgstr "Forwarded Messages"
+
+msgid "user_group_defaults.reset_button"
+msgstr "🔄 Reset to Defaults"
+
+msgid "user_group_defaults.reset_confirm_title"
+msgstr "⚠️ <b>Reset to Factory Defaults?</b>"
+
+msgid "user_group_defaults.reset_confirm_text"
+msgstr "This will reset ALL your default settings to factory values:\n\n• Silent Mode: OFF\n• AI Assistant: ON\n• Moderation: OFF\n• Stoplist: Default words, OFF\n• Content filters: All allowed\n• Moderation prompt: Default\n\n<b>This affects NEW groups only.</b>\nExisting group settings will not change.\n\nAre you sure?"
+
+msgid "user_group_defaults.reset_confirm_yes"
+msgstr "✅ Yes, Reset"
+
+msgid "user_group_defaults.reset_confirm_no"
+msgstr "❌ Cancel"
+
+msgid "user_group_defaults.reset_success"
+msgstr "✅ <b>Default settings reset to factory values!</b>\n\nAll future new groups will use these defaults."
+
+# ============================================================================
+# Common UI Elements
+# ============================================================================
+
+msgid "common.back_to_settings"
+msgstr "🔙 Back to Settings"
+
+# ============================================================================
+# Camunda Process & Task Messages
+# ============================================================================
+
+msgid "task.error.not_found"
+msgstr "❌ Task not found"
+
+msgid "task.error.render_failed"
+msgstr "❌ Failed to render task"
+
+msgid "task.completed"
+msgstr "✅ Task completed: {name}"
+
+msgid "task.dialog.error"
+msgstr "❌ Error in dialog"
+
+msgid "task.dialog.expired"
+msgstr "⚠️ Dialog session expired"
+
+msgid "task.dialog.completed"
+msgstr "✅ All information collected successfully!"
+
+msgid "task.dialog.variable_confirmed"
+msgstr "✅ {variable_name}: {value}"
+
+msgid "task.upload.too_large"
+msgstr "⚠️ File too large. Maximum size: {max_size}MB\nYour file: {file_size}MB"
+
+msgid "task.upload.wrong_format"
+msgstr "⚠️ Please upload a {expected_format} file.\nReceived: {file_name}"
+
+msgid "task.upload.processing"
+msgstr "⏳ Uploading file to storage..."
+
+msgid "task.upload.success"
+msgstr "✅ File uploaded successfully!"
+
+msgid "task.upload.failed"
+msgstr "❌ File upload failed: {error}"
+
+msgid "process.starting"
+msgstr "✅ Starting process..."
+
+msgid "process.cancelled"
+msgstr "❌ Process cancelled"
+
+msgid "process.error.start_failed"
+msgstr "❌ Failed to start process"
+
+msgid "process.no_tasks"
+msgstr "⏳ Processing your request..."
+
+# Onboarding strings
+msgid "onboarding_intro_block"
+msgstr "👋 Welcome to Community Buddy!\n\nI'm your AI-powered group management assistant for Telegram communities.\n\n🎯 What I can do for your groups:\n• 🤖 AI Assistant - Answer questions and help members with smart, context-aware responses\n• 📚 Knowledge Base - Index and search through all group messages and conversations\n• 🛡️ Smart Moderation - Automatic content filtering, stopwords, and AI-powered quality scoring\n• 📊 Analytics - Track activity, member engagement, and generate detailed group statistics\n\n🚀 Get Started:\n1️⃣ Use /groups to manage your Telegram groups\n2️⃣ Add me to your group as an admin\n3️⃣ Configure AI assistance, moderation, and KB indexing"
+
+msgid "onboarding_welcome_greeting"
+msgstr "👋 Hi{name}! I'm ready to help."
+
+msgid "onboarding_welcome_intro"
+msgstr "Here's a quick refresher so you can jump back in instantly."
+
+msgid "onboarding_welcome_scope"
+msgstr "I'll focus on your groups: {group_names}"
+
+msgid "onboarding_welcome_scope_all"
+msgstr "I'll search across all available knowledge bases."
+
+msgid "onboarding_quick_questions_intro"
+msgstr "Pick a quick question to get started:"
+
+msgid "onboarding_group_list_more"
+msgstr "{group_list} and {extra} more"
+
+# Quick prompt strings
+msgid "quick_prompt_ack"
+msgstr "Processing your question…"
+
+msgid "quick_prompt_missing"
+msgstr "That quick question is no longer available. Please refresh /start."
+
+# KB scope control strings
+msgid "kb_scope_edit_groups_button"
+msgstr "⚙️ Edit groups"
+
+msgid "kb_scope_all_sources_button"
+msgstr "🌐 All sources"
+
+msgid "kb_scope_user_groups_button"
+msgstr "🎯 Only selected"
+
+msgid "kb_scope_saved_all_toast"
+msgstr "Switched to all sources."
+
+msgid "kb_scope_saved_all_message"
+msgstr "I'll search across every available knowledge base."
+
+msgid "kb_scope_summary_all"
+msgstr "all sources"
+
+msgid "kb_scope_saved_auto_toast"
+msgstr "Using your groups."
+
+msgid "kb_scope_saved_auto_message"
+msgstr "I'll focus on your groups: {group_summary}"
+
+msgid "kb_scope_selection_empty"
+msgstr "No knowledge bases are connected yet."
+
+msgid "kb_scope_selection_prompt"
+msgstr "Choose the knowledge bases to keep active by default:"
+
+msgid "kb_scope_selection_expired"
+msgstr "Selection session expired. Please open it again."
+
+msgid "kb_scope_selection_limit"
+msgstr "You can select up to 10 knowledge bases."
+
+msgid "kb_scope_saved_custom_toast"
+msgstr "Custom selection saved."
+
+msgid "kb_scope_saved_custom_message"
+msgstr "I'll focus on: {group_summary}"
+
+msgid "kb_scope_selection_cancelled"
+msgstr "Selection cancelled."
+
+# Twitter Tools - Knowledge Base Gathering System
+msgid "twitter.error_invalid_handle"
+msgstr "❌ Invalid Twitter handle or URL. Please provide a valid Twitter/X profile link or handle."
+
+msgid "twitter.error_generic"
+msgstr "❌ Failed to retrieve Twitter account info: {error}"
+
+msgid "twitter.account_info_header"
+msgstr "🐦 Twitter Account Information"
+
+msgid "twitter.display_name"
+msgstr "Display Name:"
+
+msgid "twitter.handle"
+msgstr "Handle:"
+
+msgid "twitter.bio"
+msgstr "Bio:"
+
+msgid "twitter.stats_header"
+msgstr "Account Statistics"
+
+msgid "twitter.followers"
+msgstr "Followers:"
+
+msgid "twitter.following"
+msgstr "Following:"
+
+msgid "twitter.tweets"
+msgstr "Tweets:"
+
+msgid "twitter.created"
+msgstr "Created:"
+
+msgid "twitter.usefulness_score_header"
+msgstr "Content Quality Analysis"
+
+msgid "twitter.usefulness_score"
+msgstr "Usefulness Score:"
+
+msgid "twitter.phase1_notice"
+msgstr "⚠️ Phase 1: This is stub data for testing. Full Twitter API integration coming in Phase 2."
+
+msgid "twitter.actions_header"
+msgstr "📋 Available Actions:"
+
+msgid "twitter.action_add_kb"
+msgstr "• Ask me to add this account to the knowledge base"
+
+msgid "twitter.action_analyze_tweets"
+msgstr "• Request analysis of recent tweets"
+
+msgid "twitter.action_monitor"
+msgstr "• Set up monitoring for this account"
+
+# Knowledge Base Gathering System
+msgid "kb_gathering.button_yes"
+msgstr "✅ Yes, Add to KB"
+
+msgid "kb_gathering.button_no"
+msgstr "❌ No, Skip"
+
+msgid "kb_gathering.prompt_header"
+msgstr "📚 Add to Knowledge Base?"
+
+msgid "kb_gathering.prompt_score"
+msgstr "**Usefulness Score:** {score}/10"
+
+msgid "kb_gathering.prompt_potential_reward"
+msgstr "**Potential Reward:** {reward} Atlas tokens"
+
+msgid "kb_gathering.prompt_question"
+msgstr "Would you like to submit this for moderation and add it to the knowledge base?"
+
+msgid "kb_gathering.confirmed_submission"
+msgstr "✅ Content submitted for review! Submission ID: #{submission_id}"
+
+msgid "kb_gathering.cancelled"
+msgstr "❌ Submission cancelled."
+
+msgid "kb_gathering.analyzing_content"
+msgstr "🔍 Analyzing content..."

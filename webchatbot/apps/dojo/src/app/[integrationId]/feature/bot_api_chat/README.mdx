@@ -1,0 +1,55 @@
+# Bot API Chat
+
+This feature demonstrates how to integrate Dojo with an external bot API that is AG-UI compatible. The integration connects to the Luka Bot API at `https://bot-dexguru.dexguru.biz` and provides a chat interface for interacting with the bot.
+
+## Features
+
+- **AG-UI Compatible**: Uses the standard AG-UI protocol for agent communication
+- **Authentication Support**: Supports both guest sessions and Telegram Mini App authentication
+- **Multiple Endpoints**: Connects to various bot API endpoints including health checks and agent info
+- **Real-time Chat**: Provides a real-time chat interface for user interaction
+
+## API Endpoints
+
+The bot API provides several endpoints:
+
+- `/api/agent/luka` - Main agent endpoint for chat interactions
+- `/api/auth/guest` - Create guest sessions
+- `/api/auth/telegram-miniapp` - Telegram Mini App authentication
+- `/api/auth/refresh` - Token refresh
+- `/api/agent/luka/health` - Bot health check
+- `/api/agent/luka/info` - Bot information
+- `/api/catalog` - Knowledge base catalog
+- `/api/profile` - User profile management
+
+## Configuration
+
+The bot API URL is configured via the `BOT_API_URL` environment variable:
+
+```bash
+BOT_API_URL=https://bot-dexguru.dexguru.biz
+```
+
+## Usage
+
+1. Select the "Bot API Chat" feature from the integration menu
+2. Start chatting with the Luka Bot
+3. Use the available actions to check bot health and get information
+4. The bot will respond using the AG-UI compatible API
+
+## Authentication
+
+The bot supports multiple authentication methods:
+
+- **Guest Session**: Anonymous access with limited permissions
+- **Telegram Mini App**: Full authentication via Telegram initData
+- **JWT Token**: Standard JWT token authentication
+
+## Customization
+
+You can customize the bot behavior by:
+
+- Modifying the agent instructions in the CopilotSidebar
+- Adding custom actions using `useCopilotAction`
+- Configuring different bot endpoints for different features
+- Implementing custom authentication flows

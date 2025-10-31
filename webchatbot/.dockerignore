@@ -1,0 +1,75 @@
+# Dependencies (excluded to improve build caching)
+node_modules
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-store
+
+# Additional dependency-related exclusions
+**/node_modules
+**/.pnpm-store
+
+# Next.js build output
+.next
+out
+
+# Testing
+e2e
+tests
+coverage
+.nyc_output
+
+# Environment files
+.env
+.env.local
+.env.development
+.env.test
+.env.production.local
+
+# Git
+.git
+.gitignore
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs
+
+# Documentation (not needed in container)
+# Note: Most .md files are not needed, but some apps might require specific ones
+*.md
+!README.md
+# Allow specific documentation files if needed by build process
+# !CHANGELOG.md
+# !LICENSE
+
+# Development files
+*.backup
+.turbo
+.eslintcache
+
+# Workspace configuration files (explicitly allow these for Docker build)
+# These are needed by the Dockerfile COPY commands:
+# pnpm-lock.yaml, pnpm-workspace.yaml, package.json, turbo.json
+# (Not excluded - they will be included in the build)
+
+# ag-ui library source files (keep only dist folders)
+# Note: lib/ag-ui directory doesn't exist in this project
+# lib/ag-ui/*/src
+# lib/ag-ui/*/node_modules
+# lib/ag-ui/*/__tests__
+# lib/ag-ui/*/tsup.config.ts
+# lib/ag-ui/*/jest.config.js
+# lib/ag-ui/*/tsconfig.json
+

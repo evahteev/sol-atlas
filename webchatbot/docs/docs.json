@@ -1,0 +1,178 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "willow",
+  "name": "Agent User Interaction Protocol",
+  "colors": {
+    "primary": "#09090b",
+    "light": "#FAFAFA",
+    "dark": "#09090b"
+  },
+  "favicon": "/favicon.svg",
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": [
+              "introduction",
+              {
+                "group": "Quickstart",
+                "pages": [
+                  "quickstart/applications",
+                  {
+                    "group": "Build integrations",
+                    "pages": [
+                      "quickstart/introduction",
+                      "quickstart/server",
+                      "quickstart/middleware"
+                    ]
+                  },
+                  "quickstart/clients"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "Concepts",
+            "pages": [
+              "concepts/architecture",
+              "concepts/events",
+              "concepts/agents",
+              "concepts/messages",
+              "concepts/state",
+              "concepts/tools"
+            ]
+          },
+          {
+            "group": "Draft Proposals",
+            "pages": [
+              "drafts/overview",
+              "drafts/activity-events",
+              "drafts/reasoning",
+              "drafts/serialization",
+              "drafts/multimodal-messages",
+              "drafts/interrupts",
+              "drafts/generative-ui",
+              "drafts/meta-events"
+            ]
+          },
+          {
+            "group": "Tutorials",
+            "pages": ["tutorials/cursor", "tutorials/debugging"]
+          },
+          {
+            "group": "Development",
+            "pages": ["development/updates", "development/roadmap", "development/contributing"]
+          }
+        ]
+      },
+      {
+        "tab": "SDKs",
+        "icon": "book-open",
+        "groups": [
+          {
+            "group": "TypeScript",
+            "pages": [
+              {
+                "group": "@ag-ui/core",
+                "pages": ["sdk/js/core/overview", "sdk/js/core/types", "sdk/js/core/events"]
+              },
+              {
+                "group": "@ag-ui/client",
+                "pages": [
+                  "sdk/js/client/overview",
+                  "sdk/js/client/abstract-agent",
+                  "sdk/js/client/http-agent",
+                  "sdk/js/client/subscriber"
+                ]
+              },
+              "sdk/js/encoder",
+              "sdk/js/proto"
+            ]
+          },
+          {
+            "group": "Python",
+            "pages": [
+              {
+                "group": "ag_ui.core",
+                "pages": [
+                  "sdk/python/core/overview",
+                  "sdk/python/core/types",
+                  "sdk/python/core/events"
+                ]
+              },
+              {
+                "group": "ag_ui.encoder",
+                "pages": ["sdk/python/encoder/overview"]
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "global": {
+      "anchors": [
+        {
+          "anchor": "TypeScript SDK",
+          "href": "https://docs.ag-ui.com/sdk/js/core/overview",
+          "icon": "square-js"
+        },
+        {
+          "anchor": "Python SDK",
+          "href": "https://docs.ag-ui.com/sdk/python/core/overview",
+          "icon": "python"
+        }
+      ]
+    }
+  },
+  "logo": {
+    "light": "/logo/light.svg",
+    "dark": "/logo/dark.svg"
+  },
+  "navbar": {
+    "links": [
+      {
+        "label": "Discord",
+        "href": "https://discord.gg/Jd3FzfdJa8",
+        "icon": "server"
+      }
+    ],
+    "primary": {
+      "type": "github",
+      "href": "https://github.com/ag-ui-protocol/ag-ui"
+    }
+  },
+  "seo": {
+    "metatags": {
+      "og:image": "https://raw.githubusercontent.com/ag-ui-protocol/docs/logo/light.png"
+    },
+    "indexing": "navigable"
+  },
+  "integrations": {
+    "posthog": {
+      "apiKey": "phc_XZdymVYjrph9Mi0xZYGNyCKexxgblXRR1jMENCtdz5Q",
+      "apiHost": "https://eu.posthog.com"
+    }
+  },
+  "footer": {
+    "socials": {
+      "github": "https://github.com/ag-ui-protocol/ag-ui"
+    }
+  },
+  "redirects": [
+    {
+      "source": "/quickstart",
+      "destination": "/quickstart/build"
+    },
+    {
+      "source": "/quickstart/connect",
+      "destination": "/quickstart/middleware"
+    },
+    {
+      "source": "/quickstart/build",
+      "destination": "/quickstart/server"
+    }
+  ]
+}

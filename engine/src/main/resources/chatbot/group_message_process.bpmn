@@ -1,0 +1,408 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_GroupMessage" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.31.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.20.0">
+  <bpmn:process id="group_message_process" name="Group Message Processing" isExecutable="true">
+    <bpmn:startEvent id="Start_GroupMessage" name="Group Message Received" camunda:initiator="camunda_user_id">
+      <bpmn:extensionElements>
+        <camunda:formData businessKey="">
+          <camunda:formField id="form_documentId" label="KB Document ID" type="string" />
+          <camunda:formField id="form_question" label="Message Text" type="string" />
+          <camunda:formField id="form_chatName" label="Chat Type" type="string" defaultValue="group" />
+          <camunda:formField id="config_chatID" label="Chat/Group ID" type="string" />
+          <camunda:formField id="config_threadID" label="Thread ID" type="string" />
+          <camunda:formField id="form_replyMessageType" label="Message Type" type="string" />
+          <camunda:formField id="form_tgMessageInfo" label="Full Message Info (JSON)" type="string" />
+          <camunda:formField id="config_enabledTools" label="Enabled Tools" type="string" />
+          <camunda:formField id="config_knowledgeBases" label="Knowledge Bases" type="string" />
+          <camunda:formField id="config_llmProvider" label="LLM Provider" type="string" />
+          <camunda:formField id="config_modelName" label="Model Name" type="string" />
+        </camunda:formData>
+        <camunda:executionListener class="ai.hhrdr.chainflow.engine.listener.SetStartVariablesListener" event="start" />
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_ToSplit</bpmn:outgoing>
+      <bpmn:messageEventDefinition messageRef="Message_2ootpvj" />
+    </bpmn:startEvent>
+    <bpmn:parallelGateway id="Gateway_Split">
+      <bpmn:incoming>Flow_ToSplit</bpmn:incoming>
+      <bpmn:outgoing>Flow_ToTracking</bpmn:outgoing>
+      <bpmn:outgoing>Flow_ToProcessing</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:sequenceFlow id="Flow_ToSplit" sourceRef="Start_GroupMessage" targetRef="Gateway_Split" />
+    <bpmn:userTask id="human_noreply" name="Track Message from Group" camunda:assignee="${camunda_user_id}">
+      <bpmn:documentation>${execution.hasVariable('form_tgMessageInfo') &amp;&amp; !empty form_tgMessageInfo ? form_tgMessageInfo : form_question}</bpmn:documentation>
+      <bpmn:extensionElements>
+        <camunda:taskListener class="ai.hhrdr.chainflow.engine.listener.TaskCompleteListener" event="create" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_ToTracking</bpmn:incoming>
+      <bpmn:outgoing>Flow_TrackingDone</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_ToTracking" sourceRef="Gateway_Split" targetRef="human_noreply" />
+    <bpmn:exclusiveGateway id="Gateway_CheckEngagement" name="Check Engagement Type" default="Flow_ToParsingCheck">
+      <bpmn:outgoing>Flow_DirectToQuestionDiscovery</bpmn:outgoing>
+      <bpmn:outgoing>Flow_ToParsingCheck</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_ToProcessing" sourceRef="Gateway_Split" targetRef="Event_0lb6sm3" />
+    <bpmn:sequenceFlow id="Flow_DirectToQuestionDiscovery" name="Reply or Mention" sourceRef="Gateway_CheckEngagement" targetRef="Task_QuestionDiscovery">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${form_replyMessageType == 'REPLY' || form_replyMessageType == 'MENTION'}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:scriptTask id="Task_ParseMessage" name="Parse Message for Known Patterns" scriptFormat="JavaScript">
+      <bpmn:incoming>Flow_ToParsingCheck</bpmn:incoming>
+      <bpmn:outgoing>Flow_AfterParsing</bpmn:outgoing>
+      <bpmn:script>// Check for x.com links or dashboard_slug
+var formQuestion = execution.getVariable("form_question");
+var text = (formQuestion == null || formQuestion.trim() === "") ? "" : formQuestion;
+
+// Check for "x.com" links (case-insensitive)
+if (text &amp;&amp; /x\.com/i.test(text)) {
+  execution.setVariable("parsed_match_found", true);
+} 
+// Check for dashboard queries
+else if (text &amp;&amp; /dashboard_slug/i.test(text)) {
+  execution.setVariable("parsed_match_found", true);
+}
+// Default case
+else {
+  execution.setVariable("parsed_match_found", false);
+}</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_ToParsingCheck" sourceRef="Gateway_CheckEngagement" targetRef="Task_ParseMessage" />
+    <bpmn:exclusiveGateway id="Gateway_AfterParsing" default="Flow_ToEngagementCheck">
+      <bpmn:incoming>Flow_AfterParsing</bpmn:incoming>
+      <bpmn:outgoing>Flow_ParsedToQuestionDiscovery</bpmn:outgoing>
+      <bpmn:outgoing>Flow_ToEngagementCheck</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_AfterParsing" sourceRef="Task_ParseMessage" targetRef="Gateway_AfterParsing" />
+    <bpmn:sequenceFlow id="Flow_ParsedToQuestionDiscovery" name="Pattern Matched" sourceRef="Gateway_AfterParsing" targetRef="Task_QuestionDiscovery">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${parsed_match_found == true}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:serviceTask id="Task_AgentEngagement" name="Agent: Should I Engage?" camunda:type="external" camunda:topic="agent_engagement_check">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="message_text">${form_question}</camunda:inputParameter>
+          <camunda:inputParameter name="kb_doc_id">${form_documentId}</camunda:inputParameter>
+          <camunda:inputParameter name="chat_type">group</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_ToEngagementCheck</bpmn:incoming>
+      <bpmn:outgoing>Flow_AfterEngagement</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_ToEngagementCheck" sourceRef="Gateway_AfterParsing" targetRef="Task_AgentEngagement" />
+    <bpmn:exclusiveGateway id="Gateway_AfterEngagement" default="Flow_NoEngage">
+      <bpmn:incoming>Flow_AfterEngagement</bpmn:incoming>
+      <bpmn:outgoing>Flow_EngageToQuestionDiscovery</bpmn:outgoing>
+      <bpmn:outgoing>Flow_NoEngage</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_AfterEngagement" sourceRef="Task_AgentEngagement" targetRef="Gateway_AfterEngagement" />
+    <bpmn:sequenceFlow id="Flow_EngageToQuestionDiscovery" name="Should Engage" sourceRef="Gateway_AfterEngagement" targetRef="Task_QuestionDiscovery">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${should_engage == true}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:serviceTask id="Task_QuestionDiscovery" name="Analyze Intent" camunda:type="external" camunda:topic="question_discovery">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="message_text">${form_question}</camunda:inputParameter>
+          <camunda:inputParameter name="kb_doc_id">${form_documentId}</camunda:inputParameter>
+          <camunda:inputParameter name="chat_type">group</camunda:inputParameter>
+          <camunda:inputParameter name="enabled_tools">${config_enabledTools}</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_DirectToQuestionDiscovery</bpmn:incoming>
+      <bpmn:incoming>Flow_ParsedToQuestionDiscovery</bpmn:incoming>
+      <bpmn:incoming>Flow_EngageToQuestionDiscovery</bpmn:incoming>
+      <bpmn:outgoing>Flow_ToAgentRouter</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_ToAgentRouter" sourceRef="Task_QuestionDiscovery" targetRef="Gateway_AgentRouter" />
+    <bpmn:exclusiveGateway id="Gateway_AgentRouter" name="Route to Agent" default="Flow_ToGeneralAnswer">
+      <bpmn:incoming>Flow_ToAgentRouter</bpmn:incoming>
+      <bpmn:outgoing>Flow_ToTwitterResearch</bpmn:outgoing>
+      <bpmn:outgoing>Flow_ToDashboardAnalysis</bpmn:outgoing>
+      <bpmn:outgoing>Flow_ToGeneralAnswer</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="Task_TwitterResearch" name="Research Twitter Content" camunda:type="external" camunda:topic="twitter_research">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="message_text">${form_question}</camunda:inputParameter>
+          <camunda:inputParameter name="kb_doc_id">${form_documentId}</camunda:inputParameter>
+          <camunda:inputParameter name="chat_type">group</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_ToTwitterResearch</bpmn:incoming>
+      <bpmn:outgoing>Flow_TwitterDone</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_ToTwitterResearch" name="Twitter Research" sourceRef="Gateway_AgentRouter" targetRef="Task_TwitterResearch">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${agent_type == 'twitter_research'}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:serviceTask id="Task_DashboardAnalysis" name="Analyze Dashboard" camunda:type="external" camunda:topic="dashboard_analysis">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="message_text">${form_question}</camunda:inputParameter>
+          <camunda:inputParameter name="kb_doc_id">${form_documentId}</camunda:inputParameter>
+          <camunda:inputParameter name="chat_type">group</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_ToDashboardAnalysis</bpmn:incoming>
+      <bpmn:outgoing>Flow_DashboardDone</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_ToDashboardAnalysis" name="Dashboard Analysis" sourceRef="Gateway_AgentRouter" targetRef="Task_DashboardAnalysis">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${agent_type == 'analyze_dashboard'}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:serviceTask id="Task_GeneralAnswer" name="General Answer (RAG + KB)" camunda:type="external" camunda:topic="general_answer">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="message_text">${form_question}</camunda:inputParameter>
+          <camunda:inputParameter name="kb_doc_id">${form_documentId}</camunda:inputParameter>
+          <camunda:inputParameter name="knowledge_bases">${config_knowledgeBases}</camunda:inputParameter>
+          <camunda:inputParameter name="chat_type">group</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_ToGeneralAnswer</bpmn:incoming>
+      <bpmn:outgoing>Flow_GeneralDone</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_ToGeneralAnswer" name="General Answer" sourceRef="Gateway_AgentRouter" targetRef="Task_GeneralAnswer" />
+    <bpmn:exclusiveGateway id="Gateway_MergeAgents">
+      <bpmn:incoming>Flow_TwitterDone</bpmn:incoming>
+      <bpmn:incoming>Flow_DashboardDone</bpmn:incoming>
+      <bpmn:incoming>Flow_GeneralDone</bpmn:incoming>
+      <bpmn:outgoing>Flow_ToSendResponse</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_TwitterDone" sourceRef="Task_TwitterResearch" targetRef="Gateway_MergeAgents" />
+    <bpmn:sequenceFlow id="Flow_DashboardDone" sourceRef="Task_DashboardAnalysis" targetRef="Gateway_MergeAgents" />
+    <bpmn:sequenceFlow id="Flow_GeneralDone" sourceRef="Task_GeneralAnswer" targetRef="Gateway_MergeAgents" />
+    <bpmn:sendTask id="Task_SendResponse" name="Send Response to Group" camunda:class="ai.hhrdr.chainflow.engine.delegate.ChatbotMessageDelegate">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="chatbotMessage">${agent_response}</camunda:inputParameter>
+          <camunda:inputParameter name="buttonLink">${null}</camunda:inputParameter>
+          <camunda:inputParameter name="buttonText">${null}</camunda:inputParameter>
+          <camunda:inputParameter name="directSend">${true}</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_ToSendResponse</bpmn:incoming>
+      <bpmn:outgoing>Flow_ResponseSent</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:sequenceFlow id="Flow_ToSendResponse" sourceRef="Gateway_MergeAgents" targetRef="Task_SendResponse" />
+    <bpmn:parallelGateway id="Gateway_Converge">
+      <bpmn:incoming>Flow_ResponseSent</bpmn:incoming>
+      <bpmn:outgoing>Flow_ToEnd</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:sequenceFlow id="Flow_TrackingDone" sourceRef="human_noreply" targetRef="Event_0a175z7" />
+    <bpmn:sequenceFlow id="Flow_ResponseSent" sourceRef="Task_SendResponse" targetRef="Gateway_Converge" />
+    <bpmn:endEvent id="End_NoEngage" name="No Engagement Needed">
+      <bpmn:incoming>Flow_NoEngage</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_NoEngage" name="Don&#39;t Engage" sourceRef="Gateway_AfterEngagement" targetRef="End_NoEngage" />
+    <bpmn:endEvent id="End_Complete" name="Processing Complete">
+      <bpmn:incoming>Flow_ToEnd</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_ToEnd" sourceRef="Gateway_Converge" targetRef="End_Complete" />
+    <bpmn:endEvent id="Event_0lb6sm3">
+      <bpmn:incoming>Flow_ToProcessing</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="Event_0a175z7">
+      <bpmn:incoming>Flow_TrackingDone</bpmn:incoming>
+    </bpmn:endEvent>
+  </bpmn:process>
+  <bpmn:message id="Message_GroupMessage" name="GROUP_MSSG" />
+  <bpmn:message id="Message_2ootpvj" name="GROUP_MESSAGE" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_Group">
+    <bpmndi:BPMNPlane id="BPMNPlane_Group" bpmnElement="group_message_process">
+      <bpmndi:BPMNShape id="Shape_Start" bpmnElement="Start_GroupMessage">
+        <dc:Bounds x="152" y="320" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="131" y="363" width="79" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Split" bpmnElement="Gateway_Split">
+        <dc:Bounds x="245" y="313" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Track" bpmnElement="human_noreply">
+        <dc:Bounds x="220" y="160" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_CheckEngagement" bpmnElement="Gateway_CheckEngagement" isMarkerVisible="true">
+        <dc:Bounds x="365" y="313" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="425" y="324" width="90" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_ParseMessage" bpmnElement="Task_ParseMessage">
+        <dc:Bounds x="480" y="400" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_AfterParsing" bpmnElement="Gateway_AfterParsing" isMarkerVisible="true">
+        <dc:Bounds x="645" y="415" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_AfterEngagement" bpmnElement="Gateway_AfterEngagement" isMarkerVisible="true">
+        <dc:Bounds x="925" y="495" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_QuestionDiscovery" bpmnElement="Task_QuestionDiscovery">
+        <dc:Bounds x="740" y="298" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_AgentRouter" bpmnElement="Gateway_AgentRouter" isMarkerVisible="true">
+        <dc:Bounds x="905" y="313" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="894" y="370" width="73" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Twitter" bpmnElement="Task_TwitterResearch">
+        <dc:Bounds x="1020" y="160" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Dashboard" bpmnElement="Task_DashboardAnalysis">
+        <dc:Bounds x="1020" y="298" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_General" bpmnElement="Task_GeneralAnswer">
+        <dc:Bounds x="1020" y="430" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_MergeAgents" bpmnElement="Gateway_MergeAgents" isMarkerVisible="true">
+        <dc:Bounds x="1185" y="313" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_SendResponse" bpmnElement="Task_SendResponse">
+        <dc:Bounds x="1300" y="298" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_NoEngage" bpmnElement="End_NoEngage">
+        <dc:Bounds x="1042" y="582" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1020" y="625" width="80" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_AgentEngagement" bpmnElement="Task_AgentEngagement">
+        <dc:Bounds x="720" y="670" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_End" bpmnElement="End_Complete">
+        <dc:Bounds x="1692" y="182" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1683" y="225" width="55" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Converge" bpmnElement="Gateway_Converge">
+        <dc:Bounds x="1495" y="175" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0lb6sm3_di" bpmnElement="Event_0lb6sm3">
+        <dc:Bounds x="322" y="320" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0a175z7_di" bpmnElement="Event_0a175z7">
+        <dc:Bounds x="412" y="62" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Edge_ToSplit" bpmnElement="Flow_ToSplit">
+        <di:waypoint x="188" y="338" />
+        <di:waypoint x="245" y="338" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_ToTracking" bpmnElement="Flow_ToTracking">
+        <di:waypoint x="270" y="313" />
+        <di:waypoint x="270" y="240" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_ToProcessing" bpmnElement="Flow_ToProcessing">
+        <di:waypoint x="295" y="338" />
+        <di:waypoint x="322" y="338" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_TrackingDone" bpmnElement="Flow_TrackingDone">
+        <di:waypoint x="270" y="160" />
+        <di:waypoint x="270" y="80" />
+        <di:waypoint x="412" y="80" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_DirectToQD" bpmnElement="Flow_DirectToQuestionDiscovery">
+        <di:waypoint x="390" y="313" />
+        <di:waypoint x="390" y="240" />
+        <di:waypoint x="790" y="240" />
+        <di:waypoint x="790" y="298" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="561" y="212" width="84" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_ToParsingCheck" bpmnElement="Flow_ToParsingCheck">
+        <di:waypoint x="390" y="363" />
+        <di:waypoint x="390" y="440" />
+        <di:waypoint x="480" y="440" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_AfterParsing" bpmnElement="Flow_AfterParsing">
+        <di:waypoint x="580" y="440" />
+        <di:waypoint x="645" y="440" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_ParsedToQD" bpmnElement="Flow_ParsedToQuestionDiscovery">
+        <di:waypoint x="670" y="415" />
+        <di:waypoint x="670" y="338" />
+        <di:waypoint x="740" y="338" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="655" y="373" width="81" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_ToEngagementCheck" bpmnElement="Flow_ToEngagementCheck">
+        <di:waypoint x="670" y="465" />
+        <di:waypoint x="670" y="710" />
+        <di:waypoint x="720" y="710" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_AfterEngagement" bpmnElement="Flow_AfterEngagement">
+        <di:waypoint x="820" y="710" />
+        <di:waypoint x="950" y="710" />
+        <di:waypoint x="950" y="545" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_EngageToQD" bpmnElement="Flow_EngageToQuestionDiscovery">
+        <di:waypoint x="925" y="520" />
+        <di:waypoint x="790" y="520" />
+        <di:waypoint x="790" y="378" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="747" y="445" width="76" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_NoEngage" bpmnElement="Flow_NoEngage">
+        <di:waypoint x="975" y="520" />
+        <di:waypoint x="1020" y="520" />
+        <di:waypoint x="1020" y="600" />
+        <di:waypoint x="1042" y="600" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="995" y="570" width="67" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_ToAgentRouter" bpmnElement="Flow_ToAgentRouter">
+        <di:waypoint x="840" y="338" />
+        <di:waypoint x="905" y="338" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_ToTwitter" bpmnElement="Flow_ToTwitterResearch">
+        <di:waypoint x="930" y="313" />
+        <di:waypoint x="930" y="200" />
+        <di:waypoint x="1020" y="200" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="933" y="252" width="83" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_ToDashboard" bpmnElement="Flow_ToDashboardAnalysis">
+        <di:waypoint x="955" y="338" />
+        <di:waypoint x="1020" y="338" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="950" y="310" width="54" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_ToGeneral" bpmnElement="Flow_ToGeneralAnswer">
+        <di:waypoint x="930" y="363" />
+        <di:waypoint x="930" y="470" />
+        <di:waypoint x="1020" y="470" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="931" y="413" width="79" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_TwitterDone" bpmnElement="Flow_TwitterDone">
+        <di:waypoint x="1120" y="200" />
+        <di:waypoint x="1210" y="200" />
+        <di:waypoint x="1210" y="313" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_DashboardDone" bpmnElement="Flow_DashboardDone">
+        <di:waypoint x="1120" y="338" />
+        <di:waypoint x="1185" y="338" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_GeneralDone" bpmnElement="Flow_GeneralDone">
+        <di:waypoint x="1120" y="470" />
+        <di:waypoint x="1210" y="470" />
+        <di:waypoint x="1210" y="363" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_ToSendResponse" bpmnElement="Flow_ToSendResponse">
+        <di:waypoint x="1235" y="338" />
+        <di:waypoint x="1300" y="338" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_ResponseSent" bpmnElement="Flow_ResponseSent">
+        <di:waypoint x="1400" y="338" />
+        <di:waypoint x="1520" y="338" />
+        <di:waypoint x="1520" y="225" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_ToEnd" bpmnElement="Flow_ToEnd">
+        <di:waypoint x="1545" y="200" />
+        <di:waypoint x="1692" y="200" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

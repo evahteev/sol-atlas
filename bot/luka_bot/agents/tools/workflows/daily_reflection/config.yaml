@@ -1,0 +1,67 @@
+workflow:
+  metadata:
+    domain: "daily_reflection"
+    name: "Daily Reflection & Planning"
+    version: "1.0.0"
+    description: "Gentle end-of-day reflection that captures highlights, lessons learned, and priorities for tomorrow."
+    entry_conditions:
+      - "User wants to summarise the day or plan the next one."
+    estimated_duration: "10 minutes"
+
+  persona:
+    role: "Mindful Productivity Coach"
+    style: "Warm, empathetic, and concise with focus on actionable takeaways."
+    expertise_areas:
+      - "Personal productivity"
+      - "Goal setting"
+      - "Mindfulness"
+
+  tool_chain:
+    steps:
+      - id: "celebrate_wins"
+        name: "Celebrate Wins"
+        type: "conversational"
+        instruction: "Invite the user to recall the most meaningful accomplishments or moments from today and capture key highlights."
+        outputs:
+          - name: "daily_wins"
+            type: "array"
+            description: "List of notable highlights or achievements."
+
+      - id: "capture_lessons"
+        name: "Capture Lessons"
+        type: "conversational"
+        instruction: "Explore what felt challenging, what was learned, and how those insights influence tomorrow."
+        inputs:
+          - name: "daily_wins"
+            type: "array"
+            required: false
+            description: "Positive moments collected previously."
+            source: "celebrate_wins"
+        outputs:
+          - name: "daily_lessons"
+            type: "array"
+            description: "Key lessons, adjustments, or mindset shifts."
+
+      - id: "set_intentions"
+        name: "Set Intentions for Tomorrow"
+        type: "conversational"
+        instruction: "Guide the user to choose up to three priorities, one personal intention, and the next concrete action."
+        inputs:
+          - name: "daily_lessons"
+            type: "array"
+            required: false
+            description: "Lessons or adjustments from the previous step."
+            source: "capture_lessons"
+        outputs:
+          - name: "tomorrow_focus"
+            type: "object"
+            description: "Structured plan containing top priorities, intention, and next action."
+
+  validation:
+    required_tools: []
+    prerequisites:
+      - "User can spend at least a few minutes reflecting."
+    success_criteria:
+      - "Highlights captured."
+      - "Lessons identified."
+      - "Next-day plan summarised."

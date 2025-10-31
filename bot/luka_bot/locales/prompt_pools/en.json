@@ -1,0 +1,20 @@
+{
+  "group_prompts": [
+    "What did we discuss in {group_name} today?",
+    "Who was the most active participant in {group_name} this week?",
+    "Give me a quick recap of the top insights from {group_name}.",
+    "Show everything tagged #help inside {group_name} over the last 24 hours.",
+    "Summarize the week in {group_name} with key wins and blockers."
+  ],
+  "generic_prompts": [
+    "Give me a weekly recap for all my communities.",
+    "What should I focus on right now?",
+    "Summarize the latest announcements and decisions.",
+    "What are the biggest blockers mentioned today?",
+    "Show the most active members this week.",
+    "List new questions that still need answers.",
+    "Highlight emerging topics I should know about.",
+    "Share a quick sentiment check across my groups.",
+    "Remind me about my pending follow-ups."
+  ]
+}

@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:color="http://www.omg.org/spec/BPMN/non-normative/color/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_1e9gp8v" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.31.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.20.0">
+  <bpmn:process id="chatbot_group_import_history" name="Import Group History" isExecutable="true">
+    <bpmn:documentation>{
+        "description": "Import Group history",
+        "img_picture": "https://assets-stage.dex.guru/icons/skull.svg",
+        "type": "admin_restart",
+        "reward": 0.0
+}</bpmn:documentation>
+    <bpmn:endEvent id="Event_1xbhwog">
+      <bpmn:incoming>duplicate_in_runtime</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:exclusiveGateway id="Gateway_1cx0ipf" camunda:asyncBefore="true" default="Flow_1dhoqim">
+      <bpmn:incoming>Flow_1tqhxeb</bpmn:incoming>
+      <bpmn:outgoing>Flow_1dhoqim</bpmn:outgoing>
+      <bpmn:outgoing>duplicate_in_runtime</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_1dhoqim" sourceRef="Gateway_1cx0ipf" targetRef="Activity_1mskwvz" />
+    <bpmn:sequenceFlow id="duplicate_in_runtime" name="Exit if duplicate with Business key already exists in Runtime" sourceRef="Gateway_1cx0ipf" targetRef="Event_1xbhwog">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${isDuplicate}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:serviceTask id="Activity_0fwk1pl" name="ProcessInstanceDeduplicationFlagDelegate" camunda:asyncBefore="true" camunda:class="ai.hhrdr.chainflow.engine.delegate.ProcessInstanceDeduplicationFlagDelegate">
+      <bpmn:incoming>Flow_0te82t4</bpmn:incoming>
+      <bpmn:outgoing>Flow_1tqhxeb</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1tqhxeb" sourceRef="Activity_0fwk1pl" targetRef="Gateway_1cx0ipf" />
+    <bpmn:startEvent id="Event_0bayn2k" name="Загрузка данных" camunda:initiator="camunda_user_id">
+      <bpmn:documentation>Импортирую сообщения из группы и получи аналитику</bpmn:documentation>
+      <bpmn:extensionElements>
+        <camunda:executionListener class="ai.hhrdr.chainflow.engine.listener.SetStartVariablesListener" event="start" />
+        <camunda:formData>
+          <camunda:formField id="text_historyImport" label="📊 Загрузка истории сообщества" type="string" defaultValue="Для создания подробной аналитики вашего сообщества нам потребуется экспорт истории чата из Telegram.&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Конфиденциальность:&lt;/b&gt;&lt;br/&gt;Ваши данные останутся полностью конфиденциальными и будут использованы только для генерации персонализированного отчета." />
+          <camunda:formField id="text_exportInstructions" label="📋 Как экспортировать историю чата из Telegram:" type="string" defaultValue="&lt;b&gt;Пошаговая инструкция:&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;1. &lt;b&gt;Откройте&lt;/b&gt; настольное приложение Telegram (Telegram Desktop)&lt;br/&gt;&lt;br/&gt;2. &lt;b&gt;Перейдите&lt;/b&gt; в ваш чат или канал&lt;br/&gt;&lt;br/&gt;3. &lt;b&gt;Нажмите&lt;/b&gt; на три точки (⋯) в правом верхнем углу&lt;br/&gt;&lt;br/&gt;4. &lt;b&gt;Выберите&lt;/b&gt; &#34;Экспорт истории чата&#34; (Export chat history)&lt;br/&gt;&lt;br/&gt;5. &lt;b&gt;Отметьте&lt;/b&gt; &#34;Сообщения&#34; и снимите галочки с медиафайлов&lt;br/&gt;&lt;br/&gt;6. &lt;b&gt;Выберите&lt;/b&gt; временной период (рекомендуется последние 3-6 месяцев)&lt;br/&gt;&lt;br/&gt;7. &lt;b&gt;Выберите&lt;/b&gt; формат &#34;JSON для машинной обработки&#34;&lt;br/&gt;&lt;br/&gt;8. &lt;b&gt;Нажмите&lt;/b&gt; &#34;Экспортировать&#34; и сохраните файл" />
+          <camunda:formField id="text_whatYouGet" label="🎯 Что вы получите в отчете?" type="string" defaultValue="&lt;b&gt;После обработки вы получите:&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;📊 &lt;b&gt;Детальная аналитика активности&lt;/b&gt;&lt;br/&gt;Статистика сообщений, участников и активности&lt;br/&gt;&lt;br/&gt;👥 &lt;b&gt;Анализ поведения участников&lt;/b&gt;&lt;br/&gt;Кто наиболее активен и когда&lt;br/&gt;&lt;br/&gt;🔥 &lt;b&gt;Самые популярные темы&lt;/b&gt;&lt;br/&gt;О чём говорят в вашем сообществе&lt;br/&gt;&lt;br/&gt;⏰ &lt;b&gt;Оптимальное время для постов&lt;/b&gt;&lt;br/&gt;Когда ваша аудитория наиболее активна&lt;br/&gt;&lt;br/&gt;💬 &lt;b&gt;Умный поиск по истории&lt;/b&gt;&lt;br/&gt;Задавайте вопросы боту о содержимом чата&lt;br/&gt;&lt;br/&gt;📈 &lt;b&gt;Рекомендации по росту&lt;/b&gt;&lt;br/&gt;Инсайты для развития сообщества" />
+          <camunda:formField id="s3_chatHistory" label="📂 Файл истории чата (JSON)" type="string" />
+          <camunda:formField id="form_groupName" label="📝 Имя группы (опционально)" type="string" defaultValue="Группа" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_0te82t4</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_0te82t4" sourceRef="Event_0bayn2k" targetRef="Activity_0fwk1pl" />
+    <bpmn:serviceTask id="Activity_1mskwvz" name="Get User Info" camunda:asyncBefore="true" camunda:class="ai.hhrdr.chainflow.engine.delegate.GetUserInfoDelegate">
+      <bpmn:incoming>Flow_1dhoqim</bpmn:incoming>
+      <bpmn:outgoing>Flow_00bcz3a</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_00bcz3a" sourceRef="Activity_1mskwvz" targetRef="Activity_029j5kq" />
+    <bpmn:serviceTask id="Activity_029j5kq" name="File received – analyzing your community now…" camunda:type="external" camunda:topic="telegram_history_rag_import">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="file_url">${s3_chatHistory}</camunda:inputParameter>
+          <camunda:inputParameter name="command">upload_telegram_history</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_00bcz3a</bpmn:incoming>
+      <bpmn:outgoing>Flow_0w0aced</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:userTask id="Activity_0l9ozq4" name="Загрузка Завершена" camunda:assignee="${camunda_user_id}">
+      <bpmn:documentation>Результаты анализа</bpmn:documentation>
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="text_uploadComplete" label="✅ Поздравляем!" type="string" defaultValue="Загрузка истории в базу знаний завершена успешно!" />
+          <camunda:formField id="text_groupInfo" label="📊 Информация о группе" type="string" defaultValue="&lt;b&gt;Название:&lt;/b&gt; ${stats.group_name}&lt;br/&gt;&lt;b&gt;ID:&lt;/b&gt; ${stats.group_id}&lt;br/&gt;&lt;b&gt;Тип:&lt;/b&gt; ${stats.group_type}&lt;br/&gt;&lt;b&gt;Индекс:&lt;/b&gt; ${stats.index_name}" />
+          <camunda:formField id="text_messageStats" label="💬 Статистика сообщений" type="string" defaultValue="&lt;b&gt;Всего в файле:&lt;/b&gt; ${stats.total_messages_in_file}&lt;br/&gt;&lt;b&gt;Загружено:&lt;/b&gt; ${stats.messages_uploaded} ✅&lt;br/&gt;&lt;b&gt;Пропущено:&lt;/b&gt; ${stats.messages_skipped}&lt;br/&gt;&lt;b&gt;Ошибок:&lt;/b&gt; ${stats.messages_failed}" />
+          <camunda:formField id="text_userStats" label="👥 Участники" type="string" defaultValue="&lt;b&gt;Уникальных пользователей:&lt;/b&gt; ${stats.unique_users}&lt;br/&gt;&lt;b&gt;Тем (threads):&lt;/b&gt; ${stats.unique_threads}" />
+          <camunda:formField id="text_dateRange" label="📅 Период сообщений" type="string" defaultValue="&lt;b&gt;Первое сообщение:&lt;/b&gt; ${stats.first_message_date}&lt;br/&gt;&lt;b&gt;Последнее сообщение:&lt;/b&gt; ${stats.last_message_date}" />
+          <camunda:formField id="text_nextSteps" label="🚀 Следующие шаги" type="string" defaultValue="Сообщения успешно загружены в базу знаний. Теперь вы можете:&lt;br/&gt;• Задавать вопросы боту о содержимом чата&lt;br/&gt;• Получать аналитику по темам обсуждений&lt;br/&gt;• Искать информацию из истории сообщений" />
+          <camunda:formField id="text_uploadInfo" label="ℹ️ Информация о загрузке" type="string" defaultValue="&lt;b&gt;Загрузил:&lt;/b&gt; ${stats.uploaded_by_user_id}&lt;br/&gt;&lt;b&gt;Время загрузки:&lt;/b&gt; ${stats.upload_timestamp}&lt;br/&gt;&lt;b&gt;Векторизация:&lt;/b&gt; Будет выполнена автоматически" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0w0aced</bpmn:incoming>
+      <bpmn:outgoing>Flow_0e6m2ci</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="Event_0cv0wbf">
+      <bpmn:incoming>Flow_0e6m2ci</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0e6m2ci" sourceRef="Activity_0l9ozq4" targetRef="Event_0cv0wbf" />
+    <bpmn:sequenceFlow id="Flow_0w0aced" sourceRef="Activity_029j5kq" targetRef="Activity_0l9ozq4" />
+    <bpmn:boundaryEvent id="Event_1kr3rv4" attachedToRef="Activity_029j5kq">
+      <bpmn:outgoing>Flow_1f1hazo</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_1f9fhsf" camunda:errorCodeVariable="error_code" camunda:errorMessageVariable="error_message" />
+    </bpmn:boundaryEvent>
+    <bpmn:userTask id="Activity_1kyv72u" name="Ошибка обработки файла" camunda:assignee="${camunda_user_id}">
+      <bpmn:documentation>Ошибка при обработке файла истории</bpmn:documentation>
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="text_errorTitle" label="❌ Ошибка загрузки" type="string" defaultValue="К сожалению, при обработке файла истории произошла ошибка" />
+          <camunda:formField id="text_errorCode" label="🔴 Код ошибки" type="string" defaultValue="${error_code}" />
+          <camunda:formField id="text_errorMessage" label="📝 Описание" type="string" defaultValue="${error_message}" />
+          <camunda:formField id="text_errorHelp" label="💡 Что делать?" type="string" defaultValue="&lt;b&gt;Возможные причины:&lt;/b&gt;&lt;br/&gt;• Неверный формат файла (нужен JSON экспорт из Telegram)&lt;br/&gt;• Файл поврежден или неполный&lt;br/&gt;• В файле нет сообщений&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Рекомендации:&lt;/b&gt;&lt;br/&gt;1. Проверьте, что экспортировали историю в формате JSON&lt;br/&gt;2. Убедитесь, что файл полностью загружен&lt;br/&gt;3. Попробуйте экспортировать историю заново&lt;br/&gt;4. Свяжитесь с поддержкой, если проблема повторяется" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1f1hazo</bpmn:incoming>
+      <bpmn:outgoing>Flow_1vtr2is</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_1f1hazo" sourceRef="Event_1kr3rv4" targetRef="Activity_1kyv72u" />
+    <bpmn:endEvent id="Event_12eoknv">
+      <bpmn:incoming>Flow_1vtr2is</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1vtr2is" sourceRef="Activity_1kyv72u" targetRef="Event_12eoknv" />
+  </bpmn:process>
+  <bpmn:error id="Error_1slv2me" name="Error_1m0iqcr" errorCode="UPDATE_KB_FAIL" />
+  <bpmn:message id="Message_39l3bj5" name="embed_kb" />
+  <bpmn:message id="Message_3up3j7j" name="MESSAGE_CHATBOT" />
+  <bpmn:signal id="Signal_3qfb79c" name="user_updated" />
+  <bpmn:message id="Message_0lrohl9" name="CHATBOT_PROVISIONED" />
+  <bpmn:message id="Message_1s4c5lk" name="QUEST_FINISH" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="chatbot_group_import_history">
+      <bpmndi:BPMNShape id="Event_1xbhwog_di" bpmnElement="Event_1xbhwog">
+        <dc:Bounds x="562" y="492" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1cx0ipf_di" bpmnElement="Gateway_1cx0ipf" isMarkerVisible="true">
+        <dc:Bounds x="505" y="255" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0y5gixc" bpmnElement="Activity_0fwk1pl">
+        <dc:Bounds x="370" y="240" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1lo01gd" bpmnElement="Event_0bayn2k">
+        <dc:Bounds x="182" y="262" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="159" y="305" width="86" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0nexkt6" bpmnElement="Activity_1mskwvz" color:background-color="" color:border-color="">
+        <dc:Bounds x="610" y="240" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_14fiuv3_di" bpmnElement="Activity_029j5kq">
+        <dc:Bounds x="820" y="240" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0976kxu" bpmnElement="Activity_0l9ozq4">
+        <dc:Bounds x="1060" y="240" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0exvdog" bpmnElement="Activity_1kyv72u">
+        <dc:Bounds x="820" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_12eoknv_di" bpmnElement="Event_12eoknv">
+        <dc:Bounds x="972" y="102" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0cv0wbf_di" bpmnElement="Event_0cv0wbf">
+        <dc:Bounds x="1322" y="262" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1nxaowb_di" bpmnElement="Event_1kr3rv4">
+        <dc:Bounds x="852" y="222" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1dhoqim_di" bpmnElement="Flow_1dhoqim">
+        <di:waypoint x="555" y="280" />
+        <di:waypoint x="610" y="280" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_07nzqai_di" bpmnElement="duplicate_in_runtime">
+        <di:waypoint x="530" y="305" />
+        <di:waypoint x="530" y="510" />
+        <di:waypoint x="562" y="510" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="496" y="437" width="88" height="53" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1tqhxeb_di" bpmnElement="Flow_1tqhxeb">
+        <di:waypoint x="470" y="280" />
+        <di:waypoint x="505" y="280" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0te82t4_di" bpmnElement="Flow_0te82t4">
+        <di:waypoint x="218" y="280" />
+        <di:waypoint x="370" y="280" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_00bcz3a_di" bpmnElement="Flow_00bcz3a">
+        <di:waypoint x="710" y="280" />
+        <di:waypoint x="820" y="280" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0e6m2ci_di" bpmnElement="Flow_0e6m2ci">
+        <di:waypoint x="1160" y="280" />
+        <di:waypoint x="1322" y="280" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0w0aced_di" bpmnElement="Flow_0w0aced">
+        <di:waypoint x="920" y="280" />
+        <di:waypoint x="1060" y="280" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1f1hazo_di" bpmnElement="Flow_1f1hazo">
+        <di:waypoint x="870" y="222" />
+        <di:waypoint x="870" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1vtr2is_di" bpmnElement="Flow_1vtr2is">
+        <di:waypoint x="920" y="120" />
+        <di:waypoint x="972" y="120" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

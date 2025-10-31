@@ -1,0 +1,333 @@
+# Translations template for LukaBot.
+msgid ""
+msgstr ""
+"Project-Id-Version: LukaBot 1.0
+"
+"MIME-Version: 1.0
+"
+"Content-Type: text/plain; charset=utf-8
+"
+"Content-Transfer-Encoding: 8bit
+"
+
+msgid "actions.btn_launch_workflow"
+msgstr ""
+
+msgid "actions.btn_profile"
+msgstr ""
+
+msgid "actions.btn_search_kb"
+msgstr ""
+
+msgid "actions.btn_start_chat"
+msgstr ""
+
+msgid "actions.btn_view_tasks"
+msgstr ""
+
+msgid "actions.header"
+msgstr ""
+
+msgid "actions.intro"
+msgstr ""
+
+msgid "actions.welcome"
+msgstr ""
+
+msgid "chat.threads_count"
+msgstr ""
+
+msgid "chat.threads_instruction"
+msgstr ""
+
+msgid "chat.tip_start"
+msgstr ""
+
+msgid "chat.title"
+msgstr ""
+
+msgid "chat.your_threads"
+msgstr ""
+
+msgid "common.back"
+msgstr ""
+
+msgid "common.cancel"
+msgstr ""
+
+msgid "common.close"
+msgstr ""
+
+msgid "common.confirm"
+msgstr ""
+
+msgid "error.connection_error"
+msgstr ""
+
+msgid "error.generic"
+msgstr ""
+
+msgid "error.invalid_input"
+msgstr ""
+
+msgid "error.loading_error"
+msgstr ""
+
+msgid "error.operation_failed"
+msgstr ""
+
+msgid "error.permission_denied"
+msgstr ""
+
+msgid "error.profile_not_found"
+msgstr ""
+
+msgid "error.save_error"
+msgstr ""
+
+msgid "error.thread_not_found"
+msgstr ""
+
+msgid "error.user_not_found"
+msgstr ""
+
+msgid "keyboard.btn_new_thread"
+msgstr ""
+
+msgid "keyboard.btn_start_new_chat"
+msgstr ""
+
+msgid "notification.language_changed"
+msgstr ""
+
+msgid "notification.model_updated"
+msgstr ""
+
+msgid "notification.prompt_updated"
+msgstr ""
+
+msgid "notification.reset_complete"
+msgstr ""
+
+msgid "notification.settings_updated"
+msgstr ""
+
+msgid "notification.thread_created"
+msgstr ""
+
+msgid "notification.thread_deleted"
+msgstr ""
+
+msgid "notification.thread_renamed"
+msgstr ""
+
+msgid "notification.thread_switched"
+msgstr ""
+
+msgid "onboarding.capabilities_header"
+msgstr ""
+
+msgid "onboarding.capability_kb"
+msgstr ""
+
+msgid "onboarding.capability_tasks"
+msgstr ""
+
+msgid "onboarding.capability_threads"
+msgstr ""
+
+msgid "onboarding.capability_workflows"
+msgstr ""
+
+msgid "onboarding.choose_language"
+msgstr ""
+
+msgid "onboarding.command_chat"
+msgstr ""
+
+msgid "onboarding.command_profile"
+msgstr ""
+
+msgid "onboarding.command_start"
+msgstr ""
+
+msgid "onboarding.command_tasks"
+msgstr ""
+
+msgid "onboarding.commands_header"
+msgstr ""
+
+msgid "onboarding.complete_welcome"
+msgstr ""
+
+msgid "onboarding.language_set"
+msgstr ""
+
+msgid "onboarding.ready_message"
+msgstr ""
+
+msgid "onboarding.tip_start_typing"
+msgstr ""
+
+msgid "onboarding.welcome_intro"
+msgstr ""
+
+msgid "onboarding.welcome_title"
+msgstr ""
+
+msgid "profile.agents"
+msgstr ""
+
+msgid "profile.bot_preferences"
+msgstr ""
+
+msgid "profile.btn_change_language"
+msgstr ""
+
+msgid "profile.btn_preferences"
+msgstr ""
+
+msgid "profile.btn_processes"
+msgstr ""
+
+msgid "profile.coming_soon"
+msgstr ""
+
+msgid "profile.current_language"
+msgstr ""
+
+msgid "profile.joined"
+msgstr ""
+
+msgid "profile.language"
+msgstr ""
+
+msgid "profile.language_changed"
+msgstr ""
+
+msgid "profile.language_now"
+msgstr ""
+
+msgid "profile.language_selection"
+msgstr ""
+
+msgid "profile.name"
+msgstr ""
+
+msgid "profile.onboarding"
+msgstr ""
+
+msgid "profile.onboarding_complete"
+msgstr ""
+
+msgid "profile.onboarding_pending"
+msgstr ""
+
+msgid "profile.running_processes"
+msgstr ""
+
+msgid "profile.select_language"
+msgstr ""
+
+msgid "profile.settings"
+msgstr ""
+
+msgid "profile.statistics"
+msgstr ""
+
+msgid "profile.stats"
+msgstr ""
+
+msgid "profile.title"
+msgstr ""
+
+msgid "profile.ui_updated"
+msgstr ""
+
+msgid "profile.user_id"
+msgstr ""
+
+msgid "profile.user_info"
+msgstr ""
+
+msgid "profile.username"
+msgstr ""
+
+msgid "reset.history_cleared"
+msgstr ""
+
+msgid "reset.intro"
+msgstr ""
+
+msgid "reset.invite"
+msgstr ""
+
+msgid "reset.state_reset"
+msgstr ""
+
+msgid "reset.threads_deleted"
+msgstr ""
+
+msgid "reset.title"
+msgstr ""
+
+msgid "reset.welcome"
+msgstr ""
+
+msgid "tasks.btn_inbox"
+msgstr ""
+
+msgid "tasks.btn_next"
+msgstr ""
+
+msgid "tasks.btn_scheduled"
+msgstr ""
+
+msgid "tasks.btn_someday"
+msgstr ""
+
+msgid "tasks.btn_waiting"
+msgstr ""
+
+msgid "tasks.coming_soon"
+msgstr ""
+
+msgid "tasks.feature_claim"
+msgstr ""
+
+msgid "tasks.feature_llm"
+msgstr ""
+
+msgid "tasks.feature_switch"
+msgstr ""
+
+msgid "tasks.future_header"
+msgstr ""
+
+msgid "tasks.gtd_header"
+msgstr ""
+
+msgid "tasks.inbox"
+msgstr ""
+
+msgid "tasks.menu_closed"
+msgstr ""
+
+msgid "tasks.next"
+msgstr ""
+
+msgid "tasks.scheduled"
+msgstr ""
+
+msgid "tasks.someday"
+msgstr ""
+
+msgid "tasks.title"
+msgstr ""
+
+msgid "tasks.under_development"
+msgstr ""
+
+msgid "tasks.waiting"
+msgstr ""
+

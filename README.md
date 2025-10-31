@@ -1,233 +1,277 @@
-# Guru Framework
+# SOL Atlas
 
-## Table of Contents
-- [Introduction](#introduction)
-- [Guru Framework](#guru-framework)
-   - [Components](#components)
-   - [Project Structure](#project-structure)
-- [Getting Started](#getting-started)
-- [Development Process Example: Arbitrage Bot](#development-process-example-arbitrage-bot)
-- [License](#license)
-- [Contributing](#contributing)
+> **Your Community Is Your Net Worth**
 
+The best crypto projects don't buy users — they build believers. SOL Atlas is a Telegram-native community platform that turns your group chats into thriving, gamified Web3 ecosystems.
 
-## Introduction
+[![Built on GURU Framework](https://img.shields.io/badge/Built%20on-GURU%20Framework-blueviolet)](https://gurunetwork.ai)
+[![Telegram](https://img.shields.io/badge/Telegram-@SolanaAtlas-blue)](https://t.me/SolanaAtlas)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-## What is Guru Framework?
+---
 
-![guru_framework.png](guru_framework.png)
+## 🌟 Why SOL Atlas?
 
-The **Guru Framework** is a next-generation development platform combining AI automation, Web3 integrations, and traditional business workflow orchestration into a unified, low-code experience.
+**The Problem:** Web3 user acquisition costs ~$16,000 per user, and 90% are lost within weeks. Marketing burns millions while communities compound value.
 
-Powered by top-tier open-source technologies—**Redash** (analytics), **Camunda BPMN** (workflow orchestration), **Thirdweb** (blockchain & wallets), **Next.js** (dynamic interfaces), and **Ethereum ETL** (data pipelines)—Guru enables developers to quickly build intelligent, event-driven applications and autonomous agent workflows.
+**The Reality:** Top 3% of Web3 projects succeed because of community, not capital.
 
-### Guru Famework, how it looks?:
+**The Solution:** SOL Atlas arms your groupchats with the tools to turn followers into loyal believers through gamified engagement, AI-powered onboarding, and cross-ecosystem connectivity.
 
-The best way to check and see for yourself: [dex.guru](https://dex.guru/)
+---
 
-What you see in DexGuru is not a custom monolith—it’s a reproducible application powered entirely by the Guru Framework. This means:
-- **You can build your own DexGuru-grade apps** by combining analytics, AI agents, and Web3 logic using the same low-code system.
-- The **data warehouse, agent orchestration, and UI** are all modular and open for you to use.
-- Every builder has access to the same tools, flow engine, and runtime powering DexGuru.
+## ⚡ Quick Start
 
-Explore the demo, imagine the possibilities, and start building.
+Launch your Telegram community in under 5 minutes:
 
-### Key Developer Benefits:
-
-- **Rapid Prototyping:** Quickly assemble powerful workflows with intuitive low-code tools.
-- **Reduced Complexity:** Focus on business logic and innovation, not infrastructure.
-- **Future-Proof & AI-Ready:** Integrates seamlessly with emerging standards like the **Model Context Protocol (MCP)**, preparing your apps for agent-to-agent (A2A) interactions.
-- **Unified Ecosystem:** Guru apps automatically become part of the broader **GURU Network**, benefiting from shared resources, interoperability, and ecosystem growth.
-
-Build smarter, scale faster, and stay ahead with Guru Framework.
-
-## Components
-
-###  Engine
-Located in the `engine` directory, this is the core of the framework, managing the automation and orchestration of blockchain business processes.
-
-### Flow API
-The Flow API in the `flow_api` directory provides endpoints for creating and managing workflows programmatically.
-
-### Telegram Bot Unified Composer
-Integrated into the framework, this tool allows the creation of Telegram bots to control and manage processes.
-
-### Smart Contracts
-Found in the `contracts` directory, these handle secure and efficient decentralized application operations.
-
-### GUI
-The `gui` directory contains the user interface components, offering an intuitive graphical interface for managing processes.
-
-### External Workers
-Defined in the `external_workers` directory, these provide non-custodial execution and compute services.
-
-### Orchestration Workers Contracts
-Located in the `orchestration_workers` directory, these contracts facilitate workflow orchestration.
-
-## Project Structure
-
-
-```
-guru-framework/
-│
-├── contracts/ # Smart contracts for blockchain interactions
-├── engine/ # Core BBPA engine for process automation
-├── external_workers/ # Individual agents for non-custodial execution and compute
-├── flow_api/ # API for managing and integrating workflows
-├── bot/ # Telegram bot unified composer
-├── gui/ # User interface components
-└── README.md # This file
-```
-
-## Getting Started
-
-To begin using the Guru Framework, follow these steps:
-
-### Prerequisites
-Ensure you have Docker and Docker Compose installed.
-
-**Steps:**
-
-1. **Clone the Repository:**
-
-    ```bash
-    git clone https://github.com/dex-guru/guru-framework
-    cd guru-framework
-    ```
-
-2. **Create the `docker-compose.yaml` file:**
-
-    ```yaml
-    version: '3.8'
-
-    services:
-      engine:
-        build:
-          context: ./engine
-        container_name: chainflow-engine
-        environment:
-          INSCRIPTIONS_HISTORY_ENABLED: 'false'
-          RABBITMQ_ENABLED: 'false'
-        ports:
-          - "8080:8080"
-        networks:
-          - chainflow-net
-
-      gui:
-        build:
-          context: ./gui
-        container_name: chainflow-gui
-        ports:
-          - "3000:3000"
-        networks:
-          - chainflow-net
-
-      external-workers:
-        build:
-          context: ./external_workers
-        container_name: chainflow-external-workers
-        environment:
-          - WORKER_SCRIPTS=messaging/telegram_message_worker.py,testnet_arbitrage/get_last_price.py  # Add more worker scripts as needed
-          - CAMUNDA_URL=http://engine:8080/engine-rest
-          - CAMUNDA_USER=demo
-          - CAMUNDA_PASSWORD=demo
-        networks:
-          - chainflow-net
-        volumes:
-          - ./external_workers/envs:/app/envs  # Mount the directory containing environment files
-        depends_on:
-          - engine
-
-    networks:
-      chainflow-net:
-        driver: bridge
-    ```
-
-3. **Run the Docker Compose setup:**
-
-    ```bash
-    docker-compose up -d --build
-    ```
-
-#### Check Services
-
-- **Engine:** Running on [http://localhost:8080](http://localhost:8080) - default user/pass is demo:demo
-- **GUI:** Running on [http://localhost:3000](http://localhost:3000)
-- **Workers:** Check workers running with `docker-compose ps`
 ```bash
-➜  guru-framework git:(main) ✗ docker-compose ps
-           Name                         Command               State           Ports         
---------------------------------------------------------------------------------------------
-chainflow-engine             java -jar chainflow-engine.jar   Up      0.0.0.0:8080->8080/tcp
-chainflow-external-workers   /app/entrypoint.sh               Up                            
-chainflow-gui                ./entrypoint.sh npm start        Up      0.0.0.0:3000->3000/tcp
+# Clone the repository
+git clone https://github.com/dex-guru/sol-atlas
+cd sol-atlas
+
+# Run with Docker Compose
+docker-compose up -d --build
 ```
 
-# Development Process Example: Arbitrage Bot
+**Services:**
+- **Bot Launcher:** [http://localhost:3000](http://localhost:3000)
+- **GURU Engine:** [http://localhost:8080](http://localhost:8080) (demo/demo)
+- **Analytics Portal:** Access through your bot configuration
 
-### Step-by-Step Guide:
+📖 **[Full Getting Started Guide →](docs/GETTING_STARTED.md)**
 
-Create Process in [Camunda Modeler](https://camunda.com/download/modeler/):
+---
 
-Design your process in Camunda Modeler.
-Save the BPMN file to engine/resources directory.
-![image](https://github.com/dex-guru/guru-framework/assets/20139308/6a2b14c8-3d90-403b-8aa0-e27ee7d30db6)
+## 🎯 What You Get
 
+### 🤖 **Telegram Bot Launchpad**
+Create your community hub instantly with pre-built templates:
+- Welcome flows & onboarding sequences
+- Quest systems & achievement tracking
+- Leaderboards & ranking mechanics
+- Wallet integration & token gating
 
-#### Create Non-Custodial External Worker in Python:
+### 🧩 **Low-Code Quest Builder (BPMN)**
+Design custom quests, automations, and KPI-based missions without code:
+- Visual workflow designer powered by Camunda
+- Event-driven automation
+- Custom triggers & actions
+- Integration with Solana on-chain data
 
-**Create Non-Custodial External Worker in Python:**
-1. Create a Python script for the external worker.
-2. Example code from `external_workers/testnet_arbitrage/get_last_price.py`:
+### 🤖 **AI CoPilot Steward**
+Intelligent onboarding guide that helps new members:
+- Scenario-based learning flows
+- Natural language Q&A
+- Community navigation
+- Action recommendations
 
-```python
-from camunda.external_task.external_task import ExternalTask, TaskResult
-from camunda.external_task.external_task_worker import ExternalTaskWorker
-import requests
+### 🏆 **Leaderboards & Cross-Community Chests**
+Connect users across the ecosystem:
+- Real-time ranking systems
+- Cross-project competitions
+- Shared reward pools
+- Network effects amplification
 
-def handle_task(task: ExternalTask) -> TaskResult:
-    # Your task logic here
-    response = requests.get('https://api.example.com/get-price')
-    if response.status_code == 200:
-        price = response.json().get('price')
-        print(f"Retrieved price: {price}")
-        return task.complete({"price": price})
-    else:
-        return task.failure(error_message="Failed to fetch price")
+### 📊 **Analytics & Knowledgebases**
+Track what matters:
+- Engagement rate & retention metrics
+- Sentiment analysis from Crypto Twitter
+- User behavior patterns
+- Community health scores
 
-worker = ExternalTaskWorker(worker_id="worker-id", base_url="http://localhost:8080/engine-rest")
-worker.subscribe("get-last-price", handle_task)
+### 🔗 **SOL Atlas Network**
+Discover, collaborate, and grow alongside other Solana builders:
+- Ecosystem directory
+- Cross-community events
+- Shared infrastructure
+- Collaborative growth
+
+### 🛡️ **Portable Community**
+Your data, your control:
+- Knowledge export/import
+- Wallet-linked accounts migrate with users
+- Protection against TON vendor lock
+- Multi-platform support
+
+---
+
+## 🏛️ Six Pillars of Community Success
+
+SOL Atlas is built around the fundamental principles that make communities thrive:
+
+1. **Connection** — Real conversations, shared purpose, authentic relationships
+2. **Identity** — Roles, badges, and purpose-driven belonging
+3. **Contribution** — Quests and missions that drive meaningful participation
+4. **Recognition** — Rewards, ranks, and public celebration of achievements
+5. **Growth** — Viral referral loops and organic expansion
+6. **Governance** — From followers to stakeholders to DAO participants
+
+📖 **[Learn more about the Six Pillars →](docs/COMMUNITY_PILLARS.md)**
+
+---
+
+## 🛠️ Technical Stack
+
+**Built on the GURU Framework** — battle-tested infrastructure powering 30K+ MAU across multiple ecosystems:
+
+- **Orchestration:** Camunda BPMN for workflow automation
+- **AI/ML:** MindsDB for skilled agents & knowledge bases
+- **Analytics:** Redash for community insights
+- **Blockchain:** Solana Web3.js, Thirdweb for wallet integration
+- **Bot Framework:** Telegram Bot API with custom extensions
+- **Frontend:** Next.js for admin portals and dashboards
+- **Data:** PostgreSQL + Ethereum ETL patterns adapted for Solana
+
+📖 **[Architecture Deep Dive →](docs/ARCHITECTURE.md)**
+
+---
+
+## 📦 Project Structure
+
+```
+sol-atlas/
+│
+├── bot/                    # Telegram bot templates & launchers
+│   ├── luka_bot/          # Core bot implementation
+│   ├── ag_ui_gateway/     # Admin UI gateway
+│   └── flow_client/       # BPMN flow integration
+│
+├── worker/                # External workers for automation
+│   ├── common/            # Shared utilities
+│   ├── wallet/            # Wallet integration workers
+│   └── settings/          # Configuration management
+│
+├── engine/                # GURU Framework orchestration engine
+│   └── src/               # Camunda BPMN engine
+│
+├── docs/                  # Documentation
+│   ├── GETTING_STARTED.md
+│   ├── ARCHITECTURE.md
+│   ├── COMMUNITY_PILLARS.md
+│   ├── FEATURES.md
+│   └── INTEGRATIONS.md
+│
+└── docker-compose.yaml    # One-command deployment
 ```
 
-### Create Postgres Model Code:
+---
 
-1. Define your database models.
-2. Example code for an arbitrage bot model:
-```python
-Copy code
-from sqlalchemy import Column, Integer, String, Float, create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+## 🚀 Use Cases
 
-Base = declarative_base()
+### For Solana Builders
+- **DeFi Projects:** Gamify liquidity provision, staking, and governance participation
+- **NFT Collections:** Build engaged holder communities with quest-based utilities
+- **DAOs:** Automate contribution tracking and reputation systems
+- **Launchpads:** Create hype cycles with points farming and leaderboards
+- **Infrastructure:** Support developer communities with learning paths
 
-class ArbitrageBot(Base):
-    __tablename__ = 'arbitrage_bots'
-    id = Column(Integer, primary key=True, autoincrement=True)
-    name = Column(String)
-    profit = Column(Float)
+### Battle-Tested Examples
 
-engine = create_engine('postgresql://user:password@localhost/dbname')
-Base.metadata.create_all(engine)
-Session = sessionmaker(bind=engine)
-session = Session()
-```
+| Project | Description | Community Size |
+|---------|-------------|----------------|
+| **[Burning Meme](https://burning.meme/)** | Memecoin Launchpad on BASE | 50K+ channel, 1K+ bot |
+| **[DexGuru](https://dex.guru/)** | DeFi Aggregator (12 EVM Chains) | 30K MAU, 5K+ bot |
+| **[UCOIN](https://u-dex.com/)** | Utility DEX with Quests | 47K+ channel, 3K+ bot |
 
-## License
+---
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+## 💰 The Market Opportunity
 
-## Contributing
+**The Retention Goldmine:**
 
-Contributions are highly encouraged! Please consult the CONTRIBUTING.md document for details on our code of conduct, and
-the process for submitting pull requests to the project.
+| Metric | Without Atlas | With Atlas Buddy |
+|--------|---------------|------------------|
+| Avg CAC per user | $16,000 | Same (but retained) |
+| Retention after 30 days | 10% | 50%+ |
+| Effective value retained | $1,600 | $8,000+ per user |
+| **Scaled across 1M users** | **$1.6B** | **$8B+ recovered value** |
+
+**Solana Scale:**
+- ~3.7M daily active users
+- ~120M monthly active addresses
+- Even 1% retention gain = tens of millions in effective CAC savings
+
+> The next trillion-dollar opportunity in Web3 isn't acquisition — it's retention.
+
+---
+
+## 🎓 Documentation
+
+- **[Getting Started Guide](docs/GETTING_STARTED.md)** — Launch your first bot in 5 minutes
+- **[Community Pillars](docs/COMMUNITY_PILLARS.md)** — Understanding the framework
+- **[Features Guide](docs/FEATURES.md)** — Complete feature walkthrough
+- **[Architecture](docs/ARCHITECTURE.md)** — Technical deep dive
+- **[Integration Guide](docs/INTEGRATIONS.md)** — Connect your project
+- **[API Reference](docs/API.md)** — Developer documentation
+
+---
+
+## 🤝 Contributing
+
+We welcome contributions from the community! Whether you're:
+- Building new bot templates
+- Creating quest patterns
+- Improving documentation
+- Fixing bugs
+- Adding integrations
+
+**[Read the Contributing Guide →](CONTRIBUTING.md)**
+
+Join our builders community: [SOL Atlas Telegram](https://t.me/SolanaAtlas)
+
+---
+
+## 👥 Team
+
+**We've been there. Built it. Applied it.**
+
+- **Evgeny Vakhteev** — CEO/CTO, Guru Network founder, ex-Disney Streaming
+- **Alexey Geraskin** — AI & Data Engineering wizard
+- **Rodion Kharabet** — Frontend legend behind DexGuru
+
+**Track Record:**
+- DexGuru: $1B+ yearly volume (2022)
+- GURU Block Explorer: Hackathon winner 2023
+- Crypto Charts in Bloomberg Terminal
+- GURU Framework White Paper & Launch (2024)
+
+---
+
+## 🌐 Ecosystem
+
+SOL Atlas is part of the broader **GURU Network** ecosystem:
+
+- **[GURU Framework](https://gurunetwork.ai)** — The underlying automation engine
+- **[DexGuru](https://dex.guru)** — Battle-tested DeFi analytics
+- **[Atlas Portal](https://atlas.gurunetwork.ai)** — Community dashboard
+
+---
+
+## 📄 License
+
+MIT License - see [LICENSE](LICENSE) file for details.
+
+---
+
+## 🔗 Links
+
+- **Website:** [https://atlas.gurunetwork.ai](https://atlas.gurunetwork.ai)
+- **Telegram:** [@SolanaAtlas](https://t.me/SolanaAtlas)
+- **Twitter:** [@GuruNetwork](https://twitter.com/GuruNetwork)
+- **GitHub:** [dex-guru/sol-atlas](https://github.com/dex-guru/sol-atlas)
+
+---
+
+<div align="center">
+
+### 🏁 Join the Atlas Network
+
+**Be among the top 3% who grow with their community, not against it.**
+
+[Launch Your Bot](https://atlas.gurunetwork.ai) • [Join Community](https://t.me/SolanaAtlas) • [Read Docs](docs/)
+
+---
+
+*From chat to community. From followers to believers. From noise to net worth.*
+
+</div>

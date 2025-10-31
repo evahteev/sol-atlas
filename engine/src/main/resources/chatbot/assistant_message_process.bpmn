@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_AssistantMessage" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.31.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.20.0">
+  <bpmn:process id="assistant_message_process" name="Assistant Message Processing" isExecutable="true">
+    <bpmn:startEvent id="Start_AssistantMessage" name="Assistant Message Received" camunda:initiator="camunda_user_id">
+      <bpmn:extensionElements>
+        <camunda:formData businessKey="">
+          <camunda:formField id="form_documentId" label="KB Document ID" type="string" />
+          <camunda:formField id="form_question" label="Message Text" type="string" />
+          <camunda:formField id="form_chatName" label="Chat Type" type="string" />
+          <camunda:formField id="config_chatID" label="Chat/Group ID" type="string" />
+          <camunda:formField id="config_threadID" label="Thread ID" type="string" />
+          <camunda:formField id="form_replyMessageType" label="Message Type" type="string" />
+          <camunda:formField id="form_tgMessageInfo" label="Full Message Info (JSON)" type="string" />
+          <camunda:formField id="config_enabledTools" label="Enabled Tools" type="string" />
+          <camunda:formField id="config_knowledgeBases" label="Knowledge Bases" type="string" />
+          <camunda:formField id="config_llmProvider" label="LLM Provider" type="string" />
+          <camunda:formField id="config_modelName" label="Model Name" type="string" />
+          <camunda:formField id="agent_type" label="Agent Type" type="string" />
+          <camunda:formField id="execution_time_ms" label="Execution Time (ms)" type="long" />
+        </camunda:formData>
+        <camunda:executionListener class="ai.hhrdr.chainflow.engine.listener.SetStartVariablesListener" event="start" />
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_ToSplit</bpmn:outgoing>
+      <bpmn:messageEventDefinition messageRef="Message_AssistantMessage" />
+    </bpmn:startEvent>
+    <bpmn:parallelGateway id="Gateway_Split">
+      <bpmn:outgoing>Flow_ToQA</bpmn:outgoing>
+      <bpmn:outgoing>Flow_ToBilling</bpmn:outgoing>
+      <bpmn:outgoing>Flow_ToKB</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:sequenceFlow id="Flow_ToSplit" sourceRef="Start_AssistantMessage" targetRef="Event_1xne7ah" />
+    <bpmn:serviceTask id="Task_QualityCheck" name="Quality Assurance Check" camunda:type="external" camunda:topic="assistant_qa">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="message_text">${form_question}</camunda:inputParameter>
+          <camunda:inputParameter name="kb_doc_id">${form_documentId}</camunda:inputParameter>
+          <camunda:inputParameter name="agent_type">${agent_type}</camunda:inputParameter>
+          <camunda:inputParameter name="llm_provider">${config_llmProvider}</camunda:inputParameter>
+          <camunda:inputParameter name="model_name">${config_modelName}</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_ToQA</bpmn:incoming>
+      <bpmn:outgoing>Flow_QADone</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_ToQA" sourceRef="Gateway_Split" targetRef="Task_QualityCheck" />
+    <bpmn:serviceTask id="Task_TrackUsage" name="Track Usage for Billing" camunda:type="external" camunda:topic="usage_tracking">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="kb_doc_id">${form_documentId}</camunda:inputParameter>
+          <camunda:inputParameter name="agent_type">${agent_type}</camunda:inputParameter>
+          <camunda:inputParameter name="execution_time_ms">${execution_time_ms}</camunda:inputParameter>
+          <camunda:inputParameter name="llm_provider">${config_llmProvider}</camunda:inputParameter>
+          <camunda:inputParameter name="model_name">${config_modelName}</camunda:inputParameter>
+          <camunda:inputParameter name="user_id">${camunda_user_id}</camunda:inputParameter>
+          <camunda:inputParameter name="chat_id">${config_chatID}</camunda:inputParameter>
+          <camunda:inputParameter name="thread_id">${config_threadID}</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_ToBilling</bpmn:incoming>
+      <bpmn:outgoing>Flow_BillingDone</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_ToBilling" sourceRef="Gateway_Split" targetRef="Task_TrackUsage" />
+    <bpmn:serviceTask id="Task_EnhanceKB" name="Enhance Knowledge Base Metadata" camunda:type="external" camunda:topic="kb_enhancement">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="message_text">${form_question}</camunda:inputParameter>
+          <camunda:inputParameter name="kb_doc_id">${form_documentId}</camunda:inputParameter>
+          <camunda:inputParameter name="agent_type">${agent_type}</camunda:inputParameter>
+          <camunda:inputParameter name="knowledge_bases">${config_knowledgeBases}</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_ToKB</bpmn:incoming>
+      <bpmn:outgoing>Flow_KBDone</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_ToKB" sourceRef="Gateway_Split" targetRef="Task_EnhanceKB" />
+    <bpmn:parallelGateway id="Gateway_Converge">
+      <bpmn:incoming>Flow_QADone</bpmn:incoming>
+      <bpmn:incoming>Flow_BillingDone</bpmn:incoming>
+      <bpmn:incoming>Flow_KBDone</bpmn:incoming>
+      <bpmn:outgoing>Flow_ToEnd</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:sequenceFlow id="Flow_QADone" sourceRef="Task_QualityCheck" targetRef="Gateway_Converge" />
+    <bpmn:sequenceFlow id="Flow_BillingDone" sourceRef="Task_TrackUsage" targetRef="Gateway_Converge" />
+    <bpmn:sequenceFlow id="Flow_KBDone" sourceRef="Task_EnhanceKB" targetRef="Gateway_Converge" />
+    <bpmn:endEvent id="End_Complete" name="Processing Complete">
+      <bpmn:incoming>Flow_ToEnd</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_ToEnd" sourceRef="Gateway_Converge" targetRef="End_Complete" />
+    <bpmn:endEvent id="Event_1xne7ah">
+      <bpmn:incoming>Flow_ToSplit</bpmn:incoming>
+    </bpmn:endEvent>
+  </bpmn:process>
+  <bpmn:message id="Message_AssistantMessage" name="ASSISTANT_MESSAGE" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_Assistant">
+    <bpmndi:BPMNPlane id="BPMNPlane_Assistant" bpmnElement="assistant_message_process">
+      <bpmndi:BPMNShape id="Shape_Split_Assistant" bpmnElement="Gateway_Split">
+        <dc:Bounds x="335" y="233" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_QualityCheck" bpmnElement="Task_QualityCheck">
+        <dc:Bounds x="470" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_TrackUsage" bpmnElement="Task_TrackUsage">
+        <dc:Bounds x="470" y="218" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_EnhanceKB" bpmnElement="Task_EnhanceKB">
+        <dc:Bounds x="470" y="350" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Converge_Assistant" bpmnElement="Gateway_Converge">
+        <dc:Bounds x="635" y="233" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_End_Assistant" bpmnElement="End_Complete">
+        <dc:Bounds x="752" y="240" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="743" y="283" width="55" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Start_Assistant" bpmnElement="Start_AssistantMessage">
+        <dc:Bounds x="162" y="240" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="157" y="283" width="46" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1xne7ah_di" bpmnElement="Event_1xne7ah">
+        <dc:Bounds x="262" y="240" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Edge_ToSplit_Assistant" bpmnElement="Flow_ToSplit">
+        <di:waypoint x="198" y="258" />
+        <di:waypoint x="262" y="258" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_ToQA" bpmnElement="Flow_ToQA">
+        <di:waypoint x="360" y="233" />
+        <di:waypoint x="360" y="120" />
+        <di:waypoint x="470" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_ToBilling" bpmnElement="Flow_ToBilling">
+        <di:waypoint x="385" y="258" />
+        <di:waypoint x="470" y="258" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_ToKB" bpmnElement="Flow_ToKB">
+        <di:waypoint x="360" y="283" />
+        <di:waypoint x="360" y="390" />
+        <di:waypoint x="470" y="390" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_QADone" bpmnElement="Flow_QADone">
+        <di:waypoint x="570" y="120" />
+        <di:waypoint x="660" y="120" />
+        <di:waypoint x="660" y="233" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_BillingDone" bpmnElement="Flow_BillingDone">
+        <di:waypoint x="570" y="258" />
+        <di:waypoint x="635" y="258" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_KBDone" bpmnElement="Flow_KBDone">
+        <di:waypoint x="570" y="390" />
+        <di:waypoint x="660" y="390" />
+        <di:waypoint x="660" y="283" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_ToEnd_Assistant" bpmnElement="Flow_ToEnd">
+        <di:waypoint x="685" y="258" />
+        <di:waypoint x="752" y="258" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
