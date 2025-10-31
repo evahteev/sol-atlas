@@ -1,0 +1,25 @@
+.container {
+  flex: 1 0 auto;
+  gap: 16px;
+  display: flex;
+  flex-flow: column;
+}
+
+.header {
+}
+
+.body {
+  display: flex;
+  flex-flow: column;
+  gap: 40px;
+  width: clamp(320px, 100%, 960px);
+  margin: 0 auto;
+}
+
+.cta {
+  padding-block-end: 24px;
+
+  &.last {
+    border-color: var(--color-positive);
+  }
+}

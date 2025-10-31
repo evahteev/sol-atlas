@@ -1,0 +1,29 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  transition: 0.25s ease;
+  border-radius: var(--radii);
+}
+
+.message,
+.task {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+
+  &:not(:last-child) {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+}
+
+.toggle {
+  margin: -12px auto 0;
+  transition: 0.25s ease;
+
+  &.expanded {
+    margin: 8px auto;
+    position: sticky;
+    bottom: 0;
+  }
+}

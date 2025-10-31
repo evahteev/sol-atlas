@@ -1,0 +1,117 @@
+.container {
+  width: 56px;
+  margin: auto;
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+  gap: 16px;
+
+  &:has(.message) {
+    transform: translateY(calc((1lh + 16px) / 2));
+  }
+}
+
+.indicator {
+  aspect-ratio: 1;
+  width: 100%;
+  position: relative;
+}
+
+.segment::before,
+.segment::after {
+  content: '';
+  left: 0;
+  top: 0;
+  border: 0;
+  margin: 0;
+  width: 40%;
+  height: 40%;
+  position: absolute;
+  border-radius: 50%;
+  animation: blink 2s ease infinite;
+
+  .active & {
+    animation-name: spin;
+  }
+}
+
+.segment {
+  &.first {
+    &::before {
+      background: var(--color-primary);
+      animation-delay: -1.5s;
+    }
+    &::after {
+      background: var(--color-negative);
+      animation-delay: -1s;
+    }
+  }
+
+  &.last {
+    &::before {
+      background: var(--color-secondary);
+      animation-delay: -0.5s;
+    }
+    &::after {
+      background: var(--color-positive);
+    }
+  }
+}
+
+.pending {
+  .segment {
+    &.first {
+      &::before {
+        transform: translate(0);
+      }
+      &::after {
+        transform: translate(150%);
+      }
+    }
+
+    &.last {
+      &::before {
+        transform: translate(150%, 150%);
+      }
+      &::after {
+        transform: translate(0, 150%);
+      }
+    }
+  }
+}
+
+.message {
+  text-align: center;
+  width: max-content;
+  max-width: min(90cqw, 75vw);
+  color: var(--color-text-comment);
+  height: 1lh;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@keyframes spin {
+  0%,
+  100% {
+    transform: translate(0);
+  }
+  25% {
+    transform: translate(150%);
+  }
+  50% {
+    transform: translate(150%, 150%);
+  }
+  75% {
+    transform: translate(0, 150%);
+  }
+}
+
+@keyframes blink {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0.5;
+  }
+}

@@ -1,0 +1,285 @@
+{
+  "ProfileBar": {
+    "joinUs": "Join Us",
+    "telegram": "Telegram",
+    "discord": "Discord",
+    "youtube": "YouTube",
+    "twitter": "X/Twitter"
+  },
+  "Navigation": {
+    "aiFeed": "AI Feed",
+    "actions": "Actions",
+    "aiHub": "AI Hub",
+    "about": "About",
+    "leaderboard": "Leaderboard",
+    "logoAlt": "Application Logo"
+  },
+  "Auth": {
+    "signIn": "Sign In",
+    "welcome": "Welcome to {appName}",
+    "description": "Sign In to stake and unlock your full Guru experience: AI agents, activities & rewards"
+  },
+  "UI": {
+    "copiedToClipboard": "Copied to Clipboard!",
+    "copyFailed": "Text copy failed!"
+  },
+  "Metadata": {
+    "defaultTitle": "{appName} App – AI-Powered Blockchain Automations and Rewards",
+    "defaultDescription": "Join the {appName} on Telegram: Experience AI-powered blockchain automations, create decentralized applications, and earn rewards by participating in the network!",
+    "siteTitle": "{appName} - AI-Powered DeFi Platform",
+    "siteDescription": "Discover the future of DeFi with AI agents, staking rewards, and advanced trading tools on {appName}.",
+    "keywords": "DeFi, AI agents, blockchain, staking, trading, cryptocurrency, Web3, rewards, automation",
+    "pages": {
+      "aifeed": {
+        "title": "AI Feed - {appName}",
+        "description": "Stay updated with AI-powered insights and community activities. Join the AI revolution in DeFi."
+      },
+      "tasks": {
+        "title": "Actions & Tasks - {appName}",
+        "description": "Complete tasks, earn rewards, and participate in the {appName} ecosystem. Start your DeFi journey today."
+      },
+      "staking": {
+        "title": "Stake & Earn - {appName}",
+        "description": "Stake your tokens and earn rewards. Choose from multiple staking options with competitive APY rates."
+      },
+      "tokens": {
+        "title": "Token Explorer - {appName}",
+        "description": "Discover trending tokens, analyze market data, and find the best trading opportunities in DeFi."
+      },
+      "swap": {
+        "title": "Token Swap - {appName}",
+        "description": "Swap tokens seamlessly across multiple chains with the best rates and lowest fees."
+      }
+    }
+  },
+  "AIFeed": {
+    "title": "{appName} Application and Community",
+    "description": "{appName} — community and personal space for subscribers: news, statistics, support and services in one place.",
+    "appLink": "{appName}:",
+    "botLink": "{appName} Bot:",
+    "supportLink": "Subscriber Support:",
+    "telegramChat": "Community Chat on Telegram:",
+    "telegramChannel": "{appName} Channel on Telegram:",
+    "twitter": "{appName} X (Twitter):",
+    "support": {
+      "title": "Support",
+      "buttonText": "Open Chat",
+      "description1": "All support requests from subscribers will be sent to this Telegram group.",
+      "description2": "Our support team is also in this group and will help with complex cases."
+    },
+    "dashboard": {
+      "totalUsers": "Total Users",
+      "actions": "Actions",
+      "actionsUnit": "24H",
+      "actionsPrevious": "% vs previous 24h",
+      "dailyActiveUsers": "Daily Active Users",
+      "dau": "DAU",
+      "caps": "CAPS",
+      "usersDynamics": "Total Users Dynamics",
+      "actionsDynamics": "Total Actions Dynamics",
+      "capsDynamics": "Activity Bonuses (CAPS)"
+    },
+    "feed": {
+      "title": "AI Feed",
+      "aiAgent": "AI Agent",
+      "timeAgo": " ago"
+    },
+    "profile": {
+      "title": "Your Profile",
+      "adminPanel": "Admin Panel"
+    }
+  },
+  "AIChat": {
+    "aiAssistant": {
+      "taskCancelled": "AI Assistant: Task \"{taskName}\" has been cancelled. You're back to the main menu.",
+      "taskStartHelp": "AI Assistant: I'll help you complete \"{taskName}\". Let's start with the required information. You can click \"Back to Menu\" anytime to cancel.",
+      "fieldPrompt": "AI Assistant: Please provide {fieldKey}",
+      "taskCompleted": "AI Assistant: Task \"{taskName}\" completed successfully! 🎉",
+      "taskError": "AI Assistant: Sorry, there was an error completing \"{taskName}\". Please try again."
+    },
+    "ui": {
+      "backToMenu": "← Back to Menu",
+      "currentlyCompleting": "Currently completing:",
+      "userTask": "User Task",
+      "enterValue": "(enter value)"
+    },
+    "toasts": {
+      "taskStarting": "Starting AI-guided completion for \"{taskName}\"",
+      "taskCompletedSuccess": "Task \"{taskName}\" completed successfully",
+      "taskCompletedError": "Failed to complete task \"{taskName}\". Please try again.",
+      "taskCancelled": "Task completion cancelled",
+      "taskStartError": "Error starting task \"{taskName}\""
+    }
+  },
+  "Tasks": {
+    "title": "Actions",
+    "onboarding": "Onboarding",
+    "emptyState": "It's empty here for now. New tasks are already on their way – keep checking back!",
+    "quest": {
+      "start": "Start",
+      "restart": "Restart",
+      "stop": "stop",
+      "soon": "Soon",
+      "ended": "Ended",
+      "startingIn": "Starting in ",
+      "endedAgo": "Ended ",
+      "endedAgoSuffix": " ago",
+      "readMore": "Read more details",
+      "errorStarting": "Error starting quest",
+      "errorRestarting": "Error restarting quest"
+    },
+    "chest": {
+      "weeklyChest": "Weekly {currency} Chest",
+      "earnRewards": "Earn Rewards",
+      "description": "Complete tasks, claim rewards, repeat tomorrow. Act fast before the pool runs out!"
+    }
+  },
+  "Staking": {
+    "title": "Stake And Earn",
+    "description": "Guru Application Wizard - Get Rewarded",
+    "tiersTitle": "Tiers for Staking",
+    "tierLabels": {
+      "basic": "Basic",
+      "silver": "Silver",
+      "gold": "Gold",
+      "diamond": "Diamond"
+    },
+    "tableHeaders": {
+      "tier": "Tier",
+      "guru": "GURU",
+      "guruTooltip": "Required Staked GURU Amount for Tier"
+    },
+    "support": {
+      "title": "Need Assistance?",
+      "buttonText": "Get Help Now",
+      "description": "Encountering an issue or have a question? Our support team is here to help you. Reach out and we'll get you back on track."
+    },
+    "personalStats": {
+      "airdropReceived": "Received GURU from Airdrop",
+      "guruStaked": "Your GURU staked",
+      "aiguruToClaim": "Your AIGURU to claim"
+    },
+    "chests": {
+      "stake": "Stake",
+      "claimRewards": "Claim Rewards",
+      "lootChest": "Loot Chest",
+      "referralChest": "Referral Chest",
+      "earlyAdopters": "Early Adopters",
+      "iCanWaitDrop": "I-Can-Wait Drop",
+      "waitSomeDrop": "Wait-Some Drop",
+      "rapidDrop": "Rapid Drop",
+      "nftHoldersOnly": "🚀 Only for Guru NFT holders",
+      "properties": {
+        "minimumStake": "Minimum stake",
+        "rewards": "Rewards",
+        "participation": "Participation",
+        "lockPeriod": "Lock & Cool-off Period",
+        "aiguruEarning": "AIGURU Earning",
+        "referralBonus": "Referral Bonus",
+        "days30": "30 days",
+        "days180": "6 months",
+        "days365": "12 months",
+        "governanceAccess": "Governance & quests access",
+        "ecosystemRewards": "$AIGURU from ecosystem apps",
+        "aiguruPerGuru": "1 $AIGURU per 1 $GURU staked",
+        "referralEarning": "Earn an additional 1% from the activity of all users you refer.",
+        "lootRewards": "$AIGURU from ecosystem apps + 1 $AIGURU per 1 $GURU staked",
+        "canWaitRewards": "Earn from a 25M $GURU + 1.25 $AIGURU per 1 $GURU staked",
+        "waitSomeRewards": "Earn from a 10M $GURU + 1.10 $AIGURU per 1 $GURU staked",
+        "rapidRewards": "Earn from a 5M $GURU + 1 $AIGURU per 1 $GURU staked"
+      }
+    },
+    "stakeData": {
+      "stakeAmount": "Stake Amount:",
+      "pendingRewards": "Pending Rewards:",
+      "withdrawIn": "Withdraw In:",
+      "withdrawCoolOff": "Withdraw Cool Off Ends in:",
+      "guruAirdrop": "Guru Airdrop:",
+      "days": {
+        "one": "day",
+        "other": "days"
+      }
+    }
+  },
+  "Tokens": {
+    "title": "Tokens Explorer",
+    "tabs": {
+      "categories": "Categories",
+      "topVolume": "Top Volume",
+      "trending": "Trending",
+      "degenMode": "Degen mode",
+      "gainers": "Gainers",
+      "losers": "Losers"
+    },
+    "search": {
+      "placeholder": "Search Tokens Or Tags",
+      "tags": "Tags",
+      "tokens": "Tokens",
+      "noTagsFound": "No appropriate tags found",
+      "noTokensFound": "No appropriate tokens found"
+    },
+    "columns": {
+      "asset": "Asset",
+      "token": "Token",
+      "price": "Price",
+      "volume24h": "Volume, 24h",
+      "liquidity": "Liquidity",
+      "change24h": "24h",
+      "change7d": "7d",
+      "change30d": "30d",
+      "changeYTD": "YTD",
+      "last7Days": "Last 7 days",
+      "allTimeHigh": "All-Time High Price",
+      "tradingVolume24h": "Trading Volume, 24h",
+      "fullyDilutedValuation": "Fully Diluted Valuation",
+      "maxSupply": "Max Supply",
+      "liquidity24h": "Liquidity, 24h",
+      "liquidityVolumeRatio": "Liquidity/Volume24h",
+      "transactions24h": "Transactions, 24h",
+      "holders": "Holders"
+    },
+    "filters": {
+      "anyNetwork": "Any network"
+    },
+    "descriptions": {
+      "trending": "Trending tokens in the past 24 hours based on activity & volume from Whales (Traders with >$500k of a trading volume over the last 30 day)",
+      "gainers": "Best performing tokens in the past 24 hours by % gain with transaction volume >$50,000"
+    },
+    "stats": {
+      "fdvByNetwork": "FDV by Network"
+    },
+    "fallbacks": {
+      "unknown": "UNKNOWN",
+      "unknownShort": "UNKN",
+      "unknownToken": "Unknown",
+      "others": "Others"
+    },
+    "errors": {
+      "noTokenTagFound": "No token tag found!"
+    }
+  },
+  "Swap": {
+    "loading": {
+      "warmingUp": "Warming up…",
+      "startingSwap": "Starting swap…",
+      "oneMoment": "One moment…"
+    },
+    "errors": {
+      "notAvailable": "Swap is not available at the moment."
+    },
+    "tips": {
+      "prefix": "Tip: ",
+      "paraswap": "Works best with TrustWallet or Metamask.",
+      "kyberswap": "Works best with TrustWallet or Metamask.",
+      "debridge": "Works best with Phantom wallet on Solana, TrustWallet or Metamask on EVM.",
+      "guruswap": "Currently works only in web version",
+      "jupiter": "Currently works only in web version."
+    }
+  },
+  "AgentsIntro": {
+    "title": "Unlock Market Insights with {aiName}",
+    "supportService": "Trade Smarter, Not Harder: {aiName}'s intelligent agents crunch real-time market data, track social sentiment, and execute trades automatically—giving you a hands-free edge. Start your AI-powered trading journey today!",
+    "personalAssistant": "Stay Ahead of the Curve: With real-time on-chain and social sentiment analysis, {aiName} monitors whale moves and market trends to uncover winning opportunities. Don't miss your next big trade—sign up now!",
+    "generativeAi": "Automate Your Success: From portfolio rebalancing to liquidity strategies, {aiName} optimizes every decision using live data and predictive modeling. Let AI take the wheel—get started today!"
+  }
+}

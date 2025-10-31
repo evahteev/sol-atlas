@@ -1,0 +1,22 @@
+.container {
+  background: inherit;
+  display: flex;
+  flex-flow: column;
+  gap: 8px;
+  margin: 0 calc(-1 * var(--page-padding));
+}
+
+.header,
+.body {
+  padding: 0 var(--page-padding);
+  background: inherit;
+}
+
+.header {
+  padding-block-end: 8px;
+  border-bottom: 1px var(--color-dark-30) solid;
+}
+
+.title {
+  color: var(--color-text-comment);
+}

@@ -1,0 +1,13 @@
+.container {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.body {
+  flex: 1 0 0;
+}
+
+.action {
+  flex: 0 0 auto;
+}

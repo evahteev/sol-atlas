@@ -1,0 +1,59 @@
+.container {
+  composes: radii from '@/styles/_common.scss';
+}
+
+:where(.container) {
+  color: var(--_color, var(--color-text-comment));
+  background: color-mix(in srgb, var(--_color, transparent) 16%, transparent);
+  padding: 16px;
+  border: 1px var(--color-dark-30) solid;
+  border-radius: var(--radii);
+  width: max-content;
+  max-width: 100%;
+  display: flex;
+  flex-flow: column;
+  overflow-wrap: break-word;
+  gap: 4px;
+  font: var(--font-md);
+}
+
+.info {
+  border-color: transparent;
+  --_color: var(--color-info);
+}
+
+.danger {
+  border-color: transparent;
+  --_color: var(--color-danger);
+}
+
+.success {
+  border-color: transparent;
+  --_color: var(--color-success);
+}
+
+.warn {
+  border-color: transparent;
+  --_color: var(--color-warning);
+}
+
+.prompt {
+  border-color: transparent;
+  --_color: var(--color-info);
+}
+
+:where(.body) {
+  font-size: 14px;
+  line-height: 20px;
+
+  [href] {
+    text-decoration: underline;
+  }
+}
+
+.footer {
+  margin-block-start: 16px;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: flex-end;
+}

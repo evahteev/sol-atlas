@@ -1,0 +1,29 @@
+@layer default {
+  .xxl {
+    --size: 64px;
+  }
+
+  .xl {
+    --size: 56px;
+  }
+
+  .lg {
+    --size: 48px;
+  }
+
+  .md {
+    --size: 40px;
+  }
+
+  .sm {
+    --size: 36px;
+  }
+
+  .xs {
+    --size: 32px;
+  }
+
+  .xxs {
+    --size: 24px;
+  }
+}

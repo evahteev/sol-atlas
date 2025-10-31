@@ -1,0 +1,31 @@
+.container {
+  align-items: center;
+}
+
+.icon {
+  width: 20px;
+  height: 20px;
+  color: var(--color-text-comment);
+  align-self: start;
+}
+
+.value {
+  color: var(--color-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.content {
+  display: grid;
+  align-items: center;
+  grid-template-columns: 1fr 20px;
+  gap: 8px;
+  justify-self: end;
+}
+
+.copy {
+  --size: 20px;
+  padding: 0;
+  margin: 1px 0;
+}

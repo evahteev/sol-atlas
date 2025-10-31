@@ -1,0 +1,60 @@
+.container {
+  display: flex;
+  flex-flow: column;
+  gap: 56px;
+  align-items: center;
+}
+
+.illustration {
+  width: 184px;
+  height: 184px;
+  border-radius: 50%;
+  background: var(--color-dark-100);
+  position: relative;
+}
+
+.image {
+  position: absolute;
+  left: 50%;
+  height: 50%;
+  width: 218px;
+  height: 190px;
+  object-fit: contain;
+  margin: 0 0 0 -109px;
+  animation: float 4s ease-in-out alternate infinite;
+
+  @keyframes float {
+    from {
+      transform: translateY(16px);
+    }
+
+    to {
+      transform: translateY(-16px);
+    }
+  }
+}
+
+.title {
+  text-align: center;
+}
+
+.welcome {
+  display: block;
+  color: var(--color-positive);
+  color: #22d49f;
+}
+
+.greeting {
+  color: #9488f0;
+}
+
+.header {
+  display: flex;
+  flex-flow: column;
+  gap: 16px;
+}
+
+.subtitle {
+  text-align: center;
+  color: var(--color-text-comment);
+}

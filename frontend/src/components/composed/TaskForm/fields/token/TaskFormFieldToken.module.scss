@@ -1,0 +1,17 @@
+.header {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.tools {
+  margin-inline-start: auto;
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.selector {
+  margin: -8px -16px;
+  padding: 0 16px;
+}

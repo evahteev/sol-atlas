@@ -1,0 +1,176 @@
+.container {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 8px 16px;
+  height: 56px;
+  justify-content: flex-end;
+  --radius: 8px;
+}
+
+.toggle {
+  flex: 0 0 auto;
+  width: 32px;
+  height: 32px;
+}
+
+.avatar {
+  display: block;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+}
+
+.balances {
+  display: flex;
+  flex-flow: column;
+  text-align: end;
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 700;
+
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-auto-flow: row;
+  gap: 0 0.25em;
+
+  @media (max-width: 640px) {
+    margin-inline-start: auto;
+  }
+
+  & > a {
+    display: grid;
+    grid-column: span 2;
+    grid-template-columns: subgrid;
+  }
+}
+
+.balance {
+  color: var(--color-success);
+  padding: 2px;
+  display: grid;
+  grid-column: span 2;
+  grid-template-columns: subgrid;
+
+  & > span {
+    display: grid;
+    grid-column: span 2;
+    grid-template-columns: subgrid;
+
+    & > span {
+      text-align: start;
+    }
+  }
+}
+
+.connect {
+  margin-inline-start: auto;
+}
+
+.login {
+  margin: 0 auto;
+}
+
+.profile {
+  flex: 1 0 auto;
+  margin: 0 -16px;
+  padding: 0 16px;
+}
+
+.group {
+  justify-self: start;
+  display: flex;
+  align-items: center;
+
+  &.desktop {
+    gap: 8px;
+
+    @media (max-width: 640px) {
+      display: none;
+    }
+  }
+
+  &.mobile {
+    & > :not(:first-child) {
+      border-start-start-radius: 0;
+      border-end-start-radius: 0;
+    }
+    & > :not(:last-child) {
+      border-start-end-radius: 0;
+      border-end-end-radius: 0;
+      margin-inline-end: -1px;
+    }
+
+    @media (min-width: 640.1px) {
+      display: none;
+    }
+  }
+}
+
+.link {
+  border-radius: calc(var(--radii-root) * 0.5);
+}
+
+.personal {
+  margin-inline-start: auto;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.socials {
+  margin: -16px;
+}
+
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.social {
+  display: flex;
+  padding: 8px 16px;
+  gap: 16px;
+  align-items: center;
+  color: var(--color-text-comment);
+  font-size: 14px;
+  line-height: 22px;
+
+  &:hover,
+  &:focus-visible {
+    background: var(--color-dark-100);
+  }
+
+  .icon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .indicator {
+    width: 20px;
+    height: 20px;
+    margin-inline-start: auto;
+  }
+
+  .caption {
+    display: flex;
+    align-items: center;
+    color: var(--color-light);
+    gap: 0.25em;
+  }
+}
+
+.iconBuy {
+  color: #faa61a;
+}
+
+.loader {
+  width: 32px;
+  height: 32px;
+  margin: 0;
+}
+
+.language {
+  flex: 0 0 auto;
+}

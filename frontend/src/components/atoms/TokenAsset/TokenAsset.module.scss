@@ -1,0 +1,168 @@
+.container {
+  display: inline-grid;
+  width: max-content;
+  max-width: 100%;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 8px;
+  align-items: center;
+  --_color: var(--network-color, rgb(104, 104, 104));
+  color: var(--color-text-main);
+
+  animation: reveal 0.25s ease forwards;
+
+  @keyframes reveal {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
+  }
+}
+
+.avatar {
+  display: flex;
+  align-items: center;
+}
+
+.icon {
+  width: var(--_icon);
+  height: var(--_icon);
+  border: 2px var(--_color) solid;
+  border-radius: 50%;
+  padding: 2px;
+  display: flex;
+
+  &:not(:last-child) {
+    margin-right: -12px;
+  }
+
+  &::after {
+    content: '';
+    flex: 0 0 auto;
+    align-self: flex-end;
+    width: 8px;
+    height: 8px;
+    margin: 0 0 -2px;
+    background: var(--_color);
+    border-radius: 50%;
+    position: relative;
+  }
+}
+
+.image {
+  border-radius: 50%;
+}
+
+.lg {
+  --_icon: 40px;
+
+  .icon {
+    &::after {
+      margin-left: -6px;
+    }
+  }
+
+  .image {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+.md {
+  --_icon: 32px;
+
+  .icon {
+    &::after {
+      margin-left: -4px;
+    }
+  }
+
+  .image {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+.sm {
+  --_icon: 24px;
+
+  .icon {
+    border-width: 1px;
+    padding: 1px;
+
+    &::after {
+      margin-left: -6px;
+    }
+  }
+
+  .image {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+img.image {
+  opacity: 1;
+  transition: 0.25s ease;
+
+  mask: radial-gradient(6px at 30px 30px, #0000 98%, #000);
+
+  &.loading {
+    opacity: 0;
+  }
+}
+
+.body {
+  flex: 1 1 auto;
+  display: flex;
+  flex-flow: column;
+}
+
+.caption {
+  width: max-content;
+  max-width: 100%;
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: 4px;
+}
+
+.price {
+  font-size: 12px;
+  line-height: 18px;
+  font-weight: 400;
+  display: flex;
+  gap: 6px;
+}
+
+.value {
+  color: var(--color-text-comment);
+}
+
+.symbol {
+  display: flex;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.verified {
+  align-self: flex-start;
+  width: 12px;
+  height: 12px;
+}
+
+.network {
+  color: var(--_color);
+}
+
+.lp {
+  color: var(--color-info);
+}
+
+.amm {
+  flex: 0 0 auto;
+  width: 32px;
+  height: 32px;
+}

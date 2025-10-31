@@ -1,0 +1,8 @@
+.container {
+  composes: radii from '@/styles/_common.scss';
+
+  padding: 15px;
+  border-radius: var(--radii);
+  background: var(--color-dark-70);
+  border: 1px var(--color-dark-70) solid;
+}

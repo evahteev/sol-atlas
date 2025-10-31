@@ -1,0 +1,37 @@
+.container {
+  display: flex;
+  flex-flow: column;
+  gap: 24px;
+  margin: auto;
+  width: clamp(316px, 100%, 392px);
+  padding: 24px;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  text-align: center;
+  margin-top: 20px;
+}
+
+.logo {
+  width: 96px;
+  height: 96px;
+}
+
+.body {
+  display: flex;
+  justify-content: center;
+
+  & > div {
+    width: 100% !important;
+    background: none !important;
+    border: 0 !important;
+
+    & > div > div > div > div {
+      padding: 0 !important;
+    }
+  }
+}

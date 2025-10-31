@@ -1,0 +1,182 @@
+.container {
+  display: flex;
+  flex-flow: column;
+  gap: 24px;
+  background: inherit;
+}
+
+.header {
+  display: flex;
+  flex-flow: column;
+  gap: 16px;
+}
+
+.title {
+  font-size: 20px;
+  line-height: 32px;
+  font-weight: 400;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.back {
+  border-radius: 50%;
+}
+
+.account {
+  width: 100%;
+  margin-block-start: 20px;
+}
+
+.wallet {
+  display: flex;
+  flex-flow: column;
+  gap: 16px;
+  align-items: center;
+
+  &Value {
+    font-size: 20px;
+    line-height: 1.6;
+  }
+}
+
+.avatar {
+  margin-block-end: -8px;
+
+  &Image {
+    width: 96px;
+    height: 96px;
+    border: 2px var(--color-light) solid;
+    border-radius: 50%;
+    padding: 8px;
+    display: block;
+  }
+}
+
+.address {
+}
+
+.actions {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+
+  @media (max-width: 640px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.action {
+  flex: 1 0 0;
+  width: 100%;
+}
+
+.address {
+  color: var(--color-primary);
+  display: flex;
+  gap: 2px;
+}
+
+.tools {
+  display: flex;
+  gap: 8px;
+  flex-direction: row-reverse;
+  align-self: flex-start;
+  margin-block-end: -16px;
+}
+
+.tool {
+  &.settings {
+    background: var(--color-dark-90);
+    border-radius: 50%;
+    color: var(--color-text-comment);
+
+    &:hover,
+    &:focus-visible {
+      color: var(--color-light);
+    }
+  }
+}
+
+.body {
+  flex: 1 0 auto;
+  display: flex;
+  flex-flow: column;
+  position: relative;
+  background: inherit;
+}
+
+.content {
+  flex: 1 0 auto;
+  display: flex;
+  flex-flow: column;
+  width: calc(100% + 32px);
+  overflow: auto;
+  background: inherit;
+  margin: -8px -16px 0;
+  padding: 8px 16px 0;
+
+  &.loading {
+    &::before {
+      content: '';
+      position: absolute;
+      top: -8px;
+      left: 0;
+      right: 0;
+      height: 1px;
+      animation: pending 1.5s linear infinite;
+      background: linear-gradient(
+          to right,
+          var(--color-success) 0%,
+          var(--color-success) 10%,
+          var(--color-success) 90%,
+          var(--color-success) 100%
+        )
+        no-repeat;
+      background-size: 100% 1px;
+
+      @keyframes pending {
+        0% {
+          background-size: 50% 1px;
+          background-position: -100% 0;
+        }
+
+        100% {
+          background-size: 50% 1px;
+          background-position: 200% 0;
+        }
+      }
+    }
+  }
+}
+
+.receive {
+  flex: 1 0 auto;
+}
+
+.sections {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.refetch {
+  margin-inline-start: auto;
+}
+
+.icon {
+  &.loading {
+    animation: spin 1s linear infinite;
+
+    @keyframes spin {
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(-360deg);
+      }
+    }
+  }
+}

@@ -1,0 +1,20 @@
+.container {
+  display: flex;
+  flex-flow: row wrap;
+  gap: 8px;
+}
+
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 1px;
+  flex-flow: row wrap;
+}
+
+.icon {
+  width: 16px;
+  height: 16px;
+}

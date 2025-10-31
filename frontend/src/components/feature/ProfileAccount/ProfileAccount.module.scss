@@ -1,0 +1,42 @@
+.container {
+  display: grid;
+  gap: 0 16px;
+  align-items: center;
+  border: 1px var(--color-dark-50) solid;
+  border-radius: calc(var(--radii-root));
+  background: var(--color-dark-80);
+  padding: 15px;
+  grid-template-areas: 'avatar address' 'avatar balance';
+  grid-template-columns: 48px 1fr;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5;
+  text-align: start;
+}
+
+.avatar {
+  grid-area: avatar;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.address {
+  grid-area: address;
+  color: var(--color-text-main);
+  display: flex;
+  font-weight: 600;
+}
+
+.balance {
+  grid-area: balance;
+  color: var(--color-text-comment);
+}
+
+.loader {
+  width: 1em;
+  height: 1em;
+  margin: 0;
+  display: inline-flex;
+}

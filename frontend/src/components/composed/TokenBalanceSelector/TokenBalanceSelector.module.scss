@@ -1,0 +1,181 @@
+@use '@/styles/mixins' as mixins;
+
+.container {
+  &:not(.open) {
+    .input {
+      position: absolute;
+      margin: -1px;
+      opacity: 0;
+      visibility: hidden;
+      overflow: hidden;
+      width: 0;
+      height: 0;
+      border: 0;
+      padding: 0;
+    }
+  }
+
+  &.open {
+    .token {
+      display: none;
+    }
+  }
+
+  &.pending {
+    .body {
+      &:after {
+        animation: pending 1.5s linear infinite;
+        background: linear-gradient(
+            to right,
+            var(--color-success) 0%,
+            var(--color-success) 10%,
+            var(--color-success) 90%,
+            var(--color-success) 100%
+          )
+          no-repeat;
+        background-size: 100% 1px;
+
+        @keyframes pending {
+          0% {
+            background-size: 50% 1px;
+            background-position: -100% 0;
+          }
+
+          100% {
+            background-size: 50% 1px;
+            background-position: 200% 0;
+          }
+        }
+      }
+    }
+  }
+}
+
+.body {
+  &::after {
+    content: '';
+    position: relative;
+    display: block;
+    margin-top: -1px;
+    height: 1px;
+  }
+}
+
+.token {
+  flex-flow: row wrap;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  height: 40px;
+  overflow: hidden;
+}
+
+.search {
+  width: 20px;
+  height: 20px;
+  color: var(--color-text-comment);
+
+  @media (max-width: 480px) {
+    display: none;
+  }
+}
+
+.placeholder {
+  flex: 1 0 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--color-text-comment);
+}
+
+.asset {
+  flex: 0 1 auto;
+  font-size: 20px;
+  line-height: 24px;
+
+  @media (max-width: 480px) {
+    font-size: 16px;
+  }
+}
+
+.price {
+  margin-left: auto;
+}
+
+.input {
+  border: 0;
+  padding: 0;
+  font-size: 16px;
+  font-family: inherit;
+  background: none;
+  width: 100%;
+  outline: none;
+  height: var(--_height);
+
+  &::placeholder,
+  &:placeholder-shown {
+    color: var(--color-text-comment);
+  }
+}
+
+.dropdown {
+  padding: 0;
+}
+
+.verified {
+  flex: 0 0 auto;
+  width: 16px;
+  height: 16px;
+  align-self: flex-start;
+  margin-left: -8px;
+}
+
+.table {
+  margin-top: -5px;
+  max-height: inherit;
+  background: inherit;
+}
+
+.fixed {
+  position: sticky;
+  left: 0;
+}
+
+.colToken {
+  width: 100%;
+}
+
+.tbody {
+  .hilite {
+    .tcell {
+      background: var(--color-dark-30) !important;
+    }
+  }
+}
+
+.message {
+  width: 100%;
+}
+
+.itemAsset {
+  max-width: calc(20ch + var(--_icon, 0));
+}
+
+.lg {
+  --_height: 40px;
+}
+
+.md {
+  --_height: 32px;
+}
+
+.sm {
+  --_height: 24px;
+}
+
+.loading {
+  &.balance {
+    min-width: 4ch;
+    @include mixins.element-preloader-animated;
+  }
+}

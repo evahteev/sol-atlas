@@ -1,0 +1,30 @@
+.container {
+  background: inherit;
+  display: flex;
+  flex-flow: column;
+
+  @media (min-width: 640.1px) {
+    margin: auto;
+    width: clamp(320px, 100%, 640px);
+  }
+
+  @media (max-width: 640px) {
+    flex: 1 0 auto;
+  }
+}
+
+.body {
+  display: flex;
+  flex-flow: column;
+  gap: 8px;
+  width: 100%;
+
+  @media (max-width: 640px) {
+    padding: 0;
+    border: 0;
+  }
+}
+
+.message {
+  margin: auto;
+}

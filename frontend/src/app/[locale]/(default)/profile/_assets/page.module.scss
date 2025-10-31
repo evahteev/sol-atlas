@@ -1,0 +1,1815 @@
+// Main container structure (works within global layout like aifeed)
+.container {
+  flex: 1 0 auto;
+  display: grid;
+  gap: 24px;
+  grid-auto-rows: max-content;
+
+  @container page-content (width<=800px) {
+    display: flex;
+    flex-flow: column;
+  }
+
+  @container page-content (width>800px) {
+    display: grid;
+    grid-template-areas: 'aside header' 'aside main';
+    grid-template-columns: 320px 1fr;
+    max-width: 100%;
+    margin: 0 auto;
+  }
+}
+
+// Header section
+.header {
+  grid-area: header;
+  max-width: 100%;
+  order: -2;
+}
+
+// Main content area
+.body {
+  grid-area: main;
+  display: flex;
+  flex-flow: column;
+  gap: 24px;
+  max-width: 960px;
+  container-type: inline-size;
+}
+
+// Sidebar area (left sidebar matching Figma)
+.footer {
+  order: -1;
+  grid-area: aside;
+  display: flex;
+  flex-flow: column;
+  gap: 24px;
+  background: #1a1f2e;
+  padding: 32px 24px;
+  border-radius: 16px;
+  max-width: 320px;
+  width: 100%;
+  align-self: start;
+  position: sticky;
+  top: 24px;
+}
+
+// Main content grid layout for individual cards
+.body {
+  grid-area: main;
+  display: grid;
+  gap: 24px;
+  max-width: 100%;
+  min-width: 0; /* Critical: allows grid to shrink */
+  container-type: inline-size;
+  overflow: hidden; /* Prevent content from breaking out */
+
+  @container (width>=800px) {
+    grid-template-columns: repeat(12, minmax(48px, 1fr));
+  }
+
+  @container (540px<width<800px) {
+    grid-template-columns: repeat(2, minmax(128px, 1fr));
+  }
+
+  @container (width <= 540px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// Profile Header Card - Full width (12 columns)
+.profileHeaderCard {
+  @container (width>=800px) {
+    grid-column: span 12;
+  }
+  @container (width<800px) {
+    grid-column: span 1;
+  }
+}
+
+// Stats Cards - 2 large cards (6 columns each on desktop)
+.profileStatsCard {
+  @container (width>=800px) {
+    grid-column: span 6;
+  }
+  @container (540px<width<800px) {
+    grid-column: span 2;
+  }
+  @container (width <= 540px) {
+    grid-column: span 1;
+  }
+}
+
+// Chart Cards - 2 cards (6 columns each on desktop)
+.profileChartCard {
+  min-width: 0; /* Allows flex shrinking */
+  overflow: hidden; /* Prevents content overflow */
+
+  @container (width>=800px) {
+    grid-column: span 6;
+  }
+  @container (540px<width<800px) {
+    grid-column: span 2;
+  }
+  @container (width <= 540px) {
+    grid-column: span 1;
+  }
+}
+
+// Regular profile cards
+.profileCard {
+  @container (width>=800px) {
+    grid-column: span 12;
+  }
+  @container (540px<width<800px) {
+    grid-column: span 2;
+  }
+  @container (width <= 540px) {
+    grid-column: span 1;
+  }
+}
+
+// Full width sections
+.profileCard:has(h3:contains('Obtaining certificates')),
+.profileCard:has(h3:contains('Badges & Achievements')) {
+  @container (width>=800px) {
+    grid-column: span 12;
+  }
+  @container (width<800px) {
+    grid-column: span 1;
+  }
+}
+
+// Utility classes
+.profile-card {
+  background: #1e293b;
+  border: 1px solid #475569;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.profile-section {
+  margin-bottom: 2rem;
+}
+
+.profile-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.profile-flex {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.profile-text-center {
+  text-align: center;
+}
+
+.profile-text-right {
+  text-align: right;
+}
+
+// Typography
+.profile-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #f8fafc;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.profile-subtitle {
+  font-size: 20px;
+  font-weight: 600;
+  color: #cbd5e1;
+  margin: 0;
+  line-height: 1.3;
+}
+
+.profile-text {
+  font-size: 16px;
+  font-weight: 500;
+  color: #cbd5e1;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.profile-body {
+  font-size: 14px;
+  font-weight: 400;
+  color: #64748b;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.profile-caption {
+  font-size: 12px;
+  font-weight: 400;
+  color: #64748b;
+  line-height: 1.4;
+  margin: 0;
+}
+
+// Progress bar styles
+.profile-progress-bar {
+  width: 100%;
+  height: 8px;
+  background-color: #334155;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-top: 0.5rem;
+}
+
+.profile-progress-fill {
+  height: 100%;
+  transition: width 0.3s ease;
+}
+
+.profile-progress-section {
+  margin-bottom: 24px;
+}
+
+.profile-progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.profile-progress-text {
+  font-size: 14px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.profile-button-section {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 24px;
+}
+
+// Badges and Achievements styles
+.profile-badges-section {
+  margin-bottom: 32px;
+}
+
+.profile-badges-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.profile-badge-card {
+  background: #1e293b;
+  border: 1px solid #475569;
+  border-radius: 12px;
+  padding: 16px;
+  text-align: center;
+  transition: transform 0.2s ease;
+}
+
+.profile-badge-card:hover {
+  transform: translateY(-2px);
+}
+
+.profile-badge-icon {
+  margin-bottom: 8px;
+}
+
+.profile-badge-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.profile-badge-rarity {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.profile-achievements-section {
+  margin-top: 32px;
+}
+
+.profile-achievements-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.profile-achievement-card {
+  background: #1e293b;
+  border: 1px solid #475569;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  transition: transform 0.2s ease;
+}
+
+.profile-achievement-card:hover {
+  transform: translateY(-2px);
+}
+
+.profile-achievement-icon {
+  flex-shrink: 0;
+}
+
+.profile-achievement-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.profile-achievement-points {
+  background: #22d49f;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  align-self: flex-start;
+}
+
+// Profile stats styling
+.profile-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.profile-stat-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+// New Sidebar Styling (Figma Design)
+.sidebarContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+  height: fit-content;
+}
+
+.avatarSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 12px;
+  padding-bottom: 8px;
+}
+
+.avatarWrapper {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid #22d49f;
+}
+
+.userName {
+  font-size: 24px;
+  font-weight: 700;
+  color: #f8fafc;
+  margin: 0;
+}
+
+.userTagline {
+  font-size: 14px;
+  color: #64748b;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.userBalance {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+}
+
+.balanceAmount {
+  font-size: 20px;
+  color: #22d49f;
+}
+
+.balanceLabel {
+  font-size: 16px;
+  color: #64748b;
+}
+
+.socialIcons {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+}
+
+.socialIcon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #2d3748;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.socialIcon:hover {
+  background: #4a5568;
+}
+
+.socialIconSvg {
+  width: 20px;
+  height: 20px;
+  color: #cbd5e1;
+  transition: color 0.2s ease;
+}
+
+.socialIcon:hover .socialIconSvg {
+  color: #22d49f;
+}
+
+.communityInfo {
+  text-align: center;
+  padding: 20px 0;
+  border-top: 1px solid #2d3748;
+  border-bottom: 1px solid #2d3748;
+}
+
+.communityText {
+  font-size: 12px;
+  color: #64748b;
+  margin: 0 0 12px 0;
+}
+
+.levelRankInfo {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.levelInfo,
+.rankInfo {
+  font-size: 12px;
+  color: #cbd5e1;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.levelRankIcon {
+  width: 16px;
+  height: 16px;
+  color: #22d49f;
+}
+
+.navigationMenu {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.navItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  color: #cbd5e1;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  text-align: left;
+  width: 100%;
+}
+
+.navItem:hover {
+  background: #2d3748;
+}
+
+.navIcon {
+  width: 20px;
+  height: 20px;
+  color: #94a3b8;
+  transition: color 0.2s ease;
+}
+
+.navText {
+  flex: 1;
+}
+
+.logoutButton {
+  padding: 12px 24px;
+  background: #4a5568;
+  color: #f8fafc;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  margin-top: auto;
+}
+
+.logoutButton:hover {
+  background: #2d3748;
+}
+
+.logoutIcon {
+  width: 16px;
+  height: 16px;
+  color: #94a3b8;
+  margin-right: 8px;
+}
+
+.navItem:hover .navIcon {
+  color: #22d49f;
+}
+
+// Certificate styling (Figma design)
+.certificateItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 20px 0;
+  border-bottom: 1px solid #2d3748;
+}
+
+.certificateItem:last-of-type {
+  border-bottom: none;
+}
+
+.certificateIcon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #2d3748;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.checkIcon {
+  font-size: 20px;
+  filter: hue-rotate(120deg);
+}
+
+.lockIcon {
+  font-size: 18px;
+  opacity: 0.7;
+}
+
+.certificateContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.certificateHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.certificateTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: #f8fafc;
+  margin: 0;
+}
+
+.certificateStatus {
+  font-size: 14px;
+  color: #22d49f;
+  font-weight: 500;
+}
+
+.certificateStatusLocked {
+  font-size: 14px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.progressBarContainer {
+  width: 100%;
+}
+
+.progressBar {
+  width: 100%;
+  height: 8px;
+  background: #2d3748;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: #22d49f;
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.certificateButtonSection {
+  padding-top: 24px;
+  border-top: 1px solid #2d3748;
+  margin-top: 16px;
+}
+
+.continueButton {
+  background: #22d49f;
+  color: #111417;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.continueButton:hover {
+  background: #1ea87a;
+}
+
+// Badges horizontal grid styling (Figma design)
+.badgesHorizontalGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-top: 16px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  @media (max-width: 480px) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+}
+
+.badgeSquareCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 12px;
+  padding: 16px;
+  background: #1e293b;
+  border: 1px solid #475569;
+  border-radius: 12px;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+
+  @media (max-width: 640px) {
+    padding: 14px 12px;
+    gap: 10px;
+    min-height: 120px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 12px 10px;
+    gap: 8px;
+    min-height: 110px;
+  }
+}
+
+.badgeSquareCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.badgeSquareIcon {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+
+.badgeEmoji {
+  font-size: 24px;
+  filter: brightness(0) invert(1);
+}
+
+.badgeSquareInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.badgeSquareTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: #f8fafc;
+  margin: 0;
+  line-height: 1.2;
+
+  @media (max-width: 640px) {
+    font-size: 13px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 12px;
+    line-height: 1.3;
+  }
+}
+
+.badgeSquareRarity {
+  font-size: 12px;
+  color: #64748b;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+
+  @media (max-width: 640px) {
+    font-size: 11px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 10px;
+    letter-spacing: 0.3px;
+  }
+}
+
+// Achievements horizontal grid styling (Figma design)
+.achievementsHorizontalGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-top: 16px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  @media (max-width: 480px) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+}
+
+.achievementSquareCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 12px;
+  padding: 20px 16px;
+  background: #1e293b;
+  border: 1px solid #475569;
+  border-radius: 12px;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+  min-height: 200px;
+
+  @media (max-width: 640px) {
+    padding: 16px 12px;
+    gap: 10px;
+    min-height: 180px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 14px 10px;
+    gap: 8px;
+    min-height: 160px;
+  }
+}
+
+.achievementSquareCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.achievementSquareIcon {
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #22d49f, #1ea87a);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+  box-shadow: 0 2px 8px rgba(34, 212, 159, 0.3);
+}
+
+.achievementEmoji {
+  font-size: 28px;
+  filter: brightness(0) invert(1);
+}
+
+.achievementSquareInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.achievementSquareTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: #f8fafc;
+  margin: 0;
+  line-height: 1.3;
+}
+
+.achievementSquareDescription {
+  font-size: 13px;
+  color: #94a3b8;
+  margin: 0;
+  line-height: 1.4;
+  flex: 1;
+
+  @media (max-width: 640px) {
+    font-size: 12px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 11px;
+    line-height: 1.3;
+  }
+}
+
+.achievementPointsBadge {
+  background: #22d49f;
+  color: #111417;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  align-self: center;
+  margin-top: auto;
+
+  @media (max-width: 640px) {
+    padding: 5px 10px;
+    font-size: 11px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 4px 8px;
+    font-size: 10px;
+    letter-spacing: 0.3px;
+  }
+}
+
+// Profile Header Card styling
+.profileHeaderCard {
+  background: #1e293b;
+  border: 1px solid #475569;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 24px;
+  align-items: center;
+}
+
+.profile-avatar {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.profile-user-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.profile-badge {
+  background: #22d49f;
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.profile-balance {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #faa61a;
+}
+
+.profileRightSide {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+// Stats Card styling
+.profileStatsCard {
+  background: #1e293b;
+  border: 1px solid #475569;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+
+  @media (max-width: 640px) {
+    padding: 20px 16px;
+    gap: 24px;
+    min-height: 140px;
+    justify-content: center;
+  }
+}
+
+.profileStatItem {
+  text-align: center;
+}
+
+.profileStatValue {
+  font-size: 48px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  display: block;
+
+  @media (max-width: 640px) {
+    font-size: 36px;
+    margin-bottom: 6px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 32px;
+    margin-bottom: 4px;
+  }
+}
+
+.profileStatLabel {
+  font-size: 16px;
+  color: #64748b;
+  font-weight: 500;
+
+  @media (max-width: 640px) {
+    font-size: 14px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 13px;
+  }
+}
+
+// Enhanced Chart Card styling
+.profileChartCard {
+  background: #1e293b;
+  border: 1px solid #475569;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+  min-width: 0; /* Critical for grid flexibility */
+  max-width: 100%; /* Prevent overflow */
+  overflow: hidden; /* Ensure content doesn't break out */
+
+  @media (max-width: 640px) {
+    padding: 20px 16px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 16px 12px;
+  }
+}
+
+.profileChartCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.chartHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.chartValue {
+  font-size: 18px;
+  font-weight: 600;
+  color: #f8fafc;
+  background: rgba(34, 212, 159, 0.1);
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: 1px solid rgba(34, 212, 159, 0.2);
+
+  @media (max-width: 640px) {
+    font-size: 16px;
+    padding: 6px 12px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 14px;
+    padding: 6px 10px;
+  }
+}
+
+.profileLineChart {
+  height: 200px;
+  margin: 16px 0;
+  position: relative;
+  background: rgba(34, 212, 159, 0.02);
+  border-radius: 12px;
+  padding: 10px;
+  min-width: 0; /* Allow shrinking */
+  overflow: hidden; /* Prevent SVG overflow */
+
+  @media (max-width: 640px) {
+    height: 160px;
+    margin: 12px 0;
+    padding: 8px;
+  }
+
+  @media (max-width: 480px) {
+    height: 140px;
+    margin: 10px 0;
+    padding: 6px;
+  }
+}
+
+.chartSvg {
+  width: 100%;
+  height: 100%;
+  max-width: 100%; /* Prevent overflow */
+  overflow: visible;
+}
+
+.profileChartFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #2d3748;
+}
+
+.chartMetric {
+  font-size: 14px;
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+.chartTrend {
+  font-size: 14px;
+  color: #22d49f;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+// Utopia Partnership Banner (Figma Design)
+.utopiaPartnershipBanner {
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  border: 1px solid #475569;
+  border-radius: 16px;
+  padding: 32px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.bannerContent {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.bannerIcon {
+  flex-shrink: 0;
+  width: 64px;
+  height: 64px;
+  background: linear-gradient(135deg, #22d49f, #1ea87a);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(34, 212, 159, 0.3);
+}
+
+.rocketIcon {
+  font-size: 32px;
+  filter: brightness(0) invert(1);
+}
+
+.bannerText {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.bannerTitle {
+  font-size: 24px;
+  font-weight: 700;
+  color: #f8fafc;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.bannerDescription {
+  font-size: 16px;
+  color: #94a3b8;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.bannerActions {
+  flex-shrink: 0;
+}
+
+.learnMoreButton {
+  background: #22d49f;
+  color: #111417;
+  border: none;
+  border-radius: 12px;
+  padding: 14px 28px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: none;
+}
+
+.learnMoreButton:hover {
+  background: #1ea87a;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(34, 212, 159, 0.4);
+}
+
+@media (max-width: 768px) {
+  .utopiaPartnershipBanner {
+    padding: 20px 16px;
+    margin-bottom: 16px;
+  }
+
+  .bannerContent {
+    flex-direction: column;
+    text-align: center;
+    gap: 16px;
+  }
+
+  .bannerIcon {
+    align-self: center;
+    width: 48px;
+    height: 48px;
+  }
+
+  .rocketIcon {
+    font-size: 24px;
+  }
+
+  .bannerTitle {
+    font-size: 20px;
+    line-height: 1.3;
+  }
+
+  .bannerDescription {
+    font-size: 14px;
+    line-height: 1.4;
+  }
+
+  .learnMoreButton {
+    padding: 12px 20px;
+    font-size: 14px;
+  }
+}
+
+// Services Card styling
+.servicesHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.servicesCount {
+  font-size: 14px;
+  color: #64748b;
+  background: rgba(34, 212, 159, 0.1);
+  padding: 4px 12px;
+  border-radius: 20px;
+  border: 1px solid rgba(34, 212, 159, 0.2);
+}
+
+.servicesList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.serviceItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px;
+  background: rgba(30, 41, 59, 0.5);
+  border-radius: 12px;
+  border: 1px solid #475569;
+  transition: background 0.2s ease;
+}
+
+.serviceItem:hover {
+  background: rgba(30, 41, 59, 0.8);
+}
+
+.serviceIcon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #1e293b;
+  border-radius: 10px;
+  border: 1px solid #475569;
+}
+
+.serviceEmoji {
+  font-size: 20px;
+}
+
+.serviceInfo {
+  flex: 1;
+}
+
+.serviceHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.serviceName {
+  font-size: 16px;
+  font-weight: 600;
+  color: #f8fafc;
+  margin: 0;
+}
+
+.serviceStatus {
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.serviceDetails {
+  display: flex;
+  gap: 16px;
+  font-size: 14px;
+  color: #94a3b8;
+}
+
+.servicePlan {
+  font-weight: 500;
+}
+
+.serviceBilling {
+  opacity: 0.8;
+}
+
+// Actions Card styling
+.actionsHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.actionsCount {
+  font-size: 14px;
+  color: #64748b;
+  background: rgba(250, 166, 26, 0.1);
+  padding: 4px 12px;
+  border-radius: 20px;
+  border: 1px solid rgba(250, 166, 26, 0.2);
+}
+
+.actionsList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.actionItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px;
+  background: rgba(30, 41, 59, 0.5);
+  border-radius: 12px;
+  border: 1px solid #475569;
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+  cursor: pointer;
+}
+
+.actionItem:hover {
+  background: rgba(30, 41, 59, 0.8);
+  transform: translateY(-1px);
+}
+
+.actionIcon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #1e293b;
+  border-radius: 10px;
+  border: 1px solid #475569;
+}
+
+.actionEmoji {
+  font-size: 20px;
+}
+
+.actionInfo {
+  flex: 1;
+}
+
+.actionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.actionTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: #f8fafc;
+  margin: 0;
+}
+
+.actionDifficulty {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 4px 8px;
+  border-radius: 12px;
+}
+
+.actionDescription {
+  font-size: 14px;
+  color: #94a3b8;
+  margin: 0 0 12px 0;
+  line-height: 1.4;
+}
+
+.actionDetails {
+  display: flex;
+  gap: 16px;
+  font-size: 13px;
+  color: #64748b;
+}
+
+.actionReward {
+  color: #22d49f;
+  font-weight: 500;
+}
+
+.actionTime {
+  color: #faa61a;
+}
+
+.actionCategory {
+  opacity: 0.8;
+}
+
+// Messages Card styling
+.messagesHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.messagesStats {
+  display: flex;
+  gap: 8px;
+}
+
+.unreadCount {
+  font-size: 12px;
+  color: #f8fafc;
+  background: #dc2626;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+.totalMessages {
+  font-size: 12px;
+  color: #64748b;
+  background: rgba(100, 116, 139, 0.1);
+  padding: 4px 8px;
+  border-radius: 12px;
+}
+
+.messagesList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.messageItem {
+  display: flex;
+  gap: 12px;
+  padding: 16px;
+  background: rgba(30, 41, 59, 0.3);
+  border-radius: 12px;
+  border: 1px solid #475569;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.messageItem:hover {
+  background: rgba(30, 41, 59, 0.6);
+}
+
+.messageUnread {
+  background: rgba(34, 212, 159, 0.05);
+  border-color: rgba(34, 212, 159, 0.2);
+}
+
+.messageIcon {
+  position: relative;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #1e293b;
+  border-radius: 8px;
+  border: 1px solid #475569;
+}
+
+.messageTypeIcon {
+  font-size: 16px;
+}
+
+.unreadIndicator {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 8px;
+  height: 8px;
+  background: #dc2626;
+  border-radius: 50%;
+  border: 2px solid #111417;
+}
+
+.messageContent {
+  flex: 1;
+}
+
+.messageHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.messageSender {
+  font-size: 14px;
+  font-weight: 600;
+  color: #f8fafc;
+}
+
+.messageTime {
+  font-size: 12px;
+  color: #64748b;
+}
+
+.messageText {
+  font-size: 14px;
+  color: #94a3b8;
+  margin: 0 0 8px 0;
+  line-height: 1.4;
+}
+
+.messageFooter {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.messageType {
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.messagesActions {
+  display: flex;
+  gap: 12px;
+  padding-top: 16px;
+  border-top: 1px solid #475569;
+}
+
+.viewAllButton {
+  flex: 1;
+  padding: 10px 16px;
+  background: transparent;
+  color: #22d49f;
+  border: 1px solid #22d49f;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.viewAllButton:hover {
+  background: rgba(34, 212, 159, 0.1);
+}
+
+.composeButton {
+  flex: 1;
+  padding: 10px 16px;
+  background: #22d49f;
+  color: #111417;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.composeButton:hover {
+  background: #1ea87a;
+}
+
+// Posts Card styling
+.postsHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.postsStats {
+  display: flex;
+  gap: 8px;
+}
+
+.publishedCount {
+  font-size: 12px;
+  color: #f8fafc;
+  background: #22d49f;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+.totalPosts {
+  font-size: 12px;
+  color: #64748b;
+  background: rgba(100, 116, 139, 0.1);
+  padding: 4px 8px;
+  border-radius: 12px;
+}
+
+.postsList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.postItem {
+  padding: 20px;
+  background: rgba(30, 41, 59, 0.3);
+  border-radius: 12px;
+  border: 1px solid #475569;
+  transition: all 0.2s ease;
+}
+
+.postItem:hover {
+  background: rgba(30, 41, 59, 0.6);
+  transform: translateY(-1px);
+}
+
+.postHeader {
+  margin-bottom: 12px;
+}
+
+.postTitleSection {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.postTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: #f8fafc;
+  margin: 0;
+  line-height: 1.3;
+}
+
+.postMeta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.postStatus {
+  font-size: 12px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.postTime {
+  font-size: 12px;
+  color: #64748b;
+}
+
+.postContent {
+  font-size: 14px;
+  color: #94a3b8;
+  margin: 0 0 12px 0;
+  line-height: 1.5;
+}
+
+.postTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.postTag {
+  font-size: 11px;
+  color: #22d49f;
+  background: rgba(34, 212, 159, 0.1);
+  padding: 4px 8px;
+  border-radius: 12px;
+  border: 1px solid rgba(34, 212, 159, 0.2);
+}
+
+.moreTags {
+  font-size: 11px;
+  color: #64748b;
+  font-style: italic;
+}
+
+.postFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 12px;
+  border-top: 1px solid #475569;
+}
+
+.postEngagement {
+  display: flex;
+  gap: 16px;
+}
+
+.engagementItem {
+  font-size: 13px;
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.postCategory {
+  font-size: 12px;
+  color: #64748b;
+  background: rgba(100, 116, 139, 0.1);
+  padding: 4px 8px;
+  border-radius: 8px;
+}
+
+.postsActions {
+  display: flex;
+  gap: 12px;
+  padding-top: 16px;
+  border-top: 1px solid #475569;
+}
+
+.createPostButton {
+  flex: 1;
+  padding: 10px 16px;
+  background: #9488f0;
+  color: #f8fafc;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.createPostButton:hover {
+  background: #7c70e0;
+}
+
+// Legacy chart styling (keeping for compatibility)
+.profile-chart {
+  height: 280px;
+  display: flex;
+  align-items: end;
+  gap: 0.5rem;
+}
+
+.profile-chart-bar {
+  flex: 1;
+  text-align: center;
+}
+
+.profile-chart-bar-fill {
+  border-radius: 4px 4px 0 0;
+  min-height: 4px;
+  transition: height 0.3s ease;
+}
+
+.profile-chart-label {
+  font-size: 0.75rem;
+  color: #64748b;
+  margin-top: 0.5rem;
+  display: block;
+}
+
+// Responsive design
+@media (max-width: 1024px) {
+  .container {
+    gap: 1.5rem;
+  }
+
+  .header {
+    max-width: 100%;
+  }
+
+  .body {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    gap: 1rem;
+  }
+
+  .profile-card {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    gap: 0.75rem;
+  }
+
+  .profile-card {
+    padding: 0.75rem;
+  }
+}

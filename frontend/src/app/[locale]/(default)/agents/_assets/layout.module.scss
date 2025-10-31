@@ -1,0 +1,90 @@
+.container {
+  background: inherit;
+  flex: 1 0 auto;
+  gap: 16px;
+  display: flex;
+  flex-flow: column;
+  margin-block-end: -16px;
+}
+
+.header {
+  @container page-content (width<=1024px) {
+    display: flex;
+    align-items: center;
+    flex-flow: column;
+    margin: 0 56px;
+  }
+}
+
+.body {
+  flex: 1 0 auto;
+  background: inherit;
+  margin: 0 -16px;
+  padding: 0 16px;
+  position: relative;
+
+  @container page-content (width<=1024px) {
+    display: flex;
+    flex-flow: column;
+  }
+
+  @container page-content (width>1024px) {
+    display: grid;
+    grid-template-areas: 'processes chat aside';
+    grid-template-columns: auto minmax(320px, 3fr) minmax(320px, 1fr);
+  }
+}
+
+.processes {
+  grid-area: processes;
+
+  @container page-content (width<=1024px) {
+    position: absolute;
+    inset: 0;
+  }
+
+  @container page-content (width>1024px) {
+    margin-inline-end: 16px;
+  }
+}
+
+.main {
+  grid-area: chat;
+  background: inherit;
+  position: relative;
+  flex: 1 0 0;
+}
+
+.content {
+  position: absolute;
+  inset: 0 -16px 0 0;
+  padding-inline-end: 16px;
+  overflow: auto;
+  background: inherit;
+}
+
+.aside {
+  grid-area: aside;
+
+  @container page-content (width<=1024px) {
+    position: absolute;
+    inset: 0;
+  }
+
+  @container page-content (width>1024px) {
+    margin-inline-start: 16px;
+  }
+}
+
+.processes,
+.content,
+.aside {
+  display: flex;
+  flex-flow: column;
+}
+
+.intro {
+  margin: 0 auto;
+  width: clamp(320px, 100%, 800px);
+  grid-column: span 3;
+}

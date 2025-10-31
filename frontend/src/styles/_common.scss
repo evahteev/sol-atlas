@@ -1,0 +1,23 @@
+:where(.radii:not(.radii .radii .radii .radii .radii .radii .radii)) {
+  --radii: 0;
+}
+
+:where(.radii:not(.radii .radii .radii .radii .radii .radii)) {
+  --radii: calc(var(--radii-root) * 0.125);
+}
+
+:where(.radii:not(.radii .radii .radii .radii .radii)) {
+  --radii: calc(var(--radii-root) * 0.25);
+}
+
+:where(.radii:not(.radii .radii .radii .radii)) {
+  --radii: calc(var(--radii-root) * 0.375);
+}
+
+:where(.radii:not(.radii .radii .radii)) {
+  --radii: calc(var(--radii-root) * 0.5);
+}
+
+:where(.radii:not(.radii .radii)) {
+  --radii: var(--radii-root);
+}

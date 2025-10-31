@@ -1,0 +1,26 @@
+.container {
+  &[data-theme='dark'] {
+    --klinecharts-pro-hover-background-color: rgba(
+      var(--color-bg-30, 22, 119, 255),
+      0.15
+    ) !important;
+    --klinecharts-pro-background-color: rgb(var(--color-dark, 0, 0, 0)) !important;
+    --klinecharts-pro-popover-background-color: #1c1c1f !important;
+    --klinecharts-pro-text-color: #f8f8f8 !important;
+    --klinecharts-pro-text-second-color: #929aa5 !important;
+    --klinecharts-pro-border-color: #292929 !important;
+  }
+}
+
+.watermark {
+  display: block;
+  font-size: 32px;
+  color: var(--color-dark-40);
+  text-align: center;
+
+  &Address {
+    display: block;
+    font-size: 20px;
+    color: var(--color-dark-60);
+  }
+}

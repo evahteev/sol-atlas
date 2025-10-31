@@ -1,0 +1,26 @@
+.container {
+  align-items: center;
+}
+
+.icon {
+  width: 20px;
+  height: 20px;
+  color: var(--color-text-comment);
+}
+
+.value {
+  color: var(--color-primary);
+}
+
+.content {
+  display: grid;
+  align-items: center;
+  grid-template-columns: 1fr 20px;
+  gap: 8px;
+}
+
+.copy {
+  --size: 20px;
+  padding: 0;
+  margin: 1px 0;
+}

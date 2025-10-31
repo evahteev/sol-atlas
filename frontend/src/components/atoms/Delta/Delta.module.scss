@@ -1,0 +1,19 @@
+.container {
+  white-space: nowrap;
+  transition: color 0.25s ease;
+  font-variant-numeric: tabular-nums;
+}
+
+.container {
+  &.positive {
+    color: var(--color-positive, green);
+  }
+
+  &.negative {
+    color: var(--color-negative, red);
+  }
+
+  &.neutral {
+    color: var(--color-text-comment, inherit);
+  }
+}

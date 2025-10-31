@@ -1,0 +1,89 @@
+@use '@/styles/mixins' as mixins;
+
+.container {
+}
+
+.field {
+  &.image {
+    max-width: 100%;
+    border-radius: calc(var(--radii-root) * 0.5);
+
+    @container (width<560px) {
+      width: 100%;
+    }
+  }
+}
+
+.checklist {
+  display: flex;
+  flex-flow: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  &.color {
+    flex-flow: row wrap;
+    gap: 0 8px;
+  }
+}
+
+.group {
+  container-type: inline-size;
+
+  &.outline {
+    padding: 16px;
+    border: 1px var(--color-text-comment) solid;
+    border-radius: calc(var(--radii-root) * 0.5);
+  }
+}
+
+.separator {
+  margin: 0;
+}
+
+.message {
+  width: 100%;
+  border-radius: calc(var(--radii-root) * 0.5);
+}
+
+.colorChoose {
+  &Control,
+  &Caption {
+    @include mixins.hidden;
+  }
+
+  &::before {
+    content: '';
+    --_size: calc(var(--size, 48px) - 12px);
+    display: block;
+    background: var(--_color);
+    width: var(--_size);
+    height: var(--_size);
+    border-radius: 50%;
+    outline: 2px transparent solid;
+    outline-offset: 0;
+    transition: 0.25s ease;
+    cursor: pointer;
+    margin: 6px 0;
+  }
+
+  &:has(input:checked) {
+    &::before {
+      outline-offset: 4px;
+      outline-color: var(--_color);
+    }
+  }
+
+  &:has(input:disabled) {
+    &::before {
+      cursor: default;
+      opacity: 0.5;
+    }
+  }
+}
+
+.button {
+  min-width: auto;
+  margin: 0 auto;
+}

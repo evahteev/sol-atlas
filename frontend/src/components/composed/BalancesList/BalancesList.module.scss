@@ -1,0 +1,65 @@
+.contaner {
+  display: flex;
+  flex-flow: column;
+}
+
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-flow: column;
+  gap: 32px;
+}
+
+.body {
+  display: flex;
+  flex-flow: column;
+  gap: 32px;
+}
+
+.caption {
+  font-size: 14px;
+  line-height: 24px;
+  color: var(--color-text-comment);
+  display: flex;
+  align-items: center;
+
+  &::marker {
+    display: none;
+  }
+}
+
+.icon {
+  width: 16px;
+  height: 16px;
+  transform: none;
+  transition: 0.25s ease;
+}
+
+.header {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  color: var(--color-text-comment);
+  margin-inline-start: 12px;
+  cursor: pointer;
+}
+
+.caption {
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 400;
+}
+
+.spoiler {
+  display: flex;
+  flex-flow: column;
+  gap: 16px;
+
+  &Body {
+    display: flex;
+    flex-flow: column;
+    gap: 32px;
+  }
+}

@@ -1,0 +1,46 @@
+.container {
+}
+
+.body {
+  display: inline-block;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  position: relative;
+}
+
+.read {
+  color: transparent;
+
+  &::selection {
+    background: var(--color-primary) !important;
+    color: var(--color-primary-text) !important;
+    -webkit-background-clip: initial !important;
+    background-clip: initial !important;
+    -webkit-text-fill-color: initial !important;
+    text-fill-color: initial !important;
+  }
+}
+
+.viz {
+  overflow: hidden;
+  position: absolute;
+  inset: 0;
+  user-select: none;
+  speak: none;
+  text-shadow: none;
+  pointer-events: none;
+}
+
+.char {
+  --_shift: 0;
+  display: inline-flex;
+  flex-flow: column;
+  transform: translateY(calc(var(--_shift, 0) * -10%));
+  transition: 0.25s ease;
+
+  @for $i from 0 through 9 {
+    &[data-d='#{$i}'] {
+      --_shift: #{$i};
+    }
+  }
+}

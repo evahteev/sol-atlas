@@ -1,0 +1,15 @@
+.container {
+  background: inherit;
+
+  @media (min-width: 640.1px) {
+    margin: auto;
+  }
+}
+
+.body {
+  margin: 0 auto;
+}
+
+.message {
+  margin: auto;
+}

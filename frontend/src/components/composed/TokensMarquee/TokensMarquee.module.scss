@@ -1,0 +1,19 @@
+.container {
+  height: 32px;
+  background: var(--color-dark-100);
+}
+
+.index {
+  color: var(--color-text-comment);
+}
+
+.swap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.body {
+  margin-top: auto;
+  margin-bottom: auto;
+}

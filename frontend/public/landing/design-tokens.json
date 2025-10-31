@@ -1,0 +1,437 @@
+{
+  "name": "SOL Atlas Design System",
+  "version": "1.0.0",
+  "description": "Design tokens for SOL Atlas - Solana ecosystem support & knowledge assistant",
+  "tokens": {
+    "color": {
+      "brand": {
+        "primary": {
+          "value": "#9945ff",
+          "description": "Solana Purple - Primary brand color for headers, CTAs, and key elements"
+        },
+        "secondary": {
+          "value": "#14f195",
+          "description": "Solana Green - Secondary brand color for highlights and success states"
+        },
+        "accent": {
+          "value": "#00d4aa",
+          "description": "Teal accent - Interactive elements, links, and on-chain data"
+        }
+      },
+      "semantic": {
+        "success": {
+          "value": "#38a169",
+          "description": "Green - Success states, verified elements, confirmed transactions"
+        },
+        "warning": {
+          "value": "#ed8936",
+          "description": "Orange - Warning states, pending actions, caution messages"
+        },
+        "danger": {
+          "value": "#e53e3e",
+          "description": "Red - Error states, critical alerts, failed transactions"
+        },
+        "info": {
+          "value": "#3182ce",
+          "description": "Blue - Information, on-chain data, network status"
+        }
+      },
+      "neutral": {
+        "light": {
+          "value": "#f8fafc",
+          "description": "Very light gray - Background color for sections and cards"
+        },
+        "medium": {
+          "value": "#e2e8f0",
+          "description": "Medium gray - Borders, dividers, and subtle elements"
+        },
+        "dark": {
+          "value": "#0f0f23",
+          "description": "Very dark blue - Footer background, high contrast text"
+        }
+      },
+      "text": {
+        "primary": {
+          "value": "#2d3748",
+          "description": "Primary text color - Main content, headings"
+        },
+        "secondary": {
+          "value": "#718096",
+          "description": "Secondary text color - Supporting text, descriptions"
+        },
+        "inverse": {
+          "value": "#ffffff",
+          "description": "Inverse text color - Text on dark backgrounds"
+        }
+      },
+      "gradient": {
+        "primary": {
+          "value": "linear-gradient(135deg, #9945ff 0%, #14f195 100%)",
+          "description": "Primary gradient - Hero sections, CTAs, featured elements"
+        },
+        "secondary": {
+          "value": "linear-gradient(135deg, #00d4aa 0%, #9945ff 100%)",
+          "description": "Secondary gradient - Alternative gradient for variety"
+        }
+      }
+    },
+    "typography": {
+      "fontFamily": {
+        "primary": {
+          "value": "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif",
+          "description": "Primary font stack - System fonts for optimal performance"
+        },
+        "mono": {
+          "value": "'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace",
+          "description": "Monospace font stack - Code blocks, transaction hashes, addresses"
+        }
+      },
+      "fontSize": {
+        "xs": {
+          "value": "0.75rem",
+          "description": "12px - Small labels, source chips, badges"
+        },
+        "sm": {
+          "value": "0.875rem",
+          "description": "14px - Small text, form labels, metadata"
+        },
+        "base": {
+          "value": "1rem",
+          "description": "16px - Base font size, body text"
+        },
+        "lg": {
+          "value": "1.125rem",
+          "description": "18px - Large body text, subtitles"
+        },
+        "xl": {
+          "value": "1.25rem",
+          "description": "20px - Small headings, feature titles"
+        },
+        "2xl": {
+          "value": "1.5rem",
+          "description": "24px - Medium headings"
+        },
+        "3xl": {
+          "value": "1.875rem",
+          "description": "30px - Large headings"
+        },
+        "4xl": {
+          "value": "2.25rem",
+          "description": "36px - Section titles"
+        },
+        "5xl": {
+          "value": "3rem",
+          "description": "48px - Page titles"
+        },
+        "6xl": {
+          "value": "3.75rem",
+          "description": "60px - Hero titles"
+        }
+      },
+      "fontWeight": {
+        "normal": {
+          "value": "400",
+          "description": "Normal weight - Body text"
+        },
+        "medium": {
+          "value": "500",
+          "description": "Medium weight - Emphasized text"
+        },
+        "semibold": {
+          "value": "600",
+          "description": "Semi-bold - Subheadings, important text"
+        },
+        "bold": {
+          "value": "700",
+          "description": "Bold - Headings, strong emphasis"
+        }
+      },
+      "lineHeight": {
+        "tight": {
+          "value": "1.25",
+          "description": "Tight line height - Headings"
+        },
+        "normal": {
+          "value": "1.5",
+          "description": "Normal line height - Body text"
+        },
+        "relaxed": {
+          "value": "1.75",
+          "description": "Relaxed line height - Long-form content"
+        }
+      }
+    },
+    "spacing": {
+      "xs": {
+        "value": "0.25rem",
+        "description": "4px - Minimal spacing"
+      },
+      "sm": {
+        "value": "0.5rem",
+        "description": "8px - Small spacing"
+      },
+      "md": {
+        "value": "1rem",
+        "description": "16px - Medium spacing"
+      },
+      "lg": {
+        "value": "1.5rem",
+        "description": "24px - Large spacing"
+      },
+      "xl": {
+        "value": "2rem",
+        "description": "32px - Extra large spacing"
+      },
+      "2xl": {
+        "value": "3rem",
+        "description": "48px - Section spacing"
+      },
+      "3xl": {
+        "value": "4rem",
+        "description": "64px - Large section spacing"
+      },
+      "4xl": {
+        "value": "6rem",
+        "description": "96px - Hero section spacing"
+      }
+    },
+    "borderRadius": {
+      "none": {
+        "value": "0",
+        "description": "No border radius"
+      },
+      "sm": {
+        "value": "0.25rem",
+        "description": "4px - Small border radius"
+      },
+      "md": {
+        "value": "0.5rem",
+        "description": "8px - Medium border radius"
+      },
+      "lg": {
+        "value": "0.75rem",
+        "description": "12px - Large border radius"
+      },
+      "xl": {
+        "value": "1rem",
+        "description": "16px - Extra large border radius"
+      },
+      "full": {
+        "value": "9999px",
+        "description": "Full border radius - Pills, circles"
+      }
+    },
+    "shadow": {
+      "sm": {
+        "value": "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
+        "description": "Small shadow - Subtle elevation"
+      },
+      "md": {
+        "value": "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+        "description": "Medium shadow - Cards, buttons"
+      },
+      "lg": {
+        "value": "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
+        "description": "Large shadow - Modals, dropdowns"
+      },
+      "xl": {
+        "value": "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
+        "description": "Extra large shadow - Hero elements"
+      }
+    },
+    "breakpoints": {
+      "sm": {
+        "value": "640px",
+        "description": "Small screens - Mobile landscape"
+      },
+      "md": {
+        "value": "768px",
+        "description": "Medium screens - Tablets"
+      },
+      "lg": {
+        "value": "1024px",
+        "description": "Large screens - Desktop"
+      },
+      "xl": {
+        "value": "1280px",
+        "description": "Extra large screens - Large desktop"
+      },
+      "2xl": {
+        "value": "1536px",
+        "description": "2X large screens - Ultra-wide"
+      }
+    },
+    "animation": {
+      "duration": {
+        "fast": {
+          "value": "0.15s",
+          "description": "Fast animation - Micro-interactions"
+        },
+        "normal": {
+          "value": "0.3s",
+          "description": "Normal animation - Standard transitions"
+        },
+        "slow": {
+          "value": "0.5s",
+          "description": "Slow animation - Complex transitions"
+        }
+      },
+      "easing": {
+        "ease": {
+          "value": "ease",
+          "description": "Standard easing"
+        },
+        "easeIn": {
+          "value": "ease-in",
+          "description": "Ease in - Accelerating"
+        },
+        "easeOut": {
+          "value": "ease-out",
+          "description": "Ease out - Decelerating"
+        },
+        "easeInOut": {
+          "value": "ease-in-out",
+          "description": "Ease in-out - Smooth"
+        }
+      }
+    }
+  },
+  "components": {
+    "button": {
+      "primary": {
+        "backgroundColor": "var(--sol-gradient-primary)",
+        "color": "#ffffff",
+        "padding": "1rem 2rem",
+        "borderRadius": "0.75rem",
+        "fontWeight": "600",
+        "transition": "all 0.3s ease"
+      },
+      "secondary": {
+        "backgroundColor": "transparent",
+        "color": "#9945ff",
+        "border": "2px solid #9945ff",
+        "padding": "1rem 2rem",
+        "borderRadius": "0.75rem",
+        "fontWeight": "600",
+        "transition": "all 0.3s ease"
+      }
+    },
+    "card": {
+      "default": {
+        "backgroundColor": "#ffffff",
+        "borderRadius": "1rem",
+        "boxShadow": "0 10px 25px rgba(0, 0, 0, 0.1)",
+        "border": "1px solid #e2e8f0",
+        "padding": "2rem"
+      }
+    },
+    "navigation": {
+      "background": "rgba(15, 15, 35, 0.95)",
+      "backdropFilter": "blur(10px)",
+      "height": "4rem",
+      "linkColor": "#ffffff",
+      "linkHoverColor": "#14f195"
+    },
+    "onchainPanel": {
+      "background": "linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%)",
+      "border": "1px solid #0ea5e9",
+      "borderRadius": "0.5rem",
+      "padding": "1rem",
+      "headerColor": "#0369a1"
+    },
+    "sourceChip": {
+      "docs": {
+        "backgroundColor": "#9945ff",
+        "color": "#ffffff",
+        "borderRadius": "999px",
+        "padding": "0.25rem 0.5rem",
+        "fontSize": "0.8rem"
+      },
+      "discord": {
+        "backgroundColor": "#5865f2",
+        "color": "#ffffff",
+        "borderRadius": "999px",
+        "padding": "0.25rem 0.5rem",
+        "fontSize": "0.8rem"
+      },
+      "ecosystem": {
+        "backgroundColor": "#00d4aa",
+        "color": "#ffffff",
+        "borderRadius": "999px",
+        "padding": "0.25rem 0.5rem",
+        "fontSize": "0.8rem"
+      }
+    }
+  },
+  "icons": {
+    "brand": "🗺️",
+    "onchain": "🔗",
+    "verified": "✅",
+    "fast": "⚡",
+    "secure": "🔒",
+    "ecosystem": "🌐",
+    "support": "💬",
+    "analytics": "📊",
+    "process": "🔄",
+    "demo": "🚀",
+    "success": "✅",
+    "warning": "⚠️",
+    "error": "❌",
+    "info": "ℹ️",
+    "docs": "📚",
+    "discord": "💬",
+    "telegram": "📱",
+    "github": "🐙",
+    "wallet": "👛",
+    "transaction": "💸",
+    "block": "🧱",
+    "network": "🌐"
+  },
+  "solana": {
+    "ecosystem": {
+      "wallets": [
+        "Phantom",
+        "Solflare", 
+        "Backpack",
+        "Sollet",
+        "Slope"
+      ],
+      "explorers": [
+        "SolanaFM",
+        "Solscan",
+        "Solana Beach",
+        "Solana Explorer"
+      ],
+      "defi": [
+        "Raydium",
+        "Jupiter",
+        "Orca",
+        "Serum",
+        "Mango Markets"
+      ],
+      "rpc": [
+        "Helius",
+        "QuickNode",
+        "Alchemy",
+        "Shinami",
+        "GenesysGo"
+      ]
+    },
+    "features": {
+      "onchain": [
+        "Transaction status",
+        "Address health",
+        "Token metadata",
+        "Program IDs",
+        "Block information"
+      ],
+      "verification": [
+        "Source citations",
+        "Last updated timestamps",
+        "Verified links",
+        "Risk flags",
+        "Confidence scores"
+      ]
+    }
+  }
+}

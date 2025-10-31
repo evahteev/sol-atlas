@@ -1,0 +1,9 @@
+.error {
+  margin: auto;
+}
+
+.title {
+  @media (max-width: 1024px) {
+    display: none;
+  }
+}

@@ -1,0 +1,99 @@
+.container {
+  flex: 1 0 auto;
+  display: flex;
+  align-items: stretch;
+  flex-flow: column;
+  margin: calc(-1 * var(--page-padding)) 0;
+  background: inherit;
+}
+
+.body {
+  flex: 1 0 auto;
+  overflow: auto;
+  margin: 0 calc(-1 * var(--page-padding));
+  display: flex;
+  flex-flow: column;
+  position: relative;
+}
+
+.header,
+.footer {
+  padding: var(--page-padding) 0;
+}
+
+.frame {
+  border: 0;
+  flex: 1 0 0;
+
+  &.jupiter {
+    width: clamp(320px, 100%, 400px);
+    align-self: center;
+    position: relative;
+
+    > div {
+      position: absolute;
+      inset: 0;
+    }
+
+    :where(*) {
+      flex: initial;
+    }
+
+    input {
+      border: 0;
+    }
+
+    dialog {
+      margin: 0;
+      border: 0;
+      height: 100%;
+      width: 100%;
+    }
+
+    ul {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+
+      &[aria-label='dropdown-list'] {
+        padding: 8px;
+      }
+    }
+  }
+
+  &[id='debridge-widget-container'] > iframe {
+    position: absolute;
+    inset: 0;
+    height: 100% !important;
+    width: 100% !important;
+  }
+}
+
+body:has(.body) {
+  [id='profile-bar'] {
+    display: none !important;
+  }
+}
+
+.action {
+  padding: 8px;
+}
+
+.message {
+  width: 100%;
+  top: 0;
+}
+
+.prompt {
+  display: flex;
+  flex-flow: column;
+  gap: 16px;
+}
+
+.dialog {
+  z-index: 100000;
+}
+
+.button {
+  padding: 0 8px;
+}

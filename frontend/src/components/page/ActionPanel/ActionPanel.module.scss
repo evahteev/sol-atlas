@@ -1,0 +1,13 @@
+.container {
+  @media (max-width: 640px) {
+    border-radius: var(--radii-root) var(--radii-root) 0 0;
+    padding: 16px;
+    box-shadow: 0px -15px 30px 0px rgba(0, 0, 0, 0.27);
+    background: var(--color-dark-50);
+    position: sticky;
+    z-index: 101;
+    bottom: 0;
+    margin: auto calc(-1 * var(--page-padding)) calc(-1 * var(--page-gap));
+    order: 99999;
+  }
+}

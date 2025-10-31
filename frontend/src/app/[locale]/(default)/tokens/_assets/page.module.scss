@@ -1,0 +1,11 @@
+.marquee {
+  margin: calc(-2 * var(--page-gap)) calc(-1 * var(--page-padding)) var(--page-padding);
+  height: 32px;
+  order: -1;
+
+  @media (max-width: 640px) {
+    position: sticky;
+    top: 56px;
+    z-index: 101;
+  }
+}

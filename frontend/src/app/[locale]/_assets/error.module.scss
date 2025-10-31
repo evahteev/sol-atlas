@@ -1,0 +1,5 @@
+.container {
+  margin: auto;
+  padding: var(--page-padding);
+  max-width: min(80ch, calc(100% - 2 * var(--page-padding)));
+}

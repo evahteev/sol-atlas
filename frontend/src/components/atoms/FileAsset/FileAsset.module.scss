@@ -1,0 +1,124 @@
+.container {
+}
+
+.body {
+  grid-area: caption;
+  flex: 0 1 auto;
+
+  &:last-child {
+    grid-row: span 2;
+  }
+}
+
+.caption {
+  display: grid;
+  grid-auto-flow: column;
+  font-weight: bold;
+  color: var(--color-text-main);
+
+  .error & {
+    color: var(--color-danger);
+    text-decoration: line-through;
+  }
+}
+
+.name {
+  flex: 0 1 auto;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.size {
+  color: var(--color-text-comment);
+}
+
+.illustration {
+  display: grid;
+  place-items: center;
+  // width: var(--size, 48px);
+  // height: var(--size, 48px);
+
+  &:not(:has(.image)) {
+    background: var(--color-dark-60);
+  }
+
+  // &::before {
+  //   grid-row: 1;
+  //   grid-column: 1;
+  //   order: 2;
+  //   align-self: end;
+  //   justify-self: end;
+  //   margin: 4px;
+  //   font-size: 10px;
+  //   line-height: 1;
+  //   font-weight: 600;
+  //   padding: 1px 4px;
+  //   content: attr(data-ext);
+  //   text-transform: uppercase;
+  //   background: var(--color-primary);
+  //   color: var(--color-primary-text);
+  //   border: 1px black solid;
+  //   border-radius: calc(var(--radii-root) * 0.25);
+  //   opacity: 1;
+  //   transition: 0.25s ease;
+  // }
+
+  &:has(.loader, .error)::before {
+    opacity: 0.5;
+  }
+}
+
+.icon,
+.loader {
+  grid-row: 1;
+  grid-column: 1;
+  order: 2;
+  align-self: center;
+  justify-self: center;
+}
+
+.loader {
+  width: 24px;
+  height: 24px;
+}
+
+.icon {
+  width: 32px;
+  height: 32px;
+  color: var(--color-danger);
+}
+
+.image {
+  object-fit: contain;
+  border-radius: calc(var(--radii-root) * 0.375);
+  overflow: hidden;
+}
+
+.xxl {
+  composes: xxl from '@/styles/_interactive.scss';
+}
+
+.xl {
+  composes: xl from '@/styles/_interactive.scss';
+}
+
+.lg {
+  composes: lg from '@/styles/_interactive.scss';
+}
+
+.md {
+  composes: md from '@/styles/_interactive.scss';
+}
+
+.sm {
+  composes: sm from '@/styles/_interactive.scss';
+}
+
+.xs {
+  composes: xs from '@/styles/_interactive.scss';
+}
+
+.xxs {
+  composes: xxs from '@/styles/_interactive.scss';
+}

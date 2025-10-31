@@ -1,0 +1,36 @@
+@use '@/styles/mixins' as mixins;
+
+.container {
+  composes: radii from '@/styles/_common.scss';
+  display: flex;
+  gap: 16px;
+}
+
+.asset {
+  margin-inline-end: auto;
+  font-weight: 600;
+}
+
+.balances {
+  display: flex;
+  flex-flow: column;
+  align-items: flex-end;
+}
+
+.amount {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.value {
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 18px;
+  color: var(--color-text-comment);
+}
+
+.loading {
+  @include mixins.element-preloader-animated;
+  border-radius: var(--radii);
+}

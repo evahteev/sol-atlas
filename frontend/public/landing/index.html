@@ -1,0 +1,1792 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SOL Atlas — Turn Your Telegram into a Thriving Community Platform | Solana</title>
+    <meta name="description" content="The community platform built for Solana. Turn Telegram followers into loyal believers with gamified quests, AI CoPilot, and powerful analytics. Join the Atlas Network." />
+
+    <!-- Favicon -->
+    <link
+      rel="icon"
+      type="image/jpeg"
+      href="/landing/favicon.jpg" />
+
+    <style>
+      :root {
+        /* SOL Atlas Brand Colors - Solana-inspired */
+        --sol-primary: #9945ff; /* Solana Purple */
+        --sol-secondary: #14f195; /* Solana Green */
+        --sol-accent: #00d4aa; /* Teal accent */
+        --sol-dark: #0f0f23; /* Deep dark blue */
+        --sol-light: #f8fafc; /* Light background */
+        --sol-gradient: linear-gradient(135deg, #9945ff 0%, #14f195 100%);
+        --sol-gradient-dark: linear-gradient(135deg, #0f0f23 0%, #9945ff 100%);
+        --sol-text: #1a202c;
+        --sol-text-light: #718096;
+        --sol-border: #e2e8f0;
+        --sol-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        --sol-shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.15);
+        --sol-verified: #38a169; /* Green for verified elements */
+        --sol-warning: #ed8936; /* Orange for warnings */
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell,
+          sans-serif;
+        line-height: 1.6;
+        color: var(--sol-text);
+        background: var(--sol-light);
+        margin: 0;
+        padding: 0;
+      }
+
+      /* Main layout container */
+      .main-layout {
+        display: flex;
+        min-height: 100vh;
+        width: 100%;
+        overflow-x: hidden;
+      }
+
+      .main-content {
+        width: 100%;
+        overflow-x: hidden;
+      }
+
+      /* Chat Widget */
+      .chat-widget-button {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        width: 60px;
+        height: 60px;
+        background: var(--sol-gradient);
+        border: none;
+        border-radius: 50%;
+        box-shadow: var(--sol-shadow-lg);
+        cursor: pointer;
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+      }
+
+      .chat-widget-button:hover {
+        transform: scale(1.1);
+        box-shadow: 0 25px 50px rgba(153, 69, 255, 0.3);
+      }
+
+      .chat-widget-button svg {
+        width: 32px;
+        height: 32px;
+        color: white;
+      }
+
+      .chat-sidebar {
+        position: fixed;
+        bottom: 0;
+        right: 24px;
+        width: 800px;
+        height: calc(100vh - 24px);
+        max-height: calc(100vh - 24px);
+        background: white;
+        border-radius: 16px 16px 0 0;
+        box-shadow: var(--sol-shadow-lg);
+        z-index: 999;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        visibility: hidden;
+        opacity: 0;
+        pointer-events: none;
+        transform: translateY(20px);
+        transition: all 0.3s ease;
+      }
+
+      .chat-sidebar.active {
+        visibility: visible;
+        opacity: 1;
+        pointer-events: auto;
+        transform: translateY(0);
+      }
+
+      .chat-header {
+        width: 100%;
+        padding: 16px 20px;
+        background: var(--sol-gradient);
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-shrink: 0;
+        box-sizing: border-box;
+      }
+
+      .chat-header h3 {
+        margin: 0;
+        font-size: 18px;
+        font-weight: 600;
+      }
+
+      .chat-close {
+        background: none;
+        border: none;
+        color: white;
+        cursor: pointer;
+        font-size: 24px;
+        line-height: 1;
+        padding: 0;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .chat-close:hover {
+        opacity: 0.8;
+      }
+
+      .chat-body {
+        flex: 1;
+        overflow-y: auto;
+        overflow-x: hidden;
+      }
+
+      .chat-iframe {
+        width: 100%;
+        height: 100%;
+        min-height: 100%;
+        border: none;
+        background: white;
+      }
+
+      /* Skip Link for Accessibility */
+      .skip-link {
+        position: absolute;
+        top: -40px;
+        left: 6px;
+        background: var(--sol-primary);
+        color: white;
+        padding: 8px;
+        text-decoration: none;
+        border-radius: 4px;
+        z-index: 1000;
+      }
+
+      .skip-link:focus {
+        top: 6px;
+      }
+
+      /* Navigation */
+      .nav {
+        background: rgba(15, 15, 35, 0.95);
+        backdrop-filter: blur(10px);
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        z-index: 100;
+        transition: all 0.3s ease;
+      }
+
+      .nav-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 1rem;
+      }
+
+      .nav-content {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 4rem;
+      }
+
+      .nav-left {
+        display: flex;
+        align-items: center;
+      }
+
+      .nav-right {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .nav-brand {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: white;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .nav-brand::before {
+        content: '';
+        width: 32px;
+        height: 32px;
+        background-image: url('/landing/favicon.jpg');
+        background-size: cover;
+        background-position: center;
+        border-radius: 6px;
+        display: inline-block;
+      }
+
+      .nav-app-links {
+        display: flex;
+        gap: 0.75rem;
+        align-items: center;
+      }
+
+      .nav-app-link {
+        color: white;
+        text-decoration: none;
+        font-size: 0.85rem;
+        padding: 0.4rem 0.8rem;
+        border-radius: 0.375rem;
+        background: rgba(255, 255, 255, 0.1);
+        transition: all 0.3s ease;
+        font-weight: 500;
+      }
+
+      .nav-app-link:hover {
+        background: rgba(255, 255, 255, 0.2);
+        color: var(--sol-secondary);
+        transform: translateY(-1px);
+      }
+
+      .nav-links {
+        display: flex;
+        list-style: none;
+        gap: 2rem;
+        align-items: center;
+      }
+
+      .nav-link {
+        color: white;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s ease;
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+      }
+
+      .nav-link:hover {
+        color: var(--sol-secondary);
+        background: rgba(20, 241, 149, 0.1);
+      }
+
+      /* Mobile Menu */
+      .mobile-menu-toggle {
+        display: none;
+        background: none;
+        border: none;
+        color: white;
+        font-size: 1.5rem;
+        cursor: pointer;
+        padding: 0.5rem;
+      }
+
+      /* Hero Section */
+      .hero {
+        background: var(--sol-gradient-dark);
+        color: white;
+        padding: 8rem 1rem 6rem;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+        opacity: 0.3;
+      }
+
+      .hero-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        position: relative;
+        z-index: 2;
+      }
+
+      .hero h1 {
+        font-size: 3.5rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        line-height: 1.2;
+      }
+
+      .hero-subtitle {
+        font-size: 1.25rem;
+        margin-bottom: 2rem;
+        opacity: 0.9;
+        max-width: 700px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .hero-cta {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-top: 2rem;
+      }
+
+      .microcopy {
+        font-size: 0.95rem;
+        opacity: 0.9;
+        margin-top: 0.5rem;
+      }
+
+      /* Trust Strip */
+      .trust-strip {
+        background: rgba(15, 15, 35, 0.9);
+        color: #cbd5e0;
+        padding: 1rem;
+      }
+
+      .trust-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      .trust-pill {
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        padding: 0.5rem 0.75rem;
+        border-radius: 999px;
+        font-size: 0.95rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .trust-pill.verified::before {
+        content: '✅';
+      }
+
+      .trust-pill.fast::before {
+        content: '⚡';
+      }
+
+      .trust-pill.secure::before {
+        content: '🔒';
+      }
+
+      .trust-pill.no-migration::before {
+        content: '🚀';
+      }
+
+      /* Widget Mockup */
+      .widget-mockup {
+        max-width: 800px;
+        margin: 3rem auto 0;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 1rem;
+        padding: 2rem;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .widget-demo {
+        background: white;
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        color: var(--sol-text);
+        position: relative;
+      }
+
+      .widget-header {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid var(--sol-border);
+      }
+
+      .widget-avatar {
+        width: 40px;
+        height: 40px;
+        background-image: url('/landing/favicon.jpg');
+        background-size: cover;
+        background-position: center;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .widget-title {
+        font-weight: 600;
+        color: var(--sol-primary);
+      }
+
+      .widget-subtitle {
+        font-size: 0.9rem;
+        color: var(--sol-text-light);
+      }
+
+      .chat-message {
+        background: var(--sol-light);
+        padding: 1rem;
+        border-radius: 0.75rem;
+        margin-bottom: 1rem;
+        border-left: 3px solid var(--sol-primary);
+      }
+
+      .on-chain-panel {
+        background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+        border: 1px solid #0ea5e9;
+        border-radius: 0.5rem;
+        padding: 1rem;
+        margin: 1rem 0;
+      }
+
+      .on-chain-header {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 600;
+        color: #0369a1;
+        margin-bottom: 0.5rem;
+      }
+
+      .on-chain-header::before {
+        content: '🔗';
+      }
+
+      .source-chips {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        margin-top: 1rem;
+      }
+
+      .source-chip {
+        background: var(--sol-verified);
+        color: white;
+        padding: 0.25rem 0.5rem;
+        border-radius: 999px;
+        font-size: 0.8rem;
+        font-weight: 500;
+      }
+
+      .source-chip.docs {
+        background: var(--sol-primary);
+      }
+
+      .source-chip.discord {
+        background: #5865f2;
+      }
+
+      .source-chip.ecosystem {
+        background: var(--sol-accent);
+      }
+
+      /* Button System */
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 1rem 2rem;
+        border-radius: 0.75rem;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        border: 2px solid transparent;
+        cursor: pointer;
+        font-size: 1rem;
+      }
+
+      .btn-primary {
+        background: var(--sol-gradient);
+        color: white;
+        box-shadow: var(--sol-shadow);
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--sol-shadow-lg);
+      }
+
+      .btn-secondary {
+        background: transparent;
+        color: white;
+        border-color: white;
+      }
+
+      .btn-secondary:hover {
+        background: white;
+        color: var(--sol-primary);
+      }
+
+      /* Features Section */
+      .features {
+        padding: 6rem 1rem;
+        background: white;
+      }
+
+      .container {
+        max-width: 100%;
+        margin: 0 auto;
+        padding: 0 1rem;
+      }
+
+      .section-header {
+        text-align: center;
+        margin-bottom: 4rem;
+      }
+
+      .section-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--sol-primary);
+        margin-bottom: 1rem;
+      }
+
+      .section-subtitle {
+        font-size: 1.125rem;
+        color: var(--sol-text-light);
+        max-width: 600px;
+        margin: 0 auto;
+      }
+
+      .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-top: 3rem;
+      }
+
+      .feature-card {
+        background: white;
+        padding: 2rem;
+        border-radius: 1rem;
+        box-shadow: var(--sol-shadow);
+        border: 1px solid var(--sol-border);
+        transition: all 0.3s ease;
+      }
+
+      .feature-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--sol-shadow-lg);
+      }
+
+      .feature-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        display: block;
+      }
+
+      .feature-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--sol-primary);
+        margin-bottom: 1rem;
+      }
+
+      .feature-description {
+        color: var(--sol-text-light);
+        line-height: 1.6;
+      }
+
+      /* How It Works Section */
+      .how-it-works {
+        padding: 6rem 1rem;
+        background: var(--sol-light);
+      }
+
+      .process-steps {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+        margin-top: 3rem;
+      }
+
+      .process-step {
+        text-align: center;
+        position: relative;
+      }
+
+      .process-step::after {
+        content: '→';
+        position: absolute;
+        top: 2rem;
+        right: -1rem;
+        font-size: 2rem;
+        color: var(--sol-secondary);
+        opacity: 0.5;
+      }
+
+      .process-step:last-child::after {
+        display: none;
+      }
+
+      .step-number {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 4rem;
+        height: 4rem;
+        background: var(--sol-gradient);
+        color: white;
+        border-radius: 50%;
+        font-size: 1.5rem;
+        font-weight: bold;
+        margin-bottom: 1rem;
+      }
+
+      .step-title {
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: var(--sol-primary);
+        margin-bottom: 0.5rem;
+      }
+
+      .step-description {
+        color: var(--sol-text-light);
+        font-size: 0.9rem;
+      }
+
+      /* Demo Section */
+      .demo {
+        padding: 6rem 1rem;
+        background: white;
+      }
+
+      .demo-container {
+        background: var(--sol-light);
+        border-radius: 1rem;
+        padding: 2rem;
+        border: 1px solid var(--sol-border);
+      }
+
+      .demo-input {
+        width: 100%;
+        padding: 1rem;
+        border: 2px solid var(--sol-border);
+        border-radius: 0.5rem;
+        font-size: 1rem;
+        margin-bottom: 1rem;
+        transition: border-color 0.3s ease;
+      }
+
+      .demo-input:focus {
+        outline: none;
+        border-color: var(--sol-primary);
+      }
+
+      .demo-output {
+        background: white;
+        border: 1px solid var(--sol-border);
+        border-radius: 0.5rem;
+        padding: 1.5rem;
+        min-height: 200px;
+        margin-top: 1rem;
+      }
+
+      /* Ecosystem Directory */
+      .ecosystem {
+        padding: 6rem 1rem;
+        background: var(--sol-light);
+      }
+
+      .ecosystem-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-top: 3rem;
+      }
+
+      .ecosystem-item {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 0.75rem;
+        border: 1px solid var(--sol-border);
+        transition: all 0.3s ease;
+        position: relative;
+      }
+
+      .ecosystem-item:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--sol-shadow);
+      }
+
+      .ecosystem-item.verified::before {
+        content: '✅';
+        position: absolute;
+        top: 0.75rem;
+        right: 0.75rem;
+        font-size: 1.2rem;
+      }
+
+      .ecosystem-name {
+        font-weight: 600;
+        color: var(--sol-primary);
+        margin-bottom: 0.5rem;
+      }
+
+      .ecosystem-description {
+        font-size: 0.9rem;
+        color: var(--sol-text-light);
+        margin-bottom: 1rem;
+      }
+
+      .ecosystem-links {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+      }
+
+      .ecosystem-link {
+        background: var(--sol-light);
+        color: var(--sol-primary);
+        padding: 0.25rem 0.5rem;
+        border-radius: 0.25rem;
+        text-decoration: none;
+        font-size: 0.8rem;
+        transition: all 0.3s ease;
+      }
+
+      .ecosystem-link:hover {
+        background: var(--sol-primary);
+        color: white;
+      }
+
+      /* For Teams Section */
+      .for-teams {
+        padding: 6rem 1rem;
+        background: white;
+      }
+
+      .install-steps {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin-top: 3rem;
+      }
+
+      .install-step {
+        text-align: center;
+        padding: 1.5rem;
+        background: var(--sol-light);
+        border-radius: 0.75rem;
+        border: 1px solid var(--sol-border);
+      }
+
+      .install-step-number {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 3rem;
+        height: 3rem;
+        background: var(--sol-primary);
+        color: white;
+        border-radius: 50%;
+        font-weight: bold;
+        margin-bottom: 1rem;
+      }
+
+      /* Security Section */
+      .security {
+        padding: 6rem 1rem;
+        background: var(--sol-light);
+      }
+
+      .security-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+        margin-top: 3rem;
+      }
+
+      .security-item {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 0.75rem;
+        border: 1px solid var(--sol-border);
+      }
+
+      .security-icon {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+        display: block;
+      }
+
+      /* FAQ */
+      .faq {
+        padding: 6rem 1rem;
+        background: white;
+      }
+
+      .faq-item {
+        background: var(--sol-light);
+        border: 1px solid var(--sol-border);
+        border-radius: 0.75rem;
+        padding: 1rem 1.25rem;
+      }
+
+      .faq-grid {
+        max-width: 1000px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1rem;
+      }
+
+      /* CTA Section */
+      .cta {
+        padding: 6rem 1rem;
+        background: var(--sol-gradient-dark);
+        color: white;
+        text-align: center;
+      }
+
+      .cta-content {
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
+      .cta h2 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+      }
+
+      .cta p {
+        font-size: 1.125rem;
+        margin-bottom: 2rem;
+        opacity: 0.9;
+      }
+
+      /* Footer */
+      .footer {
+        background: var(--sol-dark);
+        color: white;
+        padding: 3rem 1rem 1rem;
+      }
+
+      .footer-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+      }
+
+      .footer-section h3 {
+        font-size: 1.125rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        color: var(--sol-secondary);
+      }
+
+      .footer-section ul {
+        list-style: none;
+      }
+
+      .footer-section ul li {
+        margin-bottom: 0.5rem;
+      }
+
+      .footer-section ul li a {
+        color: #a0aec0;
+        text-decoration: none;
+        transition: color 0.3s ease;
+      }
+
+      .footer-section ul li a:hover {
+        color: white;
+      }
+
+      .footer-bottom {
+        border-top: 1px solid #4a5568;
+        margin-top: 2rem;
+        padding-top: 1rem;
+        text-align: center;
+        color: #a0aec0;
+      }
+
+      /* Responsive Design */
+      @media (max-width: 1024px) {
+        .nav {
+          width: 100%;
+        }
+      }
+
+      @media (max-width: 640px) {
+        .chat-sidebar {
+          width: 100%;
+          height: 100%;
+          bottom: 0;
+          right: 0;
+          border-radius: 0;
+        }
+
+        .chat-widget-button {
+          bottom: 16px;
+          right: 16px;
+          width: 56px;
+          height: 56px;
+        }
+
+        .chat-widget-button svg {
+          width: 28px;
+          height: 28px;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .mobile-menu-toggle {
+          display: block;
+        }
+
+        .nav-links {
+          display: none;
+          position: absolute;
+          top: 100%;
+          left: 0;
+          right: 0;
+          background: var(--sol-dark);
+          flex-direction: column;
+          padding: 1rem;
+          box-shadow: var(--sol-shadow);
+        }
+
+        .nav-links.active {
+          display: flex;
+        }
+
+        .hero h1 {
+          font-size: 2.5rem;
+        }
+
+        .hero-cta {
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .btn {
+          width: 100%;
+          max-width: 300px;
+          justify-content: center;
+        }
+
+        .process-step::after {
+          display: none;
+        }
+
+        .section-title {
+          font-size: 2rem;
+        }
+
+        .cta h2 {
+          font-size: 2rem;
+        }
+      }
+
+      /* Animations */
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .animate-fade-in-up {
+        animation: fadeInUp 0.6s ease-out;
+      }
+
+      /* Loading States */
+      .loading {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top-color: white;
+        animation: spin 1s ease-in-out infinite;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Skip Link for Accessibility -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <!-- Navigation -->
+    <nav class="nav" role="navigation" aria-label="Main navigation">
+      <div class="nav-container">
+        <div class="nav-content">
+          <div class="nav-left">
+            <a href="#" class="nav-brand">SOL Atlas</a>
+          </div>
+
+          <ul class="nav-links" id="nav-links">
+            <li><a href="#features" class="nav-link">Pillars</a></li>
+            <li><a href="#for-teams" class="nav-link">Platform</a></li>
+            <li><a href="#atlas-network" class="nav-link">Network</a></li>
+          </ul>
+
+          <div class="nav-right">
+            <div class="nav-app-links">
+              <a href="/launcher" class="nav-app-link" target="_blank">App</a>
+              <a href="https://t.me/SOLAtlasBOT" class="nav-app-link" target="_blank">Bot</a>
+            </div>
+
+            <!-- Mobile Menu Toggle -->
+            <button class="mobile-menu-toggle" onclick="toggleMobileMenu()" aria-label="Open menu">
+              <span id="hamburger-icon">☰</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Layout Container -->
+    <div class="main-layout">
+      <!-- Main Content -->
+      <main id="main-content" class="main-content">
+        <!-- Hero Section -->
+        <section class="hero">
+          <div class="hero-content">
+            <h1>Your Community Is Your Net Worth.</h1>
+            <p class="hero-subtitle">
+              The best crypto projects don't buy users — they build believers.<br>
+              Turn your Telegram followers into loyal believers with SOL Atlas.
+            </p>
+            <div class="hero-cta">
+              <a href="https://t.me/SOLAtlasBOT" class="btn btn-primary" target="_blank">🚀 Launch Your Bot</a>
+              <a href="#atlas-network" class="btn btn-secondary">📊 Join Atlas Network</a>
+            </div>
+            <div class="microcopy">Built on GURU Framework • AI Onboarding CoPilot • Proven on 3 Major Ecosystems</div>
+          </div>
+        </section>
+
+        <!-- Problem Section -->
+        <section
+          class="features"
+          style="background: white; border-top: 1px solid var(--sol-border)">
+          <div class="container">
+            <div class="section-header">
+              <h2 class="section-title">Telegram Is the Beating Heart of Crypto — But the Heart Has No Tools.</h2>
+              <p class="section-subtitle">Crypto lives on Telegram — where intros happen, friends hang out, and alpha gets shared.<br>Yet communities remain unmanaged, unmeasured, and unowned.</p>
+            </div>
+            <div class="features-grid">
+              <div class="feature-card">
+                <span class="feature-icon">💬</span>
+                <h3 class="feature-title">Telegram Chaos</h3>
+                <p class="feature-description">Scattered chats, no structure, no measurement. Communities exist but can't be managed or grown systematically.</p>
+              </div>
+              <div class="feature-card">
+                <span class="feature-icon">🔒</span>
+                <h3 class="feature-title">Platform Lock-In</h3>
+                <p class="feature-description">TG aims to keep users inside its own ecosystem — risking your project's reach and ownership.</p>
+              </div>
+              <div class="feature-card">
+                <span class="feature-icon">📉</span>
+                <h3 class="feature-title">90% User Loss</h3>
+                <p class="feature-description">$16,000 per user acquisition cost, yet 90% disappear within weeks. No tools to retain them.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Trust Strip -->
+        <div class="trust-strip">
+          <div class="trust-content">
+            <div class="trust-pill verified">🎮 Gamified Quests</div>
+            <div class="trust-pill verified">🤖 AI CoPilot Steward</div>
+            <div class="trust-pill no-migration">🔗 Portable Community</div>
+            <div class="trust-pill fast">📊 Analytics Built-In</div>
+          </div>
+        </div>
+
+        <!-- Solution Section -->
+        <section id="how-it-works" class="how-it-works">
+          <div class="container">
+            <div class="section-header">
+              <h2 class="section-title">Arm the Groupchats.</h2>
+              <p class="section-subtitle">SOL Atlas turns Telegram from a chatroom into a gamified community platform.</p>
+            </div>
+
+            <div class="features-grid" style="margin-top: 3rem;">
+              <div class="feature-card">
+                <span class="feature-icon">🧩</span>
+                <h3 class="feature-title">Bots + Community Platform</h3>
+                <p class="feature-description">Create thriving, happy communities with powerful Telegram bots and engagement tools.</p>
+              </div>
+
+              <div class="feature-card">
+                <span class="feature-icon">💬</span>
+                <h3 class="feature-title">Gamified Experience</h3>
+                <p class="feature-description">Launch quests, missions, and leaderboards in minutes. Turn engagement into a game.</p>
+              </div>
+
+              <div class="feature-card">
+                <span class="feature-icon">🤖</span>
+                <h3 class="feature-title">AI-Powered CoPilot Steward</h3>
+                <p class="feature-description">Guides onboarding and member activation through scenario-based flows.</p>
+              </div>
+
+              <div class="feature-card">
+                <span class="feature-icon">📊</span>
+                <h3 class="feature-title">Analytics + Knowledgebases</h3>
+                <p class="feature-description">Track engagement, retention, and sentiment. Know what's working.</p>
+              </div>
+
+              <div class="feature-card">
+                <span class="feature-icon">🔗</span>
+                <h3 class="feature-title">Portable Users & Knowledge</h3>
+                <p class="feature-description">No TON lock-in; your data and members move with you.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Pillars Section -->
+        <section id="features" class="features">
+          <div class="container">
+            <div class="section-header">
+              <h2 class="section-title">Pillars of Community Success</h2>
+              <p class="section-subtitle">Atlas gives Solana builders all six — out of the box.</p>
+            </div>
+
+            <div class="features-grid">
+              <div class="feature-card">
+                <span class="feature-icon">💝</span>
+                <h3 class="feature-title">1️⃣ Connection</h3>
+                <p class="feature-description">The heartbeat of every great project. Build genuine relationships in your community.</p>
+              </div>
+              
+              <div class="feature-card">
+                <span class="feature-icon">🎭</span>
+                <h3 class="feature-title">2️⃣ Identity</h3>
+                <p class="feature-description">Roles, badges, and purpose-driven belonging. Give members a reason to stay.</p>
+              </div>
+              
+              <div class="feature-card">
+                <span class="feature-icon">🎯</span>
+                <h3 class="feature-title">3️⃣ Contribution</h3>
+                <p class="feature-description">Quests and missions that drive growth. Turn members into contributors.</p>
+              </div>
+              
+              <div class="feature-card">
+                <span class="feature-icon">🏆</span>
+                <h3 class="feature-title">4️⃣ Recognition</h3>
+                <p class="feature-description">Rewards and ranks that keep energy high. Celebrate every win.</p>
+              </div>
+              
+              <div class="feature-card">
+                <span class="feature-icon">📈</span>
+                <h3 class="feature-title">5️⃣ Growth</h3>
+                <p class="feature-description">Referrals and community loops. Turn believers into advocates.</p>
+              </div>
+              
+              <div class="feature-card">
+                <span class="feature-icon">🗳️</span>
+                <h3 class="feature-title">6️⃣ Governance</h3>
+                <p class="feature-description">From followers to DAO participants. Give power to your community.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Atlas Network Section -->
+        <section id="atlas-network" class="ecosystem">
+          <div class="container">
+            <div class="section-header">
+              <h2 class="section-title">The Atlas Network</h2>
+              <p class="section-subtitle">Growing Solana communities powered by SOL Atlas</p>
+            </div>
+
+            <div class="ecosystem-grid">
+              <div class="ecosystem-item verified">
+                <div class="ecosystem-name">🔥 Burning Meme</div>
+                <div class="ecosystem-description">Memecoin Launchpad with 50K+ active community members</div>
+                <div class="ecosystem-links">
+                  <a href="#" class="ecosystem-link">Community</a>
+                  <a href="#" class="ecosystem-link">Launch</a>
+                </div>
+              </div>
+
+              <div class="ecosystem-item verified">
+                <div class="ecosystem-name">📊 DexGuru</div>
+                <div class="ecosystem-description">DeFi analytics & trading platform with 30K+ MAU</div>
+                <div class="ecosystem-links">
+                  <a href="#" class="ecosystem-link">App</a>
+                  <a href="#" class="ecosystem-link">Analytics</a>
+                </div>
+              </div>
+
+              <div class="ecosystem-item verified">
+                <div class="ecosystem-name">💎 UCOIN App</div>
+                <div class="ecosystem-description">Utility DEX with quests & staking, 47K+ members</div>
+                <div class="ecosystem-links">
+                  <a href="#" class="ecosystem-link">Trade</a>
+                  <a href="#" class="ecosystem-link">Stake</a>
+                </div>
+              </div>
+
+              <div class="ecosystem-item">
+                <div class="ecosystem-name">🚀 Your Project Here</div>
+                <div class="ecosystem-description">Join the Atlas Network and grow your Solana community</div>
+                <div class="ecosystem-links">
+                  <a href="https://t.me/SOLAtlasBOT" class="ecosystem-link">Launch Bot</a>
+                </div>
+              </div>
+            </div>
+
+            <!-- Community Links -->
+            <div class="community-links" style="margin-top: 3rem; text-align: center;">
+              <h3 style="color: var(--sol-primary); margin-bottom: 1.5rem; font-size: 1.5rem;">Join the Atlas Network</h3>
+              <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                <a href="https://t.me/+BXMz7v3VxKFhMjli" class="btn btn-secondary" target="_blank" style="display: inline-flex; align-items: center; gap: 0.5rem;">
+                  <span>💬</span> Telegram Group
+                </a>
+                <a href="https://t.me/SolanaAtlas" class="btn btn-secondary" target="_blank" style="display: inline-flex; align-items: center; gap: 0.5rem;">
+                  <span>📢</span> Telegram Channel
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Platform Section -->
+        <section id="for-teams" class="for-teams">
+          <div class="container">
+            <div class="section-header">
+              <h2 class="section-title">Built for Solana Builders</h2>
+              <p class="section-subtitle">Build faster, retain users, and grow together.</p>
+            </div>
+
+            <div class="features-grid" style="margin-top: 3rem;">
+              <div class="feature-card">
+                <span class="feature-icon">🪄</span>
+                <h3 class="feature-title">Telegram Bot Launchpad</h3>
+                <p class="feature-description">Create your community hub instantly. No coding required.</p>
+              </div>
+
+              <div class="feature-card">
+                <span class="feature-icon">🧩</span>
+                <h3 class="feature-title">Low-code Builder (BPMN)</h3>
+                <p class="feature-description">Design quests and automations for your KPIs with visual workflows.</p>
+              </div>
+
+              <div class="feature-card">
+                <span class="feature-icon">🏆</span>
+                <h3 class="feature-title">Leaderboards & Cross-Community Chests</h3>
+                <p class="feature-description">Connect users across ecosystems. Shared rewards, shared growth.</p>
+              </div>
+
+              <div class="feature-card">
+                <span class="feature-icon">🤖</span>
+                <h3 class="feature-title">CoPilot Steward</h3>
+                <p class="feature-description">AI onboarding that drives engagement from day one.</p>
+              </div>
+
+              <div class="feature-card">
+                <span class="feature-icon">🧠</span>
+                <h3 class="feature-title">Crazy-good Data Analytics</h3>
+                <p class="feature-description">Built on Crypto Twitter + DeFi insights. Know your community.</p>
+              </div>
+              
+              <div class="feature-card">
+                <span class="feature-icon">🔗</span>
+                <h3 class="feature-title">Atlas Network</h3>
+                <p class="feature-description">Discover, collaborate, and grow with other Solana projects.</p>
+              </div>
+              
+              <div class="feature-card">
+                <span class="feature-icon">🛡</span>
+                <h3 class="feature-title">Portable Community</h3>
+                <p class="feature-description">Knowledge + wallet-linked users protected from vendor lock.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Data & Engagement Section -->
+        <section class="security">
+          <div class="container">
+            <div class="section-header">
+              <h2 class="section-title">Engagement, Rewards & Data — All in One Portal</h2>
+              <p class="section-subtitle">Powerful tools to understand and grow your community</p>
+            </div>
+
+            <div class="security-grid">
+              <div class="security-item">
+                <span class="security-icon">🌐</span>
+                <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--sol-primary);">Atlas Portal + Web Chat</h3>
+                <p style="color: var(--sol-text-light); font-size: 0.9rem;">Manage everything from one dashboard. Bot + web + mobile.</p>
+              </div>
+
+              <div class="security-item">
+                <span class="security-icon">📊</span>
+                <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--sol-primary);">Solana DeFi Data Indexing</h3>
+                <p style="color: var(--sol-text-light); font-size: 0.9rem;">Real-time on-chain activity, wallet insights, and transaction tracking.</p>
+              </div>
+
+              <div class="security-item">
+                <span class="security-icon">🎯</span>
+                <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--sol-primary);">Customizable Quests & KPIs</h3>
+                <p style="color: var(--sol-text-light); font-size: 0.9rem;">Design quests aligned to your goals. Track completion in real-time.</p>
+              </div>
+
+              <div class="security-item">
+                <span class="security-icon">🏆</span>
+                <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--sol-primary);">Leaderboards & Group Achievements</h3>
+                <p style="color: var(--sol-text-light); font-size: 0.9rem;">Gamify participation. Reward top contributors. Build competition.</p>
+              </div>
+
+              <div class="security-item">
+                <span class="security-icon">📧</span>
+                <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--sol-primary);">Automated Weekly Channel Digests</h3>
+                <p style="color: var(--sol-text-light); font-size: 0.9rem;">AI-powered summaries of community activity, top discussions, and trends.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Market Opportunity Section -->
+        <section class="features" style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);">
+          <div class="container">
+            <div class="section-header">
+              <h2 class="section-title">The $6.4 Billion Retention Opportunity</h2>
+              <p class="section-subtitle">The average Web3 user costs $16,000 to acquire — and 90% are lost within weeks.</p>
+            </div>
+
+            <div style="max-width: 800px; margin: 3rem auto; padding: 2rem; background: white; border-radius: 1rem; border: 1px solid var(--sol-border);">
+              <p style="font-size: 1.125rem; line-height: 1.8; color: var(--sol-text); margin-bottom: 2rem;">
+                Solana has <strong style="color: var(--sol-primary);">3.7M daily users</strong> and <strong style="color: var(--sol-primary);">120M monthly addresses</strong> — even a <strong>1% retention gain</strong> equals tens of millions saved in effective CAC.
+              </p>
+              
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; margin-top: 2rem;">
+                <div style="text-align: center; padding: 1.5rem; background: var(--sol-light); border-radius: 0.75rem;">
+                  <div style="font-size: 2.5rem; font-weight: bold; color: #ef4444; margin-bottom: 0.5rem;">10%</div>
+                  <div style="font-size: 0.9rem; color: var(--sol-text-light);">Without Atlas</div>
+                  <div style="font-weight: 600; margin-top: 0.5rem;">Retention Rate</div>
+                </div>
+                
+                <div style="text-align: center; padding: 1.5rem; background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); border-radius: 0.75rem; border: 2px solid var(--sol-verified);">
+                  <div style="font-size: 2.5rem; font-weight: bold; color: var(--sol-verified); margin-bottom: 0.5rem;">50%+</div>
+                  <div style="font-size: 0.9rem; color: var(--sol-text-light);">With Atlas</div>
+                  <div style="font-weight: 600; margin-top: 0.5rem;">Retention Rate</div>
+                </div>
+              </div>
+
+              <div style="text-align: center; margin-top: 2rem; padding: 2rem; background: var(--sol-gradient-dark); color: white; border-radius: 0.75rem;">
+                <div style="font-size: 3rem; font-weight: bold; margin-bottom: 0.5rem;">$6.4B</div>
+                <div style="font-size: 1.125rem; opacity: 0.9;">Retained Value Across 1M Users</div>
+              </div>
+              
+              <p style="font-size: 1rem; text-align: center; margin-top: 2rem; color: var(--sol-text-light); font-style: italic;">
+                The real market isn't in acquiring users — it's in keeping them.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Social Proof Section -->
+        <section class="faq" style="background: white;">
+          <div class="section-header">
+            <h2 class="section-title">We Are the Doctors — We Tested the Pill.</h2>
+            <p class="section-subtitle">SOL Atlas was battle-tested as the Guru Community App before evolving into the Solana Ecosystem platform.</p>
+          </div>
+          <div class="features-grid" style="max-width: 1000px; margin: 0 auto;">
+            <div class="feature-card" style="background: linear-gradient(135deg, #fff5f5 0%, #fee 100%); border-left: 4px solid #f56565;">
+              <span class="feature-icon">🔥</span>
+              <h3 class="feature-title">Burning Meme</h3>
+              <p class="feature-description">Memecoin Launchpad with <strong>50K+ users</strong>. Proven gamification and quest mechanics driving daily engagement.</p>
+            </div>
+            
+            <div class="feature-card" style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border-left: 4px solid #3b82f6;">
+              <span class="feature-icon">📊</span>
+              <h3 class="feature-title">DexGuru</h3>
+              <p class="feature-description">DeFi analytics & trading platform with <strong>30K+ MAU</strong>. Industry-leading data indexing and community insights.</p>
+            </div>
+            
+            <div class="feature-card" style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border-left: 4px solid var(--sol-verified);">
+              <span class="feature-icon">💎</span>
+              <h3 class="feature-title">UCOIN App</h3>
+              <p class="feature-description">Utility DEX with quests & staking, <strong>47K+ members</strong>. Community-first approach validated at scale.</p>
+            </div>
+          </div>
+          <p style="text-align: center; font-size: 1.25rem; font-weight: 600; color: var(--sol-primary); margin-top: 3rem;">
+            Proven on EVM. Now scaling to Solana.
+          </p>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="cta">
+          <div class="cta-content">
+            <h2>Join the Atlas Network. Arm Your Groupchat.</h2>
+
+            <p>Be among the 3% of Web3 projects that grow through community, not marketing.</p>
+            <div class="hero-cta">
+              <a href="https://t.me/SOLAtlasBOT" class="btn btn-primary" target="_blank">🚀 Launch Your Bot</a>
+              <a href="#atlas-network" class="btn btn-secondary">🧭 Explore the Atlas Network</a>
+              <a href="https://t.me/SolanaAtlas" class="btn btn-secondary" target="_blank">💬 Join @SolanaAtlas</a>
+            </div>
+            <div class="microcopy" style="margin-top:0.5rem;">Built on the GURU Framework • Powered by MindsDB • Connected by Solana</div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <!-- Chat Widget Button -->
+    <button class="chat-widget-button" id="chatWidgetButton" aria-label="Open chat assistant">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+        <path
+          d="M17.5 11a1.5 1.5 0 0 0-3 0v4a1.5 1.5 0 0 0 3 0v-4ZM8 9.5A1.5 1.5 0 0 1 9.5 11v4a1.5 1.5 0 0 1-3 0v-4A1.5 1.5 0 0 1 8 9.5Z" />
+        <path
+          fill-rule="evenodd"
+          d="M10 0a1 1 0 1 0 0 2h1v2h-.983c-1.391 0-2.488 0-3.374.062-.904.062-1.664.193-2.368.49A7 7 0 0 0 .552 8.275c-.297.704-.428 1.464-.49 2.367C0 11.53 0 12.627 0 14.018v.12c0 .8 0 1.296.054 1.727a7 7 0 0 0 6.082 6.082c.431.054.927.054 1.726.054h8.276c.798 0 1.295 0 1.726-.053a7 7 0 0 0 6.082-6.083c.054-.431.054-.928.054-1.726v-.12c0-1.392 0-2.489-.062-3.376-.062-.903-.193-1.663-.49-2.367a7 7 0 0 0-3.723-3.723c-.704-.297-1.464-.428-2.367-.49C16.47 4 15.374 4 13.983 4H13V2h1a1 1 0 1 0 0-2h-4Zm.055 6c-1.438 0-2.465 0-3.274.057-.8.055-1.312.162-1.728.337a5 5 0 0 0-2.659 2.66c-.175.415-.282.927-.337 1.727C2 11.591 2 12.617 2 14.055c0 .908.002 1.27.038 1.562a5 5 0 0 0 4.345 4.345c.292.036.654.038 1.562.038h8.11c.908 0 1.27-.002 1.562-.038a5 5 0 0 0 4.345-4.345c.036-.292.038-.654.038-1.562 0-1.438 0-2.465-.057-3.274-.055-.8-.162-1.312-.338-1.728a5 5 0 0 0-2.658-2.659c-.416-.175-.928-.282-1.728-.337C16.409 6 15.383 6 13.945 6h-3.89Z"
+          clip-rule="evenodd" />
+      </svg>
+    </button>
+
+    <!-- Chat Widget -->
+    <div class="chat-sidebar" id="chatWidget">
+      <div class="chat-header">
+        <h3>SOL Atlas Assistant</h3>
+        <button class="chat-close" id="chatCloseButton" aria-label="Close chat">&times;</button>
+      </div>
+      <div class="chat-body">
+        <iframe
+          src="https://chat-dexguru.dexguru.biz/"
+          class="chat-iframe"
+          title="SOL Atlas Chat Assistant"
+          allow="microphone; camera; geolocation"></iframe>
+      </div>
+    </div>
+
+    <script>
+      // Chat widget toggle functionality
+      const chatWidget = document.getElementById('chatWidget')
+      const chatWidgetButton = document.getElementById('chatWidgetButton')
+      const chatCloseButton = document.getElementById('chatCloseButton')
+
+      chatWidgetButton.addEventListener('click', () => {
+        chatWidget.classList.add('active')
+      })
+
+      chatCloseButton.addEventListener('click', () => {
+        chatWidget.classList.remove('active')
+      })
+
+      // Close chat when clicking outside
+      document.addEventListener('click', (e) => {
+        if (
+          !chatWidget.contains(e.target) &&
+          !chatWidgetButton.contains(e.target) &&
+          chatWidget.classList.contains('active')
+        ) {
+          chatWidget.classList.remove('active')
+        }
+      })
+    </script>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>SOL Atlas</h3>
+          <p style="color: #a0aec0; margin-bottom: 1rem;">
+            Turn your Telegram followers into loyal believers. The community platform built for Solana. 
+            Gamified quests, AI CoPilot, and powerful analytics.
+          </p>
+          <p style="color: #a0aec0;">
+            Part of the GURU Framework ecosystem.
+          </p>
+        </div>
+
+        <div class="footer-section">
+          <h3>Product</h3>
+          <ul>
+            <li><a href="#features">Community Pillars</a></li>
+            <li><a href="#atlas-network">Atlas Network</a></li>
+            <li><a href="#for-teams">Platform</a></li>
+            <li><a href="https://t.me/SOLAtlasBOT" target="_blank">Launch Bot</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-section">
+          <h3>Resources</h3>
+          <ul>
+            <li><a href="#features">Getting Started</a></li>
+            <li><a href="#for-teams">Builder Guide</a></li>
+            <li><a href="https://t.me/SolanaAtlas" target="_blank">Channel</a></li>
+            <li><a href="https://t.me/+BXMz7v3VxKFhMjli" target="_blank">Community Group</a></li>
+            <li><a href="#atlas-network">Success Stories</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-section">
+          <h3>Connect</h3>
+          <ul>
+            <li><a href="https://app-sol-atlas.apps.gurunetwork.ai/" target="_blank">App</a></li>
+            <li><a href="https://t.me/SOLAtlasBOT" target="_blank">Bot</a></li>
+            <li><a href="https://t.me/+BXMz7v3VxKFhMjli" target="_blank">Telegram Group</a></li>
+            <li><a href="https://t.me/SolanaAtlas" target="_blank">Telegram Channel</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-section">
+          <h3>Company</h3>
+          <ul>
+            <li><a href="#about">About Us</a></li>
+            <li><a href="#contact">Contact</a></li>
+            <li><a href="#careers">Careers</a></li>
+            <li><a href="#privacy">Privacy Policy</a></li>
+            <li><a href="#terms">Terms of Service</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>&copy; 2024 SOL Atlas. All rights reserved. Powered by GURU Framework.</p>
+      </div>
+    </footer>
+
+    <script>
+      // Mobile menu toggle
+      function toggleMobileMenu() {
+        const navLinks = document.getElementById('nav-links')
+        const hamburgerIcon = document.getElementById('hamburger-icon')
+
+        navLinks.classList.toggle('active')
+        hamburgerIcon.textContent = navLinks.classList.contains('active') ? '✕' : '☰'
+      }
+
+      // Demo functionality
+      function handleDemoKeyPress(event) {
+        if (event.key === 'Enter') {
+          runDemo()
+        }
+      }
+
+      function runDemo() {
+        const question = document.getElementById('demo-question').value.trim()
+        const output = document.getElementById('demo-output')
+        const btn = document.getElementById('demo-btn')
+
+        if (!question) {
+          alert('Please enter a question first.')
+          return
+        }
+
+        // Show loading state
+        btn.innerHTML = '<span class="loading"></span> Processing...'
+        btn.disabled = true
+
+        // Simulate AI processing
+        setTimeout(() => {
+          const responses = {
+            transaction: `
+                        <h4 style="color: var(--sol-primary); margin-bottom: 1rem;">🗺️ SOL Atlas Response</h4>
+                        <p><strong>Your Question:</strong> "${question}"</p>
+                        <p style="margin: 1rem 0;">
+                            Here's how to check your transaction status on Solana:
+                        </p>
+                        <ul style="margin: 1rem 0; padding-left: 1.5rem;">
+                            <li><strong>Use SolanaFM:</strong> Visit solana.fm and paste your transaction signature</li>
+                            <li><strong>Check Solscan:</strong> Alternative explorer at solscan.io</li>
+                            <li><strong>CLI Method:</strong> Use <code>solana confirm &lt;signature&gt;</code></li>
+                        </ul>
+                        <div class="on-chain-panel" style="margin: 1rem 0;">
+                            <div class="on-chain-header">On-chain Context</div>
+                            <div style="font-size: 0.9rem; color: #0369a1;">
+                                <strong>Status:</strong> ✅ Confirmed<br>
+                                <strong>Block:</strong> 245,123,456<br>
+                                <strong>Fee:</strong> 0.000005 SOL<br>
+                                <strong>Explorer:</strong> <a href="#" style="color: #0369a1;">View on SolanaFM</a>
+                            </div>
+                        </div>
+                        <div class="source-chips" style="margin-top: 1rem;">
+                            <span class="source-chip docs">Solana Docs</span>
+                            <span class="source-chip ecosystem">SolanaFM</span>
+                            <span class="source-chip discord">Discord</span>
+                        </div>
+                    `,
+            wallet: `
+                        <h4 style="color: var(--sol-primary); margin-bottom: 1rem;">🗺️ SOL Atlas Response</h4>
+                        <p><strong>Your Question:</strong> "${question}"</p>
+                        <p style="margin: 1rem 0;">
+                            Here are the most popular Solana wallets:
+                        </p>
+                        <ul style="margin: 1rem 0; padding-left: 1.5rem;">
+                            <li><strong>Phantom:</strong> Most popular browser extension wallet</li>
+                            <li><strong>Solflare:</strong> Web and mobile wallet with staking</li>
+                            <li><strong>Backpack:</strong> Developer-focused wallet with built-in features</li>
+                        </ul>
+                        <div class="on-chain-panel" style="margin: 1rem 0;">
+                            <div class="on-chain-header">Ecosystem Tools</div>
+                            <div style="font-size: 0.9rem; color: #0369a1;">
+                                <strong>Download:</strong> <a href="#" style="color: #0369a1;">Phantom Wallet</a><br>
+                                <strong>Mobile:</strong> <a href="#" style="color: #0369a1;">Solflare App</a><br>
+                                <strong>Developer:</strong> <a href="#" style="color: #0369a1;">Backpack</a>
+                            </div>
+                        </div>
+                        <div class="source-chips" style="margin-top: 1rem;">
+                            <span class="source-chip ecosystem">Wallet Directory</span>
+                            <span class="source-chip docs">Setup Guide</span>
+                        </div>
+                    `,
+            fee: `
+                        <h4 style="color: var(--sol-primary); margin-bottom: 1rem;">🗺️ SOL Atlas Response</h4>
+                        <p><strong>Your Question:</strong> "${question}"</p>
+                        <p style="margin: 1rem 0;">
+                            Solana transaction fees are typically very low:
+                        </p>
+                        <ul style="margin: 1rem 0; padding-left: 1.5rem;">
+                            <li><strong>Standard Transfer:</strong> ~0.000005 SOL (less than $0.001)</li>
+                            <li><strong>Smart Contract:</strong> ~0.00025 SOL (varies by complexity)</li>
+                            <li><strong>Priority Fee:</strong> Optional for faster processing</li>
+                        </ul>
+                        <div class="on-chain-panel" style="margin: 1rem 0;">
+                            <div class="on-chain-header">Current Network Stats</div>
+                            <div style="font-size: 0.9rem; color: #0369a1;">
+                                <strong>Base Fee:</strong> 0.000005 SOL<br>
+                                <strong>Network Status:</strong> ✅ Healthy<br>
+                                <strong>TPS:</strong> 2,847<br>
+                                <strong>Priority Fee:</strong> 0.000001 SOL
+                            </div>
+                        </div>
+                        <div class="source-chips" style="margin-top: 1rem;">
+                            <span class="source-chip docs">Fee Structure</span>
+                            <span class="source-chip ecosystem">Network Stats</span>
+                        </div>
+                    `,
+          }
+
+          // Find best matching response
+          let response = `
+                    <h4 style="color: var(--sol-primary); margin-bottom: 1rem;">🗺️ SOL Atlas Response</h4>
+                    <p><strong>Your Question:</strong> "${question}"</p>
+                    <p style="margin: 1rem 0;">
+                        SOL Atlas can help you with Solana-related questions. Here's what I found:
+                    </p>
+                    <ul style="margin: 1rem 0; padding-left: 1.5rem;">
+                        <li>Check our documentation for detailed guides</li>
+                        <li>Browse the ecosystem directory for verified tools</li>
+                        <li>Use on-chain lookups for real-time data</li>
+                        <li>Escalate to our team if you need human help</li>
+                    </ul>
+                    <div class="source-chips" style="margin-top: 1rem;">
+                        <span class="source-chip docs">Documentation</span>
+                        <span class="source-chip ecosystem">Ecosystem</span>
+                    </div>
+                `
+
+          // Check for specific keywords
+          const lowerQuestion = question.toLowerCase()
+          if (
+            lowerQuestion.includes('transaction') ||
+            lowerQuestion.includes('tx') ||
+            lowerQuestion.includes('confirm')
+          ) {
+            response = responses['transaction']
+          } else if (
+            lowerQuestion.includes('wallet') ||
+            lowerQuestion.includes('phantom') ||
+            lowerQuestion.includes('solflare')
+          ) {
+            response = responses['wallet']
+          } else if (
+            lowerQuestion.includes('fee') ||
+            lowerQuestion.includes('cost') ||
+            lowerQuestion.includes('price')
+          ) {
+            response = responses['fee']
+          }
+
+          output.innerHTML = response
+
+          // Reset button
+          btn.innerHTML = '🗺️ Ask SOL Atlas'
+          btn.disabled = false
+        }, 2000)
+      }
+
+      // Smooth scrolling for navigation links
+      document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+        anchor.addEventListener('click', function (e) {
+          e.preventDefault()
+          const target = document.querySelector(this.getAttribute('href'))
+          if (target) {
+            target.scrollIntoView({
+              behavior: 'smooth',
+              block: 'start',
+            })
+          }
+        })
+      })
+
+      // Add scroll effect to navigation
+      window.addEventListener('scroll', function () {
+        const nav = document.querySelector('.nav')
+        if (window.scrollY > 100) {
+          nav.style.background = 'rgba(15, 15, 35, 0.98)'
+        } else {
+          nav.style.background = 'rgba(15, 15, 35, 0.95)'
+        }
+      })
+
+      // Add animation on scroll
+      const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px',
+      }
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('animate-fade-in-up')
+          }
+        })
+      }, observerOptions)
+
+      // Observe feature cards and process steps
+      document
+        .querySelectorAll('.feature-card, .process-step, .ecosystem-item, .security-item')
+        .forEach((el) => {
+          observer.observe(el)
+        })
+    </script>
+  </body>
+</html>

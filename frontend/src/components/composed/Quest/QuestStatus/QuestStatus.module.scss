@@ -1,0 +1,15 @@
+.container {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.subtitle {
+  display: block;
+  color: var(--color-text-comment);
+}
+
+.loader {
+  margin: -8px 0 -8px auto;
+  width: 24px;
+}

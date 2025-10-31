@@ -1,0 +1,61 @@
+:where(.container) {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  gap: 8px;
+
+  @container page-content (width > 480px) {
+    display: grid;
+    grid-template-columns: minmax(13ch, auto) minmax(50%, 1fr);
+  }
+
+  @container page-content (width <= 480px) {
+    display: flex;
+    flex-flow: column;
+  }
+}
+
+@container page-content (width > 480px) {
+  :where(.start) {
+    text-align: start;
+  }
+
+  :where(.center) {
+    text-align: center;
+  }
+
+  :where(.end) {
+    text-align: end;
+  }
+}
+
+:where(.item) {
+  @container page-content (width > 480px) {
+    grid-column: span 2;
+    display: grid;
+    grid-template-columns: subgrid;
+  }
+
+  @container page-content (width <= 480px) {
+    display: flex;
+    flex-flow: column;
+    gap: 4px;
+  }
+}
+
+:where(.caption) {
+  color: var(--color-text-comment);
+  font-size: 12px;
+  line-height: 20px;
+  font-weight: 400;
+
+  @container page-content (width > 480px) {
+    margin-block-start: 2px;
+  }
+}
+
+:where(.value) {
+  font-size: 16px;
+  line-height: 24px;
+  color: var(--color-text-main);
+}

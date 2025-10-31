@@ -1,0 +1,94 @@
+.container {
+  flex: 1 0 auto;
+  display: flex;
+  flex-flow: column;
+  gap: 16px;
+  background: inherit;
+}
+
+.header {
+  display: flex;
+  flex-flow: column;
+  gap: 16px;
+}
+
+.body {
+  flex: 1 0 0;
+  display: flex;
+  flex-flow: column;
+  gap: var(--page-gap);
+  background: inherit;
+  z-index: 1;
+}
+
+.content {
+  flex: 1 0 0;
+  margin: 0 calc(-1 * var(--page-padding));
+  padding: 0 var(--page-padding);
+  display: flex;
+  flex-flow: column;
+  gap: 16px;
+  background: inherit;
+  overflow: auto;
+}
+
+.table {
+}
+
+.hilite {
+  background: var(--color-dark-60);
+}
+
+.icon {
+  width: 24px;
+  height: 24px;
+}
+
+.chart {
+  width: 10ch;
+  height: 32px;
+}
+
+.fixed {
+  position: sticky;
+  left: 0;
+  background: inherit;
+}
+
+.separated {
+  border-right: 1px var(--color-dark-30) solid;
+}
+
+.section {
+  background: inherit;
+
+  &:not(:only-child) {
+    position: relative;
+  }
+
+  &:only-child {
+    position: absolute;
+    inset: 0;
+    margin: 0;
+    overflow: auto;
+  }
+
+  &Header {
+    position: sticky;
+    top: 0;
+    z-index: 90;
+  }
+
+  &Body {
+    padding: 0;
+  }
+
+  &:not(:only-child) &Body {
+    overflow: auto;
+  }
+}
+
+.message {
+  width: auto;
+  margin: 0 var(--page-padding);
+}

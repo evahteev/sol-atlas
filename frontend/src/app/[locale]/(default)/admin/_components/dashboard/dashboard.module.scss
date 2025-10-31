@@ -1,0 +1,29 @@
+.dashboard {
+  @container (width>=800px) {
+    grid-template-columns: repeat(12, minmax(48px, 1fr));
+  }
+
+  @container (540px<width<800px) {
+    grid-template-columns: repeat(2, minmax(128px, 1fr));
+  }
+
+  @container (width <= 540px) {
+    display: flex;
+    flex-flow: column;
+  }
+}
+
+.counter {
+  @container (width>=800px) {
+    grid-column: span 3;
+  }
+}
+
+.chart {
+  @container (width>=800px) {
+    grid-column: span 4;
+  }
+  @container (width<800px) {
+    grid-column: span 2;
+  }
+}

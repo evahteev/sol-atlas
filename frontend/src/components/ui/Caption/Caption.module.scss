@@ -1,0 +1,70 @@
+.container {
+  font: var(--_caption-font, var(--caption-font));
+}
+
+.header {
+  letter-spacing: -1px;
+  &.md {
+    --caption-font: var(--font-header-md);
+  }
+  &.lg {
+    --caption-font: var(--font-header-lg);
+  }
+  &.xxl {
+    --caption-font: var(--font-header-xxl);
+  }
+}
+
+.body {
+  &.xxs {
+    --caption-font: var(--font-xxs);
+  }
+  &.xs {
+    --caption-font: var(--font-xs);
+  }
+  &.sm {
+    --caption-font: var(--font-sm);
+  }
+  &.md {
+    --caption-font: var(--font-md);
+  }
+  &.lg {
+    --caption-font: var(--font-lg);
+  }
+}
+
+.numbers {
+  font-weight: 700;
+  &.xs {
+    --caption-font: var(--font-numbers-xs);
+  }
+  &.sm {
+    --caption-font: var(--font-numbers-sm);
+  }
+  &.md {
+    --caption-font: var(--font-numbers-md);
+  }
+  &.lg {
+    --caption-font: var(--font-numbers-lg);
+  }
+  &.xl {
+    --caption-font: var(--font-numbers-xl);
+  }
+}
+
+.strong {
+  font-weight: 500;
+}
+
+.fire {
+  background: radial-gradient(
+    122.73% 122.73% at 95.36% 14.36%,
+    #ffcf14 0%,
+    #ff4747 55.86%,
+    #0085ff 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-fill-color: transparent;
+}

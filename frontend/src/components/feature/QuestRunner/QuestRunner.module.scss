@@ -1,0 +1,77 @@
+@use '@/styles/mixins' as mixins;
+
+.container {
+  display: flex;
+  flex-flow: column;
+  gap: 32px;
+  border-radius: calc(var(--radii-root) * 1.5);
+  animation: reveal 0.25s ease;
+
+  @keyframes reveal {
+    0% {
+      transform: scale(0.85);
+      opacity: 0;
+    }
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+
+  &.active {
+  }
+
+  &.pending {
+    @include mixins.element-preloader-direct-animated;
+  }
+
+  @media (min-width: 640.1px) {
+    padding: 24px;
+    background: var(--color-dark-80);
+    border: 0;
+  }
+
+  @media (max-width: 640px) {
+    padding: var(--page-padding);
+    flex: 1 0 auto;
+    display: flex;
+    flex-flow: column;
+    border-radius: 0;
+    background: inherit;
+  }
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.body {
+  flex: 1 0 auto;
+  display: flex;
+  flex-flow: column;
+  background: inherit;
+}
+
+.loader {
+}
+
+.close {
+  composes: radii from '@/styles/_common.scss';
+  border-radius: calc(var(--radii-root) * 1.25);
+  align-self: end;
+  padding: 8px;
+  border: 0;
+  background: var(--color-dark-100);
+  width: 36px;
+  height: 36px;
+  color: var(--color-text-comment);
+  cursor: pointer;
+  position: relative;
+  z-index: 2;
+
+  &:hover,
+  &:focus-visible {
+    color: var(--color-light);
+  }
+}

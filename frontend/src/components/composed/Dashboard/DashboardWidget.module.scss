@@ -1,0 +1,23 @@
+.container {
+}
+
+.header {
+  margin-bottom: 16px;
+  font-size: 14px;
+  line-height: 20px;
+  text-align: start;
+}
+
+.caption {
+  font-weight: 400;
+}
+
+.suffix {
+  color: var(--color-text-comment);
+}
+
+.body {
+  text-align: center;
+  display: flex;
+  flex-flow: column;
+}

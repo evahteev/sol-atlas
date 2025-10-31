@@ -1,0 +1,38 @@
+@use '@/styles/mixins' as mixins;
+
+.container {
+  display: flex;
+  flex-flow: column;
+}
+
+.value {
+  font-size: 48px;
+  line-height: 1.2;
+  font-weight: 600;
+  color: var(--color-text-main);
+}
+
+.delta {
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--color-text-comment);
+
+  &.positive {
+    color: var(--color-positive);
+  }
+
+  &.negative {
+    color: var(--color-negative);
+  }
+}
+
+.loading {
+  @include mixins.element-preloader-animated;
+  width: max-content;
+  min-width: 2em;
+  max-width: 100%;
+  display: block;
+  margin: 0 auto;
+  border-radius: var(--radii-root);
+  overflow: hidden;
+}
