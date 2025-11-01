@@ -247,6 +247,15 @@ SOL Atlas is part of the broader **GURU Network** ecosystem:
 
 ---
 
+## Contributors ✨
+
+Thanks goes to these wonderful people ❤:<br><br>
+<a href="https://github.com/evahteev/sol-atlas/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=evahteev/sol-atlas" />
+</a>
+
+---
+
 ## 📄 License
 
 MIT License - see [LICENSE](LICENSE) file for details.
@@ -275,3 +284,4 @@ MIT License - see [LICENSE](LICENSE) file for details.
 *From chat to community. From followers to believers. From noise to net worth.*
 
 </div>
+
