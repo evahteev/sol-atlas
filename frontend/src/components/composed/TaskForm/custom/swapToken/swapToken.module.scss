@@ -1,0 +1,200 @@
+@use '@/styles/mixins' as mixins;
+
+.container {
+  flex: 1 0 auto;
+  display: flex;
+  flex-flow: column;
+  gap: 24px;
+  background: inherit;
+  opacity: 1;
+  transition: 0.25s ease;
+
+  &.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+}
+
+.description {
+  color: var(--color-text-comment);
+}
+
+.body {
+  display: flex;
+  flex-flow: column;
+  gap: 24px;
+  container-type: inline-size;
+
+  @container (width<=480px) {
+    margin-bottom: -16px;
+  }
+}
+
+.chains {
+  display: grid;
+  gap: 8px;
+  grid-template-columns: minmax(0, 1fr) 48px minmax(0, 1fr);
+
+  @container (width<=480px) {
+    display: flex;
+    flex-flow: column;
+  }
+}
+
+.chain {
+  padding: calc((var(--size, 40px) - 1lh - 2px) / 2) 15px;
+}
+
+.change {
+  position: relative;
+
+  @container (width>480px) {
+    align-self: self-end;
+  }
+
+  @container (width<=480px) {
+    margin: -8px auto -36px;
+  }
+
+  &Icon {
+    max-height: none;
+    height: 20px;
+    width: 20px;
+    margin: -2px;
+  }
+}
+
+.balance {
+  &Prefix {
+    color: var(--color-dark-20);
+  }
+
+  &Amount {
+    color: var(--color-text-comment);
+  }
+
+  &Icon {
+    &.loading {
+      animation: spin 1s linear infinite;
+
+      @keyframes spin {
+        from {
+          transform: rotate(0deg);
+        }
+
+        to {
+          transform: rotate(-360deg);
+        }
+      }
+    }
+  }
+
+  &Refetch {
+    margin-inline-end: -8px;
+    color: var(--color-text-comment);
+
+    &:hover,
+    &:focus-visible {
+      color: var(--color-text-main);
+    }
+  }
+}
+
+.settings {
+  display: flex;
+  flex-flow: column;
+  gap: 16px;
+}
+
+.asset {
+  display: flex;
+  gap: 8px;
+  justify-content: space-between;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.amount {
+  flex: 0 1 50%;
+  color: var(--color-text-comment);
+  display: grid;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.input {
+  width: 100%;
+  background: none;
+  border: 0;
+  padding: 0;
+  font-size: 16px;
+  line-height: 24px;
+  height: 24px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  text-align: end;
+  color: var(--color-text-comment);
+  outline: none;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+
+  &::placeholder {
+    color: var(--color-text-comment);
+  }
+}
+
+input.input {
+  color: var(--color-text-main);
+  appearance: none;
+}
+
+.value {
+  font-size: 12px;
+  line-height: 18px;
+  height: 18px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.tokenSelector {
+  width: max-content;
+  min-width: 120px;
+  max-width: 100%;
+}
+
+.aside {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.options {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.warning {
+  color: var(--color-warning);
+}
+
+.footer {
+  margin-block-start: auto;
+
+  @container (width<=480px) {
+    margin: auto calc(-1 * var(--page-padding)) calc(-1 * var(--page-padding));
+    padding: var(--page-padding);
+    background: inherit;
+    border-radius: var(--radii-root) var(--radii-root) 0 0;
+    position: sticky;
+    bottom: 72px;
+    z-index: 10;
+
+    box-shadow: 0px 0 16px 0px var(--color-dark-90);
+  }
+}
+
+.externalWallet {
+  margin-bottom: 15px;
+}

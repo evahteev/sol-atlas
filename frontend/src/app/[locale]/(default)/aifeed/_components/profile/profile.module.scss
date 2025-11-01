@@ -1,0 +1,48 @@
+.container {
+  display: flex;
+  flex-flow: column;
+  gap: 16px;
+}
+
+.profile {
+  display: flex;
+  gap: 16px;
+}
+
+.avatar {
+  border-radius: 50%;
+}
+
+.title {
+  margin: 0;
+}
+
+.prop {
+  font-size: 14px;
+  line-height: 20px;
+
+  &,
+  &Value {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  &Icon {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+.copy {
+  --size: 20px;
+  padding: 0;
+  margin: 1px 0;
+  display: block;
+  color: var(--color-primary);
+
+  &:hover,
+  &:focus-visible {
+    color: var(--color-light);
+  }
+}

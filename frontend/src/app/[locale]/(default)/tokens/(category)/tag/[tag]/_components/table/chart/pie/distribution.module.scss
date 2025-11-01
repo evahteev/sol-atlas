@@ -1,0 +1,58 @@
+.container {
+  font-size: 12px;
+  line-height: 20px;
+  margin: 0 -8px;
+}
+
+.body {
+  width: 100%;
+  border-spacing: 8px 0;
+}
+
+.item {
+}
+
+.cell {
+  vertical-align: middle;
+  padding: 0;
+}
+
+.title {
+  color: var(--_color, grey);
+  width: 1px;
+  white-space: nowrap;
+}
+
+.bar {
+  width: 100%;
+  display: flex;
+  gap: 2px;
+  align-items: center;
+
+  &:before {
+    content: '';
+    flex: 0 0 auto;
+    height: 8px;
+    border-radius: calc(var(--radii-root) / 4);
+    width: var(--_value);
+    background: var(--_color, grey);
+    min-width: 8px;
+  }
+
+  &:after {
+    content: '';
+    flex: 1 0 0;
+    background: var(--color-dark-40);
+    height: 2px;
+    border-radius: 1px;
+  }
+}
+
+.data {
+  display: block;
+}
+
+.value {
+  width: 1px;
+  text-align: right;
+}

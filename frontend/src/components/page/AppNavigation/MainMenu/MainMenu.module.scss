@@ -1,0 +1,82 @@
+.container {
+  composes: radii from '@/styles/_common.scss';
+  padding: 8px;
+  display: flex;
+  align-items: center;
+}
+
+.list {
+  flex: 1 0 auto;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  @media (max-width: 640px) {
+    display: flex;
+  }
+
+  @media (min-width: 640.1px) {
+    display: flex;
+    flex-flow: column;
+    gap: 8px;
+  }
+}
+
+.item {
+  flex: 1 0 0;
+
+  &.collapsed {
+    display: none !important;
+  }
+}
+
+.link {
+  border-radius: calc(var(--radii) / 2);
+  color: var(--color-text-comment);
+  display: flex;
+  align-items: center;
+  transition: 0.25s ease;
+  text-align: center;
+  white-space: nowrap;
+
+  &:hover,
+  &:focus-visible {
+    color: var(--color-primary);
+  }
+
+  @media (max-width: 640px) {
+    padding: 10px 4px 4px;
+    font-size: 12px;
+    line-height: 16px;
+    flex-flow: column;
+    gap: 2px;
+  }
+
+  @media (min-width: 640.1px) {
+    padding: 8px 12px;
+    font-size: 14px;
+    line-height: 2px;
+    gap: 10px;
+  }
+
+  &.active {
+    background: var(--color-dark-80);
+    color: var(--color-primary);
+  }
+}
+
+.icon {
+  display: flex;
+  width: 24px;
+  height: 24px;
+  color: currentColor;
+}
+
+.caption {
+  @media (min-width: 640.1px) {
+    display: none;
+  }
+}
+
+.links {
+}

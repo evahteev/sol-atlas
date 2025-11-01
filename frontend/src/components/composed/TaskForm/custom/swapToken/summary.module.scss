@@ -1,0 +1,11 @@
+.container {
+  background: none;
+  border-color: var(--color-dark-30);
+  display: flex;
+  flex-flow: column;
+  gap: 12px;
+}
+
+.rate {
+  color: var(--color-primary);
+}

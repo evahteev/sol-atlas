@@ -1,0 +1,46 @@
+.container {
+  display: flex;
+  flex-flow: column;
+  gap: 4px;
+}
+
+.caption {
+  color: var(--color-text-comment);
+}
+
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-flow: row wrap;
+  gap: 8px;
+}
+
+.item {
+  flex: 1 0 64px;
+}
+
+.option {
+  width: 100%;
+  border: 1px currentColor solid;
+  background: none;
+  color: var(--color-text-comment);
+  padding: 8px;
+  border-radius: calc(var(--radii-root) * 0.5);
+  text-align: center;
+  height: 40px;
+  transition: 0.25s ease;
+
+  &::placeholder {
+    color: var(--color-text-comment);
+  }
+
+  &.active {
+    color: var(--color-text-main);
+  }
+}
+
+.message {
+  width: 100%;
+}

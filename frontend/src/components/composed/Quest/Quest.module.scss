@@ -1,0 +1,164 @@
+@use '@/styles/mixins' as mixins;
+
+@property --_angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  transition: 0.25s ease;
+  position: relative;
+}
+
+.details {
+  font-size: 14px;
+  line-height: 16px;
+  margin-block-start: 4px;
+  display: flex;
+  flex-flow: column;
+  gap: 4px;
+}
+
+.timer {
+  display: block;
+}
+
+.link {
+  color: var(--color-primary);
+  width: max-content;
+  max-width: 100%;
+}
+
+.restricted {
+  position: absolute;
+  inset: auto 0 16px auto;
+  color: #000;
+  font-size: 12px;
+  height: 24px;
+  width: 56px;
+  text-align: center;
+  padding: 0 8px;
+  transform: rotate(-45deg);
+  background: var(--_color);
+  text-transform: uppercase;
+
+  &.soon {
+    --_color: var(--color-positive);
+  }
+
+  &.ended {
+    --_color: var(--color-negative);
+  }
+
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    border: 1px transparent solid;
+    border-top-width: 24px;
+    border-bottom-width: 0;
+  }
+
+  &::before {
+    inset-inline-end: 55px;
+    border-left-width: 24px;
+    border-top-color: var(--_color);
+  }
+
+  &::after {
+    inset-inline-start: 55px;
+    border-right-width: 24px;
+    border-top-color: var(--_color);
+  }
+}
+
+.header {
+  padding: 16px;
+  border: 1px transparent solid;
+  border-color: var(--color-dark-60);
+  background: var(--color-dark-60);
+  padding: 16px;
+  display: grid;
+  grid-template-columns: [icon-start] 40px [icon-end] 24px [header-start] 1fr [header-end] 24px [actions-start] auto [actions-end];
+  align-items: center;
+}
+
+.container {
+  &.pending:not(.active) {
+    .header {
+      @include mixins.element-preloader-direct-animated;
+    }
+  }
+
+  &:has(.instance:not(:empty)) .header {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+
+  &.active:not(.hasTasks),
+  &.active:not(:has(.instance)),
+  &.active.custom {
+    .header {
+      --_angle: 0deg;
+
+      background:
+        linear-gradient(var(--color-dark-60), var(--color-dark-60)) padding-box,
+        var(--color-brand-bg) border-box;
+      background-position: center;
+      background-size: 100%;
+      border-color: transparent;
+
+      animation: rotate 2.5s linear infinite;
+
+      @keyframes rotate {
+        from {
+          --_angle: 0deg;
+        }
+
+        to {
+          --_angle: 360deg;
+        }
+      }
+    }
+  }
+}
+
+.illustration {
+  grid-area: icon;
+  flex: 0 0 auto;
+  width: 40px;
+  height: 40px;
+}
+
+.title {
+  grid-area: header;
+  display: block;
+  margin-right: auto;
+}
+
+.subtitle {
+  color: var(--color-text-comment);
+  display: block;
+}
+
+.action,
+.actions {
+  grid-area: actions;
+  place-self: start;
+}
+
+.positive {
+  color: var(--color-positive);
+}
+
+.negative {
+  color: var(--color-negative);
+}
+
+.taskForm {
+  flex: 1 0 auto;
+}

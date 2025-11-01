@@ -1,0 +1,22 @@
+.main {
+}
+
+.link {
+  padding: 8px 16px;
+
+  @media (max-width: 640px) {
+    display: none;
+  }
+}
+
+.logo {
+  display: block;
+  height: 40px;
+  width: 100%;
+  object-fit: contain;
+  object-position: center;
+
+  &.full {
+    display: none !important ;
+  }
+}

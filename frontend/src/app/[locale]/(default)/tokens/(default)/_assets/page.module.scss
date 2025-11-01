@@ -1,0 +1,15 @@
+.container {
+  flex: 1 0 0;
+  display: flex;
+  flex-flow: column;
+  gap: var(--page-gap);
+  background: inherit;
+}
+
+.cloud {
+  @media (min-width: 640.1px) {
+    margin: 0 calc(-1 * var(--page-padding));
+    padding: 0 var(--page-padding);
+    overflow: auto;
+  }
+}

@@ -1,0 +1,45 @@
+.container {
+  flex: 1 0 auto;
+  gap: 16px;
+
+  @container page-content (width<=1024px) {
+    display: flex;
+    flex-flow: column;
+  }
+
+  @container page-content (width>1024px) {
+    display: grid;
+    grid-template-rows: auto auto 1fr;
+    grid-template-areas: 'header header' 'main aside';
+    grid-template-columns: minmax(320px, 520px) minmax(320px, 1fr);
+  }
+}
+
+.header {
+  grid-area: header;
+}
+
+.body {
+  grid-area: main;
+}
+
+.footer {
+  grid-area: aside;
+}
+
+.body,
+.aside {
+  display: flex;
+  flex-flow: column;
+  gap: 16px;
+  container-type: inline-size;
+}
+
+.aside {
+  @container page-content (width>1024px) {
+    width: clamp(320px, 100%, 540px);
+    margin: 0 auto;
+    position: sticky;
+    top: 72px;
+  }
+}

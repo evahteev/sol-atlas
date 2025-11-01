@@ -1,0 +1,48 @@
+@use '@/styles/mixins' as mixins;
+
+.container {
+  composes: container from '@/components/composed/TaskForm/TaskForm.module.scss';
+}
+
+.header {
+  composes: header from '@/components/composed/TaskForm/TaskForm.module.scss';
+}
+
+.illustration {
+  composes: radii from '@/styles/_common.scss';
+  border-radius: calc(var(--radii) / 2);
+  width: 160px;
+  height: 160px;
+  border: 4px transparent solid;
+  background: #fff;
+  margin: 0 auto;
+  transition: 0.25s ease;
+
+  &.loading {
+    @include mixins.element-preloader-animated;
+  }
+}
+
+.body {
+  composes: body from '@/components/composed/TaskForm/TaskForm.module.scss';
+  display: flex;
+  flex-flow: column;
+  align-items: center !important;
+  gap: 32px;
+}
+
+.description {
+  max-width: 320px;
+}
+
+.value {
+  color: var(--color-primary);
+}
+
+.loader {
+  composes: loader from '@/components/composed/TaskForm/TaskForm.module.scss';
+}
+
+.copy {
+  flex-direction: row-reverse;
+}

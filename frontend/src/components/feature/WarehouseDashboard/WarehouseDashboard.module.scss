@@ -1,0 +1,17 @@
+.body {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 8px;
+  background: inherit;
+
+  @container (width < 480px) {
+    display: flex;
+    flex-flow: column;
+  }
+}
+
+.header {
+  &:empty {
+    display: none;
+  }
+}

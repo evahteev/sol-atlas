@@ -1,0 +1,25 @@
+.list {
+  margin: 0;
+  padding: 0;
+  border: 1px var(--color-dark-50) solid;
+  border-radius: var(--radii-root);
+  overflow: hidden;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+}
+
+.item {
+  border: 1px var(--color-dark-50) solid;
+  margin: -1px -1px -1px 0;
+  padding: 16px;
+  background: var(--color-dark-80);
+}
+
+.item,
+.widget {
+  grid-row: span 2;
+  display: grid;
+  grid-template-rows: subgrid;
+  grid-template-columns: 100%;
+}

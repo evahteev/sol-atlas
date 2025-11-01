@@ -1,0 +1,25 @@
+.toggle {
+  composes: radii from '@/styles/_common.scss';
+  border-radius: calc(var(--radii) / 2);
+  background: none;
+  color: var(--color-text-comment);
+
+  &:hover,
+  &:focus-visible {
+    color: var(--color-light);
+  }
+
+  &.open {
+    color: var(--color-light);
+    background: var(--color-dark-50);
+  }
+}
+
+.indicator {
+  transform: none;
+  transition: 0.25s ease;
+
+  &.open {
+    transform: rotate(180deg);
+  }
+}

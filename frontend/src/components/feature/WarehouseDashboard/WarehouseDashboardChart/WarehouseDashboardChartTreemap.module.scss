@@ -1,0 +1,14 @@
+.container {
+  display: flex;
+  align-items: center;
+  aspect-ratio: 16 / 9;
+}
+
+.chart {
+  margin: -4px;
+  flex: 0 0 100%;
+  min-height: 240px;
+}
+
+.treemap {
+}

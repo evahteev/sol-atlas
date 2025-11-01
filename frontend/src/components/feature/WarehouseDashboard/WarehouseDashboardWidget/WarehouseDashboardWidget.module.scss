@@ -1,0 +1,159 @@
+@use '@/styles/_mixins' as mixins;
+
+.container {
+  display: flex;
+  flex-flow: column;
+  gap: 16px;
+}
+
+.header {
+  flex: 0 0 auto;
+}
+
+.title {
+  display: block;
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 24px;
+  margin: 0;
+}
+
+.description {
+  color: var(--color-text-comment);
+  flex: 0 0 auto;
+}
+
+.body {
+  flex: 1 0 auto;
+  display: flex;
+  flex-flow: column;
+  gap: 8px;
+  background: inherit;
+}
+
+.suspense {
+  margin: auto;
+}
+
+.counter {
+  text-align: center;
+  container-type: inline-size;
+  margin-block: auto;
+
+  &:first-child {
+    margin-bottom: auto;
+  }
+
+  &Value {
+    display: block;
+    font-weight: 700;
+    line-height: 1;
+    font-size: clamp(24px, 10cqw, 72px);
+    color: var(--color-primary);
+
+    &.loading {
+      @include mixins.element-preloader-animated;
+    }
+  }
+
+  &Unit {
+    color: var(--color-dark-30);
+  }
+}
+
+.chart {
+  display: flex;
+  flex: 1 0 auto;
+  min-height: 240px;
+  max-height: 75vh;
+  aspect-ratio: 28 / 9;
+  width: 100%;
+}
+
+.empty {
+  display: flex;
+  flex: 1 0 auto;
+  min-height: 240px;
+  max-height: 75vh;
+  aspect-ratio: 28 / 9;
+  margin: 0;
+  align-items: center;
+  justify-content: center;
+}
+
+.table {
+  max-height: 75vh;
+  margin: 0 -16px -16px;
+  border-radius: 0 0 var(--radii) var(--radii);
+  overflow: hidden;
+
+  &Body {
+    max-height: max(50vh, 480px);
+    overflow: auto;
+  }
+
+  &Row {
+    &Loading {
+    }
+  }
+
+  a {
+    text-decoration: underline;
+    color: var(--color-link);
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: var(--color-light);
+    }
+  }
+}
+
+.footer {
+  font-size: 12px;
+  line-height: 16px;
+  display: flex;
+  align-items: center;
+}
+
+.refresh {
+  padding: 0;
+  border: 0;
+  height: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25em;
+  color: var(--color-text-comment);
+
+  &:not(:disabled) {
+    &:hover,
+    &:focus-visible {
+      color: var(--color-text-main);
+    }
+  }
+
+  &.loading {
+    .icon {
+      animation: loading 1s infinite linear;
+
+      @keyframes loading {
+        from {
+          transform: rotate(0deg);
+        }
+
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    }
+  }
+}
+
+.timer {
+  display: flex !important;
+  align-items: center;
+}
+
+.icon {
+  width: 16px;
+  height: 16px;
+}

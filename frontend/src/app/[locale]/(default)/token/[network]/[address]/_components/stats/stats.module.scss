@@ -1,0 +1,75 @@
+.container {
+  display: flex;
+  flex-flow: column;
+  gap: 4px;
+}
+
+.stat {
+  &.full {
+    flex: 0 0 100%;
+  }
+}
+
+.inner {
+  padding: 0;
+  background: none;
+}
+
+.value {
+  font-size: 16px;
+  line-height: 24px;
+}
+
+.subvalue {
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--color-text-comment);
+}
+
+.valueSet {
+  display: flex;
+  flex-flow: column;
+  color: var(--color-light);
+}
+
+.in {
+  color: var(--color-success);
+}
+
+.at {
+  color: var(--color-text-comment);
+}
+
+.out {
+  color: var(--color-danger);
+}
+
+.chart {
+  aspect-ratio: 4/3;
+  min-height: 240px;
+  max-height: 480px;
+}
+
+.tooltip {
+  background: var(--color-dark-80) !important;
+  color: var(--color-light);
+  padding: 8px;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 16px;
+  display: flex;
+  flex-flow: column;
+  gap: 8px;
+  border: 0 !important;
+
+  &Label {
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: 400;
+    color: var(--color-text-comment);
+
+    &:empty {
+      display: none;
+    }
+  }
+}

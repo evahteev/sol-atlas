@@ -1,0 +1,13 @@
+.container {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-flow: row wrap;
+  gap: 4px;
+}
+
+.stat {
+  flex: 1 0 auto;
+  max-width: 100%;
+}

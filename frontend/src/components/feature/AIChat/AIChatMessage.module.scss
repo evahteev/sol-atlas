@@ -1,0 +1,61 @@
+.container {
+}
+
+.body {
+  composes: radii from '@/styles/_common.scss';
+  border-radius: var(--radii);
+  padding: 16px;
+  font-size: 16px;
+  line-height: 24px;
+  width: max-content;
+  max-width: 100%;
+  overflow-wrap: break-word;
+  display: flex;
+  flex-flow: column;
+  gap: 8px;
+
+  .question > & {
+    border-top-right-radius: 0;
+    background: var(--color-dark-70);
+    margin-inline-start: auto;
+  }
+
+  .answer > & {
+    border-top-left-radius: 0;
+    background: #6046ff80;
+    margin-inline-end: auto;
+  }
+}
+
+.time {
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--color-text-comment);
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+}
+
+.action {
+  color: var(--color-text-comment);
+
+  &:hover {
+    color: var(--color-light);
+  }
+}
+
+.service {
+  font-size: 12px;
+  list-style: 16px;
+}
+
+.description {
+  color: var(--color-text-comment);
+}
+
+.title {
+  font-weight: 700;
+  color: var(--color-text-main);
+}

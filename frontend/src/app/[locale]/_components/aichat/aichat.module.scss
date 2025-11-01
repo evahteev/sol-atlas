@@ -1,0 +1,156 @@
+.container {
+  background: var(--color-dark-50);
+  flex: 0 0 auto;
+  position: relative;
+  display: flex;
+  flex-flow: column;
+
+  @media (min-width: 640.1px) {
+    height: calc(100vh - 56px);
+    position: sticky;
+    top: 56px;
+  }
+
+  @media (max-width: 800px) {
+    position: fixed;
+    right: 0;
+    z-index: 290;
+    inset: 56px 0 0 auto;
+  }
+
+  &.open {
+    @media (max-width: 800px) {
+      left: 64px;
+    }
+
+    @media (max-width: 640px) {
+      inset: 0;
+    }
+
+    @media (min-width: 800.1px) {
+      width: clamp(360px, 30vw, 640px);
+    }
+  }
+}
+
+@media (max-width: 640px) {
+  body:has(.body) {
+    [id='aside-menu'],
+    [id='profile-bar'],
+    [id='main-menu'] {
+      display: none !important;
+    }
+  }
+}
+
+@media (max-width: 800px) {
+  body:has(.open) {
+    overflow: hidden;
+  }
+}
+
+.header {
+  flex: 0 1 auto;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  padding: var(--page-padding, 0) var(--page-padding, 0);
+  background: inherit;
+  position: sticky;
+  top: 0;
+  background: inherit;
+  z-index: 2;
+
+  @media (max-width: 640px) {
+  }
+}
+
+.actions {
+  flex: 0 1 auto;
+  overflow: auto;
+  display: none;
+}
+
+.body {
+  position: relative;
+  flex: 1 0 auto;
+  background: inherit;
+  margin: 0 16px;
+}
+
+.chat {
+  display: none;
+  flex: 1 0 auto;
+  background: inherit;
+  overflow: auto;
+  position: absolute;
+  inset: 0;
+  flex-flow: column;
+  margin-inline-end: -16px;
+  padding-inline-end: 16px;
+
+  .open & {
+    display: flex;
+  }
+}
+
+.toggle {
+  position: absolute;
+  left: -56px;
+  z-index: 10001;
+  bottom: 112px;
+  transition: color 0.25s ease;
+  display: grid;
+  align-items: center;
+  gap: 16px;
+  background: var(--color-dark-50);
+  border-radius: 28px 0 0 28px;
+  padding: 8px;
+  width: 56px;
+  color: var(--color-text-comment);
+  cursor: pointer;
+
+  &:hover,
+  &:focus-visible {
+    color: var(--color-text-main);
+  }
+
+  .open & {
+    right: var(--page-padding);
+    margin-right: -8px;
+    left: auto;
+    top: 16px;
+    bottom: auto;
+    width: 36px;
+    height: 36px;
+    background: var(--color-dark-100);
+    border-radius: 100%;
+    color: var(--color-text-comment);
+    cursor: pointer;
+
+    &:hover,
+    &:focus-visible {
+      color: var(--color-light);
+    }
+  }
+
+  .close & {
+    .icon {
+      padding: 8px;
+      color: var(--color-text-main);
+      background: linear-gradient(90deg, #31017d, #ef0c64);
+    }
+  }
+}
+
+.icon {
+  display: block;
+  border-radius: 50%;
+}
+
+.ai {
+  display: block;
+  width: 24px;
+  height: 24px;
+}

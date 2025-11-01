@@ -1,0 +1,26 @@
+.container {
+  flex: 1 0 0;
+  gap: 16px;
+  grid-template-columns: 240px minmax(0, 1fr);
+  flex-flow: column;
+
+  @media (min-width: 1024.1px) {
+    display: grid;
+  }
+
+  @media (max-width: 1024px) {
+    display: flex;
+  }
+}
+
+.body {
+  display: flex;
+  flex-flow: column;
+  width: 100%;
+  gap: 16px;
+  container-type: inline-size;
+}
+
+.empty {
+  margin: auto;
+}

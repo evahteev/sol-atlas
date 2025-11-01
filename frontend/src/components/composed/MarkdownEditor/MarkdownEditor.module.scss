@@ -1,0 +1,14 @@
+.container {
+}
+
+.toolbar {
+  z-index: 2;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  overflow-x: auto;
+  position: sticky;
+  top: 0;
+  background-color: var(--color-dark-80);
+  color: var(--color-text-comment);
+}

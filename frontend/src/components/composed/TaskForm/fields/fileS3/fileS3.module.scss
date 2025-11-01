@@ -1,0 +1,34 @@
+.files {
+  order: -1;
+  width: 160px;
+  overflow: auto;
+  scroll-snap-type: x mandatory;
+  background: var(--color-dark-100);
+  border-radius: var(--radii-root);
+}
+
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  gap: 8px;
+  height: 90px;
+}
+
+.item {
+  max-height: 90px;
+  max-width: 160px;
+  scroll-snap-align: center;
+}
+
+.entry {
+  display: grid;
+  place-items: center;
+  width: auto;
+  height: auto;
+  min-height: 64px;
+  min-width: 64px;
+  height: 90px;
+  width: 160px;
+}

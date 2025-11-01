@@ -1,0 +1,155 @@
+@use '@/styles/_mixins' as mixins;
+
+.container {
+  font-size: 16px;
+  line-height: 20px;
+  display: flex;
+  align-items: stretch;
+  gap: 0px;
+  flex-flow: column;
+  background: inherit;
+}
+
+.header {
+  font-size: 14px;
+  line-height: 16px;
+  padding: 8px 16px;
+  font-weight: 400;
+  text-align: start;
+  background: rgb(var(--color-dark-15));
+  border-top: 1px rgb(var(--color-dark-30)) solid;
+  color: rgb(var(--color-light));
+}
+
+.body {
+  flex: 1 1 auto;
+  background: inherit;
+}
+
+.table {
+  min-width: 100%;
+  border-collapse: collapse;
+  word-break: normal;
+  display: table;
+  background: inherit;
+
+  &.loading {
+    pointer-events: none;
+
+    .content > * {
+      @include mixins.element-preloader-animated;
+      min-width: 2ch;
+    }
+  }
+}
+
+.tcell {
+  box-sizing: content-box;
+  display: table-cell;
+  vertical-align: middle;
+  transition: 0.25s ease;
+  padding-left: 8px;
+  padding-right: 8px;
+  background: inherit;
+}
+
+.trow {
+  color: inherit;
+  text-decoration: none;
+  display: table-row;
+  background: inherit;
+
+  & > * {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+  & > :first-child {
+    padding-left: 16px;
+  }
+
+  & > :last-child {
+    padding-right: 16px;
+  }
+
+  &[data-loading] {
+    pointer-events: none;
+
+    .content > * {
+      @include mixins.element-preloader-animated;
+      min-width: 2ch;
+    }
+  }
+}
+
+.thead {
+  display: table-header-group;
+  font-size: 14px;
+  line-height: 16px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: inherit;
+
+  .tcell {
+    padding-top: 8px;
+    padding-bottom: 8px;
+    white-space: nowrap;
+    height: 1em;
+    background: inherit;
+  }
+}
+
+.tbody {
+  display: table-row-group;
+  color: var(--color-light);
+  background: inherit;
+
+  .tcell {
+    padding-top: 12px;
+    padding-bottom: 12px;
+  }
+}
+
+.tbodyrow {
+  background: inherit;
+  transition: 0.25s ease;
+  animation: reveal 0.25s ease forwards;
+
+  @keyframes reveal {
+    from {
+      opacity: 0;
+      transform: rotateX(-90deg);
+    }
+
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  &[data-href] {
+    cursor: pointer;
+  }
+
+  &:hover {
+    .tcell {
+      background-color: var(--color-dark-60) !important;
+    }
+  }
+}
+
+.th {
+  font-weight: 400;
+  text-align: start;
+  color: var(--color-text-comment);
+  min-width: max-content;
+}
+
+.number {
+  text-align: end;
+}
+
+.center {
+  text-align: center;
+}

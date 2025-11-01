@@ -1,0 +1,122 @@
+.sign {
+  color: var(--color-text-comment);
+}
+
+.type {
+  width: 16px;
+  height: 16px;
+}
+
+.capitalize {
+  text-transform: capitalize;
+}
+
+.method {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.amm {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  font-size: 14px;
+  line-height: 16px;
+
+  &Icon {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+.address {
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+}
+
+.token {
+  white-space: nowrap;
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 12ch;
+}
+
+.time {
+  white-space: nowrap;
+  color: var(--color-text-comment);
+}
+
+.cell {
+  &Type {
+    padding-right: 0;
+  }
+
+  &Method {
+    padding-left: 2px;
+    width: 128px;
+  }
+
+  &Token {
+    width: 7ch;
+    padding-left: 0;
+  }
+
+  &Ago {
+    width: 12ch;
+  }
+}
+
+.positive {
+  color: var(--color-success);
+}
+
+.negative {
+  color: var(--color-danger);
+}
+
+.fixed {
+  position: sticky;
+  background: inherit;
+
+  &.start {
+    left: 0;
+  }
+
+  &.end {
+    right: 0;
+  }
+}
+
+.link {
+  color: var(--color-primary);
+
+  &[href]:hover,
+  &[href]:focus-visible {
+    color: var(--color-light);
+  }
+}
+
+.loader {
+  margin: auto;
+}
+
+.copy {
+  --size: 20px;
+  padding: 0;
+  margin: 1px 0;
+  display: block;
+  color: var(--color-primary);
+
+  &:hover,
+  &:focus-visible {
+    color: var(--color-light);
+  }
+}
+
+.aside {
+  font-size: 14px;
+  line-height: 22px;
+}

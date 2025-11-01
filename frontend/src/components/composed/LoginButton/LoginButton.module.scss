@@ -1,0 +1,283 @@
+@use '@/styles/mixins' as mixins;
+
+.button {
+  composes: radii from '@/styles/_common.scss';
+  max-height: var(--size, 40px) !important;
+  height: var(--size, 40px) !important;
+  min-width: var(--size, 165px) !important;
+  width: max-content !important;
+  max-width: 100% !important;
+
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  transition: 0.25s ease !important;
+  text-decoration: none !important;
+  border-width: 1px !important;
+  border-color: var(--_color, transparent) !important;
+  border-style: solid !important;
+  white-space: nowrap !important;
+  background: center center no-repeat !important;
+  color: var(--color-text-main) !important;
+  background-origin: border-box !important;
+  background-size: 100% !important;
+  outline-offset: 0 !important;
+  outline-width: 0 !important;
+  border-radius: max(var(--radii), var(--design-button-round, 0) * 28px) !important;
+
+  &:not(.outline) {
+    background-color: var(--_color, transparent) !important;
+
+    &:hover,
+    &:focus-visible {
+      background: var(--color-primary) !important;
+      background-color: color-mix(in srgb, var(--_color, transparent) 75%, #fff 15%) !important;
+    }
+  }
+
+  &.outline {
+    border-color: var(--_color, transparent) !important;
+
+    &:hover,
+    &:focus-visible {
+      background-color: color-mix(in srgb, var(--_color, transparent) 20%, #000 75%) !important;
+    }
+  }
+
+  &:focus-visible {
+    outline-offset: 4px !important;
+    outline-width: 2px !important;
+  }
+
+  &.disabled,
+  &:disabled {
+    pointer-events: none !important;
+    background: transparent !important;
+    --_color: var(--color-dark-50) !important;
+    color: var(--color-text-comment) !important;
+  }
+}
+.pending {
+  pointer-events: none !important;
+  background: var(--color-dark-80);
+  color: var(--color-dark-30) !important;
+  border-color: transparent !important;
+  @include mixins.element-preloader-direct-animated;
+}
+
+.default {
+  --_color: var(--color-text-comment) !important;
+
+  &.outline {
+    color: var(--_color, var(--color-light)) !important;
+  }
+}
+
+.primary {
+  --_color: var(--color-primary) !important;
+
+  &:not(.outline) {
+    border-width: 0 !important;
+    color: var(--color-primary-text) !important;
+  }
+}
+
+.secondary {
+  --_color: var(--color-primary) !important;
+
+  &:not(.outline) {
+    color: var(--color-secondary-text) !important;
+  }
+}
+
+.danger {
+  --_color: var(--color-danger) !important;
+}
+
+.success {
+  --_color: var(--color-success) !important;
+}
+
+.switch {
+  border-color: transparent !important;
+  color: var(--color-primary) !important;
+
+  &.active {
+    background: var(--color-primary) !important;
+    color: var(--color-primary-text) !important;
+  }
+}
+
+.xxl {
+  composes: xxl from '@/styles/_interactive.scss';
+  padding-block: 8px !important;
+  font-size: 18px !important;
+  line-height: 28px !important;
+
+  &:not(:has(.caption)) {
+    padding-inline: 8px !important;
+  }
+
+  &:has(.caption) {
+    padding-inline: 16px !important;
+  }
+
+  .icon {
+    height: 24px !important;
+    min-width: 24px !important;
+  }
+}
+
+.xl {
+  composes: xl from '@/styles/_interactive.scss';
+  padding-block: 8px !important;
+  font-size: 18px !important;
+  line-height: 28px !important;
+
+  &:not(:has(.caption)) {
+    padding-inline: 8px !important;
+  }
+
+  &:has(.caption) {
+    padding-inline: 16px !important;
+  }
+
+  .icon {
+    height: 20px !important;
+    min-width: 20px !important;
+  }
+}
+
+.lg {
+  composes: lg from '@/styles/_interactive.scss';
+  padding-block: 8px !important;
+  font-size: 18px !important;
+  line-height: 28px !important;
+
+  &:not(:has(.caption)) {
+    padding-inline: 8px !important;
+  }
+
+  &:has(.caption) {
+    padding-inline: 16px !important;
+  }
+
+  .icon {
+    height: 16px !important;
+    min-width: 16px !important;
+  }
+}
+
+.md {
+  composes: md from '@/styles/_interactive.scss';
+  padding-block: 8px !important;
+  font-size: 16px !important;
+  line-height: 24px !important;
+
+  &:not(:has(.caption)) {
+    padding-inline: 8px !important;
+  }
+
+  &:has(.caption) {
+    padding-inline: 16px !important;
+  }
+
+  .icon {
+    height: 16px !important;
+    min-width: 16px !important;
+  }
+}
+
+.sm {
+  composes: sm from '@/styles/_interactive.scss';
+  padding-block: 6px !important;
+  font-size: 14px !important;
+  line-height: 24px !important;
+
+  &:not(:has(.caption)) {
+    padding-inline: 6px !important;
+  }
+
+  &:has(.caption) {
+    padding-inline: 12px !important;
+  }
+
+  .icon {
+    height: 16px !important;
+    min-width: 16px !important;
+  }
+}
+
+.xs {
+  composes: xs from '@/styles/_interactive.scss';
+  padding-block: 4px !important;
+  font-size: 14px !important;
+  line-height: 24px !important;
+
+  &:not(:has(.caption)) {
+    padding-inline: 4px !important;
+  }
+
+  &:has(.caption) {
+    padding-inline: 8px !important;
+  }
+
+  .icon {
+    height: 16px !important;
+    min-width: 16px !important;
+  }
+}
+
+.xxs {
+  composes: xxs from '@/styles/_interactive.scss';
+  padding-block: 2px !important;
+  font-size: 12px !important;
+  line-height: 16px !important;
+
+  &:not(:has(.caption)) {
+    padding-inline: 4px !important;
+  }
+
+  &:has(.caption) {
+    padding-inline: 8px !important;
+  }
+
+  .icon {
+    height: 12px !important;
+    min-width: 12px !important;
+  }
+}
+
+.block {
+  display: flex !important;
+  min-width: 100% !important;
+}
+
+.clear {
+  padding: 2px !important;
+  border: 0 !important;
+  color: var(--color-text-comment) !important;
+
+  &:hover,
+  &:focus-visible {
+    color: var(--color-text-main) !important;
+  }
+
+  .icon {
+    height: calc(var(--size) - 4px) !important;
+    min-width: calc(var(--size) - 4px) !important;
+  }
+}
+
+.dialog {
+  @media (min-width: 640.1px) {
+    max-width: 400px;
+  }
+}
+
+.dialog {
+  @media (min-width: 640.1px) {
+    max-width: 400px;
+  }
+}

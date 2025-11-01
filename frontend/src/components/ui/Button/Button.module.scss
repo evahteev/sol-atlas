@@ -1,0 +1,299 @@
+@use '@/styles/mixins' as mixins;
+
+.button {
+  composes: radii from '@/styles/_common.scss';
+  height: var(--size, 40px);
+  min-width: var(--size, 40px);
+  width: max-content;
+  max-width: 100%;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: 0.25s ease;
+  text-decoration: none;
+  border-width: 1px;
+  border-color: var(--_color, transparent);
+  border-style: solid;
+  white-space: nowrap;
+  background: center center no-repeat;
+  color: var(--color-text-main);
+  background-origin: border-box;
+  background-size: 100%;
+  outline-offset: 0;
+  outline-width: 0;
+  border-radius: max(var(--radii), var(--design-button-round, 0) * 28px);
+
+  &:not(.outline) {
+    background-color: var(--_color, transparent);
+
+    &:hover,
+    &:focus-visible {
+      background-color: color-mix(in srgb, var(--_color, transparent) 75%, #fff 20%);
+    }
+  }
+
+  &.outline {
+    border-color: var(--_color, transparent);
+
+    &:hover,
+    &:focus-visible {
+      background-color: color-mix(in srgb, var(--_color, transparent) 20%, #000 75%);
+    }
+  }
+
+  &:focus-visible {
+    outline-offset: 4px;
+    outline-width: 2px;
+  }
+
+  &.disabled,
+  &:disabled {
+    pointer-events: none !important;
+    --_color: var(--color-dark-50) !important;
+    color: var(--color-text-comment) !important;
+  }
+}
+
+.pending {
+  pointer-events: none !important;
+  background: var(--color-dark-80);
+  color: var(--color-dark-30) !important;
+  border-color: transparent !important;
+  @include mixins.element-preloader-direct-animated;
+}
+
+.default {
+  --_color: var(--color-text-comment);
+
+  &.outline {
+    color: var(--_color, var(--color-light));
+  }
+}
+
+.primary {
+  --_color: var(--color-primary);
+
+  &:not(.outline) {
+    color: var(--color-primary-text);
+  }
+}
+
+.secondary {
+  --_color: var(--color-secondary);
+
+  &:not(.outline) {
+    color: var(--color-secondary-text);
+  }
+}
+
+.danger {
+  --_color: var(--color-danger);
+}
+
+.success {
+  --_color: var(--color-success);
+}
+
+.switch {
+  border-color: transparent;
+  color: var(--color-primary);
+
+  &.active {
+    background: var(--color-primary);
+    color: var(--color-primary-text);
+  }
+}
+
+.xxl {
+  composes: xxl from '@/styles/_interactive.scss';
+  padding-block: 8px;
+  font-size: 18px;
+  line-height: 28px;
+
+  &:not(:has(.caption)) {
+    padding-inline: 8px;
+  }
+
+  &:has(.caption) {
+    padding-inline: 16px;
+  }
+
+  .icon {
+    height: 24px;
+    min-width: 24px;
+  }
+}
+
+.xl {
+  composes: xl from '@/styles/_interactive.scss';
+  padding-block: 8px;
+  font-size: 18px;
+  line-height: 28px;
+
+  &:not(:has(.caption)) {
+    padding-inline: 8px;
+  }
+
+  &:has(.caption) {
+    padding-inline: 16px;
+  }
+
+  .icon {
+    height: 20px;
+    min-width: 20px;
+  }
+}
+
+.lg {
+  composes: lg from '@/styles/_interactive.scss';
+  padding-block: 8px;
+  font-size: 18px;
+  line-height: 28px;
+
+  &:not(:has(.caption)) {
+    padding-inline: 8px;
+  }
+
+  &:has(.caption) {
+    padding-inline: 16px;
+  }
+
+  .icon {
+    height: 16px;
+    min-width: 16px;
+  }
+}
+
+.md {
+  composes: md from '@/styles/_interactive.scss';
+  padding-block: 8px;
+  font-size: 16px;
+  line-height: 24px;
+
+  &:not(:has(.caption)) {
+    padding-inline: 8px;
+  }
+
+  &:has(.caption) {
+    padding-inline: 16px;
+  }
+
+  .icon {
+    height: 16px;
+    min-width: 16px;
+  }
+}
+
+.sm {
+  composes: sm from '@/styles/_interactive.scss';
+  padding-block: 6px;
+  font-size: 14px;
+  line-height: 24px;
+
+  &:not(:has(.caption)) {
+    padding-inline: 6px;
+  }
+
+  &:has(.caption) {
+    padding-inline: 12px;
+  }
+
+  .icon {
+    height: 16px;
+    min-width: 16px;
+  }
+}
+
+.xs {
+  composes: xs from '@/styles/_interactive.scss';
+  padding-block: 4px;
+  font-size: 14px;
+  line-height: 24px;
+
+  &:not(:has(.caption)) {
+    padding-inline: 4px;
+  }
+
+  &:has(.caption) {
+    padding-inline: 8px;
+  }
+
+  .icon {
+    height: 16px;
+    min-width: 16px;
+  }
+}
+
+.xxs {
+  composes: xxs from '@/styles/_interactive.scss';
+  padding-block: 2px;
+  font-size: 12px;
+  line-height: 16px;
+
+  &:not(:has(.caption)) {
+    padding-inline: 4px;
+  }
+
+  &:has(.caption) {
+    padding-inline: 8px;
+  }
+
+  .icon {
+    height: 12px;
+    min-width: 12px;
+  }
+}
+
+.icon {
+  flex: 0 0 auto;
+  display: flex;
+  align-self: center;
+  align-items: stretch;
+  justify-content: center;
+
+  & > :where(svg, img) {
+    display: block;
+    width: auto;
+    height: auto;
+    max-height: 100%;
+  }
+}
+
+.caption {
+  flex: 0 1 auto;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.counter {
+}
+
+.indicator {
+  color: var(--color-text-comment);
+
+  &:last-child {
+    margin-inline-end: -4px;
+  }
+
+  &:first-child {
+    margin-inline-start: -4px;
+  }
+}
+
+.block {
+  display: flex;
+  min-width: 100%;
+}
+
+.clear {
+  border: 0;
+  color: var(--color-text-comment);
+
+  &:hover,
+  &:focus-visible {
+    color: var(--color-text-main);
+  }
+}

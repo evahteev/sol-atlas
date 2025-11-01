@@ -1,0 +1,12 @@
+.container {
+  display: flex;
+  flex-flow: column;
+  gap: 16px;
+}
+
+.value {
+  font-size: 32px;
+  font-weight: 600;
+  line-height: 36px;
+  text-align: center;
+}

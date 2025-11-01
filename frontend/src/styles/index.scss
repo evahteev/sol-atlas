@@ -1,0 +1,6 @@
+@use 'sass:meta';
+
+@include meta.load-css('base');
+@include meta.load-css('toaster');
+
+@include meta.load-css('../lib/dash-guru/dist/klinecharts-pro.css');

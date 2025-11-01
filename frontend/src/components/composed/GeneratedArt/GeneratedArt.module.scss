@@ -1,0 +1,59 @@
+@use '@/styles/mixins' as mixins;
+
+.container {
+  display: flex;
+  flex-flow: column;
+  gap: 24px;
+  background: inherit;
+}
+
+.body {
+  display: flex;
+  flex-flow: column;
+  gap: 8px;
+}
+
+.illustration {
+  position: relative;
+  display: flex;
+  background: inherit;
+}
+
+.image {
+  aspect-ratio: 1;
+  width: 100%;
+  height: auto;
+  border-radius: 16px;
+  background-color: var(--color-dark-100);
+
+  &.loading {
+    @include mixins.element-preloader-direct-animated;
+  }
+}
+
+.actions {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  padding: 16px 0 0 16px;
+  border-radius: 16px 0 0 0;
+  background: inherit;
+  display: flex;
+  gap: 16px;
+}
+
+.action {
+  border-radius: 16px;
+  padding: 16px;
+  background: var(--color-dark-30);
+  border: none;
+  cursor: pointer;
+  color: var(--color-light);
+  width: 56px;
+  height: 56px;
+}
+
+.icon {
+  width: 24px;
+  height: 24px;
+}

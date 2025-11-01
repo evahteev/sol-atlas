@@ -1,0 +1,13 @@
+@use '@/styles/mixins' as mixins;
+
+.container {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  min-height: 200px;
+  display: flex;
+  flex-flow: column;
+}
+
+.loader {
+  margin: auto;
+}

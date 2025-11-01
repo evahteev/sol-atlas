@@ -1,0 +1,46 @@
+.container {
+  composes: radii from '@/styles/_common.scss';
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 60px;
+  grid-template-areas: 'header illustration' 'body illustration';
+  border: 1px var(--color-dark-40) solid;
+  border-radius: var(--radii);
+  padding: 16px;
+  gap: 4px 16px;
+  background: var(--color-dark-80);
+}
+
+.title {
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 24px;
+  color: var(--color-text-main);
+}
+
+.header {
+  grid-area: header;
+}
+
+.actions {
+  display: flex;
+  flex-flow: row wrap;
+  gap: 8px;
+  margin-block-start: 16px;
+}
+
+.body {
+  grid-area: body;
+  font-size: 12px;
+  line-height: 18px;
+  color: var(--color-text-comment);
+  display: flex;
+  flex-flow: column;
+  gap: 4px;
+}
+
+.illustration {
+  grid-area: illustration;
+  width: 60px;
+  place-self: end;
+  display: grid;
+}

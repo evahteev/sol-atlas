@@ -1,0 +1,67 @@
+.container {
+  &.open {
+    border-radius: calc(var(--radii-root) * 0.5);
+    --_gap: 8px;
+    position: fixed;
+    width: max-content;
+    min-width: max(240px, var(--_dce-width, 240px));
+    max-width: calc(100vw - 48px);
+    max-height: min(var(--_max-height, 75vh), 400px);
+    z-index: 10001;
+    padding: 16px;
+    background: var(--color-dark-50);
+    animation: reveal 0.25s ease forwards;
+    overflow: auto;
+    overflow: overlay;
+    transform-origin: var(--_origin-y, center) var(--_origin-x, center);
+
+    --_max-height: max(
+      100px,
+      calc(var(--_dce-space, 100vh) - var(--_gap, 0) - var(--page-padding, 0))
+    );
+
+    --_origin-x: center;
+
+    &[data-placement^='top'] {
+      --_shift-y: 16px;
+      --_origin-y: bottom;
+      margin-block-start: calc(-1 * var(--_gap));
+    }
+
+    &[data-placement^='bottom'] {
+      --_shift-y: -16px;
+      --_origin-y: top;
+      margin-block-start: var(--_gap);
+    }
+
+    &[data-placement$='start'] {
+      --_origin-x: left;
+    }
+
+    &[data-placement$='end'] {
+      --_origin-x: right;
+    }
+  }
+}
+
+@keyframes reveal {
+  0% {
+    opacity: 0;
+    visibility: hidden;
+    translate: 0 0;
+  }
+
+  1% {
+    opacity: 0;
+    visibility: hidden;
+    scale: 0.85;
+    translate: 0 var(--_shift-y, 0);
+  }
+
+  100% {
+    opacity: 1;
+    visibility: visible;
+    translate: 0 0;
+    scale: 1;
+  }
+}

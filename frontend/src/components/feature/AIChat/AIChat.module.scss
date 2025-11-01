@@ -1,0 +1,165 @@
+.container {
+  flex: 1 0 auto;
+  display: flex;
+  flex-flow: column;
+  background: inherit;
+}
+
+body:has(.body) {
+  [id='app-link-chat'] {
+    display: none !important;
+  }
+}
+
+.body {
+  flex: 1 0 0;
+}
+
+.backLink {
+  margin: 4px 0;
+  width: 24px;
+  height: 24px;
+}
+
+.icon {
+  display: block;
+  width: 24px;
+  height: 24px;
+}
+
+.footer {
+  transition: 0.25s ease;
+  margin: auto 0 0;
+  padding: var(--page-padding) 0;
+  min-height: 80px;
+
+  display: flex;
+  flex-flow: row wrap;
+  align-items: flex-end;
+  gap: 16px;
+  position: sticky;
+  bottom: 0;
+  z-index: 3;
+  overflow: hidden;
+  background: inherit;
+
+  opacity: 1;
+  visibility: visible;
+  transition: 0.25s ease;
+  transform: none;
+
+  &.warming {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(100%);
+    height: 80px;
+  }
+}
+
+.loader {
+  margin: -8px auto -4px;
+}
+
+.indicator {
+  width: 24px;
+  height: 24px;
+  align-self: center;
+  margin: 0;
+}
+
+.prompts {
+  width: 100%;
+  display: flex;
+  gap: 8px;
+  flex-flow: row wrap;
+}
+
+.prompt {
+  max-width: 100%;
+  --_color: var(--color-dark-10);
+  color: var(--_color);
+}
+
+.input {
+  flex: 1 1 0;
+  --_height: 40px !important;
+  max-width: 100%;
+
+  .footer:not(.empty) & {
+    max-width: calc(100% - 56px);
+  }
+}
+
+.submit {
+  flex: 0 0 40px;
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(104.04deg, #6046ff 0%, #22d49f 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 1;
+  visibility: visible;
+  margin: 4px 0;
+  transition: 0.25s ease;
+
+  .footer.empty & {
+    opacity: 0;
+    visibility: hidden;
+    margin-inline-end: -56px;
+  }
+}
+
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-flow: column;
+  gap: 16px;
+}
+
+.body:not(:has(.list)) ~ .footer {
+  border-top-color: transparent;
+}
+
+.welcome {
+  position: sticky;
+  top: calc(80px + var(--page-gap));
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition: 0.25s ease;
+  height: 0;
+
+  .body:has(.list) & {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+.service {
+  margin-block-start: 16px;
+  display: block;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--color-text-comment);
+  padding-inline-start: 16px;
+}
+
+.scroll {
+  display: flex;
+  position: sticky;
+  bottom: 80px;
+  margin: -24px auto 0;
+  z-index: 10;
+  opacity: 1;
+  visibility: visible;
+  transition: 0.25s ease;
+
+  &:not(.show) {
+    opacity: 0;
+    visibility: hidden;
+  }
+}

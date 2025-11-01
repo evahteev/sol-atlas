@@ -1,0 +1,21 @@
+.container {
+  background: inherit;
+  flex: 1 0 auto;
+  display: flex;
+  flex-flow: column;
+  margin: calc(var(--page-padding, 0) * -2) calc(-1 * var(--page-padding))
+    calc(-1 * var(--page-padding));
+  border-radius: 0;
+}
+
+.body {
+  background: inherit;
+  display: flex;
+  flex-flow: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.message {
+  margin: auto;
+}

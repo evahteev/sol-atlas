@@ -1,0 +1,24 @@
+.container {
+  max-width: 100%;
+}
+
+.prefix,
+.suffix {
+  color: var(--color-text-comment);
+  font-weight: 400;
+}
+
+.lg {
+  font-size: 32px;
+  line-height: 40px;
+}
+
+.md {
+  font-size: 16px;
+  line-height: 24px;
+}
+
+.sm {
+  font-size: 12px;
+  line-height: 16px;
+}
