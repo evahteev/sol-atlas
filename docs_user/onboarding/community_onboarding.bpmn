@@ -1,0 +1,631 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:color="http://www.omg.org/spec/BPMN/non-normative/color/1.0" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_community" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.31.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.20.0">
+  <bpmn:process id="community_onboarding" name="Community Onboarding" isExecutable="true">
+    <bpmn:documentation>{
+        "description": "Welcome to our community! This onboarding process will help you connect with fellow members, access exclusive features, and get the most out of your community experience.",
+        "img_picture": "https://assets.gurunetwork.ai/icons/community.svg",
+        "type": "onboarding_community",
+        "reward": 0
+}</bpmn:documentation>
+    <bpmn:startEvent id="community_start" name="Start Community Onboarding" camunda:formRef="onboarding_start_form" camunda:formRefBinding="latest" camunda:initiator="camunda_user_id">
+      <bpmn:documentation>Start the community onboarding process - first get app configuration, then show landing page.</bpmn:documentation>
+      <bpmn:extensionElements>
+        <camunda:executionListener class="ai.hhrdr.chainflow.engine.listener.SetStartVariablesListener" event="start" />
+        <camunda:properties>
+          <camunda:property name="action" value="setup" />
+          <camunda:property name="reward_amount" value="100" />
+          <camunda:property name="ref_reward_amount" value="10" />
+        </camunda:properties>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_to_dedup_check</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:scriptTask id="prepare_verification_code" name="Prepare Verification Code" scriptFormat="JavaScript">
+      <bpmn:documentation>Generate clean verification code from process instance ID (remove hyphens)</bpmn:documentation>
+      <bpmn:incoming>Flow_05qya9h</bpmn:incoming>
+      <bpmn:outgoing>Flow_to_confirmation_code</bpmn:outgoing>
+      <bpmn:script>// Get process instance ID and remove hyphens for display
+var processInstanceId = execution.getProcessInstanceId();
+var verificationCode = processInstanceId.replace(/-/g, '');
+
+// Get bot username from process variable (set by SetStartVariablesListener)
+// Falls back to botName if bot_username not set, then to default
+var botUsername = execution.getVariable('bot_username');
+if (!botUsername) {
+  botUsername = execution.getVariable('botName');
+}
+if (!botUsername) {
+  botUsername = 'your_bot'; // Default fallback
+}
+
+// Store variables for form
+execution.setVariable('verification_code', verificationCode);
+execution.setVariable('bot_username', botUsername);
+execution.setVariable('process_instance_id', processInstanceId);
+</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:userTask id="bot_verification" name="Connect Your Telegram" camunda:formRef="bot_verification" camunda:formRefBinding="latest" camunda:assignee="${camunda_user_id}">
+      <bpmn:documentation>Choose your preferred method to link your account and unlock all community features.</bpmn:documentation>
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="verification_code">${verification_code}</camunda:inputParameter>
+          <camunda:inputParameter name="bot_username">${bot_username}</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_to_confirmation_code</bpmn:incoming>
+      <bpmn:incoming>Flow_03jqtd7</bpmn:incoming>
+      <bpmn:outgoing>Flow_to_get_user_info</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="Gateway_telegram_check" camunda:asyncBefore="true" default="Flow_back_to_verification">
+      <bpmn:incoming>Flow_0o72sh8</bpmn:incoming>
+      <bpmn:outgoing>Flow_to_bot_success</bpmn:outgoing>
+      <bpmn:outgoing>Flow_back_to_verification</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="bot_success" name="Bot Connected Successfully" camunda:formRef="bot_success" camunda:formRefBinding="latest" camunda:assignee="${camunda_user_id}">
+      <bpmn:documentation>Congratulations! Your community bot connection is now active. You can now access all bot features and receive personalized assistance.</bpmn:documentation>
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="community_name">${environment.getProperty('application.name')}</camunda:inputParameter>
+          <camunda:inputParameter name="bot_name">${environment.getProperty('bot.name')}</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_to_bot_success</bpmn:incoming>
+      <bpmn:incoming>Flow_0feoeig</bpmn:incoming>
+      <bpmn:incoming>Flow_0b1e0u7</bpmn:incoming>
+      <bpmn:outgoing>Flow_0i7rqpw</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:serviceTask id="unlock_user_task" name="Unlock User" camunda:asyncBefore="true" camunda:class="ai.hhrdr.chainflow.engine.delegate.UnblockUserDelegate">
+      <bpmn:documentation>Final step: Unlock the user in FlowAPI to grant full access to the platform.</bpmn:documentation>
+      <bpmn:incoming>Flow_1aw4t1u</bpmn:incoming>
+      <bpmn:outgoing>Flow_0lkfpf4</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="community_end" name="Onboarding Complete">
+      <bpmn:incoming>Flow_140abno</bpmn:incoming>
+      <bpmn:incoming>Flow_0i7rqpw</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:serviceTask id="dedup_check" name="ProcessInstanceDeduplicationFlagDelegate" camunda:asyncBefore="true" camunda:class="ai.hhrdr.chainflow.engine.delegate.ProcessInstanceDeduplicationFlagDelegate">
+      <bpmn:incoming>Flow_to_dedup_check</bpmn:incoming>
+      <bpmn:outgoing>Flow_dedup_gateway</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="Gateway_dedup_check" camunda:asyncBefore="true" default="Flow_to_get_config">
+      <bpmn:incoming>Flow_dedup_gateway</bpmn:incoming>
+      <bpmn:outgoing>Flow_exit_duplicate</bpmn:outgoing>
+      <bpmn:outgoing>Flow_to_get_config</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:endEvent id="Event_duplicate_exit">
+      <bpmn:incoming>Flow_exit_duplicate</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_to_dedup_check" sourceRef="community_start" targetRef="dedup_check" />
+    <bpmn:sequenceFlow id="Flow_dedup_gateway" sourceRef="dedup_check" targetRef="Gateway_dedup_check" />
+    <bpmn:sequenceFlow id="Flow_exit_duplicate" name="Exit if duplicate with Business key already exists" sourceRef="Gateway_dedup_check" targetRef="Event_duplicate_exit">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${isDuplicate}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_to_get_config" sourceRef="Gateway_dedup_check" targetRef="Activity_0tmdl7o" />
+    <bpmn:sequenceFlow id="Flow_to_confirmation_code" sourceRef="prepare_verification_code" targetRef="bot_verification" />
+    <bpmn:sequenceFlow id="Flow_to_get_user_info" sourceRef="bot_verification" targetRef="Activity_1jk6f7r" />
+    <bpmn:sequenceFlow id="Flow_to_bot_success" name="Telegram connected" sourceRef="Gateway_telegram_check" targetRef="send_test_message">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${execution.hasVariable('telegram_user_id') &amp;&amp; telegram_user_id != null}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_back_to_verification" name="Not verified yet" sourceRef="Gateway_telegram_check" targetRef="bot_verification" />
+    <bpmn:serviceTask id="Activity_0tmdl7o" name="GetAppConfig" camunda:asyncBefore="true">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="method">GET</camunda:inputParameter>
+            <camunda:inputParameter name="url">${environment.getProperty('api.url')}/api/config/app_config</camunda:inputParameter>
+            <camunda:inputParameter name="headers">
+              <camunda:map>
+                <camunda:entry key="Content-Type">application/json</camunda:entry>
+                <camunda:entry key="Accept">application/json</camunda:entry>
+                <camunda:entry key="X-SYS-KEY">${environment.getProperty('api.key')}</camunda:entry>
+              </camunda:map>
+            </camunda:inputParameter>
+            <camunda:outputParameter name="app_config">${response}</camunda:outputParameter>
+            <camunda:outputParameter name="app_title">${S(response).prop("value").prop("app_title").stringValue()}</camunda:outputParameter>
+            <camunda:outputParameter name="app_description">${S(response).prop("value").prop("app_description").stringValue()}</camunda:outputParameter>
+            <camunda:outputParameter name="app_name">${S(response).prop("value").prop("app_name").stringValue()}</camunda:outputParameter>
+            <camunda:outputParameter name="app_url">${S(response).prop("value").prop("app_url").stringValue()}</camunda:outputParameter>
+            <camunda:outputParameter name="social_discord">${S(response).prop("value").prop("socials").prop("discord").isNull() ? null : S(response).prop("value").prop("socials").prop("discord").stringValue()}</camunda:outputParameter>
+            <camunda:outputParameter name="social_telegram_channel">${S(response).prop("value").prop("socials").prop("telegram_channel").isNull() ? null : S(response).prop("value").prop("socials").prop("telegram_channel").stringValue()}</camunda:outputParameter>
+            <camunda:outputParameter name="social_x">${S(response).prop("value").prop("socials").prop("x").isNull() ? null : S(response).prop("value").prop("socials").prop("x").stringValue()}</camunda:outputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_to_get_config</bpmn:incoming>
+      <bpmn:outgoing>Flow_to_landing</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_to_landing" sourceRef="Activity_0tmdl7o" targetRef="Activity_0ln2haz" />
+    <bpmn:sequenceFlow id="Flow_0lkfpf4" sourceRef="unlock_user_task" targetRef="Activity_0tg7pje" />
+    <bpmn:boundaryEvent id="Event_0rvf252" attachedToRef="bot_success">
+      <bpmn:outgoing>Flow_140abno</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_1fqb4k1">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">PT5M</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_140abno" sourceRef="Event_0rvf252" targetRef="community_end" />
+    <bpmn:serviceTask id="woker_signUp_generateWallet" name="Generate Wallet /Save/Resolve Ref" camunda:asyncAfter="true" camunda:type="external" camunda:topic="wallet_generate">
+      <bpmn:incoming>Flow_1tlza0u</bpmn:incoming>
+      <bpmn:outgoing>Flow_1x0czl5</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:inclusiveGateway id="Gateway_12247qy">
+      <bpmn:incoming>Flow_0o8vixs</bpmn:incoming>
+      <bpmn:incoming>Flow_1r1bdlc</bpmn:incoming>
+      <bpmn:outgoing>Flow_1l97c87</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0lt3xyp</bpmn:outgoing>
+    </bpmn:inclusiveGateway>
+    <bpmn:inclusiveGateway id="Gateway_1n4b5pe">
+      <bpmn:incoming>Flow_0lt3xyp</bpmn:incoming>
+      <bpmn:incoming>Flow_1ffs758</bpmn:incoming>
+      <bpmn:outgoing>Flow_1aw4t1u</bpmn:outgoing>
+    </bpmn:inclusiveGateway>
+    <bpmn:serviceTask id="worker_signUp_sendReferralRewards" name="Transfer Ref Rewards" camunda:asyncBefore="true" camunda:asyncAfter="true" camunda:type="external" camunda:topic="wallet_native_transfer">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="chain_id">${environment.getProperty('testnet.chainId')}</camunda:inputParameter>
+          <camunda:inputParameter name="transfer_amount">${ref_reward_amount}</camunda:inputParameter>
+          <camunda:inputParameter name="transfer_to">${ref_wallet_address}</camunda:inputParameter>
+          <camunda:inputParameter name="camunda_user_id">${camunda_user_id}</camunda:inputParameter>
+          <camunda:outputParameter name="transfer_txhash">${transfer_txhash}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1l97c87</bpmn:incoming>
+      <bpmn:outgoing>Flow_1ffs758</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="woker_signUp_transferSocialsRewards" name="Transfer Initial rewards" camunda:asyncBefore="true" camunda:asyncAfter="true" camunda:type="external" camunda:topic="wallet_treasury_transfer">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="chain_id">${environment.getProperty('testnet.chainId')}</camunda:inputParameter>
+          <camunda:inputParameter name="transfer_amount">${reward_amount}</camunda:inputParameter>
+          <camunda:inputParameter name="camunda_user_id">${camunda_user_id}</camunda:inputParameter>
+          <camunda:outputParameter name="treasury_txhash">${treasury_txhash}</camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1x0czl5</bpmn:incoming>
+      <bpmn:outgoing>Flow_0o8vixs</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:boundaryEvent id="Event_1j0b790" name="user_exists_error" attachedToRef="woker_signUp_generateWallet">
+      <bpmn:outgoing>Flow_1r1bdlc</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_0yu9rxe" camunda:errorCodeVariable="USER_EXISTS" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_1x0czl5" sourceRef="woker_signUp_generateWallet" targetRef="woker_signUp_transferSocialsRewards" />
+    <bpmn:sequenceFlow id="Flow_0o8vixs" sourceRef="woker_signUp_transferSocialsRewards" targetRef="Gateway_12247qy" />
+    <bpmn:sequenceFlow id="Flow_1r1bdlc" name="User exists" sourceRef="Event_1j0b790" targetRef="Gateway_12247qy" />
+    <bpmn:sequenceFlow id="Flow_1l97c87" name="${ref_user_id != null}" sourceRef="Gateway_12247qy" targetRef="worker_signUp_sendReferralRewards">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${execution.hasVariable('ref_wallet_address') &amp;&amp; ref_wallet_address != null}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0lt3xyp" sourceRef="Gateway_12247qy" targetRef="Gateway_1n4b5pe" />
+    <bpmn:sequenceFlow id="Flow_1ffs758" sourceRef="worker_signUp_sendReferralRewards" targetRef="Gateway_1n4b5pe" />
+    <bpmn:sequenceFlow id="Flow_1aw4t1u" sourceRef="Gateway_1n4b5pe" targetRef="unlock_user_task" />
+    <bpmn:sequenceFlow id="Flow_0i7rqpw" sourceRef="bot_success" targetRef="community_end" />
+    <bpmn:serviceTask id="Activity_1jk6f7r" name="Ger User Info" camunda:asyncBefore="true" camunda:class="ai.hhrdr.chainflow.engine.delegate.GetUserInfoDelegate">
+      <bpmn:incoming>Flow_to_get_user_info</bpmn:incoming>
+      <bpmn:outgoing>Flow_0o72sh8</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0o72sh8" sourceRef="Activity_1jk6f7r" targetRef="Gateway_telegram_check" />
+    <bpmn:userTask id="send_test_message" name="Send Test Message" camunda:assignee="${camunda_user_id}">
+      <bpmn:documentation>This is a test message to confirm notifications are working. You'll receive updates here about your bots, tasks, and important events.
+
+Welcome aboard! 🚀</bpmn:documentation>
+      <bpmn:extensionElements>
+        <camunda:taskListener class="ai.hhrdr.chainflow.engine.listener.UserNotificationListener" event="create">
+          <camunda:field name="telegramUserIdExp">
+            <camunda:expression>${telegram_user_id}</camunda:expression>
+          </camunda:field>
+          <camunda:field name="parseModeExp">
+            <camunda:string>HTML</camunda:string>
+          </camunda:field>
+          <camunda:field name="sendTaskButtonExp">
+            <camunda:expression>${false}</camunda:expression>
+          </camunda:field>
+          <camunda:field name="completeTaskExp">
+            <camunda:expression>${true}</camunda:expression>
+          </camunda:field>
+          <camunda:field name="buttonTextExp">
+            <camunda:expression>${null}</camunda:expression>
+          </camunda:field>
+          <camunda:field name="buttonLinkExp">
+            <camunda:expression>${null}</camunda:expression>
+          </camunda:field>
+          <camunda:field name="telegramThreadIdExp">
+            <camunda:expression>${null}</camunda:expression>
+          </camunda:field>
+        </camunda:taskListener>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1fylnew</bpmn:incoming>
+      <bpmn:incoming>Flow_to_bot_success</bpmn:incoming>
+      <bpmn:outgoing>Flow_15facxw</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:boundaryEvent id="Event_1igzsqa" attachedToRef="send_test_message">
+      <bpmn:outgoing>Flow_03jqtd7</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_0xtiew5" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_03jqtd7" name="To the bot connection in case we cant send" sourceRef="Event_1igzsqa" targetRef="bot_verification" />
+    <bpmn:serviceTask id="Activity_0ln2haz" name="Ger User Info" camunda:asyncBefore="true" camunda:class="ai.hhrdr.chainflow.engine.delegate.GetUserInfoDelegate">
+      <bpmn:incoming>Flow_to_landing</bpmn:incoming>
+      <bpmn:outgoing>Flow_1alaqcq</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1alaqcq" sourceRef="Activity_0ln2haz" targetRef="Gateway_02brpma" />
+    <bpmn:exclusiveGateway id="Gateway_02brpma" default="Flow_05qya9h">
+      <bpmn:incoming>Flow_1alaqcq</bpmn:incoming>
+      <bpmn:outgoing>Flow_05qya9h</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1fylnew</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_05qya9h" sourceRef="Gateway_02brpma" targetRef="prepare_verification_code" />
+    <bpmn:sequenceFlow id="Flow_1fylnew" name="If user have telegram id already skip bot, and get to the test message, where get user to the bot if needed" sourceRef="Gateway_02brpma" targetRef="send_test_message">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${execution.hasVariable('telegram_user_id') &amp;&amp; telegram_user_id != null}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_15facxw" sourceRef="send_test_message" targetRef="Gateway_1v2161t" />
+    <bpmn:exclusiveGateway id="Gateway_1v2161t" default="Flow_0feoeig">
+      <bpmn:incoming>Flow_15facxw</bpmn:incoming>
+      <bpmn:outgoing>Flow_1tlza0u</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0feoeig</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_1tlza0u" name="User is still blocked, so we need to send init rewards and register wallet" sourceRef="Gateway_1v2161t" targetRef="woker_signUp_generateWallet">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${isBlock}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0feoeig" sourceRef="Gateway_1v2161t" targetRef="bot_success" />
+    <bpmn:serviceTask id="Activity_0tg7pje" name="Ger User Info" camunda:asyncBefore="true" camunda:class="ai.hhrdr.chainflow.engine.delegate.GetUserInfoDelegate">
+      <bpmn:incoming>Flow_0lkfpf4</bpmn:incoming>
+      <bpmn:outgoing>Flow_0b1e0u7</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0b1e0u7" sourceRef="Activity_0tg7pje" targetRef="bot_success" />
+    <bpmn:textAnnotation id="TextAnnotation_1xva6h9">
+      <bpmn:text>wallet address and passphrase saved in flow API</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_1fvzt0a" associationDirection="None" sourceRef="woker_signUp_generateWallet" targetRef="TextAnnotation_1xva6h9" />
+    <bpmn:textAnnotation id="TextAnnotation_0urcepb">
+      <bpmn:text>Update to show the Personal User greeting</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_092ia3w" associationDirection="None" sourceRef="Activity_0tg7pje" targetRef="TextAnnotation_0urcepb" />
+    <bpmn:textAnnotation id="TextAnnotation_1i3tu5t">
+      <bpmn:text>Get User info, if he's blocked or not, etc</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_0fq3a44" associationDirection="None" sourceRef="Activity_0ln2haz" targetRef="TextAnnotation_1i3tu5t" />
+    <bpmn:textAnnotation id="TextAnnotation_09fcl42">
+      <bpmn:text>refetch the user data to compare and check if telegram user id got there</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_1uvfq2i" associationDirection="None" sourceRef="Activity_1jk6f7r" targetRef="TextAnnotation_09fcl42" />
+    <bpmn:textAnnotation id="TextAnnotation_0j2ava1">
+      <bpmn:text>Verification code is thise process instance id, which is used in the bot /verify {id not hypens}, or int the /start veryfy_ for deep links</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_0knviaj" associationDirection="None" sourceRef="prepare_verification_code" targetRef="TextAnnotation_0j2ava1" />
+    <bpmn:textAnnotation id="TextAnnotation_1iclabj">
+      <bpmn:text>User have a choice of the drop down into the bot with deplink or manually and then verify /</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_03a9f3x" associationDirection="None" sourceRef="bot_verification" targetRef="TextAnnotation_1iclabj" />
+    <bpmn:textAnnotation id="TextAnnotation_0ssjmd4">
+      <bpmn:text>Checking if we can message to user</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_1o82ws7" associationDirection="None" sourceRef="send_test_message" targetRef="TextAnnotation_0ssjmd4" />
+    <bpmn:textAnnotation id="TextAnnotation_0gnqn0u">
+      <bpmn:text>Title, description, name, url, socials, linls</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_0m1vikh" associationDirection="None" sourceRef="Activity_0tmdl7o" targetRef="TextAnnotation_0gnqn0u" />
+    <bpmn:textAnnotation id="TextAnnotation_1xzab15">
+      <bpmn:text>Personalized greeting with all the info we knew on the user, plus congrats on the  initial Points recieve</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_16pg8er" associationDirection="None" sourceRef="bot_success" targetRef="TextAnnotation_1xzab15" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="community_onboarding">
+      <bpmndi:BPMNShape id="ScriptTask_prepare_code_di" bpmnElement="prepare_verification_code">
+        <dc:Bounds x="1015" y="410" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UserTask_code_input_di" bpmnElement="bot_verification">
+        <dc:Bounds x="1160" y="410" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_telegram_check_di" bpmnElement="Gateway_telegram_check" isMarkerVisible="true">
+        <dc:Bounds x="1460" y="425" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_end_di" bpmnElement="community_end">
+        <dc:Bounds x="2722" y="442" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2711" y="405" width="58" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1o985ok_di" bpmnElement="woker_signUp_generateWallet">
+        <dc:Bounds x="1630" y="420" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0trljy3_di" bpmnElement="Gateway_12247qy">
+        <dc:Bounds x="1955" y="435" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0dux3v4_di" bpmnElement="Gateway_1n4b5pe">
+        <dc:Bounds x="2105" y="435" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0uistrf_di" bpmnElement="worker_signUp_sendReferralRewards">
+        <dc:Bounds x="2020" y="530" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_09x2x31_di" bpmnElement="woker_signUp_transferSocialsRewards">
+        <dc:Bounds x="1800" y="420" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1gh9b6s_di" bpmnElement="Activity_1jk6f7r">
+        <dc:Bounds x="1310" y="410" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_035pdnh" bpmnElement="send_test_message" bioc:stroke="#0d4372" bioc:fill="#bbdefb" color:background-color="#bbdefb" color:border-color="#0d4372">
+        <dc:Bounds x="1530" y="150" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1k1w3tw" bpmnElement="Activity_0ln2haz">
+        <dc:Bounds x="660" y="420" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_02brpma_di" bpmnElement="Gateway_02brpma" isMarkerVisible="true">
+        <dc:Bounds x="835" y="435" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UserTask_bot_success_di" bpmnElement="bot_success">
+        <dc:Bounds x="2500" y="420" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1v2161t_di" bpmnElement="Gateway_1v2161t" isMarkerVisible="true">
+        <dc:Bounds x="1635" y="255" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="unlock_user_task_di" bpmnElement="unlock_user_task">
+        <dc:Bounds x="2200" y="420" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0zd6i2w" bpmnElement="Activity_0tg7pje">
+        <dc:Bounds x="2350" y="420" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_start_di" bpmnElement="community_start">
+        <dc:Bounds x="172" y="442" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="150" y="485" width="82" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_dedup_check" bpmnElement="dedup_check">
+        <dc:Bounds x="270" y="420" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_Gateway_dedup_check" bpmnElement="Gateway_dedup_check" isMarkerVisible="true">
+        <dc:Bounds x="395" y="435" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_Event_duplicate_exit" bpmnElement="Event_duplicate_exit">
+        <dc:Bounds x="402" y="542" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1an2iv1" bpmnElement="Activity_0tmdl7o">
+        <dc:Bounds x="480" y="420" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_1fvzt0a_di" bpmnElement="Association_1fvzt0a">
+        <di:waypoint x="1678" y="500" />
+        <di:waypoint x="1678" y="550" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0fq3a44_di" bpmnElement="Association_0fq3a44">
+        <di:waypoint x="729" y="420" />
+        <di:waypoint x="740" y="398" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1uvfq2i_di" bpmnElement="Association_1uvfq2i">
+        <di:waypoint x="1402" y="489" />
+        <di:waypoint x="1424" y="510" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0knviaj_di" bpmnElement="Association_0knviaj">
+        <di:waypoint x="1058" y="410" />
+        <di:waypoint x="1042" y="324" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_03a9f3x_di" bpmnElement="Association_03a9f3x">
+        <di:waypoint x="1223" y="490" />
+        <di:waypoint x="1235" y="529" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0m1vikh_di" bpmnElement="Association_0m1vikh">
+        <di:waypoint x="560" y="500" />
+        <di:waypoint x="579" y="525" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1o82ws7_di" bpmnElement="Association_1o82ws7">
+        <di:waypoint x="1555" y="150" />
+        <di:waypoint x="1546" y="136" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_092ia3w_di" bpmnElement="Association_092ia3w">
+        <di:waypoint x="2410" y="420" />
+        <di:waypoint x="2420" y="376" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_16pg8er_di" bpmnElement="Association_16pg8er">
+        <di:waypoint x="2569" y="420" />
+        <di:waypoint x="2598" y="360" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_1j0b790_di" bpmnElement="Event_1j0b790">
+        <dc:Bounds x="1682" y="402" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1707" y="373" width="86" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1w6kl52_di" bpmnElement="Event_0rvf252">
+        <dc:Bounds x="2532" y="482" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0unmoqe" bpmnElement="Event_1igzsqa">
+        <dc:Bounds x="1512" y="212" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1xva6h9_di" bpmnElement="TextAnnotation_1xva6h9">
+        <dc:Bounds x="1630" y="550" width="100" height="70" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_05qya9h_di" bpmnElement="Flow_05qya9h">
+        <di:waypoint x="885" y="460" />
+        <di:waypoint x="1015" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_to_confirmation_code_di" bpmnElement="Flow_to_confirmation_code">
+        <di:waypoint x="1115" y="450" />
+        <di:waypoint x="1160" y="450" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_back_to_verification_di" bpmnElement="Flow_back_to_verification">
+        <di:waypoint x="1485" y="425" />
+        <di:waypoint x="1485" y="370" />
+        <di:waypoint x="1230" y="370" />
+        <di:waypoint x="1230" y="410" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1321" y="336" width="74" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_to_get_user_info_di" bpmnElement="Flow_to_get_user_info">
+        <di:waypoint x="1260" y="450" />
+        <di:waypoint x="1310" y="450" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0o72sh8_di" bpmnElement="Flow_0o72sh8">
+        <di:waypoint x="1410" y="450" />
+        <di:waypoint x="1460" y="450" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_to_bot_success_di" bpmnElement="Flow_to_bot_success">
+        <di:waypoint x="1510" y="450" />
+        <di:waypoint x="1580" y="450" />
+        <di:waypoint x="1580" y="230" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1514" y="406" width="51" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0i7rqpw_di" bpmnElement="Flow_0i7rqpw">
+        <di:waypoint x="2600" y="460" />
+        <di:waypoint x="2722" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1aw4t1u_di" bpmnElement="Flow_1aw4t1u">
+        <di:waypoint x="2155" y="460" />
+        <di:waypoint x="2200" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0lkfpf4_di" bpmnElement="Flow_0lkfpf4">
+        <di:waypoint x="2300" y="460" />
+        <di:waypoint x="2350" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_140abno_di" bpmnElement="Flow_140abno">
+        <di:waypoint x="2550" y="518" />
+        <di:waypoint x="2550" y="580" />
+        <di:waypoint x="2740" y="580" />
+        <di:waypoint x="2740" y="478" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_to_landing_di" bpmnElement="Flow_to_landing">
+        <di:waypoint x="580" y="460" />
+        <di:waypoint x="660" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1fylnew_di" bpmnElement="Flow_1fylnew">
+        <di:waypoint x="860" y="435" />
+        <di:waypoint x="860" y="190" />
+        <di:waypoint x="1530" y="190" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="877" y="213" width="85" height="93" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1x0czl5_di" bpmnElement="Flow_1x0czl5">
+        <di:waypoint x="1730" y="460" />
+        <di:waypoint x="1800" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0o8vixs_di" bpmnElement="Flow_0o8vixs">
+        <di:waypoint x="1900" y="460" />
+        <di:waypoint x="1955" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1r1bdlc_di" bpmnElement="Flow_1r1bdlc">
+        <di:waypoint x="1700" y="402" />
+        <di:waypoint x="1700" y="320" />
+        <di:waypoint x="1980" y="320" />
+        <di:waypoint x="1980" y="435" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1812" y="302" width="55" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1l97c87_di" bpmnElement="Flow_1l97c87" color:border-color="#212121">
+        <di:waypoint x="1980" y="485" />
+        <di:waypoint x="1980" y="570" />
+        <di:waypoint x="2020" y="570" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1952" y="525" width="78" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0lt3xyp_di" bpmnElement="Flow_0lt3xyp">
+        <di:waypoint x="2005" y="460" />
+        <di:waypoint x="2105" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ffs758_di" bpmnElement="Flow_1ffs758">
+        <di:waypoint x="2100" y="530" />
+        <di:waypoint x="2100" y="508" />
+        <di:waypoint x="2130" y="508" />
+        <di:waypoint x="2130" y="485" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_03jqtd7_di" bpmnElement="Flow_03jqtd7">
+        <di:waypoint x="1530" y="248" />
+        <di:waypoint x="1530" y="280" />
+        <di:waypoint x="1210" y="280" />
+        <di:waypoint x="1210" y="410" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1357" y="233" width="65" height="53" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1alaqcq_di" bpmnElement="Flow_1alaqcq">
+        <di:waypoint x="760" y="460" />
+        <di:waypoint x="835" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_15facxw_di" bpmnElement="Flow_15facxw">
+        <di:waypoint x="1630" y="190" />
+        <di:waypoint x="1660" y="190" />
+        <di:waypoint x="1660" y="255" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1tlza0u_di" bpmnElement="Flow_1tlza0u">
+        <di:waypoint x="1660" y="305" />
+        <di:waypoint x="1660" y="420" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1579" y="305" width="81" height="66" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0feoeig_di" bpmnElement="Flow_0feoeig">
+        <di:waypoint x="1685" y="280" />
+        <di:waypoint x="2550" y="280" />
+        <di:waypoint x="2550" y="420" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0b1e0u7_di" bpmnElement="Flow_0b1e0u7">
+        <di:waypoint x="2450" y="460" />
+        <di:waypoint x="2500" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="TextAnnotation_1i3tu5t_di" bpmnElement="TextAnnotation_1i3tu5t">
+        <dc:Bounds x="710" y="342" width="99.99274099883856" height="55.749128919860624" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_09fcl42_di" bpmnElement="TextAnnotation_09fcl42">
+        <dc:Bounds x="1390" y="510" width="120" height="99" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0j2ava1_di" bpmnElement="TextAnnotation_0j2ava1">
+        <dc:Bounds x="980" y="250" width="260" height="74" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1iclabj_di" bpmnElement="TextAnnotation_1iclabj">
+        <dc:Bounds x="1190" y="529" width="99.99274099883856" height="112.65969802555169" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_to_dedup_check_di" bpmnElement="Flow_to_dedup_check">
+        <di:waypoint x="208" y="460" />
+        <di:waypoint x="270" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_dedup_gateway_di" bpmnElement="Flow_dedup_gateway">
+        <di:waypoint x="370" y="460" />
+        <di:waypoint x="395" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_exit_duplicate_di" bpmnElement="Flow_exit_duplicate">
+        <di:waypoint x="420" y="485" />
+        <di:waypoint x="420" y="542" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="326" y="530" width="88" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_to_get_config_di" bpmnElement="Flow_to_get_config">
+        <di:waypoint x="445" y="460" />
+        <di:waypoint x="480" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="TextAnnotation_0gnqn0u_di" bpmnElement="TextAnnotation_0gnqn0u">
+        <dc:Bounds x="540" y="525" width="99.99274099883856" height="69.68641114982579" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0ssjmd4_di" bpmnElement="TextAnnotation_0ssjmd4">
+        <dc:Bounds x="1470" y="80" width="99.99274099883856" height="55.749128919860624" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0urcepb_di" bpmnElement="TextAnnotation_0urcepb">
+        <dc:Bounds x="2380" y="320" width="99.99274099883856" height="55.749128919860624" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1xzab15_di" bpmnElement="TextAnnotation_1xzab15">
+        <dc:Bounds x="2580" y="280" width="160" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

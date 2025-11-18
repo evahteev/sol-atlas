@@ -1,0 +1,50 @@
+{
+  "components": [
+    {
+      "label": "",
+      "components": [
+        {
+          "content": "<!-- HYBRID VERIFICATION FORM -->\n<style>\n  :root {\n    /* Brand Colors */\n    --color-primary: #6366F1;\n    --color-primary-dark: #8B5CF6;\n    --color-success: #10B981;\n    --color-success-dark: #059669;\n    --color-warning: #F59E0B;\n    --color-warning-dark: #D97706;\n    --color-info: #0088CC;\n    --color-info-dark: #00A3E0;\n    --color-accent: #EC4899;\n    --color-accent-dark: #BE185D;\n    \n    /* Background Colors */\n    --color-bg-primary: #0E141A;\n    --color-bg-surface: #1C262E;\n    --color-bg-elevated: #374151;\n    \n    /* Border Colors */\n    --color-border: #3B4D5E;\n    --color-border-hover: #6366F1;\n    \n    /* Text Colors */\n    --color-text-primary: #FFFFFF;\n    --color-text-secondary: #94A3B8;\n    --color-text-muted: #64748B;\n    \n    /* Typography */\n    --font-family: \"Space Grotesk\", sans-serif;\n    --font-size-h1: 48px;\n    --font-size-h2: 36px;\n    --font-size-h3: 28px;\n    --font-size-h4: 24px;\n    --font-size-h5: 20px;\n    --font-size-body-large: 20px;\n    --font-size-body: 16px;\n    --font-size-small: 14px;\n    \n    /* Spacing */\n    --spacing-xs: 8px;\n    --spacing-sm: 12px;\n    --spacing-md: 16px;\n    --spacing-lg: 24px;\n    --spacing-xl: 32px;\n    --spacing-2xl: 40px;\n    --spacing-3xl: 48px;\n    \n    /* Border Radius */\n    --radius-sm: 8px;\n    --radius-md: 12px;\n    --radius-lg: 16px;\n    --radius-xl: 20px;\n    \n    /* Shadows */\n    --shadow-sm: 0 4px 8px rgba(0, 0, 0, 0.1);\n    --shadow-md: 0 8px 20px rgba(0, 0, 0, 0.15);\n    --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.2);\n  }\n\n  .verification-container {\n    width: 100%;\n    max-width: 800px;\n    margin: 0 auto;\n    font-family: var(--font-family);\n    padding: 0 var(--spacing-md);\n  }\n\n  .hero-section {\n    background: linear-gradient(135deg, var(--color-bg-surface) 0%, var(--color-bg-primary) 100%);\n    border: 1px solid var(--color-border);\n    border-radius: var(--radius-xl);\n    padding: var(--spacing-2xl);\n    text-align: center;\n    margin-bottom: var(--spacing-xl);\n    position: relative;\n    overflow: hidden;\n  }\n\n  .hero-section::before {\n    content: '';\n    position: absolute;\n    top: 0;\n    left: 0;\n    right: 0;\n    bottom: 0;\n    background: linear-gradient(45deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));\n    pointer-events: none;\n  }\n\n  .hero-content {\n    position: relative;\n    z-index: 2;\n  }\n\n  .hero-icon {\n    font-size: 80px;\n    margin-bottom: 28px;\n    filter: drop-shadow(var(--shadow-sm));\n    animation: float 3s ease-in-out infinite;\n  }\n\n  @keyframes float {\n    0%, 100% { transform: translateY(0px); }\n    50% { transform: translateY(-10px); }\n  }\n\n  .hero-title {\n    color: var(--color-text-primary);\n    font-size: var(--font-size-h2);\n    font-weight: 700;\n    margin-bottom: var(--spacing-md);\n    line-height: 1.2;\n  }\n\n  .hero-subtitle {\n    color: var(--color-text-secondary);\n    font-size: var(--font-size-body-large);\n    line-height: 1.6;\n    max-width: 600px;\n    margin: 0 auto;\n  }\n\n  .option-card {\n    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);\n    border-radius: var(--radius-xl);\n    padding: var(--spacing-2xl);\n    margin-bottom: var(--spacing-lg);\n    color: var(--color-text-primary);\n    text-align: center;\n    position: relative;\n    overflow: hidden;\n  }\n\n  .option-card::before {\n    content: '';\n    position: absolute;\n    top: 0;\n    left: 0;\n    right: 0;\n    bottom: 0;\n    background: linear-gradient(45deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));\n    pointer-events: none;\n  }\n\n  .option-content {\n    position: relative;\n    z-index: 2;\n  }\n\n  .option-title {\n    font-size: var(--font-size-h4);\n    font-weight: 700;\n    margin-bottom: var(--spacing-md);\n  }\n\n  .option-description {\n    font-size: var(--font-size-body);\n    opacity: 0.95;\n    margin-bottom: var(--spacing-lg);\n    line-height: 1.5;\n  }\n\n  .deep-link-button {\n    display: inline-block;\n    background: white;\n    color: var(--color-primary);\n    padding: 16px 32px;\n    border-radius: var(--radius-md);\n    text-decoration: none;\n    font-weight: 600;\n    font-size: var(--font-size-body);\n    transition: all 0.3s ease;\n    box-shadow: var(--shadow-md);\n  }\n\n  .deep-link-button:hover {\n    background: #f8fafc;\n    transform: translateY(-2px);\n    box-shadow: var(--shadow-lg);\n  }\n\n  .code-display {\n    background: rgba(255, 255, 255, 0.15);\n    border: 2px dashed rgba(255, 255, 255, 0.4);\n    border-radius: var(--radius-md);\n    padding: var(--spacing-lg) var(--spacing-xl);\n    margin: var(--spacing-md) 0;\n    font-family: 'Courier New', monospace;\n    font-size: 22px;\n    font-weight: 700;\n    letter-spacing: 2px;\n    cursor: pointer;\n    transition: all 0.2s;\n    word-break: break-all;\n  }\n\n  .code-display:hover {\n    background: rgba(255, 255, 255, 0.2);\n    border-color: rgba(255, 255, 255, 0.6);\n    transform: scale(1.02);\n  }\n\n  .code-hint {\n    font-size: var(--font-size-small);\n    opacity: 0.9;\n    margin-top: var(--spacing-sm);\n  }\n\n  .divider {\n    text-align: center;\n    margin: var(--spacing-2xl) 0;\n    position: relative;\n  }\n\n  .divider::before {\n    content: '';\n    position: absolute;\n    top: 50%;\n    left: 0;\n    right: 0;\n    height: 1px;\n    background: var(--color-border);\n  }\n\n  .divider-text {\n    background: var(--color-bg-primary);\n    padding: 0 var(--spacing-lg);\n    position: relative;\n    color: var(--color-text-secondary);\n    font-weight: 600;\n    font-size: var(--font-size-body);\n  }\n\n  .success-option {\n    background: linear-gradient(135deg, var(--color-success) 0%, var(--color-success-dark) 100%);\n  }\n\n  /* Mobile Responsiveness */\n  @media (max-width: 768px) {\n    .verification-container {\n      padding: 0 var(--spacing-sm);\n    }\n    \n    .hero-section {\n      padding: var(--spacing-lg);\n      border-radius: var(--radius-lg);\n    }\n    \n    .hero-icon {\n      font-size: 64px;\n    }\n    \n    .hero-title {\n      font-size: var(--font-size-h3);\n    }\n    \n    .hero-subtitle {\n      font-size: 18px;\n    }\n    \n    .option-card {\n      padding: var(--spacing-lg);\n      border-radius: var(--radius-lg);\n    }\n    \n    .option-title {\n      font-size: var(--font-size-h5);\n    }\n    \n    .option-description {\n      font-size: 15px;\n    }\n    \n    .code-display {\n      font-size: 18px;\n      letter-spacing: 1px;\n      padding: var(--spacing-md) var(--spacing-lg);\n    }\n    \n    .deep-link-button {\n      font-size: 15px;\n      padding: 14px 28px;\n    }\n  }\n\n  @media (max-width: 480px) {\n    .hero-title {\n      font-size: var(--font-size-h4);\n    }\n    \n    .hero-icon {\n      font-size: 56px;\n    }\n    \n    .code-display {\n      font-size: 16px;\n      padding: var(--spacing-sm) var(--spacing-md);\n    }\n  }\n</style>\n\n<div class=\"verification-container\" ng-cloak>\n  <!-- Hero Section -->\n  <div class=\"hero-section\">\n    <div class=\"hero-content\">\n      <div class=\"hero-icon\">🔗</div>\n      <div class=\"hero-title\">Connect Your Telegram</div>\n      <div class=\"hero-subtitle\">\n        Choose your preferred method to link your account and unlock all community features\n      </div>\n    </div>\n  </div>\n\n  <!-- OPTION 1: Deep Link (Primary) -->\n  <div class=\"option-card\">\n    <div class=\"option-content\">\n      <div class=\"option-title\">⚡ Quick Connect (Recommended)</div>\n      <div class=\"option-description\">\n        Click the button below to open Telegram and connect instantly\n      </div>\n      <a href=\"https://t.me/{{ bot_username }}?start=verify_{{ verification_code }}\" \n         target=\"_blank\" \n         class=\"deep-link-button\">\n        🚀 Open in Telegram\n      </a>\n    </div>\n  </div>\n\n  <!-- Divider -->\n  <div class=\"divider\">\n    <span class=\"divider-text\">OR</span>\n  </div>\n\n  <!-- OPTION 2: Manual Code (Fallback) -->\n  <div class=\"option-card success-option\">\n    <div class=\"option-content\">\n      <div class=\"option-title\">📝 Manual Verification</div>\n      <div class=\"option-description\">\n        Open Telegram bot manually and type:\n      </div>\n      <div class=\"code-display\">\n        /verify {{ verification_code }}\n      </div>\n      <div class=\"code-hint\">\n        💡 This page will update automatically when verified\n      </div>\n    </div>\n  </div>\n</div>",
+          "type": "html",
+          "layout": {
+            "row": "Row_main",
+            "columns": null
+          },
+          "id": "Field_main"
+        },
+        {
+          "label": "✓ I've Verified in Telegram",
+          "action": "submit",
+          "type": "button",
+          "layout": {
+            "row": "Row_submit",
+            "columns": null
+          },
+          "id": "Field_submit",
+          "properties": {
+            "variant": "primary"
+          }
+        }
+      ],
+      "showOutline": true,
+      "type": "group",
+      "layout": {
+        "row": "Row_0y5ujqc",
+        "columns": 16
+      },
+      "id": "Field_group_main",
+      "properties": {
+        "maxWidth": "960px"
+      }
+    }
+  ],
+  "type": "default",
+  "id": "bot_verification",
+  "exporter": {
+    "name": "Camunda Modeler",
+    "version": "5.31.0"
+  },
+  "executionPlatform": "Camunda Platform",
+  "executionPlatformVersion": "7.22.0",
+  "schemaVersion": 18
+}

@@ -1,0 +1,48 @@
+site_name: SOL Atlas Docs
+site_description: Documentation for SOL Atlas — community platform and personal bots on Solana.
+site_url: https://atlas.gurunetwork.ai/docs/
+repo_url: https://github.com/evahteev/sol-atlas
+
+docs_dir: docs_user
+site_dir: site
+use_directory_urls: false
+
+extra:
+  base_path: /docs
+
+theme:
+  name: material
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - content.code.copy
+  palette:
+    - scheme: default
+      primary: deep purple
+      accent: teal
+
+nav:
+  - Overview: index.md
+  - Getting Started: getting-started.md
+  - Architecture: architecture.md
+  - Components: components.md
+  - Whitepaper: whitepaper.md
+  - Launcher Wizard: launcher-wizard.md
+  - WebChatbot: webchatbot.md
+  - Requirements: requirements.md
+  - Projects & Competition: projects.md
+
+plugins:
+  - search
+
+hooks:
+  - docs_hooks.py
+
+markdown_extensions:
+  - admonition
+  - toc:
+      permalink: true
+  - tables
+  - codehilite
+
+
