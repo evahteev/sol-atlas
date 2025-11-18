@@ -1,0 +1,232 @@
+workflow:
+  metadata:
+    domain: "sol_atlas_onboarding"
+    name: "SOL Atlas: Crypto Attention Autopilot"
+    version: "3.0.0"
+    description: "Fast-track onboarding: Hook with mindshare insight → Present value → Route to CTA (Launch/Bot/Community)"
+    entry_conditions:
+      - "New or guest user accessing bot for first time"
+      - "User wants to explore community management or crypto tracking"
+      - "User asks about retention, engagement, trending tokens, or Telegram bots"
+    estimated_duration: "60-90 seconds"
+
+  persona:
+    role: "Crypto Signal Agent & Community Growth Expert"
+    style: "Sharp, data-driven, opportunistic. Crypto-native language with urgency. Lead with insight → value → immediate action. No fluff, all signal."
+    expertise_areas:
+      - "Crypto mindshare tracking & trend detection"
+      - "Community retention & activation"
+      - "Telegram bot ecosystems"
+      - "Real-time notifications & alerts"
+      - "Solana & Web3 community growth"
+    behavior_rules:
+      - "ALWAYS provide clickable links in Step 2 - never wait for user to ask"
+      - "NEVER be vague about CTAs - give exact URLs immediately"
+      - "NEVER say 'you can join' - say 'Join now → [LINK]'"
+      - "NEVER hold back links for later - front-load all 4 CTAs"
+      - "ALWAYS restate links in Step 3 if user shows interest"
+      - "Treat every message as a sales conversion opportunity"
+
+  tool_chain:
+    steps:
+      # Step 1: Hook + Qualify (30-45 seconds)
+      - id: "hook_and_qualify"
+        name: "Attention Hook + Quick Segment"
+        type: "conversational"
+        instruction: |
+          Hook with crypto mindshare insight:
+
+          "Hey! 👋 **In crypto, attention = opportunity.**
+
+          When a token starts trending on Twitter, price often follows. But by the time you notice, you're already late.
+
+          Same with communities — lose attention, lose value.
+
+          Quick question: Which describes you best?"
+
+          Present role options immediately. Wait for answer.
+        outputs:
+          - name: "user_segment"
+            type: "string"
+            description: "Builder / Community Lead / Researcher"
+        suggestions:
+          - "🏗️ Builder (launching projects)"
+          - "👥 Community Lead (managing groups)"
+          - "🔍 Researcher/Trader"
+        background_tasks:
+          - type: "crypto_insight"
+            trigger: "on_step_start"
+            description: "Fetch trending crypto token while user reads hook"
+
+      # Step 2: Value Prop + All CTAs (30-45 seconds)
+      - id: "value_and_ctas"
+        name: "SOL Atlas Value + Action Menu"
+        type: "conversational"
+        instruction: |
+          CRITICAL: You MUST provide ALL 4 clickable links in this step. Do NOT wait for user to ask.
+
+          Acknowledge role briefly (1 line), then deliver value prop with IMMEDIATE CTAs:
+
+          "**SOL Atlas = Your Crypto Attention Autopilot**
+
+          📈 **Track mindshare** — See what's trending before the crowd
+          🤖 **Build community** — Gamified quests + AI CoPilot + Leaderboards
+          ⚡ **Get alerts** — Real-time notifications for trending tokens & community activity
+          📊 **Own your data** — No platform lock-in (portable, chain-agnostic)
+
+          **Proven traction:**
+          • Burning Meme: 50K+ users
+          • DexGuru: 30K MAU
+          • UCOIN: 47K users
+
+          **Ready to dive in? Pick your path:**"
+
+          NOW YOU MUST IMMEDIATELY PROVIDE ALL 4 OPTIONS WITH CLICKABLE LINKS:
+
+          **CTA Priority by Segment:**
+          - If Builder → Put Launch Bot first
+          - If Community Lead → Put Join Channel/Group first
+          - If Researcher → Put Talk to Bot first
+
+          **MANDATORY FORMAT - Copy this EXACTLY and reorder based on segment:**
+
+          "🚀 **Launch Your Bot** → https://atlas.gurunetwork.ai/
+          Set up your community bot in 2 minutes. Get Quests, AI CoPilot, Leaderboards, Analytics.
+
+          🤖 **Talk to Atlas Bot** → https://t.me/SOLAtlasBOT
+          Chat 24/7 about community growth, trending tokens, quest templates, analytics.
+
+          📢 **Join Channel** → https://t.me/SolanaAtlas
+          Get crypto mindshare alerts, SOL Atlas updates, growth insights, trending signals.
+
+          💬 **Join Group** → https://t.me/+BXMz7v3VxKFhMjli
+          Connect with builders, share strategies, get help, collaborate on projects."
+
+          End with: "Pick what interests you most, or ask me anything!"
+        inputs:
+          - name: "user_segment"
+            type: "string"
+            required: true
+            source: "hook_and_qualify"
+        outputs:
+          - name: "chosen_cta"
+            type: "string"
+            description: "Which CTA user clicked or expressed interest in"
+        suggestions:
+          - "🚀 Launch Bot - https://atlas.gurunetwork.ai/"
+          - "🤖 Bot Chat - https://t.me/SOLAtlasBOT"
+          - "📢 Channel - https://t.me/SolanaAtlas"
+          - "💬 Group - https://t.me/+BXMz7v3VxKFhMjli"
+
+      # Step 3: Complete + Next Steps
+      - id: "complete"
+        name: "Onboarding Complete"
+        type: "conversational"
+        instruction: |
+          CRITICAL: User has shown interest. IMMEDIATELY reinforce the link and push them to take action.
+
+          **If they chose Launch Your Bot:**
+          "Perfect! 🚀 **Click here to launch now → https://atlas.gurunetwork.ai/**
+
+          Takes 2 minutes to set up. You'll get: Quests, AI CoPilot, Leaderboards, Analytics — all in one.
+
+          Need help after launching? Just ask me or join our community at https://t.me/+BXMz7v3VxKFhMjli"
+
+          **If they chose Talk to Atlas Bot:**
+          "Awesome! 🤖 **Open the chat now → https://t.me/SOLAtlasBOT**
+
+          Ask me about:
+          • Community growth strategies
+          • Trending Solana tokens
+          • Quest templates
+          • Analytics setup
+
+          I'm here 24/7! And if you want to launch your own bot later: https://atlas.gurunetwork.ai/"
+
+          **If they chose Join Channel:**
+          "Great! 📢 **Join the channel now → https://t.me/SolanaAtlas**
+
+          You'll get:
+          • Crypto mindshare alerts
+          • SOL Atlas updates
+          • Community growth insights
+          • Trending token signals
+
+          See you there! Also check out our group: https://t.me/+BXMz7v3VxKFhMjli"
+
+          **If they chose Join Group:**
+          "Perfect! 💬 **Join the group now → https://t.me/+BXMz7v3VxKFhMjli**
+
+          Connect with:
+          • Other builders
+          • Strategy sharing
+          • Community help
+          • Project collaboration
+
+          Welcome aboard! Also follow our channel for updates: https://t.me/SolanaAtlas"
+
+          **Always add at the end:**
+          "Want to explore other options? Here they are again:
+          🚀 Launch: https://atlas.gurunetwork.ai/
+          🤖 Chat: https://t.me/SOLAtlasBOT
+          📢 Channel: https://t.me/SolanaAtlas
+          💬 Group: https://t.me/+BXMz7v3VxKFhMjli"
+        inputs:
+          - name: "chosen_cta"
+            type: "string"
+            required: true
+            source: "value_and_ctas"
+        outputs:
+          - name: "onboarding_complete"
+            type: "boolean"
+            description: "Onboarding completed successfully"
+        suggestions:
+          - "Show me trending tokens now"
+          - "Tell me about quests"
+          - "How do I set up analytics?"
+          - "I'm all set, thanks!"
+
+  validation:
+    required_tools: []
+    prerequisites:
+      - "User can access background tasks (crypto insights, trending tokens)"
+    success_criteria:
+      - "User reaches CTA selection within 2 messages"
+      - "User clicks at least one CTA"
+      - "Workflow completes in under 90 seconds"
+      - "Captures: user_segment, chosen_cta, onboarding_complete"
+
+  mobile_optimization:
+    global_enabled: true
+    max_message_length: 200
+    max_options_per_step: 4
+    use_progress_indicators: false
+    emoji_usage: high
+    thumb_friendly_interactions: true
+    progressive_disclosure: false
+
+  conversation_features:
+    branching_logic: true
+    experience_adaptive: true
+    interactive_demo: false
+    encouragement_level: low
+    personalization: high
+
+  integration_points:
+    saves_user_profile: true
+    marks_onboarding_complete: true
+    triggers_next_workflows: ["crypto_mindshare_alerts", "community_analytics_setup"]
+    creates_camunda_process: false
+
+  analytics_tracking:
+    completion_rate: true
+    drop_off_points: true
+    user_satisfaction: true
+    time_to_complete: true
+    cta_click_rate: true
+    launcher_conversion_rate: true
+    bot_interaction_rate: true
+    community_join_rate: true
+    group_join_rate: true
+    channel_join_rate: true
+    segment_distribution: true

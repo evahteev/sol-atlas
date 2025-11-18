@@ -1,0 +1,6 @@
+id,name,category,description,priority,status
+1,Item Alpha,Category A,First example item with important data,High,Active
+2,Item Beta,Category B,Second example item for reference,Medium,Active
+3,Item Gamma,Category A,Third example item showing pattern,Low,Inactive
+4,Item Delta,Category C,Fourth example with different category,High,Active
+5,Item Epsilon,Category B,Fifth example for completeness,Medium,Pending
