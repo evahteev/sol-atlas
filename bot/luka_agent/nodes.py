@@ -9,7 +9,6 @@ This module defines the core nodes used in the agent graph:
 
 from typing import cast
 from langchain_core.messages import AIMessage, ToolMessage
-from langgraph.prebuilt import ToolNode
 from loguru import logger
 
 from luka_agent.state import AgentState
@@ -20,8 +19,9 @@ async def agent_node(state: AgentState) -> dict:
 
     This node:
     1. Takes the current state (with messages)
-    2. Calls the LLM with tools
-    3. Returns the LLM's response (text or tool calls)
+    2. Hydrates state with sub-agent config if needed
+    3. Calls the LLM with tools and sub-agent system prompt
+    4. Returns the LLM's response (text or tool calls)
 
     The LLM decides whether to:
     - Answer directly (text response)
@@ -35,12 +35,27 @@ async def agent_node(state: AgentState) -> dict:
     """
     from langchain_ollama import ChatOllama
     from langchain_openai import ChatOpenAI
-    from luka_bot.core.config import settings
+    from langchain_anthropic import ChatAnthropic
+    from langchain_core.messages import SystemMessage
     from luka_agent.tools import create_tools_for_user
+    from luka_agent.graph import hydrate_state_with_sub_agent
+
+    # Try to import settings, gracefully handle if not available (CLI mode)
+    try:
+        from luka_bot.core.config import settings
+    except Exception:
+        settings = None
 
     logger.info(f"🤖 Agent node processing for user {state['user_id']}")
 
-    # Create tools for this user
+    # Check if state needs hydration (first run or agent switch)
+    if not state.get("system_prompt_content"):
+        logger.info("🔄 State not hydrated, loading sub-agent config")
+        hydration_updates = hydrate_state_with_sub_agent(state)
+        # Merge updates into state (simulate state update for this turn)
+        state = {**state, **hydration_updates}
+
+    # Create tools for this user (using sub-agent's enabled_tools)
     tools = create_tools_for_user(
         user_id=state["user_id"],
         thread_id=state["thread_id"],
@@ -50,34 +65,63 @@ async def agent_node(state: AgentState) -> dict:
         language=state["language"],
     )
 
-    # Select LLM provider based on configuration
-    if settings.DEFAULT_LLM_PROVIDER == "ollama":
-        ollama_url = settings.OLLAMA_URL.rstrip("/v1").rstrip("/")
+    # Select LLM provider based on sub-agent config
+    llm_provider = state.get("llm_provider", "ollama")
+    llm_model = state.get("llm_model", "llama3.2")
+    llm_temperature = state.get("llm_temperature", 0.7)
+
+    logger.info(f"🧠 Invoking LLM: {llm_provider}/{llm_model} (temp={llm_temperature})")
+
+    if llm_provider == "ollama":
+        # Get Ollama URL from settings or environment/default
+        if settings:
+            ollama_url = settings.OLLAMA_URL.rstrip("/v1").rstrip("/")
+        else:
+            import os
+            ollama_url = os.getenv("OLLAMA_URL", "http://localhost:11434").rstrip("/v1").rstrip("/")
+
         llm = ChatOllama(
-            model=settings.OLLAMA_MODEL_NAME,
+            model=llm_model,
             base_url=ollama_url,
-            temperature=0.7,
+            temperature=llm_temperature,
+        )
+    elif llm_provider == "openai":
+        llm = ChatOpenAI(
+            model=llm_model,
+            temperature=llm_temperature,
+        )
+    elif llm_provider == "anthropic":
+        llm = ChatAnthropic(
+            model=llm_model,
+            temperature=llm_temperature,
         )
     else:
-        llm = ChatOpenAI(
-            model=settings.DEFAULT_LLM_MODEL or "gpt-4o-mini",
+        logger.error(f"Unknown LLM provider: {llm_provider}, falling back to ollama")
+        import os
+        ollama_url = os.getenv("OLLAMA_URL", "http://localhost:11434").rstrip("/v1").rstrip("/")
+        llm = ChatOllama(
+            model="llama3.2",
+            base_url=ollama_url,
             temperature=0.7,
         )
 
     # Bind tools to LLM
     llm_with_tools = llm.bind_tools(tools)
 
-    # Build system prompt
-    system_prompt = f"""You are Luka, a helpful AI assistant.
+    # Use sub-agent's system prompt
+    system_prompt_content = state.get(
+        "system_prompt_content",
+        "You are a helpful AI assistant."
+    )
 
-Platform: {state['platform']}
-Language: {state['language']}
+    logger.debug(f"📝 System prompt length: {len(system_prompt_content)} chars")
+    logger.debug(f"🔧 Tools available: {len(tools)}")
 
-You have access to tools to help users. Use them when appropriate.
-"""
+    # Build messages with system prompt
+    system_message = SystemMessage(content=system_prompt_content)
+    messages = [system_message] + state["messages"]
 
     # Invoke LLM with current message history
-    messages = state["messages"]
     response = await llm_with_tools.ainvoke(messages)
 
     logger.info(f"✅ Agent node completed, response type: {type(response).__name__}")
@@ -111,6 +155,7 @@ async def tools_node(state: AgentState) -> dict:
     Returns:
         State update with tool results
     """
+    from langchain_core.messages import ToolMessage
     from luka_agent.tools import create_tools_for_user
 
     logger.info(f"🔧 Tools node executing for user {state['user_id']}")
@@ -125,15 +170,60 @@ async def tools_node(state: AgentState) -> dict:
         language=state["language"],
     )
 
-    # Use LangGraph's built-in ToolNode for execution
-    tool_node = ToolNode(tools)
+    # Create a tool lookup dict
+    tools_by_name = {tool.name: tool for tool in tools}
 
-    # Execute tools
-    result = await tool_node.ainvoke(state)
+    # Get tool calls from the last message
+    last_message = state["messages"][-1]
+    tool_calls = last_message.tool_calls if hasattr(last_message, "tool_calls") else []
 
-    logger.info(f"✅ Tools node completed")
+    # Execute each tool call
+    tool_messages = []
+    for tool_call in tool_calls:
+        tool_name = tool_call["name"]
+        tool_args = tool_call.get("args", {})
+        tool_id = tool_call.get("id", "")
 
-    return result
+        # Find the tool
+        tool = tools_by_name.get(tool_name)
+        if not tool:
+            error_msg = f"Tool '{tool_name}' not found"
+            logger.error(error_msg)
+            tool_messages.append(
+                ToolMessage(
+                    content=error_msg,
+                    tool_call_id=tool_id,
+                    name=tool_name,
+                )
+            )
+            continue
+
+        # Execute the tool
+        try:
+            logger.debug(f"Executing tool: {tool_name} with args: {tool_args}")
+            result = await tool.ainvoke(tool_args)
+            tool_messages.append(
+                ToolMessage(
+                    content=str(result),
+                    tool_call_id=tool_id,
+                    name=tool_name,
+                )
+            )
+            logger.debug(f"Tool {tool_name} executed successfully")
+        except Exception as e:
+            error_msg = f"Error executing tool '{tool_name}': {str(e)}"
+            logger.error(error_msg, exc_info=True)
+            tool_messages.append(
+                ToolMessage(
+                    content=error_msg,
+                    tool_call_id=tool_id,
+                    name=tool_name,
+                )
+            )
+
+    logger.info(f"✅ Tools node completed, executed {len(tool_messages)} tools")
+
+    return {"messages": tool_messages}
 
 
 async def suggestions_node(state: AgentState) -> dict:
@@ -157,9 +247,15 @@ async def suggestions_node(state: AgentState) -> dict:
     """
     from langchain_ollama import ChatOllama
     from langchain_openai import ChatOpenAI
-    from luka_bot.core.config import settings
     import json
     import random
+    import os
+
+    # Try to import settings, gracefully handle if not available
+    try:
+        from luka_bot.core.config import settings
+    except Exception:
+        settings = None
 
     logger.info(f"💡 Suggestions node generating for user {state['user_id']}")
 
@@ -194,17 +290,24 @@ async def suggestions_node(state: AgentState) -> dict:
 
         # Generate suggestions with LLM
         try:
-            # Select LLM provider
-            if settings.DEFAULT_LLM_PROVIDER == "ollama":
-                ollama_url = settings.OLLAMA_URL.rstrip("/v1").rstrip("/")
+            # Select LLM provider (use state config if available, else fallback)
+            llm_provider = state.get("llm_provider", "ollama")
+            llm_model = state.get("llm_model", "llama3.2")
+
+            if llm_provider == "ollama":
+                if settings:
+                    ollama_url = settings.OLLAMA_URL.rstrip("/v1").rstrip("/")
+                else:
+                    ollama_url = os.getenv("OLLAMA_URL", "http://localhost:11434").rstrip("/v1").rstrip("/")
+
                 llm = ChatOllama(
-                    model=settings.OLLAMA_MODEL_NAME,
+                    model=llm_model,
                     base_url=ollama_url,
                     temperature=0.7,
                 )
             else:
                 llm = ChatOpenAI(
-                    model=settings.DEFAULT_LLM_MODEL or "gpt-4o-mini",
+                    model=llm_model,
                     temperature=0.7,
                 )
 

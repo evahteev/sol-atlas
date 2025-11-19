@@ -148,6 +148,20 @@ class TestAgentStatePlatforms:
 
         assert state["platform"] == "web"
 
+    def test_platform_accepts_worker(self):
+        """Test platform field accepts 'worker' (CLI/background jobs)."""
+        state: AgentState = {
+            "messages": [],
+            "user_id": 123,
+            "thread_id": "test",
+            "knowledge_bases": [],
+            "language": "en",
+            "platform": "worker",
+            "conversation_suggestions": [],
+        }
+
+        assert state["platform"] == "worker"
+
 
 class TestAgentStateKnowledgeBases:
     """Test AgentState knowledge_bases field."""

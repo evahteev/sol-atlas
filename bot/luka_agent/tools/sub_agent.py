@@ -31,28 +31,39 @@ async def get_available_sub_agents_impl() -> str:
     Returns:
         Summary of all sub-agents with their capabilities
     """
-    # Step 1: Try to import service
+    # Step 1: Try to use luka_bot service if available (integrated mode)
     try:
         from luka_bot.services.workflow_context_service import get_workflow_context_service
-    except ImportError as import_err:
-        logger.error(f"Unable to import workflow_context_service: {import_err}")
-        return "Sub-agent system is not configured. Please ensure luka_bot services are installed correctly."
-
-    # Step 2: Get service and check availability
-    try:
         context_service = get_workflow_context_service()
         summary = await context_service.get_all_workflows_summary()
 
-        # Check if any sub-agents are configured
-        if not summary or summary.strip() == "" or "No workflows found" in summary:
-            logger.warning("No sub-agents configured in system")
+        if summary and summary.strip() and "No workflows found" not in summary:
+            logger.debug("Retrieved available sub-agents summary from luka_bot service")
+            return summary
+    except (ImportError, Exception) as exc:
+        logger.debug(f"luka_bot service not available, using standalone mode: {exc}")
+
+    # Step 2: Fallback to standalone SubAgentLoader (CLI/standalone mode)
+    try:
+        from luka_agent.sub_agents.loader import get_sub_agent_loader
+
+        loader = get_sub_agent_loader()
+        agents = loader.list_available_agents()
+
+        if not agents:
             return (
                 "No sub-agents are currently configured. "
-                "Sub-agents should be defined in luka_agent/sub_agents/ directory. "
-                "Please check the configuration or contact your administrator."
+                "Sub-agents should be defined in luka_agent/sub_agents/ directory."
             )
 
-        logger.debug("Retrieved available sub-agents summary")
+        # Build summary
+        lines = ["Available sub-agents:\n"]
+        for agent in agents:
+            lines.append(f"{agent['icon']} **{agent['name']}** (`{agent['id']}`)")
+            lines.append(f"   {agent['description']}\n")
+
+        summary = "\n".join(lines)
+        logger.debug(f"Retrieved {len(agents)} sub-agents from SubAgentLoader")
         return summary
 
     except Exception as exc:
@@ -70,26 +81,49 @@ async def get_sub_agent_details_impl(domain: str, include_full_documentation: bo
     Returns:
         Sub-agent details and documentation
     """
-    # Step 1: Try to import service
+    # Step 1: Try to use luka_bot service if available (integrated mode)
     try:
         from luka_bot.services.workflow_context_service import get_workflow_context_service
-    except ImportError as import_err:
-        logger.error(f"Unable to import workflow_context_service: {import_err}")
-        return "Sub-agent system is not configured. Please ensure luka_bot services are installed correctly."
-
-    # Step 2: Get details
-    try:
         context_service = get_workflow_context_service()
         context = await context_service.get_workflow_context(domain, include_full_documentation)
 
         if context:
-            logger.debug(f"Retrieved sub-agent details for domain '{domain}'")
+            logger.debug(f"Retrieved sub-agent details for domain '{domain}' from luka_bot service")
             return context
+    except (ImportError, Exception) as exc:
+        logger.debug(f"luka_bot service not available, using standalone mode: {exc}")
 
+    # Step 2: Fallback to standalone SubAgentLoader (CLI/standalone mode)
+    try:
+        from luka_agent.sub_agents.loader import get_sub_agent_loader
+
+        loader = get_sub_agent_loader()
+        config = loader.load(domain)
+
+        # Build details text
+        lines = [
+            f"# {config.icon} {config.name}",
+            f"**ID:** `{config.id}`",
+            f"**Version:** {config.version}",
+            f"**Description:** {config.description}\n",
+            f"## Persona",
+            f"**Role:** {config.role}",
+            f"**Identity:** {config.identity}\n",
+            f"## Enabled Tools",
+            f"{', '.join(config.enabled_tools)}\n",
+            f"## Knowledge Bases",
+            f"{', '.join(config.knowledge_bases)}\n",
+        ]
+
+        details = "\n".join(lines)
+        logger.debug(f"Retrieved sub-agent details for '{domain}' from SubAgentLoader")
+        return details
+
+    except FileNotFoundError:
         # Provide helpful error with available options
         try:
-            available = await context_service.get_all_workflows_summary()
-            return f"Sub-agent '{domain}' not found.\n\nAvailable sub-agents:\n{available}"
+            available_summary = await get_available_sub_agents_impl()
+            return f"Sub-agent '{domain}' not found.\n\n{available_summary}"
         except Exception:
             return f"Sub-agent '{domain}' not found. Use get_available_sub_agents to see what's available."
 
@@ -107,15 +141,9 @@ async def suggest_sub_agent_impl(user_query: str) -> str:
     Returns:
         Suggested sub-agent with context
     """
-    # Step 1: Try to import service
+    # Step 1: Try to use luka_bot service if available (integrated mode)
     try:
         from luka_bot.services.workflow_context_service import get_workflow_context_service
-    except ImportError as import_err:
-        logger.error(f"Unable to import workflow_context_service: {import_err}")
-        return "Sub-agent system is not configured. Please ensure luka_bot services are installed correctly."
-
-    # Step 2: Get suggestion
-    try:
         context_service = get_workflow_context_service()
         suggested_context = await context_service.get_workflow_for_user_intent(user_query)
 
@@ -125,6 +153,14 @@ async def suggest_sub_agent_impl(user_query: str) -> str:
 
         all_workflows = await context_service.get_all_workflows_summary()
         return f"I couldn't find a perfect match. Here are available sub-agents:\n\n{all_workflows}"
+
+    except (ImportError, Exception) as exc:
+        logger.debug(f"luka_bot service not available, using standalone mode: {exc}")
+
+    # Step 2: Fallback to standalone mode (just list available sub-agents)
+    try:
+        all_agents = await get_available_sub_agents_impl()
+        return f"Here are the available sub-agents (intent matching not available in standalone mode):\n\n{all_agents}"
 
     except Exception as exc:
         logger.error(f"Error suggesting sub-agent for query '{user_query}': {exc}")
@@ -144,15 +180,9 @@ async def get_sub_agent_step_guidance_impl(domain: str, step_id: str) -> str:
     Returns:
         Step guidance and instructions
     """
-    # Step 1: Try to import service
+    # Step 1: Try to use luka_bot service if available (integrated mode)
     try:
         from luka_bot.services.workflow_context_service import get_workflow_context_service
-    except ImportError as import_err:
-        logger.error(f"Unable to import workflow_context_service: {import_err}")
-        return "Sub-agent system is not configured. Please ensure luka_bot services are installed correctly."
-
-    # Step 2: Get guidance
-    try:
         context_service = get_workflow_context_service()
         guidance = await context_service.get_workflow_step_guidance(domain, step_id)
 
@@ -165,12 +195,14 @@ async def get_sub_agent_step_guidance_impl(domain: str, step_id: str) -> str:
             "Please verify the step ID or use get_sub_agent_details to see available steps."
         )
 
-    except Exception as exc:
-        logger.error(f"Error getting step guidance for '{domain}:{step_id}': {exc}")
-        return (
-            f"Unable to retrieve step guidance for '{domain}:{step_id}'. "
-            "Please verify the domain and step ID are correct."
-        )
+    except (ImportError, Exception) as exc:
+        logger.debug(f"luka_bot service not available: {exc}")
+
+    # Step 2: Fallback for standalone mode
+    return (
+        "Step-by-step guidance is not available in standalone mode. "
+        "Use get_sub_agent_details to see general information about the sub-agent."
+    )
 
 
 # =============================================================================
@@ -369,12 +401,14 @@ def create_sub_agent_tools(
                 "Get detailed information about a specific sub-agent including documentation. "
                 "Use this when user asks for details about a specific sub-agent or guided experience."
             ),
-            func=lambda domain, include_full_documentation=True: get_sub_agent_details_impl(
-                domain, include_full_documentation
-            ),
             args_schema=GetSubAgentDetailsInput,
+            func=lambda domain, include_full_documentation=True: get_sub_agent_details_impl(
+                domain=domain,
+                include_full_documentation=include_full_documentation,
+            ),
             coroutine=lambda domain, include_full_documentation=True: get_sub_agent_details_impl(
-                domain, include_full_documentation
+                domain=domain,
+                include_full_documentation=include_full_documentation,
             ),
         ),
         StructuredTool.from_function(
@@ -383,9 +417,9 @@ def create_sub_agent_tools(
                 "Suggest the most appropriate sub-agent based on user's query or intent. "
                 "Use this when user describes a goal but doesn't know which sub-agent to use."
             ),
-            func=lambda user_query: suggest_sub_agent_impl(user_query),
             args_schema=SuggestSubAgentInput,
-            coroutine=lambda user_query: suggest_sub_agent_impl(user_query),
+            func=lambda user_query: suggest_sub_agent_impl(user_query=user_query),
+            coroutine=lambda user_query: suggest_sub_agent_impl(user_query=user_query),
         ),
         StructuredTool.from_function(
             name="get_sub_agent_step_guidance",
@@ -393,9 +427,15 @@ def create_sub_agent_tools(
                 "Get specific guidance for executing a particular step in a sub-agent. "
                 "Use this when user is stuck on a sub-agent step and needs help."
             ),
-            func=lambda domain, step_id: get_sub_agent_step_guidance_impl(domain, step_id),
             args_schema=GetStepGuidanceInput,
-            coroutine=lambda domain, step_id: get_sub_agent_step_guidance_impl(domain, step_id),
+            func=lambda domain, step_id: get_sub_agent_step_guidance_impl(
+                domain=domain,
+                step_id=step_id,
+            ),
+            coroutine=lambda domain, step_id: get_sub_agent_step_guidance_impl(
+                domain=domain,
+                step_id=step_id,
+            ),
         ),
         # Execution tool (user context bound)
         StructuredTool.from_function(
@@ -406,13 +446,13 @@ def create_sub_agent_tools(
                 "tutorials, or complex workflows. Use this when the user wants to begin "
                 "a structured process or guided experience."
             ),
+            args_schema=ExecuteSubAgentInput,
             func=lambda domain: execute_sub_agent_impl(
                 domain=domain,
                 user_id=user_id,
                 thread_id=thread_id,
                 language=language,
             ),
-            args_schema=ExecuteSubAgentInput,
             coroutine=lambda domain: execute_sub_agent_impl(
                 domain=domain,
                 user_id=user_id,

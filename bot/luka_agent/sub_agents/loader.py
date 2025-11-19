@@ -105,10 +105,6 @@ class SubAgentConfig:
         return self.luka_extensions.get("knowledge_bases", [])
 
     @property
-    def llm_config(self) -> Dict[str, Any]:
-        return self.luka_extensions.get("llm_config", {})
-
-    @property
     def capabilities(self) -> Dict[str, Any]:
         return self.luka_extensions.get("capabilities", {})
 
@@ -174,7 +170,8 @@ class SubAgentLoader:
                     "icon": config.icon,
                 })
             except Exception as e:
-                logger.warning(f"Failed to load agent {sub_dir.name}: {e}")
+                # Expected for non-BMAD format agents - use DEBUG level
+                logger.debug(f"Skipping agent {sub_dir.name} (not in BMAD format): {e}")
                 continue
 
         return agents
@@ -407,7 +404,8 @@ class SubAgentLoader:
         else:
             extensions = config_dict["luka_extensions"]
 
-            required_extensions = ["system_prompt", "enabled_tools", "knowledge_bases", "llm_config"]
+            # Required fields (llm_config removed - now handled via env vars)
+            required_extensions = ["system_prompt", "enabled_tools", "knowledge_bases"]
             for field in required_extensions:
                 if field not in extensions:
                     errors.append(f"Missing required field: luka_extensions.{field}")
@@ -417,14 +415,6 @@ class SubAgentLoader:
                 sp = extensions["system_prompt"]
                 if "base" not in sp:
                     errors.append("Missing required field: luka_extensions.system_prompt.base")
-
-            # Check llm_config structure
-            if "llm_config" in extensions:
-                llm = extensions["llm_config"]
-                required_llm = ["provider", "model", "temperature"]
-                for field in required_llm:
-                    if field not in llm:
-                        errors.append(f"Missing required field: luka_extensions.llm_config.{field}")
 
         if errors:
             error_msg = f"Invalid config for sub-agent '{sub_agent_id}':\n"

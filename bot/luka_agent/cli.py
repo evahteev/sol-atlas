@@ -3,30 +3,50 @@
 luka_agent CLI Tool
 
 Commands:
-    list                    - List all available sub-agents
-    validate <agent_id>     - Validate sub-agent configuration
-    test <agent_id> <msg>   - Test sub-agent with a message
-    info <agent_id>         - Show sub-agent details
+    list                            - List all available sub-agents
+    validate <agent_id>             - Validate sub-agent configuration
+    test <agent_id> <msg>           - Test sub-agent with a message (mock, no LLM)
+    run <agent_id> <msg> [options]  - Run sub-agent with actual LLM invocation
+    info <agent_id>                 - Show sub-agent details
+
+Run Options:
+    --model <model>       Override LLM model (e.g., gpt-4o, llama3.2, claude-sonnet-4)
+    --provider <provider> Override LLM provider (ollama, openai, anthropic)
 
 Usage:
     python -m luka_agent.cli list
     python -m luka_agent.cli validate general_luka
     python -m luka_agent.cli test general_luka "Hello, who are you?"
+    python -m luka_agent.cli run general_luka "What can you help me with?"
+    python -m luka_agent.cli run general_luka "Hello" --model gpt-4o --provider openai
     python -m luka_agent.cli info crypto_analyst
 """
 
 import sys
+import asyncio
+import os
 from pathlib import Path
 from typing import Optional
 
 from loguru import logger
 
+# Load .env file if it exists
+try:
+    from dotenv import load_dotenv
+    env_path = Path(__file__).parent / ".env"
+    if env_path.exists():
+        load_dotenv(env_path)
+        logger.debug(f"Loaded environment from {env_path}")
+except ImportError:
+    pass  # python-dotenv not installed
+
 # Configure logger for CLI
+log_level = os.getenv("LOG_LEVEL", "INFO").upper()
 logger.remove()
 logger.add(
     sys.stderr,
     format="<level>{level: <8}</level> | <level>{message}</level>",
-    level="INFO",
+    level=log_level,
 )
 
 
@@ -83,8 +103,6 @@ def validate_agent(agent_id: str):
         print(f"Role: {config.role}")
         print(f"Enabled Tools: {', '.join(config.enabled_tools)}")
         print(f"Knowledge Bases: {', '.join(config.knowledge_bases)}")
-        print(f"LLM: {config.llm_config.get('provider')}/{config.llm_config.get('model')}")
-        print(f"Temperature: {config.llm_config.get('temperature')}")
         print()
         print(f"System Prompt: {len(prompt)} characters")
         print(f"Principles: {len(config.principles)}")
@@ -183,13 +201,12 @@ def show_info(agent_id: str):
             print(f"  - {kb}")
         print()
 
-        print("LLM Configuration:")
-        llm = config.llm_config
-        print(f"  Provider: {llm.get('provider')}")
-        print(f"  Model: {llm.get('model')}")
-        print(f"  Temperature: {llm.get('temperature')}")
-        print(f"  Max Tokens: {llm.get('max_tokens', 'default')}")
-        print(f"  Streaming: {llm.get('streaming', True)}")
+        print("LLM Configuration (from environment):")
+        print(f"  Provider: {os.getenv('DEFAULT_LLM_PROVIDER', 'ollama')}")
+        print(f"  Model: {os.getenv('DEFAULT_LLM_MODEL', 'llama3.2')}")
+        print(f"  Temperature: {os.getenv('DEFAULT_LLM_TEMPERATURE', '0.7')}")
+        print(f"  Max Tokens: {os.getenv('DEFAULT_LLM_MAX_TOKENS', '2000')}")
+        print(f"  Streaming: {os.getenv('DEFAULT_LLM_STREAMING', 'true')}")
         print()
 
         if config.capabilities:
@@ -292,21 +309,159 @@ def test_agent(agent_id: str, message: str):
             print(f"  - {kb}")
         print()
 
-        # Mock LLM configuration that would be used
-        print("LLM Configuration:")
-        print(f"  Provider: {config.llm_config.get('provider')}")
-        print(f"  Model: {config.llm_config.get('model')}")
-        print(f"  Temperature: {config.llm_config.get('temperature')}")
+        # LLM configuration from environment
+        print("LLM Configuration (from environment):")
+        print(f"  Provider: {os.getenv('DEFAULT_LLM_PROVIDER', 'ollama')}")
+        print(f"  Model: {os.getenv('DEFAULT_LLM_MODEL', 'llama3.2')}")
+        print(f"  Temperature: {os.getenv('DEFAULT_LLM_TEMPERATURE', '0.7')}")
         print()
 
         logger.success("✅ Test setup complete!")
         logger.info(
             "This is a mock test showing configuration. "
-            "To test with actual LLM, integrate with luka_agent graph."
+            "Use 'run' command to invoke actual LLM."
         )
 
     except Exception as e:
         logger.error(f"❌ Test failed: {e}")
+        sys.exit(1)
+
+
+async def run_agent(agent_id: str, message: str, model_override: str = None, provider_override: str = None):
+    """Run sub-agent with actual LLM invocation
+
+    Args:
+        agent_id: Sub-agent ID to run
+        message: User message
+        model_override: Optional LLM model override (e.g., "gpt-4o", "llama3.2")
+        provider_override: Optional LLM provider override (e.g., "openai", "ollama")
+    """
+    from luka_agent import get_unified_agent_graph, create_initial_state
+    from langchain_core.messages import AIMessage, ToolMessage
+
+    try:
+        logger.info(f"Running sub-agent: {agent_id}")
+
+        if model_override:
+            logger.info(f"🔧 Model override: {model_override}")
+        if provider_override:
+            logger.info(f"🔧 Provider override: {provider_override}")
+
+        # Get CLI-enabled tools from environment
+        cli_enabled_tools_str = os.getenv("CLI_ENABLED_TOOLS", "")
+        if cli_enabled_tools_str:
+            cli_enabled_tools = [tool.strip() for tool in cli_enabled_tools_str.split(",")]
+        else:
+            # Default: no tools enabled in CLI mode (will error if sub-agent needs any)
+            cli_enabled_tools = []
+
+        # Create initial state
+        state = create_initial_state(
+            user_message=message,
+            user_id=12345,  # CLI test user
+            thread_id="cli_thread",
+            platform="worker",  # CLI runs as worker (non-interactive)
+            language="en",
+            sub_agent_id=agent_id,
+            enabled_tools=cli_enabled_tools if cli_enabled_tools else None,  # Use sub-agent default if not specified
+        )
+
+        # Validate that all sub-agent tools are enabled in CLI
+        if cli_enabled_tools:
+            sub_agent_tools = set(state["enabled_tools"])
+            cli_tools = set(cli_enabled_tools)
+            missing_tools = sub_agent_tools - cli_tools
+
+            if missing_tools:
+                logger.error(
+                    f"Sub-agent '{agent_id}' requires tools that are not enabled in CLI_ENABLED_TOOLS: {missing_tools}"
+                )
+                logger.error(f"Sub-agent needs: {sub_agent_tools}")
+                logger.error(f"CLI allows: {cli_tools}")
+                logger.error(f"Please add {missing_tools} to CLI_ENABLED_TOOLS in .env or disable them in the sub-agent config")
+                sys.exit(1)
+
+        # Apply model/provider from environment defaults (if set) or CLI overrides
+        # Priority: CLI override > ENV default > sub-agent default
+
+        if model_override:
+            # CLI override has highest priority
+            state["llm_model"] = model_override
+        else:
+            # Use env default if provided, otherwise keep sub-agent default
+            env_model = os.getenv("DEFAULT_LLM_MODEL")
+            if env_model:
+                state["llm_model"] = env_model
+
+        if provider_override:
+            # CLI override has highest priority
+            state["llm_provider"] = provider_override
+        else:
+            # Use env default if provided, otherwise keep sub-agent default
+            env_provider = os.getenv("DEFAULT_LLM_PROVIDER")
+            if env_provider:
+                state["llm_provider"] = env_provider
+
+        logger.info(f"Invoking {agent_id} with message: \"{message}\"")
+        logger.info(f"Using LLM: {state['llm_provider']}/{state['llm_model']}")
+        print()
+        print("=" * 70)
+        print(f"🤖 {state['sub_agent_metadata']['name']} {state['sub_agent_metadata']['icon']}")
+        print("=" * 70)
+        print()
+        print(f"👤 User: {message}")
+        print(f"🧠 LLM: {state['llm_provider']}/{state['llm_model']}")
+        print()
+
+        # Get graph and invoke
+        graph = await get_unified_agent_graph()
+        config = {"configurable": {"thread_id": "cli_thread"}}
+
+        # Stream events from graph
+        print(f"🤖 {state['sub_agent_metadata']['name']}: ", end="", flush=True)
+
+        final_state = None
+        async for event in graph.astream(state, config, stream_mode="updates"):
+            # Extract messages from updates
+            for node_name, node_output in event.items():
+                if "messages" in node_output:
+                    for msg in node_output["messages"]:
+                        if isinstance(msg, AIMessage):
+                            if msg.content:
+                                # Print AI response content
+                                print(msg.content, end="", flush=True)
+                            if hasattr(msg, "tool_calls") and msg.tool_calls:
+                                # Show tool calls
+                                print()
+                                print()
+                                for tool_call in msg.tool_calls:
+                                    print(f"  🔧 Calling tool: {tool_call['name']}")
+                        elif isinstance(msg, ToolMessage):
+                            # Show tool results
+                            print(f"     ✓ Result: {msg.content[:100]}...")
+
+            # Store final state
+            final_state = node_output
+
+        print()
+        print()
+
+        # Show suggestions if available
+        if final_state and "conversation_suggestions" in final_state:
+            suggestions = final_state["conversation_suggestions"]
+            if suggestions:
+                print("💡 Suggestions:")
+                for suggestion in suggestions:
+                    print(f"  • {suggestion}")
+                print()
+
+        print("=" * 70)
+        logger.success("✅ Response complete!")
+
+    except Exception as e:
+        logger.error(f"❌ Run failed: {e}")
+        import traceback
+        traceback.print_exc()
         sys.exit(1)
 
 
@@ -340,6 +495,32 @@ def main():
         agent_id = sys.argv[2]
         message = sys.argv[3]
         test_agent(agent_id, message)
+
+    elif command == "run":
+        if len(sys.argv) < 4:
+            logger.error('Usage: python -m luka_agent.cli run <agent_id> "message" [--model MODEL] [--provider PROVIDER]')
+            sys.exit(1)
+
+        agent_id = sys.argv[2]
+        message = sys.argv[3]
+
+        # Parse optional model/provider overrides
+        model_override = None
+        provider_override = None
+
+        i = 4
+        while i < len(sys.argv):
+            if sys.argv[i] == "--model" and i + 1 < len(sys.argv):
+                model_override = sys.argv[i + 1]
+                i += 2
+            elif sys.argv[i] == "--provider" and i + 1 < len(sys.argv):
+                provider_override = sys.argv[i + 1]
+                i += 2
+            else:
+                logger.warning(f"Unknown argument: {sys.argv[i]}")
+                i += 1
+
+        asyncio.run(run_agent(agent_id, message, model_override, provider_override))
 
     elif command == "info":
         if len(sys.argv) < 3:

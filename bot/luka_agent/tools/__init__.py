@@ -12,6 +12,7 @@ from loguru import logger
 from luka_agent.tools.knowledge_base import create_knowledge_base_tool
 from luka_agent.tools.sub_agent import create_sub_agent_tools
 from luka_agent.tools.youtube import create_youtube_tool
+from luka_agent.tools.image_description import create_image_description_tool
 
 
 def create_tools_for_user(
@@ -59,6 +60,7 @@ def create_tools_for_user(
         ),
         "sub_agent": lambda: create_sub_agent_tools(user_id, thread_id, language),  # Returns list of 5 tools
         "youtube": lambda: create_youtube_tool(user_id, thread_id, language),
+        "image_description": lambda: create_image_description_tool(user_id, thread_id, language),
         # Additional tools will be added as they are migrated
     }
 

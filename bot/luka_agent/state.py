@@ -50,7 +50,8 @@ class AgentState(TypedDict):
     #: Platform identifier
     #: - "web": ag_ui_gateway (CopilotKit)
     #: - "telegram": luka_bot (aiogram)
-    platform: Literal["web", "telegram"]
+    #: - "worker": CLI, background jobs, API workers
+    platform: Literal["web", "telegram", "worker"]
 
     # =========================================================================
     # KNOWLEDGE BASE & TOOLS
@@ -86,6 +87,32 @@ class AgentState(TypedDict):
     #: Sub-agent persona (loaded from config.yaml)
     #: Contains: role, identity, communication_style, principles
     sub_agent_persona: Dict[str, Any]
+
+    #: Rendered system prompt content (loaded from sub-agent's system_prompt.md)
+    #: This is the full prompt text with template variables substituted
+    #: Used by agent_node to set SystemMessage
+    system_prompt_content: str
+
+    # =========================================================================
+    # LLM CONFIGURATION (from sub-agent config)
+    # =========================================================================
+    # These fields are loaded from sub-agent's luka_extensions.llm_config section
+    # They allow each sub-agent to use different LLM providers and settings
+
+    #: LLM provider (e.g., "ollama", "openai", "anthropic")
+    llm_provider: str
+
+    #: LLM model name (e.g., "llama3.2", "gpt-4o", "claude-sonnet-4")
+    llm_model: str
+
+    #: LLM temperature setting (0.0 to 2.0)
+    llm_temperature: float
+
+    #: Maximum tokens for LLM response
+    llm_max_tokens: int
+
+    #: Whether to stream LLM responses
+    llm_streaming: bool
 
     # =========================================================================
     # LEGACY WORKFLOW FIELDS (Deprecated, kept for backward compatibility)
@@ -164,13 +191,19 @@ def create_initial_state(
     user_message: str,
     user_id: int,
     thread_id: str,
-    platform: Literal["web", "telegram"],
+    platform: Literal["web", "telegram", "worker"],
     language: str = "en",
     knowledge_bases: Optional[List[str]] = None,
     enabled_tools: Optional[List[str]] = None,
     is_guest: bool = False,
     active_workflow: Optional[str] = None,  # DEPRECATED: Use sub_agent_id instead
     sub_agent_id: Optional[str] = None,
+    # LLM runtime overrides (optional, for user-specific settings)
+    llm_provider: Optional[str] = None,
+    llm_model: Optional[str] = None,
+    llm_temperature: Optional[float] = None,
+    llm_max_tokens: Optional[int] = None,
+    llm_streaming: Optional[bool] = None,
 ) -> AgentState:
     """
     Create initial AgentState for a new conversation turn.
@@ -183,27 +216,51 @@ def create_initial_state(
         user_message: User's message text
         user_id: User ID
         thread_id: Thread ID
-        platform: "web" or "telegram"
+        platform: "web", "telegram", or "worker"
         language: User language (default: "en")
         knowledge_bases: KB indices (default: user's KB or loaded from sub-agent)
         enabled_tools: Tool names (default: loaded from sub-agent config)
         is_guest: Guest mode flag (default: False)
         active_workflow: DEPRECATED - Use sub_agent_id instead
         sub_agent_id: Sub-agent to load (default: platform default)
+        llm_provider: Override LLM provider (optional, for user-specific settings)
+        llm_model: Override LLM model (optional, for user-specific settings)
+        llm_temperature: Override temperature (optional, for user-specific settings)
+        llm_max_tokens: Override max tokens (optional, for user-specific settings)
+        llm_streaming: Override streaming (optional, for user-specific settings)
 
     Returns:
         Initial AgentState ready for graph execution
+
+    LLM Configuration Priority:
+        1. Runtime parameters (user-specific, passed to this function)
+        2. Environment variables (deployment defaults from .env)
+        3. Hardcoded fallbacks (system defaults)
+
+    Example - Web platform with user's preferred model:
+        >>> state = create_initial_state(
+        ...     user_message="Hello",
+        ...     user_id=123,
+        ...     thread_id="user_123",
+        ...     platform="web",
+        ...     llm_provider="openai",     # User chose GPT-4o
+        ...     llm_model="gpt-4o",
+        ... )
     """
     from langchain_core.messages import HumanMessage
 
     # Determine sub-agent ID (platform defaults)
     if sub_agent_id is None:
-        # Load from platform config
-        from luka_bot.core.config import settings
-        if platform == "telegram":
-            sub_agent_id = getattr(settings, "DEFAULT_SUB_AGENT_TELEGRAM", "general_luka")
-        else:  # web
-            sub_agent_id = getattr(settings, "DEFAULT_SUB_AGENT_WEB", "general_luka")
+        # Try to load from platform config, fallback to general_luka
+        try:
+            from luka_bot.core.config import settings
+            if platform == "telegram":
+                sub_agent_id = getattr(settings, "DEFAULT_SUB_AGENT_TELEGRAM", "general_luka")
+            else:  # web
+                sub_agent_id = getattr(settings, "DEFAULT_SUB_AGENT_WEB", "general_luka")
+        except Exception:
+            # Fallback if luka_bot config not available (CLI mode)
+            sub_agent_id = "general_luka"
 
     # Load sub-agent configuration
     from luka_agent.sub_agents.loader import get_sub_agent_loader
@@ -228,6 +285,51 @@ def create_initial_state(
     # Load enabled tools from sub-agent config
     if enabled_tools is None:
         enabled_tools = sub_agent_config.enabled_tools
+
+    # Load system prompt with template variables
+    template_vars = {
+        "user_name": f"User{user_id}",  # TODO: Get real user name from database
+        "platform": platform,
+        "language": language,
+    }
+    try:
+        system_prompt_content = loader.load_system_prompt(
+            sub_agent_config,
+            language=language,
+            template_vars=template_vars,
+        )
+    except Exception as e:
+        from loguru import logger
+        logger.warning(f"Failed to load system prompt for '{sub_agent_id}', using fallback: {e}")
+        system_prompt_content = f"You are {sub_agent_config.name}, a helpful AI assistant."
+
+    # Load LLM configuration with priority: runtime > env > defaults
+    # This allows user-specific settings on web/telegram while using env defaults for CLI
+    import os
+
+    # Priority 1: Runtime parameter (user-specific)
+    # Priority 2: Environment variable (deployment default)
+    # Priority 3: Hardcoded fallback (system default)
+    final_llm_provider = (
+        llm_provider if llm_provider is not None
+        else os.getenv("DEFAULT_LLM_PROVIDER", "ollama")
+    )
+    final_llm_model = (
+        llm_model if llm_model is not None
+        else os.getenv("DEFAULT_LLM_MODEL", "llama3.2")
+    )
+    final_llm_temperature = (
+        llm_temperature if llm_temperature is not None
+        else float(os.getenv("DEFAULT_LLM_TEMPERATURE", "0.7"))
+    )
+    final_llm_max_tokens = (
+        llm_max_tokens if llm_max_tokens is not None
+        else int(os.getenv("DEFAULT_LLM_MAX_TOKENS", "2000"))
+    )
+    final_llm_streaming = (
+        llm_streaming if llm_streaming is not None
+        else os.getenv("DEFAULT_LLM_STREAMING", "true").lower() == "true"
+    )
 
     # Platform-specific copilotkit field
     copilotkit_value = (
@@ -257,6 +359,13 @@ def create_initial_state(
             "communication_style": sub_agent_config.communication_style,
             "principles": sub_agent_config.principles,
         },
+        "system_prompt_content": system_prompt_content,
+        # LLM configuration (with runtime > env > default priority)
+        "llm_provider": final_llm_provider,
+        "llm_model": final_llm_model,
+        "llm_temperature": final_llm_temperature,
+        "llm_max_tokens": final_llm_max_tokens,
+        "llm_streaming": final_llm_streaming,
         # Legacy workflow fields (deprecated)
         "active_workflow": active_workflow,
         "workflow_step": None,

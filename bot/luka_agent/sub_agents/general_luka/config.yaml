@@ -122,18 +122,10 @@ luka_extensions:
     - "user-kb-{user_id}"     # User's personal knowledge base
 
   # ---------------------------------------------------------------------------
-  # LLM CONFIGURATION
-  # ---------------------------------------------------------------------------
-  llm_config:
-    provider: "ollama"        # Local inference (cost-effective)
-    model: "llama3.2"         # Balanced model for general tasks
-    temperature: 0.7          # Balanced - not too creative, not too rigid
-    max_tokens: 2000          # Sufficient for most conversations
-    streaming: true           # Better UX with progressive responses
-
-  # ---------------------------------------------------------------------------
   # CAPABILITIES
   # ---------------------------------------------------------------------------
+  # NOTE: LLM configuration (provider, model, temperature, etc.) is now set
+  # via environment variables in .env, not in sub-agent config.
   capabilities:
     data_access:
       allowed_kb_patterns:

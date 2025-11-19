@@ -7,12 +7,22 @@ retrieval from Redis.
 """
 
 from typing import Optional
+from loguru import logger
 
 from langgraph.checkpoint.redis import RedisSaver
 from langgraph.checkpoint.memory import MemorySaver
 from redis.asyncio import ConnectionPool, Redis
 
-from luka_bot.core.config import settings
+# Try to import settings, but don't fail if luka_bot isn't configured
+# This allows luka_agent to work standalone (e.g., CLI usage)
+try:
+    from luka_bot.core.config import settings
+    _has_settings = True
+except Exception:
+    # This is expected in standalone/CLI mode - use DEBUG level
+    logger.debug("luka_bot settings not available, will use MemorySaver (standalone mode)")
+    settings = None
+    _has_settings = False
 
 # Global checkpointer instance
 _checkpointer: Optional[RedisSaver | MemorySaver] = None
@@ -24,7 +34,7 @@ async def get_checkpointer() -> RedisSaver | MemorySaver:
 
     The checkpointer type is determined by configuration:
     - Redis (default): Used in production for persistent state
-    - Memory (testing): Used in tests for isolation
+    - Memory (testing/CLI): Used in tests, CLI, or when luka_bot config unavailable
 
     Returns:
         RedisSaver or MemorySaver instance
@@ -39,12 +49,20 @@ async def get_checkpointer() -> RedisSaver | MemorySaver:
     if _checkpointer is not None:
         return _checkpointer
 
+    # Use MemorySaver if settings not available (CLI/standalone mode)
+    if not _has_settings or settings is None:
+        logger.info("🧠 Using MemorySaver (luka_bot config not available)")
+        _checkpointer = MemorySaver()
+        return _checkpointer
+
     # Check if we should use memory checkpointer (testing mode)
     if getattr(settings, "LUKA_USE_MEMORY_CHECKPOINTER", False):
+        logger.info("🧠 Using MemorySaver (testing mode)")
         _checkpointer = MemorySaver()
         return _checkpointer
 
     # Create Redis connection pool
+    logger.info("💾 Creating Redis checkpointer")
     pool = ConnectionPool(
         host=settings.redis_settings.host,
         port=settings.redis_settings.port,

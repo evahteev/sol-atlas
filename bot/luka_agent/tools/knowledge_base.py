@@ -64,9 +64,17 @@ async def search_knowledge_base_impl(
     Returns:
         Formatted search results or error message
     """
+    # Step 1: Try to use luka_bot services if available (integrated mode)
     try:
-        from luka_bot.services import get_elasticsearch_service, get_user_profile_service
-        from luka_bot.core.config import settings
+        from luka_bot.services import get_elasticsearch_service
+
+        # Import settings carefully - might fail if required env vars missing
+        try:
+            from luka_bot.core.config import settings
+        except Exception as settings_err:
+            # Settings import failed (likely missing required env vars in standalone mode)
+            logger.debug(f"Settings import failed: {settings_err}, switching to standalone mode")
+            raise ImportError(f"Settings unavailable: {settings_err}")
 
         # Check if Elasticsearch is enabled
         if not settings.ELASTICSEARCH_ENABLED:
@@ -74,7 +82,7 @@ async def search_knowledge_base_impl(
             return "Knowledge base is currently disabled."
 
         es_service = await get_elasticsearch_service()
-        profile_service = get_user_profile_service()
+        logger.debug("Using luka_bot Elasticsearch service")
 
         # Determine KB index to search
         kb_index = knowledge_bases[0] if knowledge_bases else f"tg-kb-user-{user_id}"
@@ -115,6 +123,130 @@ async def search_knowledge_base_impl(
         logger.info(f"✅ Found {len(results)} KB results, returning top {len(formatted_results)}")
 
         return f"Found {len(results)} results in knowledge base:\n\n{result_text}"
+
+    except ImportError as import_err:
+        logger.debug(f"luka_bot services not available, trying standalone mode: {import_err}")
+
+        # Step 2: Fallback to standalone Elasticsearch (CLI/standalone mode)
+        try:
+            import os
+
+            logger.debug("📦 Checking elasticsearch package import...")
+            try:
+                from elasticsearch import AsyncElasticsearch
+                logger.debug("✅ elasticsearch package imported successfully")
+            except ImportError as es_import_err:
+                logger.error(f"❌ elasticsearch package not installed: {es_import_err}")
+                return (
+                    "Knowledge base search requires the 'elasticsearch' package in standalone mode. "
+                    "Install it with: pip install elasticsearch"
+                )
+
+            # Get Elasticsearch config from environment
+            logger.debug("🔍 Reading environment variables...")
+            try:
+                es_url = os.getenv("ELASTICSEARCH_URL", "http://localhost:9200")
+                es_api_key = os.getenv("ELASTICSEARCH_API_KEY")
+                es_username = os.getenv("ELASTICSEARCH_USERNAME")
+                es_password = os.getenv("ELASTICSEARCH_PASSWORD")
+                logger.debug(f"✅ Got env vars - URL: {es_url}, has_api_key: {bool(es_api_key)}, has_auth: {bool(es_username and es_password)}")
+            except Exception as env_err:
+                logger.error(f"❌ Error reading env vars: {env_err}", exc_info=True)
+                raise
+
+            # Create ES client
+            logger.debug("🔌 Creating Elasticsearch client...")
+            try:
+                if es_api_key:
+                    es_client = AsyncElasticsearch(es_url, api_key=es_api_key)
+                elif es_username and es_password:
+                    es_client = AsyncElasticsearch(es_url, basic_auth=(es_username, es_password))
+                else:
+                    es_client = AsyncElasticsearch(es_url)
+                logger.debug(f"✅ ES client created successfully")
+            except Exception as client_err:
+                logger.error(f"❌ Error creating ES client: {client_err}", exc_info=True)
+                raise
+
+            logger.debug(f"Using standalone Elasticsearch at {es_url}")
+
+            # Determine KB index
+            kb_index = knowledge_bases[0] if knowledge_bases else f"user-kb-{user_id}"
+
+            logger.info(f"🔍 Searching KB '{kb_index}' for query: {query[:100]}...")
+
+            # Perform search
+            logger.debug("📝 Building search query...")
+            try:
+                if query == "*":
+                    search_query = {
+                        "query": {"match_all": {}},
+                        "size": max_results or 5,
+                    }
+                else:
+                    search_query = {
+                        "query": {
+                            "match": {
+                                "message_text": query
+                            }
+                        },
+                        "size": max_results or 5,
+                    }
+                logger.debug(f"✅ Query built: {search_query}")
+            except Exception as query_err:
+                logger.error(f"❌ Error building query: {query_err}", exc_info=True)
+                raise
+
+            logger.debug(f"🔎 Executing ES search on index '{kb_index}'...")
+            try:
+                response = await es_client.search(index=kb_index, body=search_query)
+                logger.debug(f"✅ Search executed, got response")
+            except Exception as search_err:
+                logger.error(f"❌ Error executing search: {search_err}", exc_info=True)
+                raise
+            finally:
+                try:
+                    await es_client.close()
+                    logger.debug("✅ ES client closed")
+                except Exception as close_err:
+                    logger.warning(f"⚠️ Error closing ES client: {close_err}")
+
+            hits = response.get("hits", {}).get("hits", [])
+
+            if not hits:
+                logger.info(f"ℹ️ No results found in KB '{kb_index}' for query: {query[:50]}")
+                return f"No relevant information found in your knowledge base for: {query}"
+
+            # Format results
+            formatted_results = []
+            for i, hit in enumerate(hits, 1):
+                source = hit.get("_source", {})
+                text = source.get("message_text", source.get("text", ""))
+                score = hit.get("_score", 0)
+                date = source.get("message_date", source.get("date", ""))
+                from_name = source.get("sender_name", source.get("from_user", ""))
+
+                entry_parts = [f"{i}. {text[:300]}"]
+                if from_name:
+                    entry_parts.append(f"   (from: {from_name})")
+                if date:
+                    entry_parts.append(f"   (date: {date})")
+                entry_parts.append(f"   (relevance: {score:.2f})")
+
+                formatted_results.append("\n".join(entry_parts))
+
+            result_text = "\n\n".join(formatted_results)
+            logger.info(f"✅ Found {len(hits)} KB results, returning top {len(formatted_results)}")
+
+            return f"Found {len(hits)} results in knowledge base:\n\n{result_text}"
+
+        except Exception as standalone_err:
+            logger.error(f"❌ Standalone KB search failed: {standalone_err}", exc_info=True)
+            return (
+                "Knowledge base search is not available in standalone mode. "
+                "Please ensure Elasticsearch is running and ELASTICSEARCH_URL is set in .env, "
+                "or run this within the luka_bot integration."
+            )
 
     except Exception as e:
         logger.error(f"❌ Error in search_knowledge_base: {e}", exc_info=True)

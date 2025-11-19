@@ -64,17 +64,26 @@ Usage:
             print(event["suggestions"])
 """
 
-from luka_agent.graph import get_unified_agent_graph
+from luka_agent.graph import get_unified_agent_graph, hydrate_state_with_sub_agent
 from luka_agent.tools import create_tools_for_user
-from luka_agent.state import AgentState
+from luka_agent.state import AgentState, create_initial_state
+from luka_agent.checkpointer import get_checkpointer
 from luka_agent.integration import stream_telegram_response, stream_web_response
 
 __version__ = "1.0.0"
 
 __all__ = [
+    # Core graph
     "get_unified_agent_graph",
-    "create_tools_for_user",
+    "hydrate_state_with_sub_agent",
+    # State management
     "AgentState",
+    "create_initial_state",
+    # Tools
+    "create_tools_for_user",
+    # Checkpointer
+    "get_checkpointer",
+    # Integration helpers
     "stream_telegram_response",
     "stream_web_response",
 ]

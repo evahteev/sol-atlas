@@ -141,18 +141,10 @@ luka_extensions:
     - "defi-protocols"        # DeFi protocol documentation
 
   # ---------------------------------------------------------------------------
-  # LLM CONFIGURATION
-  # ---------------------------------------------------------------------------
-  llm_config:
-    provider: "openai"        # Higher-capability model for complex analysis
-    model: "gpt-4o"           # Advanced reasoning for market analysis
-    temperature: 0.4          # Lower temp for more deterministic, factual responses
-    max_tokens: 3000          # Longer responses for detailed analysis
-    streaming: true           # Progressive display
-
-  # ---------------------------------------------------------------------------
   # CAPABILITIES
   # ---------------------------------------------------------------------------
+  # NOTE: LLM configuration (provider, model, temperature, etc.) is now set
+  # via environment variables in .env, not in sub-agent config.
   capabilities:
     data_access:
       allowed_kb_patterns:
