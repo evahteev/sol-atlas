@@ -279,3 +279,44 @@ class TelegramAdapter(BasePlatformAdapter):
         if match:
             return match.group(1).strip(), match.group(2).strip()
         return suggestion, None
+
+    def format_tool_notification(self, tool_name: str, status: str) -> str:
+        """Format tool execution notification for Telegram.
+
+        Args:
+            tool_name: Name of the tool being executed
+            status: Tool status ('started', 'completed', 'error')
+
+        Returns:
+            Formatted notification string
+
+        Examples:
+            format_tool_notification("knowledge_base", "started")
+            → "🔍 Searching knowledge base..."
+
+            format_tool_notification("knowledge_base", "completed")
+            → "✅ Knowledge base search complete"
+
+            format_tool_notification("knowledge_base", "error")
+            → "❌ Searching knowledge base failed"
+        """
+        # Map tool names to friendly names and icons
+        tool_display_names = {
+            "knowledge_base": ("🔍", "Searching knowledge base"),
+            "youtube": ("📺", "Fetching YouTube content"),
+            "sub_agent": ("🤖", "Starting sub-agent"),
+            "describe_image": ("🖼️", "Analyzing image"),
+        }
+
+        icon, friendly_name = tool_display_names.get(
+            tool_name, ("🔧", f"Using {tool_name}")
+        )
+
+        if status == "started":
+            return f"{icon} {friendly_name}..."
+        elif status == "completed":
+            return f"✅ {friendly_name} complete"
+        elif status == "error":
+            return f"❌ {friendly_name} failed"
+        else:
+            return f"{icon} {friendly_name}"

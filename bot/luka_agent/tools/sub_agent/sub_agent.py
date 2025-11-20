@@ -33,7 +33,7 @@ async def get_available_sub_agents_impl() -> str:
     """
     # Step 1: Try to use luka_bot service if available (integrated mode)
     try:
-        from luka_bot.services.workflow_context_service import get_workflow_context_service
+        from luka_agent.tools.sub_agent.context_service import get_workflow_context_service
         context_service = get_workflow_context_service()
         summary = await context_service.get_all_workflows_summary()
 
@@ -83,7 +83,7 @@ async def get_sub_agent_details_impl(domain: str, include_full_documentation: bo
     """
     # Step 1: Try to use luka_bot service if available (integrated mode)
     try:
-        from luka_bot.services.workflow_context_service import get_workflow_context_service
+        from luka_agent.tools.sub_agent.context_service import get_workflow_context_service
         context_service = get_workflow_context_service()
         context = await context_service.get_workflow_context(domain, include_full_documentation)
 
@@ -143,7 +143,7 @@ async def suggest_sub_agent_impl(user_query: str) -> str:
     """
     # Step 1: Try to use luka_bot service if available (integrated mode)
     try:
-        from luka_bot.services.workflow_context_service import get_workflow_context_service
+        from luka_agent.tools.sub_agent.context_service import get_workflow_context_service
         context_service = get_workflow_context_service()
         suggested_context = await context_service.get_workflow_for_user_intent(user_query)
 
@@ -180,14 +180,14 @@ async def get_sub_agent_step_guidance_impl(domain: str, step_id: str) -> str:
     Returns:
         Step guidance and instructions
     """
-    # Step 1: Try to use luka_bot service if available (integrated mode)
+    # Step 1: Try to use luka_agent service if available (integrated mode)
     try:
-        from luka_bot.services.workflow_context_service import get_workflow_context_service
-        context_service = get_workflow_context_service()
-        guidance = await context_service.get_workflow_step_guidance(domain, step_id)
+        from luka_agent.tools.sub_agent.context_service import get_workflow_context_service
+        service = get_workflow_context_service()
+        guidance = await service.get_workflow_step_guidance(domain, step_id)
 
         if guidance:
-            logger.debug(f"Retrieved step guidance for '{domain}:{step_id}'")
+            logger.debug(f"Retrieved step guidance for '{domain}:{step_id}' from luka_agent service")
             return guidance
 
         return (
@@ -196,7 +196,7 @@ async def get_sub_agent_step_guidance_impl(domain: str, step_id: str) -> str:
         )
 
     except (ImportError, Exception) as exc:
-        logger.debug(f"luka_bot service not available: {exc}")
+        logger.debug(f"luka_agent service not available: {exc}")
 
     # Step 2: Fallback for standalone mode
     return (
@@ -256,19 +256,26 @@ async def execute_sub_agent_impl(
     Returns:
         Sub-agent execution status and next steps
     """
-    # Step 1: Try to import services
+    # Step 1: Try to use luka_agent services if available (integrated mode)
     try:
-        from luka_bot.services import (
+        from luka_agent.services import (
+            get_workflow_context_service,
             get_workflow_discovery_service,
             get_workflow_service,
         )
-        from luka_bot.utils.i18n_helper import _
-    except ImportError as import_err:
-        logger.error(f"Unable to import workflow services: {import_err}")
+    except ImportError:
         return (
-            "Sub-agent execution system is not configured. "
-            "Please ensure luka_bot workflow services are installed correctly."
+            "Workflow services are not available. "
+            "Please ensure luka_agent workflow services are installed correctly."
         )
+
+    # Import i18n utility - try luka_agent first, fall back to standalone
+    try:
+        from luka_agent.utils.i18n import get_text as _
+    except ImportError:
+        # Fallback to simple identity function if not available
+        def _(text: str, lang: str = "en") -> str:
+            return text
 
     # Step 2: Execute sub-agent
     try:

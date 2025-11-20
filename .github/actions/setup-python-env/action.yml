@@ -1,0 +1,50 @@
+name: 'Setup Python Environment'
+description: 'Set up Python with caching and install dependencies'
+
+inputs:
+  python-version:
+    description: 'Python version to use'
+    required: false
+    default: '3.11'
+  requirements-file:
+    description: 'Path to requirements.txt file'
+    required: true
+  working-directory:
+    description: 'Working directory for pip install'
+    required: false
+    default: '.'
+  cache-key-suffix:
+    description: 'Additional suffix for cache key'
+    required: false
+    default: ''
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Set up Python ${{ inputs.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ inputs.python-version }}
+        cache: 'pip'
+        cache-dependency-path: ${{ inputs.requirements-file }}
+
+    - name: Cache pip packages
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ inputs.python-version }}-${{ hashFiles(inputs.requirements-file) }}${{ inputs.cache-key-suffix }}
+        restore-keys: |
+          ${{ runner.os }}-pip-${{ inputs.python-version }}-
+          ${{ runner.os }}-pip-
+
+    - name: Install dependencies
+      shell: bash
+      run: |
+        python -m pip install --upgrade pip setuptools wheel
+        pip install -r ${{ inputs.requirements-file }}
+      working-directory: ${{ inputs.working-directory }}
+
+    - name: Display installed packages
+      shell: bash
+      run: pip list
+      working-directory: ${{ inputs.working-directory }}

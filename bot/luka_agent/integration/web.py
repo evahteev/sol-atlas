@@ -161,7 +161,7 @@ async def stream_web_response(
                         "type": "toolResult",
                         "tool": tool_name,
                         "error": str(error),
-                        "message": adapter.format_tool_notification(tool_name, "failed"),
+                        "message": adapter.format_tool_notification(tool_name, "error"),
                     }
                     logger.warning(f"❌ Tool failed: {tool_name}")
 

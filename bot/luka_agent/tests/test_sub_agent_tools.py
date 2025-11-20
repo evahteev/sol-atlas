@@ -62,7 +62,7 @@ class TestSubAgentToolExecution:
     """Test sub-agent tool execution logic."""
 
     @pytest.mark.asyncio
-    @patch('luka_bot.services.workflow_context_service.get_workflow_context_service')
+    @patch('luka_agent.services.workflow_context_service.get_workflow_context_service')
     async def test_get_available_sub_agents(self, mock_service_getter):
         """Test get_available_sub_agents returns sub-agent list."""
         # Mock the service
@@ -90,7 +90,7 @@ class TestSubAgentToolExecution:
         mock_service.get_all_workflows_summary.assert_called_once()
 
     @pytest.mark.asyncio
-    @patch('luka_bot.services.workflow_context_service.get_workflow_context_service')
+    @patch('luka_agent.services.workflow_context_service.get_workflow_context_service')
     async def test_get_sub_agent_details(self, mock_service_getter):
         """Test get_sub_agent_details returns documentation."""
         # Mock the service
@@ -122,7 +122,7 @@ class TestSubAgentToolExecution:
         )
 
     @pytest.mark.asyncio
-    @patch('luka_bot.services.workflow_context_service.get_workflow_context_service')
+    @patch('luka_agent.services.workflow_context_service.get_workflow_context_service')
     async def test_suggest_sub_agent(self, mock_service_getter):
         """Test suggest_sub_agent recommends appropriate sub-agent."""
         # Mock the service
@@ -151,8 +151,8 @@ class TestSubAgentToolExecution:
         mock_service.get_workflow_for_user_intent.assert_called_once()
 
     @pytest.mark.asyncio
-    @patch('luka_bot.services.get_workflow_service')
-    @patch('luka_bot.services.get_workflow_discovery_service')
+    @patch('luka_agent.services.get_workflow_service')
+    @patch('luka_agent.services.get_workflow_discovery_service')
     async def test_execute_sub_agent_starts_new(self, mock_discovery_getter, mock_service_getter):
         """Test execute_sub_agent starts a new sub-agent instance."""
         # Mock discovery service
@@ -248,7 +248,7 @@ class TestSubAgentDiscovery:
     """Test that sub-agents can be discovered from luka_agent/sub_agents/."""
 
     @pytest.mark.asyncio
-    @patch('luka_bot.services.workflow_context_service.get_workflow_context_service')
+    @patch('luka_agent.services.workflow_context_service.get_workflow_context_service')
     async def test_sub_agents_directory_discovered(self, mock_service_getter):
         """Test that sub-agents in luka_agent/sub_agents/ are discovered."""
         # Mock service to return our sub-agents

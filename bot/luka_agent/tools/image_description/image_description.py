@@ -74,7 +74,7 @@ async def describe_image_impl(
 
     # Step 2: Check configuration (dual-mode support)
     try:
-        from luka_bot.core.config import settings
+        from luka_agent.core.config import settings
         ollama_url = settings.OLLAMA_URL
         vision_model = getattr(settings, "DEFAULT_VISION_MODEL", "llava")
         vision_enabled = getattr(settings, "VISION_ENABLED", True)

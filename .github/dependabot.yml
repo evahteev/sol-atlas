@@ -1,0 +1,156 @@
+version: 2
+updates:
+  # GitHub Actions dependencies
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    labels:
+      - "dependencies"
+      - "github-actions"
+    commit-message:
+      prefix: "ci"
+      include: "scope"
+
+  # Python - Bot (Luka Agent)
+  - package-ecosystem: "pip"
+    directory: "/bot/luka_agent"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    labels:
+      - "dependencies"
+      - "python"
+      - "bot"
+    commit-message:
+      prefix: "deps"
+      prefix-development: "deps-dev"
+    open-pull-requests-limit: 5
+
+  # Python - Bot (Root)
+  - package-ecosystem: "pip"
+    directory: "/bot"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    labels:
+      - "dependencies"
+      - "python"
+      - "bot"
+    commit-message:
+      prefix: "deps"
+    open-pull-requests-limit: 5
+
+  # Python - Worker
+  - package-ecosystem: "pip"
+    directory: "/worker"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    labels:
+      - "dependencies"
+      - "python"
+      - "worker"
+    commit-message:
+      prefix: "deps"
+    open-pull-requests-limit: 5
+
+  # Java - Engine (Maven)
+  - package-ecosystem: "maven"
+    directory: "/engine"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    labels:
+      - "dependencies"
+      - "java"
+      - "engine"
+    commit-message:
+      prefix: "deps"
+    open-pull-requests-limit: 5
+
+  # Node.js - Frontend (Yarn)
+  - package-ecosystem: "npm"
+    directory: "/frontend"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    labels:
+      - "dependencies"
+      - "javascript"
+      - "frontend"
+    commit-message:
+      prefix: "deps"
+    open-pull-requests-limit: 5
+    versioning-strategy: increase
+
+  # Node.js - Solexer
+  - package-ecosystem: "npm"
+    directory: "/solexer"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    labels:
+      - "dependencies"
+      - "javascript"
+      - "solexer"
+    commit-message:
+      prefix: "deps"
+    open-pull-requests-limit: 5
+
+  # Node.js - Webchatbot (pnpm)
+  - package-ecosystem: "npm"
+    directory: "/webchatbot"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    labels:
+      - "dependencies"
+      - "javascript"
+      - "webchatbot"
+    commit-message:
+      prefix: "deps"
+    open-pull-requests-limit: 10
+    versioning-strategy: increase
+
+  # Docker - Base images
+  - package-ecosystem: "docker"
+    directory: "/bot"
+    schedule:
+      interval: "monthly"
+    labels:
+      - "dependencies"
+      - "docker"
+
+  - package-ecosystem: "docker"
+    directory: "/worker"
+    schedule:
+      interval: "monthly"
+    labels:
+      - "dependencies"
+      - "docker"
+
+  - package-ecosystem: "docker"
+    directory: "/engine"
+    schedule:
+      interval: "monthly"
+    labels:
+      - "dependencies"
+      - "docker"
+
+  - package-ecosystem: "docker"
+    directory: "/frontend"
+    schedule:
+      interval: "monthly"
+    labels:
+      - "dependencies"
+      - "docker"
+
+  - package-ecosystem: "docker"
+    directory: "/solexer"
+    schedule:
+      interval: "monthly"
+    labels:
+      - "dependencies"
+      - "docker"

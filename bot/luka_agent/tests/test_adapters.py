@@ -385,8 +385,8 @@ def test_web_format_tool_notification():
     notification = adapter.format_tool_notification("youtube", "completed")
     assert "✅" in notification or "complete" in notification.lower()
 
-    # Failed
-    notification = adapter.format_tool_notification("search", "failed")
+    # Error
+    notification = adapter.format_tool_notification("search", "error")
     assert "❌" in notification or "failed" in notification.lower()
 
 

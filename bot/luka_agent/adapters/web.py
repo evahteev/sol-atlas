@@ -196,10 +196,10 @@ class WebAdapter(BasePlatformAdapter):
                 "metadata": {...}
             }
         """
-        response = {"message": self.format_message(message)}
-
-        if suggestions:
-            response["suggestions"] = self.render_suggestions(suggestions)
+        response = {
+            "message": self.format_message(message),
+            "suggestions": self.render_suggestions(suggestions) if suggestions else []
+        }
 
         if metadata:
             response["metadata"] = metadata
@@ -211,17 +211,20 @@ class WebAdapter(BasePlatformAdapter):
 
         Args:
             tool_name: Name of tool being executed
-            status: Tool status ("started", "completed", "failed")
+            status: Tool status ("started", "completed", "error")
 
         Returns:
             Formatted notification text
 
         Examples:
             format_tool_notification("knowledge_base", "started")
-            → "🔍 Searching knowledge base..."
+            → "🔍 Using Knowledge Base..."
 
             format_tool_notification("youtube", "completed")
-            → "✅ Retrieved YouTube transcript"
+            → "✅ Youtube complete"
+
+            format_tool_notification("knowledge_base", "error")
+            → "❌ Knowledge Base failed"
         """
         tool_emoji_map = {
             "knowledge_base": "🔍",
@@ -235,7 +238,7 @@ class WebAdapter(BasePlatformAdapter):
         status_text_map = {
             "started": "...",
             "completed": "",
-            "failed": "(error)",
+            "error": "",
         }
 
         emoji = tool_emoji_map.get(tool_name, "🔧")
@@ -248,7 +251,7 @@ class WebAdapter(BasePlatformAdapter):
             return f"{emoji} Using {tool_display}{status_suffix}"
         elif status == "completed":
             return f"✅ {tool_display} complete{status_suffix}"
-        elif status == "failed":
+        elif status == "error":
             return f"❌ {tool_display} failed{status_suffix}"
 
         return f"{emoji} {tool_display}"

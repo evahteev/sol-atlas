@@ -158,7 +158,7 @@ async def stream_telegram_response(
             elif event_type == "on_tool_error":
                 tool_name = event.get("name", "")
                 if tool_name:
-                    notification = adapter.format_tool_notification(tool_name, "failed")
+                    notification = adapter.format_tool_notification(tool_name, "error")
                     yield {"type": "tool_notification", "content": notification}
                     logger.warning(f"❌ Tool failed: {tool_name}")
 

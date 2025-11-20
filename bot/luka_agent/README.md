@@ -93,9 +93,11 @@ User receives response
 
 **Optional**:
 - [ ] **Pydantic-AI**: If using Pydantic-AI agents (luka_bot does)
-- [ ] **OpenAI/Anthropic SDKs**: For LLM providers
+- [ ] **OpenAI/Anthropic SDKs**: For LLM providers (optional, Ollama is default)
+- [ ] **Ollama**: For local LLM and vision models (llava for image description)
 - [ ] **Elasticsearch**: If using knowledge base tool
 - [ ] **YouTube Transcript API**: If using YouTube tool
+- [ ] **httpx**: For image downloading (image_description tool)
 
 ### For Tools
 
@@ -116,9 +118,10 @@ User receives response
 ### For State Management
 
 - [ ] **AgentState TypedDict**: Use unified state schema
-- [ ] **Platform Field**: Specify "telegram" or "web"
+- [ ] **Platform Field**: Specify "telegram", "web", or "worker" (CLI/background jobs)
 - [ ] **Thread ID**: Unique conversation identifier
 - [ ] **User ID**: User identifier for context
+- [ ] **LLM Configuration**: Set via environment variables (not in sub-agent YAML)
 </requirements>
 
 ---
@@ -230,6 +233,7 @@ luka_agent/
 │   ├── knowledge_base.py    # KB search tool
 │   ├── sub_agent.py         # 5 sub-agent tools
 │   ├── youtube.py           # YouTube transcript tool
+│   ├── image_description.py # Image description using Ollama llava
 │   └── [TODO] support.py, menu.py, twitter.py, tripplanner/
 │
 ├── sub_agents/              # Sub-agent configurations (YAML)
@@ -265,8 +269,8 @@ tools = create_tools_for_user(
     user_id=123,
     thread_id="thread_123",
     knowledge_bases=["tg-kb-user-123"],  # User's KB indexes
-    enabled_tools=["knowledge_base", "sub_agent", "youtube"],
-    platform="telegram",  # or "web"
+    enabled_tools=["knowledge_base", "sub_agent", "youtube", "image_description"],
+    platform="telegram",  # or "web" or "worker"
     language="en"
 )
 
@@ -574,7 +578,7 @@ class AgentState(TypedDict, total=False):
 
     # REQUIRED fields
     messages: Annotated[Sequence[BaseMessage], add_messages]
-    platform: Literal["web", "telegram"]
+    platform: Literal["web", "telegram", "worker"]  # Added "worker" for CLI
     user_id: int
     thread_id: str
     language: str
@@ -582,6 +586,13 @@ class AgentState(TypedDict, total=False):
     # Tool configuration
     knowledge_bases: list[str]
     enabled_tools: list[str]
+
+    # LLM Configuration (set via environment variables, not in sub-agent YAML)
+    llm_provider: str  # "ollama", "openai", "anthropic"
+    llm_model: str
+    llm_temperature: float
+    llm_max_tokens: int
+    llm_streaming: bool
 
     # Optional UI
     suggestions: Optional[list[str]]
@@ -1141,7 +1152,7 @@ class MyPlatformAdapter:
 - [x] **AgentState** with full sub-agent fields (`state.py`)
   - Sub-agent metadata, persona, LLM config fields
   - System prompt content field
-  - Backward compatible with legacy workflow fields
+  - Workflow fields for sub-agent execution
 - [x] **Sub-Agent Hydration** (`graph.py::hydrate_state_with_sub_agent`)
   - Loads sub-agent config from YAML
   - Resolves knowledge base templates (user_id substitution)
@@ -1166,26 +1177,38 @@ class MyPlatformAdapter:
 
 **Tools**
 - [x] Tool factory pattern (`create_tools_for_user`)
-- [x] 3 core tools: `knowledge_base`, `sub_agent` (5 discovery tools), `youtube`
+- [x] 4 core tools: `knowledge_base`, `sub_agent` (5 discovery tools), `youtube`, `image_description`
 - [x] Factory pattern with user context binding
 - [x] Runtime dependency injection
+- [x] Vision support via Ollama llava (image_description tool)
+
+**Configuration System**
+- [x] **Environment-based LLM Configuration** - LLM settings via .env (not sub-agent YAML)
+- [x] **3-tier Priority System** - Runtime parameters > Environment variables > Hardcoded defaults
+- [x] **Runtime LLM Overrides** - Per-user model selection for web/telegram platforms
+- [x] **LLM Configuration Documentation** - Complete guide in docs/LLM_CONFIGURATION.md
 
 **Testing & CLI**
 - [x] **CLI Tool** - validate, test, list, info commands
-- [x] **89/111 tests passing** (80%) - Core infrastructure fully tested
+- [x] **106/128 tests passing** (83%) - Core infrastructure + new features fully tested
+- [x] **17 new tests** - LLM config priority and image description tool coverage
 - [x] Standalone CLI mode (no luka_bot dependency required)
 
 **Documentation**
 - [x] Comprehensive README with XML markup
 - [x] PIVOT architecture document
 - [x] Configuration strategy (CONFIG.md)
+- [x] LLM configuration guide (docs/LLM_CONFIGURATION.md)
 - [x] Tool and sub-agent development guides
+- [x] CLI usage guide (CLI_USAGE.md)
+- [x] Test report documenting changes (TEST_REPORT.md)
 - [x] Public API exports in __init__.py
 
 ### 🔲 Future Enhancements (Deferred)
 - [ ] Agent switching mechanism (`tools/agent_switch.py`)
-- [ ] Additional tools: `support`, `menu`, `twitter`, `tripplanner` (9 tools)
-- [ ] Additional sub-agents: `web_assistant`, `crypto_analyst`, etc.
+- [ ] Additional tools: `support`, `menu`, `twitter`, `tripplanner`
+- [ ] Additional sub-agents: `web_assistant`, etc.
+- [ ] Multi-modal tool expansion (audio, video analysis)
 - [ ] Platform integration: Update luka_bot and ag_ui_gateway to use luka_agent
 - [ ] End-to-end platform testing (Telegram + Web)
 - [ ] Performance benchmarking and optimization
@@ -1219,6 +1242,9 @@ from luka_agent import (
 - **Tools Guide**: `luka_agent/tools/README.md`
 - **Sub-Agents Guide**: `luka_agent/sub_agents/README.md`
 - **Configuration Strategy**: `luka_agent/CONFIG.md`
+- **LLM Configuration**: `luka_agent/docs/LLM_CONFIGURATION.md`
+- **CLI Usage Guide**: `luka_agent/CLI_USAGE.md`
+- **Test Report**: `luka_agent/TEST_REPORT.md`
 - **Dependency Checking**: `luka_agent/DEPENDENCY_CHECKING.md`
 - **Project Conventions**: `CLAUDE.md` (repo root)
 
@@ -1229,6 +1255,7 @@ from luka_agent import (
 
 ### Examples
 - **Simple Tool**: `luka_agent/tools/knowledge_base.py`
+- **Vision Tool**: `luka_agent/tools/image_description.py`
 - **Multi-Tool Factory**: `luka_agent/tools/sub_agent.py`
 - **Sub-Agent**: `luka_agent/sub_agents/sol_atlas_onboarding/`
 

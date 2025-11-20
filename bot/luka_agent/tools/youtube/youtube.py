@@ -37,10 +37,10 @@ async def get_youtube_transcript_impl(
     """
     # Step 1: Check if YouTube feature is enabled
     try:
-        from luka_bot.core.config import settings
+        from luka_agent.core.config import settings
     except ImportError:
-        logger.error("Unable to import settings - luka_bot config not available")
-        return "YouTube transcript feature is not configured. Please ensure luka_bot is properly installed."
+        logger.error("Unable to import settings - luka_agent config not available")
+        return "YouTube transcript feature is not configured. Please ensure luka_agent is properly installed."
 
     # Note: YOUTUBE_TRANSCRIPT_ENABLED is optional - if not present, feature is enabled by default
     if hasattr(settings, "YOUTUBE_TRANSCRIPT_ENABLED") and not settings.YOUTUBE_TRANSCRIPT_ENABLED:

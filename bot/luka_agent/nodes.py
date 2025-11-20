@@ -42,7 +42,7 @@ async def agent_node(state: AgentState) -> dict:
 
     # Try to import settings, gracefully handle if not available (CLI mode)
     try:
-        from luka_bot.core.config import settings
+        from luka_agent.core.config import settings
     except Exception:
         settings = None
 
@@ -253,11 +253,16 @@ async def suggestions_node(state: AgentState) -> dict:
 
     # Try to import settings, gracefully handle if not available
     try:
-        from luka_bot.core.config import settings
+        from luka_agent.core.config import settings
     except Exception:
         settings = None
 
     logger.info(f"💡 Suggestions node generating for user {state['user_id']}")
+
+    # Check if suggestions are enabled
+    if not state.get("generate_suggestions", True):
+        logger.info("Suggestions generation disabled, skipping")
+        return {"conversation_suggestions": []}
 
     # Check if we have an active workflow
     active_workflow = state.get("active_workflow")

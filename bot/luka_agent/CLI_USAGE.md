@@ -71,10 +71,15 @@ Version: 1.0.0
 Description: General-purpose AI assistant...
 
 Role: Helpful AI Assistant + Knowledge Manager
-Enabled Tools: knowledge_base, sub_agent, youtube, support
+Enabled Tools: knowledge_base, sub_agent, youtube, image_description, support
 Knowledge Bases: user-kb-{user_id}
-LLM: ollama/llama3.2
-Temperature: 0.7
+
+LLM Configuration (from environment):
+  Provider: ollama
+  Model: gpt-oss
+  Temperature: 0.7
+  Max Tokens: 2000
+  Streaming: true
 
 System Prompt: 14310 characters
 Principles: 6
@@ -99,8 +104,8 @@ System Prompt (preview):
 # System Prompt for Luka
 You are **Luka**, Helpful AI Assistant + Knowledge Manager...
 
-Available Tools: knowledge_base, sub_agent, youtube, support
-LLM Configuration: ollama/llama3.2
+Available Tools: knowledge_base, sub_agent, youtube, image_description, support
+LLM Configuration: ollama/gpt-oss (from environment)
 ```
 
 ### `run <agent_id> <message>` - Run Sub-Agent with LLM
@@ -124,6 +129,50 @@ Invokes the actual LLM and returns a real response.
   • Tell me more
   • What else can you do?
   • Thanks!
+```
+
+#### Using Tools from CLI
+
+The general_luka agent has access to several tools including image description:
+
+**Image Description Example:**
+```bash
+./luka-agent.sh run general_luka "Please describe this image: https://picsum.photos/id/237/400/300"
+```
+
+**Output:**
+```
+🤖 Luka 🤖
+═════════════════════════════════════════
+👤 User: Please describe this image: https://picsum.photos/id/237/400/300
+
+  🔧 Calling tool: describe_image
+     ✓ Result: The image features a black Labrador puppy...
+
+🤖 Luka: Let me describe the image for you.
+
+- **Subject**: A black Labrador puppy with light brown eyes...
+- **Pose**: Sitting on a wooden deck, looking directly at the camera...
+- **Composition**: Puppy centered, drawing focus to its eyes...
+- **Background**: Blurred, likely an overcast sky...
+- **Mood/Style**: Realistic, candid photograph...
+
+💡 Suggestions:
+  • Could you describe the background?
+  • What color is the puppy's collar?
+  • Show me a different picture.
+```
+
+**Other Tool Examples:**
+```bash
+# Knowledge base search
+./luka-agent.sh run general_luka "Search my knowledge base for notes about Python"
+
+# YouTube transcript
+./luka-agent.sh run general_luka "Get the transcript of this video: https://youtube.com/watch?v=..."
+
+# Sub-agent execution
+./luka-agent.sh run general_luka "Help me with DeFi onboarding"
 ```
 
 ### `info <agent_id>` - Detailed Information
@@ -150,16 +199,18 @@ Version: 1.0.0
 ### System Requirements
 - Python 3.10+ (3.11 recommended)
 - Docker & Docker Compose (for development with Elasticsearch & Redis)
-- Ollama (for local LLM) OR OpenAI API key
+- Ollama (for local LLM and vision models) OR OpenAI/Anthropic API keys
 
 ### Python Packages
 All required packages are listed in `requirements.txt`:
 - `langgraph` - Graph execution engine
 - `langchain-core` - LangChain core
-- `langchain-ollama` - Ollama integration
-- `langchain-openai` - OpenAI integration
+- `langchain-ollama` - Ollama integration (LLM + vision)
+- `langchain-openai` - OpenAI integration (optional)
+- `langchain-anthropic` - Anthropic integration (optional)
 - `elasticsearch` - Elasticsearch client (for knowledge_base tool)
 - `redis` - Redis client (for state persistence)
+- `httpx` - HTTP client (for image downloading)
 - `loguru` - Logging
 - `pydantic` - Data validation
 - `pyyaml` - YAML parsing
@@ -243,11 +294,44 @@ nano .env
 
 **Example .env:**
 ```bash
+# ============================================================================
+# LLM Provider Settings
+# ============================================================================
 # Ollama Configuration
 OLLAMA_URL=http://localhost:11434
 
+# Default LLM Configuration (used by all sub-agents)
+DEFAULT_LLM_PROVIDER=ollama
+DEFAULT_LLM_MODEL=llama3.2
+DEFAULT_LLM_TEMPERATURE=0.7
+DEFAULT_LLM_MAX_TOKENS=2000
+DEFAULT_LLM_STREAMING=true
+
 # OpenAI Configuration (optional)
-OPENAI_API_KEY=sk-...
+# OPENAI_API_KEY=sk-...
+# DEFAULT_LLM_PROVIDER=openai
+# DEFAULT_LLM_MODEL=gpt-4o-mini
+
+# Anthropic Configuration (optional)
+# ANTHROPIC_API_KEY=sk-ant-...
+
+# ============================================================================
+# Vision Model Settings (for image_description tool)
+# ============================================================================
+DEFAULT_VISION_MODEL=llava
+VISION_ENABLED=true
+
+# ============================================================================
+# Tool Configuration
+# ============================================================================
+# Comma-separated list of enabled tools for CLI runs
+CLI_ENABLED_TOOLS=knowledge_base,sub_agent,youtube,image_description,support
+
+# ============================================================================
+# Other Settings
+# ============================================================================
+# Elasticsearch (for knowledge_base tool)
+ELASTICSEARCH_URL=http://localhost:9200
 
 # Log level
 LOG_LEVEL=INFO
@@ -259,9 +343,22 @@ The CLI automatically loads `.env` if it exists.
 
 | Variable | Description | Default |
 |----------|-------------|---------|
+| **LLM Configuration** | | |
+| `DEFAULT_LLM_PROVIDER` | LLM provider (ollama, openai, anthropic) | `ollama` |
+| `DEFAULT_LLM_MODEL` | Model name | `llama3.2` |
+| `DEFAULT_LLM_TEMPERATURE` | Temperature (0.0-2.0) | `0.7` |
+| `DEFAULT_LLM_MAX_TOKENS` | Max output tokens | `2000` |
+| `DEFAULT_LLM_STREAMING` | Enable streaming | `true` |
 | `OLLAMA_URL` | Ollama API URL | `http://localhost:11434` |
 | `OPENAI_API_KEY` | OpenAI API key | (optional) |
 | `ANTHROPIC_API_KEY` | Anthropic API key | (optional) |
+| **Vision Configuration** | | |
+| `DEFAULT_VISION_MODEL` | Vision model for image description | `llama` |
+| `VISION_ENABLED` | Enable image description tool | `true` |
+| **Tools** | | |
+| `CLI_ENABLED_TOOLS` | Comma-separated list of enabled tools | See .env.example |
+| **Other** | | |
+| `ELASTICSEARCH_URL` | Elasticsearch URL (knowledge_base tool) | `http://localhost:9200` |
 | `LOG_LEVEL` | Logging level (DEBUG, INFO, WARNING, ERROR) | `INFO` |
 
 **Manual export (without .env):**

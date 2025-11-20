@@ -115,23 +115,19 @@ class AgentState(TypedDict):
     llm_streaming: bool
 
     # =========================================================================
-    # LEGACY WORKFLOW FIELDS (Deprecated, kept for backward compatibility)
+    # WORKFLOW FIELDS
     # =========================================================================
-    # These fields are from the old workflow system and will be removed in Phase 2
-    # Use sub_agent_id instead
 
-    #: DEPRECATED: Use sub_agent_id instead
     active_workflow: Optional[str]
-
-    #: DEPRECATED: Workflows don't have steps in BMAD model
     workflow_step: Optional[str]
-
-    #: DEPRECATED: Progress tracking moved to workflow-specific sub-agents
     workflow_progress: float
 
     # =========================================================================
     # SUGGESTIONS (LLM-generated, contextual)
     # =========================================================================
+
+    #: Whether to generate suggestions (can be disabled for one-shot CLI runs)
+    generate_suggestions: bool
 
     #: User-facing suggestions (displayed in UI/keyboard)
     #: These are LLM-generated, contextually aware suggestions
@@ -196,7 +192,7 @@ def create_initial_state(
     knowledge_bases: Optional[List[str]] = None,
     enabled_tools: Optional[List[str]] = None,
     is_guest: bool = False,
-    active_workflow: Optional[str] = None,  # DEPRECATED: Use sub_agent_id instead
+    active_workflow: Optional[str] = None,
     sub_agent_id: Optional[str] = None,
     # LLM runtime overrides (optional, for user-specific settings)
     llm_provider: Optional[str] = None,
@@ -204,6 +200,8 @@ def create_initial_state(
     llm_temperature: Optional[float] = None,
     llm_max_tokens: Optional[int] = None,
     llm_streaming: Optional[bool] = None,
+    # Suggestions control
+    generate_suggestions: bool = True,
 ) -> AgentState:
     """
     Create initial AgentState for a new conversation turn.
@@ -221,13 +219,14 @@ def create_initial_state(
         knowledge_bases: KB indices (default: user's KB or loaded from sub-agent)
         enabled_tools: Tool names (default: loaded from sub-agent config)
         is_guest: Guest mode flag (default: False)
-        active_workflow: DEPRECATED - Use sub_agent_id instead
+        active_workflow: Workflow identifier
         sub_agent_id: Sub-agent to load (default: platform default)
         llm_provider: Override LLM provider (optional, for user-specific settings)
         llm_model: Override LLM model (optional, for user-specific settings)
         llm_temperature: Override temperature (optional, for user-specific settings)
         llm_max_tokens: Override max tokens (optional, for user-specific settings)
         llm_streaming: Override streaming (optional, for user-specific settings)
+        generate_suggestions: Whether to generate suggestions (default: True, set False for one-shot CLI runs)
 
     Returns:
         Initial AgentState ready for graph execution
@@ -253,7 +252,7 @@ def create_initial_state(
     if sub_agent_id is None:
         # Try to load from platform config, fallback to general_luka
         try:
-            from luka_bot.core.config import settings
+            from luka_agent.core.config import settings
             if platform == "telegram":
                 sub_agent_id = getattr(settings, "DEFAULT_SUB_AGENT_TELEGRAM", "general_luka")
             else:  # web
@@ -366,11 +365,12 @@ def create_initial_state(
         "llm_temperature": final_llm_temperature,
         "llm_max_tokens": final_llm_max_tokens,
         "llm_streaming": final_llm_streaming,
-        # Legacy workflow fields (deprecated)
+        # Workflow fields
         "active_workflow": active_workflow,
         "workflow_step": None,
         "workflow_progress": 0.0,
-        # Rest of state
+        # Suggestions
+        "generate_suggestions": generate_suggestions,
         "conversation_suggestions": [],
         "_workflow_suggestion_hints": [],
         "is_guest": is_guest,

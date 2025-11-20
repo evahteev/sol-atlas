@@ -66,15 +66,17 @@ async def search_knowledge_base_impl(
     """
     # Step 1: Try to use luka_bot services if available (integrated mode)
     try:
-        from luka_bot.services import get_elasticsearch_service
-
-        # Import settings carefully - might fail if required env vars missing
+        from luka_agent.tools.knowledge_base.elasticsearch_service import get_elasticsearch_service
+        
+        # Also need settings for index prefix
         try:
-            from luka_bot.core.config import settings
-        except Exception as settings_err:
-            # Settings import failed (likely missing required env vars in standalone mode)
-            logger.debug(f"Settings import failed: {settings_err}, switching to standalone mode")
-            raise ImportError(f"Settings unavailable: {settings_err}")
+            from luka_agent.core.config import settings
+            user_kb_prefix = settings.ELASTICSEARCH_USER_KB_PREFIX
+        except ImportError:
+            user_kb_prefix = "tg-kb-user-"
+            
+        es_service = await get_elasticsearch_service()
+        logger.debug("Using luka_agent Elasticsearch service")
 
         # Check if Elasticsearch is enabled
         if not settings.ELASTICSEARCH_ENABLED:

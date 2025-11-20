@@ -217,7 +217,8 @@ luka_extensions:
     - "user-kb-{user_id}"
 
   # LLM Configuration
-  llm_config:
+  # NOTE: llm_config is NO LONGER USED - configure LLM via .env instead
+  # llm_config:
     provider: "ollama"      # "ollama" or "openai"
     model: "llama3.2"       # Model name
     temperature: 0.7        # 0.0-1.0
@@ -475,7 +476,8 @@ luka_extensions:
   knowledge_bases:
     - "user-kb-{user_id}"
 
-  llm_config:
+  # NOTE: llm_config is NO LONGER USED - configure LLM via .env instead
+  # llm_config:
     provider: "ollama"
     model: "llama3.2"
     temperature: 0.7
@@ -743,40 +745,49 @@ knowledge_bases:
   - "defi-protocols"         # Domain KB (if specialist)
 ```
 
-### luka_extensions.llm_config (REQUIRED)
+### luka_extensions.llm_config (REMOVED)
 
-| Field | Type | Default | Description |
-|-------|------|---------|-------------|
-| `provider` | string | - | "ollama" or "openai" |
-| `model` | string | - | Model name |
-| `temperature` | float | 0.7 | 0.0 (deterministic) to 1.0 (creative) |
-| `max_tokens` | int | 2000 | Max response length |
-| `streaming` | bool | true | Enable streaming responses |
+**⚠️ IMPORTANT:** LLM configuration is now set via environment variables (.env file).
 
-**Provider Options:**
+Do not include `llm_config` in sub-agent YAML files. LLM settings are infrastructure concerns, not agent personality traits.
 
-| Provider | Models | Use Case | Cost |
-|----------|--------|----------|------|
-| `ollama` | `llama3.2`, `gpt-oss` | Local, fast | Free |
-| `openai` | `gpt-4o`, `gpt-4-turbo` | Advanced reasoning | Paid |
+**Instead:** Configure LLM settings in your `.env` file:
+```bash
+# Default LLM Configuration (used by all sub-agents)
+DEFAULT_LLM_PROVIDER=ollama
+DEFAULT_LLM_MODEL=llama3.2
+DEFAULT_LLM_TEMPERATURE=0.7
+DEFAULT_LLM_MAX_TOKENS=2000
+DEFAULT_LLM_STREAMING=true
+```
 
-**Temperature Guide:**
+**For runtime overrides** (e.g., user-specific models in web/telegram):
+Pass parameters to `create_initial_state()`:
+```python
+state = create_initial_state(
+    user_message="Hello",
+    user_id=123,
+    thread_id="abc",
+    platform="web",
+    llm_provider="openai",  # Override for this user
+    llm_model="gpt-4o",     # Override for this user
+)
+```
+
+**Priority System:**
+1. Runtime Parameters (highest) - per-user overrides
+2. Environment Variables (middle) - deployment defaults
+3. Hardcoded Defaults (lowest) - system fallbacks
+
+**See:** `docs/LLM_CONFIGURATION.md` for complete documentation.
+
+**Temperature Guide (for .env configuration):**
 
 | Range | Use Case | Example Agents |
 |-------|----------|----------------|
 | 0.0-0.3 | Deterministic, factual | Data analysis, code |
 | 0.4-0.7 | Balanced | General conversation |
 | 0.8-1.0 | Creative | Brainstorming, storytelling |
-
-**Example:**
-```yaml
-llm_config:
-  provider: "ollama"
-  model: "llama3.2"
-  temperature: 0.7
-  max_tokens: 2000
-  streaming: true
-```
 
 ### luka_extensions.capabilities (OPTIONAL)
 

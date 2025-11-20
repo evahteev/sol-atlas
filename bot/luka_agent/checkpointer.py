@@ -13,14 +13,14 @@ from langgraph.checkpoint.redis import RedisSaver
 from langgraph.checkpoint.memory import MemorySaver
 from redis.asyncio import ConnectionPool, Redis
 
-# Try to import settings, but don't fail if luka_bot isn't configured
+# Try to import settings, but don't fail if luka_agent isn't configured
 # This allows luka_agent to work standalone (e.g., CLI usage)
 try:
-    from luka_bot.core.config import settings
+    from luka_agent.core.config import settings
     _has_settings = True
-except Exception:
+except ImportError:
     # This is expected in standalone/CLI mode - use DEBUG level
-    logger.debug("luka_bot settings not available, will use MemorySaver (standalone mode)")
+    logger.debug("luka_agent settings not available, will use MemorySaver (standalone mode)")
     settings = None
     _has_settings = False
 

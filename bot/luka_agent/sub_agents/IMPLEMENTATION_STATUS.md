@@ -70,10 +70,10 @@ python -m luka_agent.cli test general_luka "Hello"
   - `sub_agent_id: str` - Current active sub-agent
   - `sub_agent_metadata: Dict` - Agent metadata (name, icon, description, version)
   - `sub_agent_persona: Dict` - Agent persona (role, identity, communication_style, principles)
-- **Deprecated Fields** (backward compatibility):
-  - `active_workflow` → Use `sub_agent_id` instead
-  - `workflow_step` → Not used in BMAD model
-  - `workflow_progress` → Moved to workflow-specific sub-agents
+- **Workflow Fields**:
+  - `active_workflow` - Workflow identifier
+  - `workflow_step` - Current workflow step
+  - `workflow_progress` - Workflow completion progress
 
 **Enhanced `create_initial_state()`:**
 - Automatically loads sub-agent config

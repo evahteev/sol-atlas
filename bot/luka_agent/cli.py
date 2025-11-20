@@ -12,6 +12,7 @@ Commands:
 Run Options:
     --model <model>       Override LLM model (e.g., gpt-4o, llama3.2, claude-sonnet-4)
     --provider <provider> Override LLM provider (ollama, openai, anthropic)
+    --with-suggestions    Enable suggestions generation (useful for testing, disabled by default)
 
 Usage:
     python -m luka_agent.cli list
@@ -19,6 +20,7 @@ Usage:
     python -m luka_agent.cli test general_luka "Hello, who are you?"
     python -m luka_agent.cli run general_luka "What can you help me with?"
     python -m luka_agent.cli run general_luka "Hello" --model gpt-4o --provider openai
+    python -m luka_agent.cli run general_luka "Hello" --with-suggestions
     python -m luka_agent.cli info crypto_analyst
 """
 
@@ -327,7 +329,7 @@ def test_agent(agent_id: str, message: str):
         sys.exit(1)
 
 
-async def run_agent(agent_id: str, message: str, model_override: str = None, provider_override: str = None):
+async def run_agent(agent_id: str, message: str, model_override: str = None, provider_override: str = None, with_suggestions: bool = False):
     """Run sub-agent with actual LLM invocation
 
     Args:
@@ -335,6 +337,7 @@ async def run_agent(agent_id: str, message: str, model_override: str = None, pro
         message: User message
         model_override: Optional LLM model override (e.g., "gpt-4o", "llama3.2")
         provider_override: Optional LLM provider override (e.g., "openai", "ollama")
+        with_suggestions: Whether to generate suggestions (default: False for CLI)
     """
     from luka_agent import get_unified_agent_graph, create_initial_state
     from langchain_core.messages import AIMessage, ToolMessage
@@ -364,6 +367,7 @@ async def run_agent(agent_id: str, message: str, model_override: str = None, pro
             language="en",
             sub_agent_id=agent_id,
             enabled_tools=cli_enabled_tools if cli_enabled_tools else None,  # Use sub-agent default if not specified
+            generate_suggestions=with_suggestions,  # Optional suggestions for CLI (default: False)
         )
 
         # Validate that all sub-agent tools are enabled in CLI
@@ -498,15 +502,16 @@ def main():
 
     elif command == "run":
         if len(sys.argv) < 4:
-            logger.error('Usage: python -m luka_agent.cli run <agent_id> "message" [--model MODEL] [--provider PROVIDER]')
+            logger.error('Usage: python -m luka_agent.cli run <agent_id> "message" [--model MODEL] [--provider PROVIDER] [--with-suggestions]')
             sys.exit(1)
 
         agent_id = sys.argv[2]
         message = sys.argv[3]
 
-        # Parse optional model/provider overrides
+        # Parse optional model/provider overrides and flags
         model_override = None
         provider_override = None
+        with_suggestions = False
 
         i = 4
         while i < len(sys.argv):
@@ -516,11 +521,14 @@ def main():
             elif sys.argv[i] == "--provider" and i + 1 < len(sys.argv):
                 provider_override = sys.argv[i + 1]
                 i += 2
+            elif sys.argv[i] == "--with-suggestions":
+                with_suggestions = True
+                i += 1
             else:
                 logger.warning(f"Unknown argument: {sys.argv[i]}")
                 i += 1
 
-        asyncio.run(run_agent(agent_id, message, model_override, provider_override))
+        asyncio.run(run_agent(agent_id, message, model_override, provider_override, with_suggestions))
 
     elif command == "info":
         if len(sys.argv) < 3:
