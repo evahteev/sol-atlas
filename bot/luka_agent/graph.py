@@ -135,7 +135,7 @@ def hydrate_state_with_sub_agent(state: AgentState) -> dict:
         }
 
 
-async def get_unified_agent_graph():
+async def get_unified_agent_graph(use_memory: bool | None = None):
     """Get or create the singleton agent graph instance.
 
     This function creates the LangGraph workflow with nodes and edges:
@@ -143,7 +143,14 @@ async def get_unified_agent_graph():
     Flow:
         START → agent → [tools?] → suggestions → END
 
-    The graph uses Redis checkpointing for automatic state persistence.
+    The graph uses checkpointing for automatic state persistence.
+    By default, uses in-memory checkpointing. Set use_memory=False or
+    LUKA_USE_MEMORY_CHECKPOINTER=false env var to use Redis.
+
+    Args:
+        use_memory: Optional override for checkpointer type.
+                   If True, use MemorySaver. If False, use RedisSaver.
+                   If None, use settings (defaults to True/MemorySaver).
 
     Returns:
         Compiled LangGraph graph ready for execution
@@ -187,8 +194,8 @@ async def get_unified_agent_graph():
     # After suggestions, end
     workflow.add_edge("suggestions", END)
 
-    # Get checkpointer
-    checkpointer = await get_checkpointer()
+    # Get checkpointer (pass use_memory parameter)
+    checkpointer = await get_checkpointer(use_memory=use_memory)
 
     # Compile graph with checkpointer
     _graph_instance = workflow.compile(checkpointer=checkpointer)

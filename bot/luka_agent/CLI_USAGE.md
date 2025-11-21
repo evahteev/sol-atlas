@@ -108,12 +108,37 @@ Available Tools: knowledge_base, sub_agent, youtube, image_description, support
 LLM Configuration: ollama/gpt-oss (from environment)
 ```
 
-### `run <agent_id> <message>` - Run Sub-Agent with LLM
+### `run <agent_id> <message> [options]` - Run Sub-Agent with LLM
 
 Invokes the actual LLM and returns a real response.
 
+**Basic usage:**
 ```bash
 ./luka-agent.sh run general_luka "What can you help me with?"
+```
+
+**Available options:**
+- `--model <model>` - Override LLM model (e.g., gpt-4o, llama3.2, claude-sonnet-4)
+- `--provider <provider>` - Override LLM provider (ollama, openai, anthropic)
+- `--memory <type>` - Checkpointer type: 'memory' (default) or 'redis'
+- `--with-suggestions` - Enable suggestions generation (disabled by default in CLI)
+
+**Examples:**
+```bash
+# Basic run with defaults (in-memory checkpointer, env settings)
+./luka-agent.sh run general_luka "Hello!"
+
+# Override model and provider
+./luka-agent.sh run general_luka "Hello!" --model gpt-4o --provider openai
+
+# Use Redis checkpointer (requires Redis running)
+./luka-agent.sh run general_luka "Hello!" --memory redis
+
+# Enable suggestions
+./luka-agent.sh run general_luka "Hello!" --with-suggestions
+
+# Combine multiple options
+./luka-agent.sh run general_luka "Hello!" --model claude-sonnet-4 --provider anthropic --memory redis --with-suggestions
 ```
 
 **Output:**
@@ -121,6 +146,8 @@ Invokes the actual LLM and returns a real response.
 🤖 Luka 🤖
 ═════════════════════════════════════════
 👤 User: What can you help me with?
+🧠 LLM: ollama/llama3.2
+💾 Memory: memory
 
 🤖 Luka: I'm Luka, your AI assistant! I can help you with...
 [actual LLM response]
@@ -278,6 +305,68 @@ curl http://localhost:9200
 redis-cli ping
 ```
 
+## Complete Command Reference
+
+### All Available Commands
+
+```bash
+# List all available sub-agents
+./luka-agent.sh list
+
+# Validate sub-agent configuration
+./luka-agent.sh validate <agent_id>
+
+# Test sub-agent (mock mode, no LLM)
+./luka-agent.sh test <agent_id> "<message>"
+
+# Run sub-agent with actual LLM
+./luka-agent.sh run <agent_id> "<message>" [OPTIONS]
+
+# Show detailed sub-agent information
+./luka-agent.sh info <agent_id>
+
+# Show help
+./luka-agent.sh help
+./luka-agent.sh --help
+./luka-agent.sh -h
+```
+
+### Run Command Options
+
+The `run` command supports the following options:
+
+| Option | Description | Example Values | Default |
+|--------|-------------|----------------|---------|
+| `--model <model>` | Override LLM model | `llama3.2`, `gpt-4o`, `claude-sonnet-4` | From .env or `llama3.2` |
+| `--provider <provider>` | Override LLM provider | `ollama`, `openai`, `anthropic` | From .env or `ollama` |
+| `--memory <type>` | Checkpointer type | `memory`, `redis` | `memory` |
+| `--with-suggestions` | Enable suggestions | (flag, no value) | Disabled |
+
+**Examples:**
+```bash
+# All defaults (in-memory, env settings)
+./luka-agent.sh run general_luka "Hello!"
+
+# Custom model
+./luka-agent.sh run general_luka "Hello!" --model gpt-4o
+
+# Custom provider
+./luka-agent.sh run general_luka "Hello!" --provider openai
+
+# Redis checkpointer
+./luka-agent.sh run general_luka "Hello!" --memory redis
+
+# With suggestions
+./luka-agent.sh run general_luka "Hello!" --with-suggestions
+
+# Multiple options
+./luka-agent.sh run general_luka "Hello!" \
+  --model claude-sonnet-4 \
+  --provider anthropic \
+  --memory redis \
+  --with-suggestions
+```
+
 ## Environment Configuration
 
 ### Using .env File (Recommended)
@@ -297,8 +386,8 @@ nano .env
 # ============================================================================
 # LLM Provider Settings
 # ============================================================================
-# Ollama Configuration
-OLLAMA_URL=http://localhost:11434
+# Ollama Configuration (OpenAI-compatible endpoint)
+OLLAMA_URL=http://localhost:11434/v1
 
 # Default LLM Configuration (used by all sub-agents)
 DEFAULT_LLM_PROVIDER=ollama
@@ -314,6 +403,19 @@ DEFAULT_LLM_STREAMING=true
 
 # Anthropic Configuration (optional)
 # ANTHROPIC_API_KEY=sk-ant-...
+
+# ============================================================================
+# Memory/Checkpointer Configuration
+# ============================================================================
+# Use in-memory checkpointer (default, no Redis required)
+LUKA_USE_MEMORY_CHECKPOINTER=true
+
+# To use Redis checkpointer in production:
+# LUKA_USE_MEMORY_CHECKPOINTER=false
+# REDIS_HOST=localhost
+# REDIS_PORT=6379
+# REDIS_PASS=
+# REDIS_DATABASE=0
 
 # ============================================================================
 # Vision Model Settings (for image_description tool)
@@ -349,11 +451,17 @@ The CLI automatically loads `.env` if it exists.
 | `DEFAULT_LLM_TEMPERATURE` | Temperature (0.0-2.0) | `0.7` |
 | `DEFAULT_LLM_MAX_TOKENS` | Max output tokens | `2000` |
 | `DEFAULT_LLM_STREAMING` | Enable streaming | `true` |
-| `OLLAMA_URL` | Ollama API URL | `http://localhost:11434` |
+| `OLLAMA_URL` | Ollama API URL (OpenAI-compatible) | `http://localhost:11434/v1` |
 | `OPENAI_API_KEY` | OpenAI API key | (optional) |
 | `ANTHROPIC_API_KEY` | Anthropic API key | (optional) |
+| **Memory/Checkpointer** | | |
+| `LUKA_USE_MEMORY_CHECKPOINTER` | Use in-memory (true) or Redis (false) | `true` |
+| `REDIS_HOST` | Redis host (if using Redis checkpointer) | `localhost` |
+| `REDIS_PORT` | Redis port (if using Redis checkpointer) | `6379` |
+| `REDIS_PASS` | Redis password (if using Redis checkpointer) | (optional) |
+| `REDIS_DATABASE` | Redis database number | `0` |
 | **Vision Configuration** | | |
-| `DEFAULT_VISION_MODEL` | Vision model for image description | `llama` |
+| `DEFAULT_VISION_MODEL` | Vision model for image description | `llava` |
 | `VISION_ENABLED` | Enable image description tool | `true` |
 | **Tools** | | |
 | `CLI_ENABLED_TOOLS` | Comma-separated list of enabled tools | See .env.example |
@@ -477,6 +585,8 @@ For issues or questions:
 
 ## Quick Reference
 
+### Basic Commands
+
 | Command | Description |
 |---------|-------------|
 | `./luka-agent.sh list` | List all sub-agents |
@@ -485,5 +595,34 @@ For issues or questions:
 | `./luka-agent.sh run <id> "<msg>"` | Run with actual LLM invocation |
 | `./luka-agent.sh info <id>` | Detailed information |
 | `./luka-agent.sh help` | Show help |
+
+### Run Command Options
+
+| Option | Values | Default |
+|--------|--------|---------|
+| `--model <model>` | `llama3.2`, `gpt-4o`, `claude-sonnet-4`, etc. | From .env |
+| `--provider <provider>` | `ollama`, `openai`, `anthropic` | From .env |
+| `--memory <type>` | `memory`, `redis` | `memory` |
+| `--with-suggestions` | (flag) | Disabled |
+
+### Common Usage Patterns
+
+```bash
+# Development (quick testing with defaults)
+./luka-agent.sh run general_luka "Hello!"
+
+# Test with OpenAI
+./luka-agent.sh run general_luka "Hello!" --model gpt-4o --provider openai
+
+# Production simulation (Redis persistence)
+./luka-agent.sh run general_luka "Hello!" --memory redis
+
+# Full customization
+./luka-agent.sh run general_luka "Hello!" \
+  --model claude-sonnet-4 \
+  --provider anthropic \
+  --memory redis \
+  --with-suggestions
+```
 
 **Tip:** The wrapper automatically detects your Python environment and runs the CLI with proper PYTHONPATH settings. Just make sure dependencies are installed!

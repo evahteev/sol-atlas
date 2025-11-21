@@ -27,20 +27,24 @@ except ImportError:
 _checkpointer: Optional[RedisSaver | MemorySaver] = None
 
 
-async def get_checkpointer() -> RedisSaver | MemorySaver:
+async def get_checkpointer(use_memory: bool | None = None) -> RedisSaver | MemorySaver:
     """
     Get or create the singleton checkpointer instance.
 
     The checkpointer type is determined by configuration:
-    - Redis (default): Used in production for persistent state
-    - Memory (testing/CLI): Used in tests, CLI, or when luka_bot config unavailable
+    - Memory (default): Used by default for safety and compatibility
+    - Redis (production): Used when explicitly enabled via env vars or parameters
+
+    Args:
+        use_memory: Optional override. If True, use MemorySaver. If False, use RedisSaver.
+                   If None, use settings (defaults to True/MemorySaver).
 
     Returns:
         RedisSaver or MemorySaver instance
 
     Example:
-        >>> checkpointer = await get_checkpointer()
-        >>> # Use in graph builder
+        >>> checkpointer = await get_checkpointer()  # Uses default (MemorySaver)
+        >>> checkpointer = await get_checkpointer(use_memory=False)  # Forces Redis
         >>> graph = builder.compile(checkpointer=checkpointer)
     """
     global _checkpointer
@@ -54,9 +58,12 @@ async def get_checkpointer() -> RedisSaver | MemorySaver:
         _checkpointer = MemorySaver()
         return _checkpointer
 
-    # Check if we should use memory checkpointer (testing mode)
-    if getattr(settings, "LUKA_USE_MEMORY_CHECKPOINTER", False):
-        logger.info("🧠 Using MemorySaver (testing mode)")
+    # Determine whether to use memory checkpointer
+    # Priority: function parameter > env var > default (True)
+    should_use_memory = use_memory if use_memory is not None else getattr(settings, "LUKA_USE_MEMORY_CHECKPOINTER", True)
+
+    if should_use_memory:
+        logger.info("🧠 Using MemorySaver (configured)")
         _checkpointer = MemorySaver()
         return _checkpointer
 

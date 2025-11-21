@@ -8,20 +8,75 @@ Commands:
     test <agent_id> <msg>           - Test sub-agent with a message (mock, no LLM)
     run <agent_id> <msg> [options]  - Run sub-agent with actual LLM invocation
     info <agent_id>                 - Show sub-agent details
+    help, --help, -h                - Show this help message
 
-Run Options:
-    --model <model>       Override LLM model (e.g., gpt-4o, llama3.2, claude-sonnet-4)
-    --provider <provider> Override LLM provider (ollama, openai, anthropic)
-    --with-suggestions    Enable suggestions generation (useful for testing, disabled by default)
+Run Command Options:
+    --model <model>       Override LLM model
+                          Examples: gpt-4o, llama3.2, claude-sonnet-4
+                          Default: From .env (DEFAULT_LLM_MODEL) or llama3.2
 
-Usage:
+    --provider <provider> Override LLM provider
+                          Options: ollama, openai, anthropic
+                          Default: From .env (DEFAULT_LLM_PROVIDER) or ollama
+
+    --memory <type>       Checkpointer type for state persistence
+                          Options: memory (in-memory), redis (persistent)
+                          Default: memory (no Redis required)
+
+    --with-suggestions    Enable suggestions generation
+                          (Disabled by default in CLI mode)
+
+Usage Examples:
+    # List and validate
     python -m luka_agent.cli list
     python -m luka_agent.cli validate general_luka
+    python -m luka_agent.cli info general_luka
+
+    # Test without LLM
     python -m luka_agent.cli test general_luka "Hello, who are you?"
+
+    # Run with defaults (in-memory, env settings)
     python -m luka_agent.cli run general_luka "What can you help me with?"
+
+    # Override model and provider
     python -m luka_agent.cli run general_luka "Hello" --model gpt-4o --provider openai
+
+    # Use Redis for state persistence
+    python -m luka_agent.cli run general_luka "Hello" --memory redis
+
+    # Enable suggestions
     python -m luka_agent.cli run general_luka "Hello" --with-suggestions
-    python -m luka_agent.cli info crypto_analyst
+
+    # Combine multiple options
+    python -m luka_agent.cli run general_luka "Hello" \
+        --model claude-sonnet-4 \
+        --provider anthropic \
+        --memory redis \
+        --with-suggestions
+
+Environment Configuration:
+    Create a .env file in the luka_agent directory with:
+
+    # LLM Settings
+    OLLAMA_URL=http://localhost:11434/v1
+    DEFAULT_LLM_PROVIDER=ollama
+    DEFAULT_LLM_MODEL=llama3.2
+
+    # Memory/Checkpointer
+    LUKA_USE_MEMORY_CHECKPOINTER=true  # true = in-memory, false = Redis
+
+    # Redis (only if using Redis checkpointer)
+    REDIS_HOST=localhost
+    REDIS_PORT=6379
+
+    # Tools
+    CLI_ENABLED_TOOLS=knowledge_base,sub_agent,youtube,image_description,support
+
+    See .env.example for complete configuration options.
+
+For More Information:
+    - CLI_USAGE.md - Detailed CLI documentation
+    - README.md - Architecture and development guide
 """
 
 import sys
@@ -329,7 +384,7 @@ def test_agent(agent_id: str, message: str):
         sys.exit(1)
 
 
-async def run_agent(agent_id: str, message: str, model_override: str = None, provider_override: str = None, with_suggestions: bool = False):
+async def run_agent(agent_id: str, message: str, model_override: str = None, provider_override: str = None, with_suggestions: bool = False, memory_type: str = "memory"):
     """Run sub-agent with actual LLM invocation
 
     Args:
@@ -338,6 +393,7 @@ async def run_agent(agent_id: str, message: str, model_override: str = None, pro
         model_override: Optional LLM model override (e.g., "gpt-4o", "llama3.2")
         provider_override: Optional LLM provider override (e.g., "openai", "ollama")
         with_suggestions: Whether to generate suggestions (default: False for CLI)
+        memory_type: Checkpointer type: "memory" (default) or "redis"
     """
     from luka_agent import get_unified_agent_graph, create_initial_state
     from langchain_core.messages import AIMessage, ToolMessage
@@ -408,6 +464,7 @@ async def run_agent(agent_id: str, message: str, model_override: str = None, pro
 
         logger.info(f"Invoking {agent_id} with message: \"{message}\"")
         logger.info(f"Using LLM: {state['llm_provider']}/{state['llm_model']}")
+        logger.info(f"Using checkpointer: {memory_type}")
         print()
         print("=" * 70)
         print(f"🤖 {state['sub_agent_metadata']['name']} {state['sub_agent_metadata']['icon']}")
@@ -415,10 +472,12 @@ async def run_agent(agent_id: str, message: str, model_override: str = None, pro
         print()
         print(f"👤 User: {message}")
         print(f"🧠 LLM: {state['llm_provider']}/{state['llm_model']}")
+        print(f"💾 Memory: {memory_type}")
         print()
 
-        # Get graph and invoke
-        graph = await get_unified_agent_graph()
+        # Get graph and invoke (use_memory=True for "memory", False for "redis")
+        use_memory = memory_type.lower() == "memory"
+        graph = await get_unified_agent_graph(use_memory=use_memory)
         config = {"configurable": {"thread_id": "cli_thread"}}
 
         # Stream events from graph
@@ -502,7 +561,7 @@ def main():
 
     elif command == "run":
         if len(sys.argv) < 4:
-            logger.error('Usage: python -m luka_agent.cli run <agent_id> "message" [--model MODEL] [--provider PROVIDER] [--with-suggestions]')
+            logger.error('Usage: python -m luka_agent.cli run <agent_id> "message" [--model MODEL] [--provider PROVIDER] [--with-suggestions] [--memory TYPE]')
             sys.exit(1)
 
         agent_id = sys.argv[2]
@@ -512,6 +571,7 @@ def main():
         model_override = None
         provider_override = None
         with_suggestions = False
+        memory_type = "memory"  # Default to in-memory checkpointer
 
         i = 4
         while i < len(sys.argv):
@@ -521,6 +581,12 @@ def main():
             elif sys.argv[i] == "--provider" and i + 1 < len(sys.argv):
                 provider_override = sys.argv[i + 1]
                 i += 2
+            elif sys.argv[i] == "--memory" and i + 1 < len(sys.argv):
+                memory_type = sys.argv[i + 1]
+                if memory_type.lower() not in ["memory", "redis"]:
+                    logger.error(f"Invalid memory type: {memory_type}. Must be 'memory' or 'redis'")
+                    sys.exit(1)
+                i += 2
             elif sys.argv[i] == "--with-suggestions":
                 with_suggestions = True
                 i += 1
@@ -528,7 +594,7 @@ def main():
                 logger.warning(f"Unknown argument: {sys.argv[i]}")
                 i += 1
 
-        asyncio.run(run_agent(agent_id, message, model_override, provider_override, with_suggestions))
+        asyncio.run(run_agent(agent_id, message, model_override, provider_override, with_suggestions, memory_type))
 
     elif command == "info":
         if len(sys.argv) < 3:

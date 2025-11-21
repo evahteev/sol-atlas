@@ -33,7 +33,6 @@ async def agent_node(state: AgentState) -> dict:
     Returns:
         State update with new message
     """
-    from langchain_ollama import ChatOllama
     from langchain_openai import ChatOpenAI
     from langchain_anthropic import ChatAnthropic
     from langchain_core.messages import SystemMessage
@@ -75,14 +74,17 @@ async def agent_node(state: AgentState) -> dict:
     if llm_provider == "ollama":
         # Get Ollama URL from settings or environment/default
         if settings:
-            ollama_url = settings.OLLAMA_URL.rstrip("/v1").rstrip("/")
+            ollama_url = settings.OLLAMA_URL.rstrip("/")
         else:
             import os
-            ollama_url = os.getenv("OLLAMA_URL", "http://localhost:11434").rstrip("/v1").rstrip("/")
+            ollama_url = os.getenv("OLLAMA_URL", "http://localhost:11434").rstrip("/")
 
-        llm = ChatOllama(
+        # Use OpenAI-compatible API for Ollama (requires /v1 endpoint)
+        # This allows using models like gpt-oss that are hosted via Ollama
+        llm = ChatOpenAI(
             model=llm_model,
-            base_url=ollama_url,
+            base_url=f"{ollama_url}/v1",
+            api_key="ollama",  # Ollama doesn't require a real API key
             temperature=llm_temperature,
         )
     elif llm_provider == "openai":
@@ -98,10 +100,12 @@ async def agent_node(state: AgentState) -> dict:
     else:
         logger.error(f"Unknown LLM provider: {llm_provider}, falling back to ollama")
         import os
-        ollama_url = os.getenv("OLLAMA_URL", "http://localhost:11434").rstrip("/v1").rstrip("/")
-        llm = ChatOllama(
+        ollama_url = os.getenv("OLLAMA_URL", "http://localhost:11434").rstrip("/")
+        # Use OpenAI-compatible API for Ollama fallback
+        llm = ChatOpenAI(
             model="llama3.2",
-            base_url=ollama_url,
+            base_url=f"{ollama_url}/v1",
+            api_key="ollama",  # Ollama doesn't require a real API key
             temperature=0.7,
         )
 
@@ -245,7 +249,6 @@ async def suggestions_node(state: AgentState) -> dict:
     Returns:
         State update with suggestions
     """
-    from langchain_ollama import ChatOllama
     from langchain_openai import ChatOpenAI
     import json
     import random
@@ -301,13 +304,15 @@ async def suggestions_node(state: AgentState) -> dict:
 
             if llm_provider == "ollama":
                 if settings:
-                    ollama_url = settings.OLLAMA_URL.rstrip("/v1").rstrip("/")
+                    ollama_url = settings.OLLAMA_URL.rstrip("/")
                 else:
-                    ollama_url = os.getenv("OLLAMA_URL", "http://localhost:11434").rstrip("/v1").rstrip("/")
+                    ollama_url = os.getenv("OLLAMA_URL", "http://localhost:11434").rstrip("/")
 
-                llm = ChatOllama(
+                # Use OpenAI-compatible API for Ollama
+                llm = ChatOpenAI(
                     model=llm_model,
-                    base_url=ollama_url,
+                    base_url=f"{ollama_url}/v1",
+                    api_key="ollama",  # Ollama doesn't require a real API key
                     temperature=0.7,
                 )
             else:

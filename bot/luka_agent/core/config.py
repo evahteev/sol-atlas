@@ -14,11 +14,16 @@ BOT_DIR = Path(__file__).absolute().parent.parent
 LOCALES_DIR = f"{BOT_DIR}/locales"
 I18N_DOMAIN = "messages"
 
+# .env file path - look in luka_agent directory
+ENV_FILE = BOT_DIR / ".env"
+
 
 class EnvBaseSettings(BaseSettings):
     """Base settings with .env file loading."""
     model_config = SettingsConfigDict(
-        env_file=".env", env_file_encoding="utf-8", extra="ignore"
+        env_file=str(ENV_FILE) if ENV_FILE.exists() else None,
+        env_file_encoding="utf-8",
+        extra="ignore"
     )
 
 
@@ -72,9 +77,12 @@ class ElasticsearchSettings(EnvBaseSettings):
 
 class LukaSettings(EnvBaseSettings):
     """Luka agent settings."""
-    
+
     # YouTube Tool Configuration
     YOUTUBE_TRANSCRIPT_ENABLED: bool = True  # Enable YouTube transcript tool
+
+    # Checkpointer Configuration
+    LUKA_USE_MEMORY_CHECKPOINTER: bool = True  # Use in-memory checkpointer (default), set to False for Redis in production
 
 
 class Settings(

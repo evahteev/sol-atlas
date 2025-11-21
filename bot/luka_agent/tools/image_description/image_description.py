@@ -122,14 +122,14 @@ async def describe_image_impl(
         }
         prompt = prompts.get(detail_level, prompts["standard"])
 
-    # Step 4: Try to import and use Ollama vision model
+    # Step 4: Check if langchain_openai is available for OpenAI-compatible API
     try:
-        from langchain_ollama import ChatOllama
+        from langchain_openai import ChatOpenAI
     except ImportError as import_err:
-        logger.error(f"Unable to import ChatOllama: {import_err}")
+        logger.error(f"Unable to import ChatOpenAI: {import_err}")
         return (
-            "Ollama integration is not available. "
-            "Please ensure langchain-ollama is installed: pip install langchain-ollama"
+            "OpenAI integration is not available. "
+            "Please ensure langchain-openai is installed: pip install langchain-openai"
         )
 
     # Step 5: Download image from URL
@@ -178,18 +178,19 @@ async def describe_image_impl(
 
     # Step 6: Execute vision model with specific error handling
     try:
-        # Strip /v1 suffix if present (ChatOllama doesn't need it)
-        base_url = ollama_url.rstrip("/v1").rstrip("/")
+        # Ensure URL doesn't have trailing slash
+        base_url = ollama_url.rstrip("/")
 
         logger.info(
             f"Describing image for user {user_id}, thread {thread_id}, "
             f"model: {vision_model}, detail: {detail_level}"
         )
 
-        # Initialize Ollama vision model
-        llm = ChatOllama(
+        # Initialize Ollama vision model using OpenAI-compatible API
+        llm = ChatOpenAI(
             model=vision_model,
-            base_url=base_url,
+            base_url=f"{base_url}/v1",
+            api_key="ollama",  # Ollama doesn't require a real API key
             temperature=0.7,
         )
 

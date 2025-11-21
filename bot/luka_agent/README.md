@@ -4,6 +4,212 @@
 
 ---
 
+## 🚀 Quick Start for Developers
+
+### Prerequisites
+- Python 3.10+
+- Redis (optional - defaults to in-memory storage)
+- Ollama or OpenAI API access
+
+### Setup
+
+```bash
+# 1. Navigate to luka_agent directory
+cd bot/luka_agent
+
+# 2. Install dependencies
+pip install -r requirements.txt
+
+# 3. Configure environment
+cp .env.example .env
+# Edit .env with your settings (OLLAMA_URL, etc.)
+
+# 4. Verify setup
+./luka-agent.sh list
+```
+
+### Development Workflow
+
+#### Using the CLI (Recommended for Development)
+
+The `luka-agent.sh` script provides a standalone CLI for development and testing:
+
+```bash
+# List all available sub-agents
+./luka-agent.sh list
+
+# Validate a sub-agent configuration
+./luka-agent.sh validate general_luka
+
+# Show detailed sub-agent information
+./luka-agent.sh info general_luka
+
+# Test sub-agent (mock mode - no LLM calls)
+./luka-agent.sh test general_luka "Hello, who are you?"
+
+# Run sub-agent with actual LLM
+./luka-agent.sh run general_luka "Hello!"
+
+# Run with specific model/provider
+./luka-agent.sh run general_luka "Hello!" --model gpt-4o --provider openai
+
+# Run with in-memory checkpointer (default)
+./luka-agent.sh run general_luka "Hello!" --memory memory
+
+# Run with Redis checkpointer (for testing persistence)
+./luka-agent.sh run general_luka "Hello!" --memory redis
+
+# Enable suggestions generation (useful for testing)
+./luka-agent.sh run general_luka "Hello!" --with-suggestions
+```
+
+#### Direct Python CLI
+
+Alternatively, use the Python module directly:
+
+```bash
+# Same commands as above, using Python module
+python -m luka_agent.cli list
+python -m luka_agent.cli validate general_luka
+python -m luka_agent.cli run general_luka "Hello!" --model gpt-4o
+```
+
+#### Running Tests
+
+```bash
+# Run all tests
+pytest luka_agent/tests/ -v
+
+# Run specific test file
+pytest luka_agent/tests/test_sub_agent_tools.py -v
+
+# Run with coverage
+pytest luka_agent/tests/ --cov=luka_agent --cov-report=html
+
+# Run specific test
+pytest luka_agent/tests/test_sub_agent_tools.py::test_sub_agent_discovery -v
+```
+
+### Memory/Checkpointer Configuration
+
+The luka_agent supports two types of state persistence:
+
+1. **In-Memory (Default)** - Fast, no Redis required, state lost on restart
+   - Perfect for development and testing
+   - Enabled by default
+   - Override: `--memory memory` CLI flag or `LUKA_USE_MEMORY_CHECKPOINTER=true` in .env
+
+2. **Redis (Production)** - Persistent, survives restarts, supports concurrent users
+   - Required for production deployments
+   - Enable: `--memory redis` CLI flag or `LUKA_USE_MEMORY_CHECKPOINTER=false` in .env
+   - Requires Redis connection configured in .env
+
+```bash
+# .env configuration
+LUKA_USE_MEMORY_CHECKPOINTER=true  # Use in-memory (default)
+# or
+LUKA_USE_MEMORY_CHECKPOINTER=false # Use Redis
+
+# Runtime override via CLI
+./luka-agent.sh run general_luka "test" --memory memory  # Force in-memory
+./luka-agent.sh run general_luka "test" --memory redis   # Force Redis
+```
+
+### Environment Variables
+
+Key environment variables in `.env`:
+
+```bash
+# LLM Provider (Ollama by default)
+OLLAMA_URL=http://localhost:11434/ 
+DEFAULT_LLM_PROVIDER=ollama
+DEFAULT_LLM_MODEL=llama3.2
+DEFAULT_LLM_TEMPERATURE=0.7
+
+# Memory/Checkpointer
+LUKA_USE_MEMORY_CHECKPOINTER=true  # true = in-memory, false = Redis
+
+# Redis (optional, only if using Redis checkpointer)
+REDIS_HOST=localhost
+REDIS_PORT=6379
+REDIS_PASS=
+REDIS_DATABASE=0
+
+# Elasticsearch (optional, for knowledge_base tool)
+ELASTICSEARCH_URL=http://localhost:9200
+
+# Tools
+CLI_ENABLED_TOOLS=knowledge_base,sub_agent,youtube,image_description,support
+```
+
+### Common Development Tasks
+
+#### Adding a New Tool
+
+```bash
+# 1. Copy template
+cp luka_agent/tools/TEMPLATE.md luka_agent/tools/my_tool.py
+
+# 2. Implement tool (see tools/README.md)
+# 3. Register in tools/__init__.py
+# 4. Test
+./luka-agent.sh run general_luka "use my tool" --with-suggestions
+```
+
+#### Adding a New Sub-Agent
+
+```bash
+# 1. Copy template
+cp -r luka_agent/sub_agents/TEMPLATE luka_agent/sub_agents/my_agent
+
+# 2. Edit config.yaml
+cd luka_agent/sub_agents/my_agent
+# Replace [PLACEHOLDERS] in config.yaml
+
+# 3. Validate
+./luka-agent.sh validate my_agent
+
+# 4. Test
+./luka-agent.sh run my_agent "Hello!"
+```
+
+#### Testing with Different LLMs
+
+```bash
+# Ollama (default)
+./luka-agent.sh run general_luka "test" --model gpt-oss --provider ollama
+
+# OpenAI
+export OPENAI_API_KEY=sk-...
+./luka-agent.sh run general_luka "test" --model gpt-4o --provider openai
+
+# Anthropic
+export ANTHROPIC_API_KEY=sk-ant-...
+./luka-agent.sh run general_luka "test" --model claude-sonnet-4 --provider anthropic
+```
+
+### Troubleshooting
+
+**Issue: "Model not found" error**
+- Ensure OLLAMA_URL is correct in .env
+- For Ollama: Verify model is pulled (`ollama pull llama3.2`)
+- Check that URL includes `/v1` suffix for OpenAI-compatible API
+
+**Issue: "Unable to import settings"**
+- Ensure .env file exists in `luka_agent/` directory
+- Check .env file path in config.py
+
+**Issue: Redis connection error**
+- If using Redis checkpointer: Verify Redis is running (`redis-cli ping`)
+- Otherwise: Use in-memory checkpointer (`--memory memory`)
+
+**Issue: Tool not working**
+- Check CLI_ENABLED_TOOLS in .env includes the tool
+- Verify tool is registered in tools/__init__.py
+- Check service dependencies are available
+
+---
+
 <objective>
 Provide a unified, platform-agnostic LangGraph-based agent architecture that:
 - Serves both Telegram (luka_bot) and Web (ag_ui_gateway) platforms identically

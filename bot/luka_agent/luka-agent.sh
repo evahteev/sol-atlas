@@ -54,32 +54,87 @@ print_usage() {
 Usage: ./luka-agent.sh <command> [args...]
 
 Commands:
-  list                                 List all available sub-agents
-  validate <agent_id>                  Validate sub-agent configuration
-  test <agent_id> <msg>                Test sub-agent with a message (mock, no LLM)
-  run <agent_id> <msg> [--model M]     Run sub-agent with actual LLM invocation
-                       [--provider P]
-  info <agent_id>                      Show detailed sub-agent information
-  help                                 Show this help message
+  list                    List all available sub-agents
+  validate <agent_id>     Validate sub-agent configuration
+  test <agent_id> <msg>   Test sub-agent with a message (mock, no LLM)
+  run <agent_id> <msg>    Run sub-agent with actual LLM invocation
+      [OPTIONS]
+  info <agent_id>         Show detailed sub-agent information
+  help, --help, -h        Show this help message
 
-Run Options:
-  --model <model>       Override LLM model (e.g., gpt-4o, llama3.2)
-  --provider <provider> Override LLM provider (ollama, openai, anthropic)
+Run Command Options:
+  --model <model>         Override LLM model
+                          Examples: gpt-4o, llama3.2, claude-sonnet-4
+                          Default: From .env (DEFAULT_LLM_MODEL) or llama3.2
+
+  --provider <provider>   Override LLM provider
+                          Options: ollama, openai, anthropic
+                          Default: From .env (DEFAULT_LLM_PROVIDER) or ollama
+
+  --memory <type>         Checkpointer type for state persistence
+                          Options: memory (in-memory), redis (persistent)
+                          Default: memory (no Redis required)
+
+  --with-suggestions      Enable suggestions generation
+                          (Disabled by default in CLI mode)
 
 Examples:
+  # List and validate
   ./luka-agent.sh list
   ./luka-agent.sh validate general_luka
-  ./luka-agent.sh test general_luka "Hello, who are you?"
-  ./luka-agent.sh run general_luka "What can you help me with?"
-  ./luka-agent.sh run general_luka "Hello" --model gpt-4o --provider openai
   ./luka-agent.sh info general_luka
 
-Environment Variables (optional):
-  OLLAMA_URL               Ollama API URL (default: http://localhost:11434)
+  # Test without LLM
+  ./luka-agent.sh test general_luka "Hello, who are you?"
+
+  # Run with defaults (in-memory, env settings)
+  ./luka-agent.sh run general_luka "What can you help me with?"
+
+  # Override model and provider
+  ./luka-agent.sh run general_luka "Hello" --model gpt-4o --provider openai
+
+  # Use Redis for state persistence
+  ./luka-agent.sh run general_luka "Hello" --memory redis
+
+  # Enable suggestions
+  ./luka-agent.sh run general_luka "Hello" --with-suggestions
+
+  # Combine multiple options
+  ./luka-agent.sh run general_luka "Hello" \\
+    --model claude-sonnet-4 \\
+    --provider anthropic \\
+    --memory redis \\
+    --with-suggestions
+
+Environment Configuration:
+  Create a .env file in the luka_agent directory with:
+
+  # LLM Settings
+  OLLAMA_URL=http://localhost:11434/v1
+  DEFAULT_LLM_PROVIDER=ollama
+  DEFAULT_LLM_MODEL=llama3.2
+  DEFAULT_LLM_TEMPERATURE=0.7
+
+  # Memory/Checkpointer
+  LUKA_USE_MEMORY_CHECKPOINTER=true  # true = in-memory, false = Redis
+
+  # Redis (only if using Redis checkpointer)
+  REDIS_HOST=localhost
+  REDIS_PORT=6379
+
+  # Tools
+  CLI_ENABLED_TOOLS=knowledge_base,sub_agent,youtube,image_description,support
+
+  See .env.example for complete configuration options.
 
 Requirements:
-  - Python 3.10+ with packages: langgraph, langchain, loguru, pydantic, yaml
-  - Or: Run from the bot's main conda/venv environment
+  - Python 3.10+ installed
+  - Required packages: langgraph, langchain-core, langchain-openai, etc.
+  - Run: pip install -r requirements.txt
+
+For more information:
+  - See CLI_USAGE.md for detailed documentation
+  - See README.md for architecture and development guide
 
 EOF
 }
