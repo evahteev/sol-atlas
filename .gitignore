@@ -78,3 +78,5 @@ coverage/
 *.log
 .DS_Store
 
+bot/.venv-luka/
+bot/venv

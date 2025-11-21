@@ -1,0 +1,80 @@
+# Example Workflow Configuration
+# Based on BMAD Method workflow structure
+
+name: "example_workflow"
+description: "Example multi-step guided workflow for luka_agent sub-agents"
+author: "[AUTHOR_NAME]"
+version: "1.0.0"
+
+# Workflow type
+type: "interactive"  # interactive | automated
+standalone: true  # Can run independently
+
+# Variables
+variables:
+  user_name: "{state.user_name}"  # From agent state
+  date: "{system.date}"  # System-generated
+  output_folder: "outputs/{agent_id}"  # Where to save results
+
+# Component files (relative to workflow directory)
+components:
+  instructions: "instructions.md"  # REQUIRED - Step-by-step execution
+  template: "template.md"  # OPTIONAL - Output template
+  checklist: "checklist.md"  # OPTIONAL - Validation checklist
+  data: "data.csv"  # OPTIONAL - Reference data
+
+# Output configuration
+output:
+  default_file: "{output_folder}/workflow-result-{date}.md"
+  format: "markdown"
+  save_progress: true  # Save after each major step
+
+# Workflow behavior
+behavior:
+  elicit: true  # Requires user interaction
+  allow_skip: true  # User can skip optional steps
+  allow_edit: true  # User can edit generated content
+  checkpoint_approval: true  # Require approval at checkpoints
+
+# Step configuration
+steps:
+  - id: "step_1"
+    name: "Initialize"
+    required: true
+    description: "Gather context and setup"
+
+  - id: "step_2"
+    name: "Execute Main Process"
+    required: true
+    description: "Core workflow logic"
+
+  - id: "step_3"
+    name: "Review and Finalize"
+    required: true
+    description: "Final review and output"
+
+# Advanced options
+advanced:
+  yolo_mode: false  # Skip all confirmations
+  party_mode: false  # Creative/playful approach
+  advanced_elicitation: false  # Use advanced questioning techniques
+
+# Integration
+integration:
+  # Can invoke other workflows/tasks
+  can_invoke:
+    workflows: ["other_workflow"]
+    tasks: ["example_task"]
+    agents: ["specialist_agent"]
+
+  # Required tools
+  required_tools:
+    - "knowledge_base"  # For context retrieval
+    - "file_writer"  # For saving outputs
+
+# Metadata
+metadata:
+  tags: ["example", "template", "workflow"]
+  category: "general"
+  difficulty: "beginner"
+  estimated_time: "15-20 minutes"

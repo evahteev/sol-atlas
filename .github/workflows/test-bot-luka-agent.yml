@@ -1,0 +1,133 @@
+name: Luka Agent - Unit Tests
+
+on:
+  # Run on pull requests to any branch
+  pull_request:
+    paths:
+      - 'bot/luka_agent/**'
+      - 'bot/requirements.txt'
+      - '.github/workflows/test-bot-luka-agent.yml'
+
+  # Run on direct pushes to main/langgraph_migration (e.g., hotfixes without PR)
+  # Note: This will NOT run on PR commits to these branches (pull_request handles that)
+  push:
+    branches:
+      - main
+    paths:
+      - 'bot/luka_agent/**'
+      - 'bot/requirements.txt'
+      - '.github/workflows/test-bot-luka-agent.yml'
+
+jobs:
+  luka-agent-unit-tests:
+    name: Luka Agent Unit Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.11']
+
+    # Service containers for dependencies
+    services:
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      elasticsearch:
+        image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+        ports:
+          - 9200:9200
+        env:
+          discovery.type: single-node
+          xpack.security.enabled: false
+          ES_JAVA_OPTS: -Xms512m -Xmx512m
+        options: >-
+          --health-cmd "curl -f http://localhost:9200/_cluster/health || exit 1"
+          --health-interval 30s
+          --health-timeout 10s
+          --health-retries 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: 'pip'
+          cache-dependency-path: |
+            bot/luka_agent/requirements.txt
+            bot/requirements.txt
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r bot/luka_agent/requirements.txt
+          pip install pytest-cov
+        working-directory: .
+
+      - name: Wait for services to be ready
+        run: |
+          echo "Waiting for Elasticsearch..."
+          timeout 60 bash -c 'until curl -f http://localhost:9200/_cluster/health 2>/dev/null; do sleep 2; done'
+          echo "✓ Elasticsearch is ready"
+
+          echo "Waiting for Redis..."
+          # Install redis-tools for redis-cli
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq redis-tools
+          timeout 30 bash -c 'until redis-cli -h localhost -p 6379 ping 2>/dev/null | grep -q PONG; do sleep 1; done'
+          echo "✓ Redis is ready"
+
+      - name: Run tests with coverage
+        env:
+          # Use in-memory checkpointer for tests (default, faster)
+          LUKA_USE_MEMORY_CHECKPOINTER: true
+          # Redis connection (available but not required due to in-memory default)
+          REDIS_HOST: localhost
+          REDIS_PORT: 6379
+          # Elasticsearch connection
+          ELASTICSEARCH_HOST: localhost
+          ELASTICSEARCH_PORT: 9200
+          ELASTICSEARCH_URL: http://localhost:9200
+          # Optional: Add test API keys if needed
+          # OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY_TEST }}
+        run: |
+          pytest bot/luka_agent/tests/ \
+            -v \
+            --cov=bot/luka_agent \
+            --cov-report=xml \
+            --cov-report=term-missing \
+            --cov-config=bot/luka_agent/.coveragerc \
+            --tb=short
+        working-directory: .
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          files: ./coverage.xml
+          flags: luka-agent
+          name: luka-agent-coverage
+          fail_ci_if_error: false
+
+      - name: Generate test summary
+        if: always()
+        run: |
+          echo "## Luka Agent - Unit Tests Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Python Version:** ${{ matrix.python-version }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ -f coverage.xml ]; then
+            echo "✅ Tests completed with coverage report generated" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⚠️ Tests completed but coverage report missing" >> $GITHUB_STEP_SUMMARY
+          fi

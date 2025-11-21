@@ -1,0 +1,398 @@
+le# Sub-Agent Configuration Template (BMAD-Compatible)
+#
+# This is the official template for creating BMAD-compatible sub-agents for luka_agent.
+# Copy this file to your new sub-agent directory and customize.
+#
+# Quick Start:
+#   1. Create directory: luka_agent/sub_agents/my_agent/
+#   2. Copy config: cp TEMPLATE/config.yaml my_agent/config.yaml
+#   3. Copy prompt: cp TEMPLATE/system_prompt.md my_agent/system_prompt.md
+#   4. Copy README: cp TEMPLATE/README.md my_agent/README.md
+#   5. Replace all [PLACEHOLDERS] with your values
+#   6. Test: python -m luka_agent.cli validate my_agent
+#   7. Deploy: Restart luka_bot or ag_ui_gateway
+
+# =============================================================================
+# BMAD Core Section (Compatible with BMAD Method)
+# =============================================================================
+
+agent:
+  # ---------------------------------------------------------------------------
+  # METADATA (REQUIRED)
+  # ---------------------------------------------------------------------------
+  metadata:
+    # Unique identifier (lowercase with underscores)
+    # Used in: sub_agent_id state field, tool calls, config references
+    # Example: "general_luka", "crypto_analyst", "trip_planner"
+    id: "[AGENT_ID]"
+
+    # Display name shown to users
+    # Keep concise (1-3 words)
+    # Example: "Luka", "Crypto Analyst", "Trip Planner"
+    name: "[AGENT_NAME]"
+
+    # Full descriptive title
+    # Can be longer, shown in agent details
+    # Example: "General AI Assistant", "Crypto Market Expert"
+    title: "[FULL_TITLE]"
+
+    # Single emoji icon for visual identification
+    # Example: "🤖", "📈", "🗺️", "🎓"
+    icon: "[EMOJI]"
+
+    # Semantic versioning (major.minor.patch)
+    # Update on changes: 1.0.0 → 1.1.0 (minor), 2.0.0 (major)
+    version: "1.0.0"
+
+    # One-sentence description (max 100 chars)
+    # Shown in get_available_sub_agents list
+    # Example: "General-purpose assistant for conversation and knowledge search"
+    description: "[BRIEF_DESCRIPTION]"
+
+  # ---------------------------------------------------------------------------
+  # PERSONA (REQUIRED)
+  # ---------------------------------------------------------------------------
+  persona:
+    # Who/what the AI embodies
+    # Be specific, not generic
+    # Example: "Crypto Market Expert + On-Chain Analyst"
+    # NOT: "Assistant" or "Helper"
+    role: "[SPECIFIC_ROLE]"
+
+    # Detailed background and expertise (multiline YAML with |)
+    # Include:
+    # - What the agent knows (domains of expertise)
+    # - Who it helps (target users)
+    # - What it does (key capabilities)
+    # - How it differs from other agents
+    identity: |
+      You are [Name], a [role] with expertise in [domain].
+
+      You help users with:
+      - [Capability 1]
+      - [Capability 2]
+      - [Capability 3]
+
+      [What makes you unique from other agents]
+
+    # Communication tone, pacing, and style
+    # Be detailed and specific
+    # Example: "Data-driven and concise. Always cite sources. Serious but approachable."
+    # Example: "Warm and consultative. Ask questions like a friend. Build excitement gradually."
+    communication_style: "[TONE], [PACING], [LANGUAGE_STYLE]"
+
+    # Core principles and constraints
+    # Use format: "ALWAYS/NEVER [action] to/because [goal/reason]"
+    # Include WHY for each principle
+    principles:
+      - "[PRINCIPLE_1_WITH_REASON]"
+      - "[PRINCIPLE_2_WITH_REASON]"
+      - "[PRINCIPLE_3_WITH_REASON]"
+      # Example: "ALWAYS cite data sources to build trust"
+      # Example: "NEVER give financial advice because legal liability"
+      # Example: "USE simple language to make crypto accessible"
+
+  # ---------------------------------------------------------------------------
+  # MENU (BMAD Compatibility - Quick Actions)
+  # ---------------------------------------------------------------------------
+  # Menu items are quick actions available to users
+  # Displayed as:
+  # - Telegram: Inline keyboard buttons or reply keyboard
+  # - Web: Quick action buttons in UI
+  # - Voice: Voice command suggestions
+  #
+  # Each menu item can trigger:
+  # - tool: Execute a tool directly
+  # - command: Run a predefined command
+  # - agent: Switch to another sub-agent
+  # - workflow: Launch a multi-step workflow
+  #
+  menu:
+    # Example: Knowledge base search
+    - label: "🔍 Search My Notes"
+      description: "Search your past conversations and saved notes"
+      action:
+        type: "tool"
+        tool: "knowledge_base"
+        prompt_template: "Search my knowledge base for: {user_input}"
+
+    # Example: Agent switching
+    - label: "🤖 Discover Agents"
+      description: "Find specialized agents for specific tasks"
+      action:
+        type: "tool"
+        tool: "sub_agent"
+        command: "list_agents"
+
+    # Example: Direct command
+    - label: "📊 My Profile"
+      description: "View and manage your profile settings"
+      action:
+        type: "command"
+        command: "show_profile"
+
+    # Example: Launch workflow
+    # - label: "🗺️ Plan Trip"
+    #   description: "Start guided trip planning workflow"
+    #   action:
+    #     type: "agent"
+    #     agent_id: "trip_planner"
+
+    # Add your menu items here following the same pattern
+    # Remove examples above when customizing
+
+# =============================================================================
+# Luka Agent Extensions (Additional Features)
+# =============================================================================
+
+luka_extensions:
+  # ---------------------------------------------------------------------------
+  # SYSTEM PROMPT (REQUIRED)
+  # ---------------------------------------------------------------------------
+  system_prompt:
+    # Path to main system prompt file (relative to luka_agent/)
+    # Example: "sub_agents/my_agent/system_prompt.md"
+    base: "sub_agents/[AGENT_ID]/system_prompt.md"
+
+    # OPTIONAL: Language-specific prompt variants
+    # If provided, overrides base prompt for that language
+    # Remove this section if not using language variants
+    language_variants:
+      en: "sub_agents/[AGENT_ID]/prompts/en.md"
+      ru: "sub_agents/[AGENT_ID]/prompts/ru.md"
+
+    # Template variables available in prompt via {var_name}
+    # These are populated at runtime from state and config
+    # Don't modify unless adding custom variables
+    template_vars:
+      agent_name: "{metadata.name}"
+      user_name: "{user.name}"
+      platform: "{state.platform}"
+      language: "{state.language}"
+
+  # ---------------------------------------------------------------------------
+  # ENABLED TOOLS (REQUIRED)
+  # ---------------------------------------------------------------------------
+  # List of tools this sub-agent can use
+  # Only include tools relevant to agent's domain
+  #
+  # Available tools:
+  # - "knowledge_base"   : Search user's KB and domain-specific indices
+  # - "sub_agent"        : Discover and launch other sub-agents
+  # - "youtube"          : Fetch video transcripts
+  # - "support"          : Get help resources
+  # - "token_info"       : Real-time crypto token data (specialist agents)
+  # - "swap_executor"    : Execute token swaps (specialist agents)
+  #
+  enabled_tools:
+    - "knowledge_base"
+    - "sub_agent"
+    - "youtube"
+    - "support"
+    # Add domain-specific tools:
+    # - "token_info"     # For crypto agents
+    # - "swap_executor"  # For trading agents
+
+  # ---------------------------------------------------------------------------
+  # KNOWLEDGE BASES (REQUIRED)
+  # ---------------------------------------------------------------------------
+  # List of KB indices this agent can access
+  # Supports template variables: {user_id}, {group_id}
+  #
+  # Common patterns:
+  # - User KB: "user-kb-{user_id}"
+  # - Group KB: "tg-kb-group-{group_id}"
+  # - Domain KB: "crypto-tweets", "defi-protocols"
+  # - Public KB: "public-kb", "luka-public-kb"
+  #
+  knowledge_bases:
+    - "user-kb-{user_id}"
+    # Add domain-specific indices:
+    # - "crypto-tweets"    # For crypto agents
+    # - "defi-protocols"   # For DeFi agents
+    # - "public-kb"        # For general public data
+
+  # ---------------------------------------------------------------------------
+  # LLM CONFIGURATION
+  # ---------------------------------------------------------------------------
+  # NOTE: LLM configuration (provider, model, temperature, max_tokens, streaming)
+  # is now set via environment variables in .env, NOT in sub-agent config.
+  #
+  # This separation ensures:
+  # - Sub-agent config focuses on personality/behavior (BMAD Method)
+  # - LLM settings are infrastructure concerns set at deployment time
+  # - All agents can be switched to different LLMs without config changes
+  #
+  # Set these in .env:
+  # - DEFAULT_LLM_PROVIDER (ollama, openai, anthropic)
+  # - DEFAULT_LLM_MODEL (llama3.2, gpt-4o, claude-sonnet-4)
+  # - DEFAULT_LLM_TEMPERATURE (0.0-1.0)
+  # - DEFAULT_LLM_MAX_TOKENS (1000-4000)
+  # - DEFAULT_LLM_STREAMING (true/false)
+
+  # ---------------------------------------------------------------------------
+  # CAPABILITIES (OPTIONAL)
+  # ---------------------------------------------------------------------------
+  # Agent capability boundaries
+  # Currently informational, future versions may enforce
+  capabilities:
+    # Data access scope
+    # Whitelist (allowed) and blacklist (forbidden) patterns
+    data_access:
+      # KB indices this agent CAN access (glob patterns)
+      allowed_kb_patterns:
+        - "user-kb-*"
+        - "public-*"
+
+      # KB indices this agent CANNOT access (glob patterns)
+      forbidden_kb_patterns:
+        - "admin-*"
+        - "system-*"
+
+    # Feature flags
+    # Document what this agent can/cannot do
+    features:
+      can_create_threads: true
+      can_execute_workflows: true
+      can_search_external: false
+      can_modify_user_data: false
+
+  # ---------------------------------------------------------------------------
+  # DEPENDENCIES (BMAD Compatibility - Tasks, Templates, Agents)
+  # ---------------------------------------------------------------------------
+  # Dependencies are reusable resources this agent can reference
+  # Similar to BMAD Method's dependencies system
+  #
+  # Types:
+  # - tasks: Executable workflows/procedures
+  # - templates: Reusable document templates
+  # - agents: Other sub-agents this agent can delegate to
+  # - data: Static data files (JSON, CSV, etc.)
+  #
+  dependencies:
+    # Tasks: Multi-step workflows the agent can execute
+    # Path relative to luka_agent/ directory
+    tasks:
+      # Example: Documentation creation task
+      - id: "create_doc"
+        path: "sub_agents/[AGENT_ID]/tasks/create_doc.md"
+        description: "Create structured documentation"
+        elicit: true  # Requires user interaction
+
+      # Example: Analysis task
+      # - id: "analyze_data"
+      #   path: "sub_agents/[AGENT_ID]/tasks/analyze_data.md"
+      #   description: "Analyze data and generate insights"
+      #   elicit: false  # Can run automatically
+
+    # Templates: Reusable document structures
+    templates:
+      # Example: PRD template
+      - id: "prd_template"
+        path: "sub_agents/[AGENT_ID]/templates/prd.md"
+        description: "Product Requirements Document template"
+        variables:
+          - product_name
+          - target_audience
+          - key_features
+
+      # Example: Report template
+      # - id: "report_template"
+      #   path: "sub_agents/[AGENT_ID]/templates/report.md"
+      #   description: "Analysis report template"
+      #   variables:
+      #     - report_title
+      #     - date
+      #     - findings
+
+    # Agents: Other sub-agents for delegation
+    agents:
+      # Example: Crypto specialist
+      - id: "crypto_analyst"
+        description: "Delegate crypto market analysis tasks"
+        trigger_keywords:
+          - "token price"
+          - "market analysis"
+          - "crypto"
+
+      # Example: Trip planner
+      # - id: "trip_planner"
+      #   description: "Delegate trip planning tasks"
+      #   trigger_keywords:
+      #     - "plan trip"
+      #     - "travel"
+      #     - "vacation"
+
+    # Data: Static reference files
+    data:
+      # Example: Knowledge base index
+      # - id: "faq_data"
+      #   path: "sub_agents/[AGENT_ID]/data/faqs.json"
+      #   description: "Frequently asked questions"
+      #   format: "json"
+
+      # Example: Reference data
+      # - id: "city_data"
+      #   path: "sub_agents/[AGENT_ID]/data/cities.csv"
+      #   description: "City information database"
+      #   format: "csv"
+
+  # ---------------------------------------------------------------------------
+  # INTENT TRIGGERS (OPTIONAL - Future Use)
+  # ---------------------------------------------------------------------------
+  # Keywords/phrases that suggest this agent should be used
+  # Used for automatic agent selection/recommendation
+  # Examples: ["crypto", "token price"] for crypto_analyst
+  # Leave empty if not using auto-switching
+  intent_triggers: []
+
+# =============================================================================
+# Quick Customization Checklist
+# =============================================================================
+#
+# 1. Replace [PLACEHOLDERS]:
+#    ✓ [AGENT_ID] → my_agent
+#    ✓ [AGENT_NAME] → My Agent
+#    ✓ [FULL_TITLE] → My Specialized Agent
+#    ✓ [EMOJI] → 🤖
+#    ✓ [BRIEF_DESCRIPTION] → What this agent does
+#    ✓ [SPECIFIC_ROLE] → Expert in X
+#
+# 2. Configure Persona:
+#    ✓ Write detailed identity (who, what, why)
+#    ✓ Define communication style (tone, pacing)
+#    ✓ Add 3-5 principles with WHY
+#
+# 3. Select Tools:
+#    ✓ Include only relevant tools
+#    ✓ Add domain-specific tools if needed
+#
+# 4. Configure Knowledge Bases:
+#    ✓ Always include user-kb-{user_id}
+#    ✓ Add domain KB indices if needed
+#
+# 5. Set LLM Config:
+#    ✓ Choose provider (ollama or openai)
+#    ✓ Choose model
+#    ✓ Set temperature based on agent type
+#
+# 6. Write system_prompt.md:
+#    ✓ Copy TEMPLATE/system_prompt.md
+#    ✓ Follow template structure
+#    ✓ Include tool descriptions
+#    ✓ Add 3-5 example interactions
+#
+# 7. Validate and Test:
+#    ✓ python -m luka_agent.cli validate my_agent
+#    ✓ python -m luka_agent.cli test my_agent "Hello"
+#
+# =============================================================================
+# Resources
+# =============================================================================
+#
+# - Development Guide: luka_agent/sub_agents/SUB_AGENT_DEV_GUIDE.md
+# - Architecture Doc: luka_agent/LUKA_AGENT_PIVOT_ARCHITECTURE.md
+# - Example Agents: general_luka/, crypto_analyst/, trip_planner/
+# - BMAD Docs: luka_agent/BMAD-METHOD/README.md
+#
+# =============================================================================
