@@ -1,15 +1,18 @@
 name: Lint Python
 
 on:
+  # Run on pull requests to any branch
   pull_request:
     paths:
       - 'bot/**/*.py'
       - 'worker/**/*.py'
       - '.github/workflows/lint-python.yml'
+
+  # Run on direct pushes to main (e.g., hotfixes without PR)
+  # Note: This will NOT run on PR commits to main (pull_request handles that)
   push:
     branches:
       - main
-      - langgraph_migration
     paths:
       - 'bot/**/*.py'
       - 'worker/**/*.py'

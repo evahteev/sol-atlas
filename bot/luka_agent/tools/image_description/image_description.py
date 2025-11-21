@@ -1,4 +1,4 @@
-m ta"""
+"""
 Image description tool for luka_agent.
 
 Uses Ollama llava vision model to analyze and describe images from URLs.
