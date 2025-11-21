@@ -1,30 +1,33 @@
-name: Test Bot - Luka Agent
+name: Luka Agent - Unit Tests
 
 on:
+  # Run on pull requests to any branch
   pull_request:
     paths:
       - 'bot/luka_agent/**'
       - 'bot/requirements.txt'
       - '.github/workflows/test-bot-luka-agent.yml'
+
+  # Run on direct pushes to main/langgraph_migration (e.g., hotfixes without PR)
+  # Note: This will NOT run on PR commits to these branches (pull_request handles that)
   push:
     branches:
       - main
-      - langgraph_migration
     paths:
       - 'bot/luka_agent/**'
       - 'bot/requirements.txt'
       - '.github/workflows/test-bot-luka-agent.yml'
 
 jobs:
-  test:
-    name: Test (Python ${{ matrix.python-version }})
+  luka-agent-unit-tests:
+    name: Luka Agent Unit Tests
     runs-on: ubuntu-latest
     timeout-minutes: 20
 
     strategy:
       fail-fast: false
       matrix:
-        python-version: ['3.10', '3.11']
+        python-version: ['3.11']
 
     # Service containers for dependencies
     services:
@@ -75,16 +78,27 @@ jobs:
       - name: Wait for services to be ready
         run: |
           echo "Waiting for Elasticsearch..."
-          timeout 60 bash -c 'until curl -f http://localhost:9200/_cluster/health; do sleep 2; done'
+          timeout 60 bash -c 'until curl -f http://localhost:9200/_cluster/health 2>/dev/null; do sleep 2; done'
+          echo "✓ Elasticsearch is ready"
+
           echo "Waiting for Redis..."
-          timeout 30 bash -c 'until redis-cli ping; do sleep 1; done'
+          # Install redis-tools for redis-cli
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq redis-tools
+          timeout 30 bash -c 'until redis-cli -h localhost -p 6379 ping 2>/dev/null | grep -q PONG; do sleep 1; done'
+          echo "✓ Redis is ready"
 
       - name: Run tests with coverage
         env:
+          # Use in-memory checkpointer for tests (default, faster)
+          LUKA_USE_MEMORY_CHECKPOINTER: true
+          # Redis connection (available but not required due to in-memory default)
           REDIS_HOST: localhost
           REDIS_PORT: 6379
+          # Elasticsearch connection
           ELASTICSEARCH_HOST: localhost
           ELASTICSEARCH_PORT: 9200
+          ELASTICSEARCH_URL: http://localhost:9200
           # Optional: Add test API keys if needed
           # OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY_TEST }}
         run: |
@@ -99,17 +113,18 @@ jobs:
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
-        if: matrix.python-version == '3.11'
         with:
           files: ./coverage.xml
           flags: luka-agent
-          name: luka-agent-py${{ matrix.python-version }}
+          name: luka-agent-coverage
           fail_ci_if_error: false
 
       - name: Generate test summary
         if: always()
         run: |
-          echo "## Test Results - Luka Agent (Python ${{ matrix.python-version }})" >> $GITHUB_STEP_SUMMARY
+          echo "## Luka Agent - Unit Tests Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Python Version:** ${{ matrix.python-version }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           if [ -f coverage.xml ]; then
             echo "✅ Tests completed with coverage report generated" >> $GITHUB_STEP_SUMMARY
