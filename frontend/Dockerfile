@@ -27,6 +27,9 @@ RUN yarn install
 # Copy the rest of your application's source code into the working directory
 COPY . .
 
+# Build the dash-guru library first
+RUN cd src/lib/dash-guru && yarn install && yarn build && cd ../../..
+
 # Build your Next.js application
 RUN yarn build
 
