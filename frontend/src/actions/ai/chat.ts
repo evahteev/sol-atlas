@@ -1,5 +1,4 @@
-import { Session } from 'next-auth'
-
+import { Session } from '@/lib/session'
 import { FlowClientObject } from '@/services/flow'
 import { components } from '@/services/flow/schema'
 

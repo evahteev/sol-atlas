@@ -15,7 +15,7 @@ import { NextRequest } from 'next/server'
 import { env } from 'next-runtime-env'
 import 'server-only'
 
-import auth from '@/auth'
+import { getSessionWithUser } from '@/lib/dal'
 
 import { BotApiAgent } from './bot-api-agent'
 
@@ -42,8 +42,8 @@ export const agentsIntegrations: AgentIntegrationConfig[] = [
     agents: async () => {
       const botApiUrl = env('NEXT_PUBLIC_BOT_API_URL') || 'https://bot-dexguru.dexguru.biz'
 
-      // Try to get authenticated user session from next-auth
-      const session = await auth()
+      // Try to get authenticated user session from custom session management
+      const session = await getSessionWithUser()
       const jwtToken = session?.access_token as string | undefined
       const userId = session?.user?.webapp_user_id || session?.user?.camunda_user_id
 

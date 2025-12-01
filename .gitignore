@@ -80,3 +80,6 @@ coverage/
 
 bot/.venv-luka/
 bot/venv
+
+.bmad
+.claude

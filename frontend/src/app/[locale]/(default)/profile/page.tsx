@@ -1,4 +1,4 @@
-import { auth } from '@/auth'
+import { getSessionWithUser } from '@/lib/dal'
 
 import { ActionsCard } from './_components/ActionsCard'
 import { BadgesAchievements } from './_components/BadgesAchievements'
@@ -12,7 +12,7 @@ import { HARDCODED_PROFILE_DATA } from './_types/profile'
 import styles from './_assets/page.module.scss'
 
 export default async function ProfilePage() {
-  const session = await auth()
+  const session = await getSessionWithUser()
 
   // Use hardcoded data for development
   const profileData = HARDCODED_PROFILE_DATA

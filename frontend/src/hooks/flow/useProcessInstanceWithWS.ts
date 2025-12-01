@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import { QueryObserverOptions } from '@tanstack/react-query'
 import uniqBy from 'lodash/uniqBy'
-import { useSession } from 'next-auth/react'
 import { env } from 'next-runtime-env'
 import useWebSocket, { ReadyState } from 'react-use-websocket'
 
+import { useSession } from '@/hooks/useAuth.compat'
 import { useTasks } from '@/services/flow/hooks/engine'
 import { components } from '@/services/flow/schema'
 
@@ -122,6 +122,13 @@ export const useProcessInstanceWithWS = ({
   const [tasks, setTasks] = useState<components['schemas']['TaskSchema'][]>([])
   const [currentActivity, setCurrentActivity] = useState<string | null>()
 
+  // Use ref to store the latest callback without causing re-renders
+  const onProcessInstanceEndRef = useRef(onProcessInstanceEnd)
+
+  useEffect(() => {
+    onProcessInstanceEndRef.current = onProcessInstanceEnd
+  }, [onProcessInstanceEnd])
+
   const { data: httpTasks } = useTasks({
     schema: {
       ...schema,
@@ -179,7 +186,7 @@ export const useProcessInstanceWithWS = ({
         endMessage.processInstanceId === processInstanceId
       ) {
         console.log(`process instance has ended`, lastJsonMessage)
-        onProcessInstanceEnd?.(endMessage)
+        onProcessInstanceEndRef.current?.(endMessage)
       }
     }
 
@@ -212,7 +219,7 @@ export const useProcessInstanceWithWS = ({
         return currentTasksArray
       })
     }
-  }, [lastJsonMessage, session?.user?.camunda_user_id, onProcessInstanceEnd, processInstanceId])
+  }, [lastJsonMessage, session?.user?.camunda_user_id, processInstanceId])
 
   const connectionStatus = {
     [ReadyState.CONNECTING]: 'Connecting',

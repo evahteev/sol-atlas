@@ -24,4 +24,7 @@ export const taskCustomComponent: Record<
   swap_tokens: {
     start: TaskFormCustomSwapToken,
   },
+  swap_tokens_from_external_wallet: {
+    start: TaskFormCustomSwapToken,
+  },
 }

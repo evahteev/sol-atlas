@@ -41,7 +41,7 @@ export default async function PageSwap() {
   return (
     <div className={styles.container}>
       <QuestRunner
-        processDefinitionKey="swap_tokens"
+        processDefinitionKey="swap_tokens_from_external_wallet"
         className={styles.body}
         startVariables={{
           token_sell: { type: 'String', value: '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913-base' }, // USDC

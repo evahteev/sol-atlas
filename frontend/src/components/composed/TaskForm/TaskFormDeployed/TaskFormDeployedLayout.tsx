@@ -3,7 +3,8 @@
 import { CSSProperties, FC } from 'react'
 
 import clsx from 'clsx'
-import { Session } from 'next-auth'
+
+import { Session } from '@/lib/session'
 
 import { TaskFormVariable } from '../types'
 import { TaskFormDeployedField } from './TaskFormDeployedField'

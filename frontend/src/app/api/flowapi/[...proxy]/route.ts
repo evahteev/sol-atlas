@@ -1,6 +1,7 @@
+import { cookies } from 'next/headers'
 import { NextRequest, NextResponse } from 'next/server'
 
-import auth from '@/auth'
+import { THIRDWEB_JWT_COOKIE_NAME } from '@/config/settings'
 
 const baseUrl = process.env.FLOW_API_URL
 
@@ -12,10 +13,13 @@ async function handler(originRequest: NextRequest) {
   headers.delete('host') // Remove 'host' to avoid cross-origin issues
   headers.delete('transfer-encoding') // Prevents chunked transfer encoding issues
 
-  const session = await auth()
-  if (session?.access_token) {
+  // Get Thirdweb JWT from cookie for Flow API authorization
+  const cookieStore = await cookies()
+  const thirdwebJWT = cookieStore.get(THIRDWEB_JWT_COOKIE_NAME)?.value
+
+  if (thirdwebJWT) {
     console.log('Request with Token to: ', url)
-    headers.set('Authorization', `Bearer ${session.access_token}`)
+    headers.set('Authorization', `Bearer ${thirdwebJWT}`)
   } else {
     console.log('Fallback Request with SYS_KEY to: ', url)
     headers.set('x-sys-key', process.env.FLOW_API_SYS_KEY ?? '')

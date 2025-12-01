@@ -49,6 +49,18 @@
       "swap": {
         "title": "Token Swap - {appName}",
         "description": "Swap tokens seamlessly across multiple chains with the best rates and lowest fees."
+      },
+      "content": {
+        "title": "Content - {appName}",
+        "description": "Browse and explore content dashboards, articles, and resources on {appName}."
+      },
+      "leaderboards": {
+        "title": "Leaderboards - {appName}",
+        "description": "View rankings, leaderboards, and competitive standings across the {appName} ecosystem."
+      },
+      "agents": {
+        "title": "AI Agents - {appName}",
+        "description": "Interact with AI agents and assistants powered by {appName}. Get intelligent responses and automated assistance."
       }
     }
   },
@@ -281,5 +293,20 @@
     "supportService": "Trade Smarter, Not Harder: {aiName}'s intelligent agents crunch real-time market data, track social sentiment, and execute trades automatically—giving you a hands-free edge. Start your AI-powered trading journey today!",
     "personalAssistant": "Stay Ahead of the Curve: With real-time on-chain and social sentiment analysis, {aiName} monitors whale moves and market trends to uncover winning opportunities. Don't miss your next big trade—sign up now!",
     "generativeAi": "Automate Your Success: From portfolio rebalancing to liquidity strategies, {aiName} optimizes every decision using live data and predictive modeling. Let AI take the wheel—get started today!"
+  },
+  "Launcher": {
+    "title": "Atlas Launcher",
+    "firstCta": {
+      "caption": "Ready to Build Your AI Agent?",
+      "description1": "Start with one bot or one workflow. Grow into a full AI layer for support, workflows, and experiments — all open-source and self-hosted.",
+      "deploymentTime": "Your personal bot configuration and deployment time ~15 minutes",
+      "button": "Launch Your Agent"
+    },
+    "secondCta": {
+      "caption": "Ready to Build Your AI Agent?",
+      "description1": "Choose a ready solution or deploy your own platform on Atlas. Gradually build your personal and product autopilot — battle-tested, open source, powered by GURU Framework.",
+      "description2": "Join {count} active users across the Atlas ecosystem.",
+      "button": "Launch Atlas"
+    }
   }
 }

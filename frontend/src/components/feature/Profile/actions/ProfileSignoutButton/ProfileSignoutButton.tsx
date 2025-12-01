@@ -3,12 +3,12 @@
 import { FC, useCallback } from 'react'
 
 import clsx from 'clsx'
-import { signOut } from 'next-auth/react'
 import { useActiveWallet, useDisconnect } from 'thirdweb/react'
 
 import { logout } from '@/actions/thirdweb'
 import Button, { ButtonProps } from '@/components/ui/Button'
 import { DEFAULT_REDIRECT_PATH } from '@/config/settings'
+import { signOut } from '@/hooks/useAuth.compat'
 
 import styles from './ProfileSignoutButton.module.scss'
 
@@ -24,7 +24,7 @@ export const ProfileSignoutButton: FC<SignoutButtonProps> = ({ caption, classNam
       disconnect(wallet)
     }
     await logout()
-    signOut({ redirectTo: DEFAULT_REDIRECT_PATH })
+    signOut({ callbackUrl: DEFAULT_REDIRECT_PATH })
   }, [disconnect, wallet])
   return (
     <Button

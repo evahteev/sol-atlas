@@ -2,13 +2,12 @@
 
 import { FC, useState } from 'react'
 
-import { useSession } from 'next-auth/react'
-
 import Delta from '@/components/atoms/Delta'
 import Loader from '@/components/atoms/Loader'
 import TokenAsset from '@/components/atoms/TokenAsset'
 import QuestRunner from '@/components/feature/QuestRunner'
 import Dialog from '@/components/ui/Dialog'
+import { useSession } from '@/hooks/useAuth.compat'
 import { ChainModel } from '@/models/chain'
 import { TokenV3Model } from '@/models/token'
 import { mapGuruNetworkToChainId } from '@/utils/chains'
@@ -48,7 +47,7 @@ export const TokensMarqueeSwap: FC<TokensMarqueeSwapProps> = ({ token, network }
 
       <Dialog isOpen={isOpen} onClose={handleClose} isMaximized className={styles.dialog}>
         <QuestRunner
-          processDefinitionKey="swap_tokens"
+          processDefinitionKey="swap_tokens_from_external_wallet"
           businessKey={`${session?.user?.id}-${token.address}-${token.network}`}
           className={styles.body}
           startVariables={{

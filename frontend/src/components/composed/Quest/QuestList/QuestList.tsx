@@ -3,12 +3,12 @@
 import { FC, ReactNode } from 'react'
 
 import clsx from 'clsx'
-import { useSession } from 'next-auth/react'
 import { useTranslations } from 'next-intl'
 
 import { questCustomRoute } from '@/components/composed/TaskForm/custom'
 import { ButtonProps } from '@/components/ui/Button'
 import Message from '@/components/ui/Message'
+import { useSession } from '@/hooks/useAuth.compat'
 import { FlowClientObject } from '@/services/flow'
 import { useProcessInstances, useTasks } from '@/services/flow/hooks/engine'
 import { useFlows } from '@/services/flow/hooks/flow'

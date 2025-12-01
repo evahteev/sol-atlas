@@ -1,17 +1,10 @@
 .container {
   flex: 0 0 auto;
   background: inherit;
-  overflow: auto;
 }
 
 .body {
   flex: 1 0 0;
-
-  @container page-content (width>1024px) {
-    position: absolute;
-    inset: 0;
-    overflow: auto;
-  }
 }
 
 .countdown {

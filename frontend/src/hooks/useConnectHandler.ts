@@ -2,16 +2,16 @@
 
 import { useCallback } from 'react'
 
-import { signIn, useSession } from 'next-auth/react'
 import { Chain, getContract, sendTransaction, waitForReceipt } from 'thirdweb'
 import { base } from 'thirdweb/chains'
 import { addAdmin, getAllAdmins } from 'thirdweb/extensions/erc4337'
 import { Wallet } from 'thirdweb/wallets'
 
 import { THIRDWEB_ADMIN_ACCOUNT, THIRDWEB_AUTH_TOKEN_LS_KEY, client } from '@/config/thirdweb'
+import { useSession } from '@/hooks/useAuth.compat'
 
 export const useConnectHandler = () => {
-  const { data: session } = useSession()
+  const { data: session, update } = useSession()
 
   const onConnectHandler = useCallback(
     async (wallet: Wallet) => {
@@ -36,18 +36,35 @@ export const useConnectHandler = () => {
             ? new URLSearchParams(window.location.search).get('callbackUrl')
             : null
 
-        const signInResult = await signIn('credentials', {
-          jwt: signedJWT,
-          wallets: JSON.stringify([
-            {
-              id: wallet.id,
-              address: address,
-            },
-          ]),
-          callbackUrl: callbackUrl || undefined,
-          redirect: false,
-        })
+        // Call new login API
+        const signInResult = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            jwt: signedJWT,
+            wallets: [
+              {
+                id: wallet.id,
+                address: address,
+              },
+            ],
+          }),
+          credentials: 'include',
+        }).then((res) => res.json())
+
         console.log('signInResult', signInResult)
+
+        // Refresh session after successful login
+        if (signInResult.success) {
+          await update()
+
+          // Redirect to callback URL if provided
+          if (callbackUrl) {
+            window.location.href = callbackUrl
+          }
+        }
 
         await Promise.all(
           [base].map(async (chain) => {
@@ -92,7 +109,7 @@ export const useConnectHandler = () => {
         )
       }
     },
-    [session]
+    [session?.user?.id, update]
   )
 
   return { onConnectHandler }

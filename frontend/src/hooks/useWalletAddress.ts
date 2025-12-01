@@ -1,6 +1,6 @@
 'use client'
 
-import { useSession } from 'next-auth/react'
+import { useSession } from '@/hooks/useAuth.compat'
 
 export enum WalletType {
   'guru' = 'guru',

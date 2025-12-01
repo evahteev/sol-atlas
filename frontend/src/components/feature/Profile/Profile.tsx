@@ -3,7 +3,6 @@
 import { FC, useMemo, useState } from 'react'
 
 import clsx from 'clsx'
-import { Session } from 'next-auth'
 import { useWalletDetailsModal } from 'thirdweb/react'
 
 import Loader from '@/components/atoms/Loader'
@@ -25,6 +24,7 @@ import IconBuy from '@/images/icons/plus.svg'
 import IconRefetch from '@/images/icons/reload.svg'
 import IconSettings from '@/images/icons/settings.svg'
 import IconSwap from '@/images/icons/swap.svg'
+import { Session } from '@/lib/session'
 import { ChainModel } from '@/models/chain'
 
 import ProfileAccount from '../ProfileAccount'

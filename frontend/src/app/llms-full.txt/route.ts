@@ -5,19 +5,19 @@ export async function GET() {
 
 ## Website
 
-- [https://dex.guru/](https://dex.guru/): Main application and access point for AI-powered trading terminal
+- [https://gurunetwork.ai/](https://gurunetwork.ai/): Main application and access point for AI-powered trading terminal
 - [https://gurunetwork.ai/](https://gurunetwork.ai/): Core Guru Network platform and Multi-Chain AI Compute Layer documentation
 - [https://launch.gurunetwork.ai/](https://launch.gurunetwork.ai/): Zero-code community launch platform with AI-powered features
 - [https://legacy.dex.guru/](https://legacy.dex.guru/): Original DeFi trading terminal for users preferring classic interface
-- [Maximize Staking Earnings](https://dex.guru/staking/loot): Stake $GURU to maximize your earnings effectively.
-- [Staking Support Page](https://dex.guru/staking/support): Get assistance and maximize earnings through GURU staking.
-- [Staking and Rewards](https://dex.guru/staking): Maximize earnings by staking $GURU and earning AIGURU.
-- [Staking $GURU Rewards](https://dex.guru/staking/wait-some): Maximize earnings by staking $GURU for rewards.
-- [Maximize Staking Earnings](https://dex.guru/staking/rapid): Stake $GURU to maximize your earnings with AIGURU.
-- [Stake and Earn $GURU](https://dex.guru): Maximize earnings through staking and rewards with $GURU.
-- [Maximize Your Staking Earnings](https://dex.guru/staking/can-wait): Stake $GURU to maximize your earnings and rewards.
-- [Staking and Referral Program](https://dex.guru/staking/referral): Maximize earnings through staking and referral opportunities.
-- [Buy $GURU Token](https://dex.guru/buy): Purchase $GURU and earn rewards through staking options.
+- [Maximize Staking Earnings](https://gurunetwork.ai/staking/loot): Stake $GURU to maximize your earnings effectively.
+- [Staking Support Page](https://gurunetwork.ai/staking/support): Get assistance and maximize earnings through GURU staking.
+- [Staking and Rewards](https://gurunetwork.ai/staking): Maximize earnings by staking $GURU and earning AIGURU.
+- [Staking $GURU Rewards](https://gurunetwork.ai/staking/wait-some): Maximize earnings by staking $GURU for rewards.
+- [Maximize Staking Earnings](https://gurunetwork.ai/staking/rapid): Stake $GURU to maximize your earnings with AIGURU.
+- [Stake and Earn $GURU](https://gurunetwork.ai): Maximize earnings through staking and rewards with $GURU.
+- [Maximize Your Staking Earnings](https://gurunetwork.ai/staking/can-wait): Stake $GURU to maximize your earnings and rewards.
+- [Staking and Referral Program](https://gurunetwork.ai/staking/referral): Maximize earnings through staking and referral opportunities.
+- [Buy $GURU Token](https://gurunetwork.ai/buy): Purchase $GURU and earn rewards through staking options.
 
 ## About Us
 

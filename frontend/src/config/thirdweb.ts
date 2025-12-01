@@ -1,6 +1,6 @@
 import { env } from 'next-runtime-env'
 import { createThirdwebClient } from 'thirdweb'
-import { arbitrum, base, mainnet } from 'thirdweb/chains'
+import { base, bsc, mainnet } from 'thirdweb/chains'
 import { ConnectButtonProps, ConnectEmbedProps } from 'thirdweb/react'
 import { ecosystemWallet } from 'thirdweb/wallets'
 
@@ -33,16 +33,12 @@ export const client = createThirdwebClient(
       }
 )
 
-export const wallets = [
-  ecosystemWallet(THIRDWEB_ECOSYSTEM_ID, {
-    auth: { mode: 'redirect' },
-  }),
-]
+export const wallets = [ecosystemWallet(THIRDWEB_ECOSYSTEM_ID)]
 
 export const thirdwebConnectBaseConfig: ConnectButtonProps | ConnectEmbedProps = {
   client: client,
   wallets: wallets,
-  chains: [mainnet, base, arbitrum],
+  chains: [mainnet, base, bsc],
   walletConnect: { projectId },
   theme: 'dark',
   accountAbstraction: { chain: base, sponsorGas: false },

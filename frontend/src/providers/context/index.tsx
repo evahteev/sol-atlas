@@ -6,7 +6,6 @@ import { PropsWithChildren, createContext, useCallback, useEffect, useState } fr
 
 import { getCookie, setCookie } from 'cookies-next/client'
 import jwt from 'jsonwebtoken'
-import { signOut, useSession } from 'next-auth/react'
 import { useActiveWallet, useDisconnect } from 'thirdweb/react'
 
 import { logout } from '@/actions/thirdweb'
@@ -15,6 +14,7 @@ import { AIChatPrompt } from '@/components/feature/AIChat/AIChat'
 import { DEFAULT_REDIRECT_PATH, REF_USER_ID_COOKIE_NAME } from '@/config/settings'
 import { ApplicationSettings } from '@/framework/config'
 import { useTokens } from '@/hooks/tokens/useTokens'
+import { signOut, useSession } from '@/hooks/useAuth.compat'
 import { ChainModel } from '@/models/chain'
 import { TokenV3Model } from '@/models/token'
 
@@ -72,7 +72,7 @@ export default function AppContextProvider({
       disconnect(wallet)
     }
     await logout()
-    signOut({ redirectTo: DEFAULT_REDIRECT_PATH })
+    signOut({ callbackUrl: DEFAULT_REDIRECT_PATH })
   }, [disconnect, wallet])
 
   useEffect(() => {
@@ -104,9 +104,11 @@ export default function AppContextProvider({
   useEffect(() => {
     if (
       status === 'authenticated' &&
-      session.user?.is_block === true &&
+      session?.user?.is_block === true &&
       !pathname.startsWith('/staking') &&
-      !pathname.startsWith('/agents')
+      !pathname.startsWith('/swap') &&
+      !pathname.startsWith('/flow/community_onboarding') &&
+      !pathname.startsWith('/run/community_onboarding')
     ) {
       router.push('/flow/community_onboarding')
     }

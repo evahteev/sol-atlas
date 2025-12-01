@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useMemo } from 'react'
 
 import clsx from 'clsx'
-import { useSession } from 'next-auth/react'
 import { toast } from 'react-toastify'
 import { useLinkProfile, useProfiles } from 'thirdweb/react'
 
 import Button, { ButtonProps } from '@/components/ui/Button'
 import { client } from '@/config/thirdweb'
+import { useSession } from '@/hooks/useAuth.compat'
 import IconSuccess from '@/images/icons/success.svg'
 import IconTelegram from '@/images/socials/telegram.svg'
 import IconX from '@/images/socials/x.svg'

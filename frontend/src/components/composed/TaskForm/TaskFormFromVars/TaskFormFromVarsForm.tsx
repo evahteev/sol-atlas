@@ -67,7 +67,9 @@ export const TaskFormFromVarsForm: FC<TaskFormProps & { isStartForm?: boolean }>
   // indicates whether share link was clicked or not.
   // User can't complete task until they click all share links
   const [linksToShare, setLinksToShare] = useState<Record<string, boolean>>({})
-  const wallets = session?.user?.web3_wallets?.map((x) => x.wallet_address)
+  const wallets = session?.user?.web3_wallets
+    ?.map((x) => x.wallet_address || x.address)
+    .filter(Boolean)
   const accountWallet = useWalletAddress(WalletType.thirdweb_ecosystem)
 
   const variablesGrouped = useMemo(() => groupTaskFormVariables(variables), [variables])

@@ -1,5 +1,3 @@
-import { Session } from 'next-auth'
-
 import JazzIcon from '@/components/atoms/JazzIcon'
 import IconEdit from '@/images/icons/edit.svg'
 import IconExit from '@/images/icons/exit.svg'
@@ -11,6 +9,7 @@ import IconDiscord from '@/images/socials/discord.svg'
 import IconTelegram from '@/images/socials/telegram.svg'
 import IconX from '@/images/socials/x.svg'
 import IconYouTube from '@/images/socials/youtube.svg'
+import { Session } from '@/lib/session'
 
 import { UserProfile } from '../_types/profile'
 

@@ -1,9 +1,16 @@
 import { redirect } from 'next/navigation'
 
-import { signIn } from 'next-auth/react'
 import createClient, { type Middleware } from 'openapi-fetch'
 
 import { paths } from './schema'
+
+const redirectToLogin = () => {
+  if (typeof window !== 'undefined') {
+    window.location.href = '/login'
+  } else {
+    redirect('/login')
+  }
+}
 
 const authMiddleware = (): Middleware => {
   return {
@@ -14,22 +21,14 @@ const authMiddleware = (): Middleware => {
       if (params.response.status >= 400) {
         if (params.response.status === 401) {
           console.error('Unauthorized in FLOW API', JSON.stringify(params))
-          if (typeof window !== 'undefined') {
-            signIn()
-          } else {
-            redirect('/login')
-          }
+          redirectToLogin()
         }
         const body = params.response.headers.get('content-type')?.includes('json')
           ? await params.response.clone().json()
           : await params.response.clone().text()
         if (JSON.stringify(body).includes('Signature has expired')) {
           console.error('Signature has expired', JSON.stringify(params))
-          if (typeof window !== 'undefined') {
-            signIn()
-          } else {
-            redirect('/login')
-          }
+          redirectToLogin()
         }
         throw new Error(JSON.stringify(body))
       }

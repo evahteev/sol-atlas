@@ -37,6 +37,15 @@
     background: var(--color-dark-80);
     border-radius: var(--radii) var(--radii) 0 0;
   }
+  button,
+  a {
+    margin: 0 auto;
+    min-width: auto;
+  }
+  .action {
+    margin: 0 auto;
+    min-width: auto;
+  }
 }
 
 .body {
@@ -180,4 +189,9 @@
 }
 
 .loader {
+}
+
+.action {
+  margin: 0 auto;
+  min-width: auto;
 }

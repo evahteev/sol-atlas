@@ -1,6 +1,6 @@
 import { ReactNode } from 'react'
 
-import { Session } from 'next-auth'
+import { Session } from '@/lib/session'
 
 export type TaskFormVariable = {
   value: unknown

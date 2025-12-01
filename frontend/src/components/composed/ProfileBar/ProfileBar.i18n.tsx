@@ -5,7 +5,6 @@ import Link from 'next/link'
 import { FC, memo, useContext, useMemo, useState } from 'react'
 
 import clsx from 'clsx'
-import { useSession } from 'next-auth/react'
 import { useTranslations } from 'next-intl'
 import { Address } from 'viem'
 
@@ -19,6 +18,7 @@ import Dialog from '@/components/ui/Dialog'
 import { LanguageSwitcher } from '@/components/ui/LanguageSwitcher'
 import Show from '@/components/ui/Show'
 import useAuth from '@/hooks/useAuth'
+import { useSession } from '@/hooks/useAuth.compat'
 import { useProfileBalance } from '@/hooks/useProfileBalance'
 import { WalletType, useWalletAddress } from '@/hooks/useWalletAddress'
 import IconExternal from '@/images/icons/arrow-up-right.svg'
@@ -146,7 +146,13 @@ export const ProfileBarI18n: FC<ProfileBarProps> = ({ className, chains }) => {
             <div className={styles.balances}>
               <appkit-button namespace="solana" />
             </div>
-
+            <div className={styles.balances}>
+              <Value
+                className={styles.balance}
+                value={profileBalance.testnet === null ? '–' : formatNumber(profileBalance.testnet)}
+                suffix={` ${pointsToken.symbols[0]}`}
+              />
+            </div>
             <button className={styles.toggle} onClick={handleOpen}>
               <JazzIcon
                 size={48}

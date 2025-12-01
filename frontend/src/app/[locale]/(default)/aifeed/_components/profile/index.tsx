@@ -5,7 +5,6 @@ import Link from 'next/link'
 import { FC } from 'react'
 
 import clsx from 'clsx'
-import { Session } from 'next-auth'
 
 import JazzIcon from '@/components/atoms/JazzIcon'
 import { jsNumberForAddress } from '@/components/atoms/JazzIcon/utils'
@@ -17,6 +16,7 @@ import Show from '@/components/ui/Show'
 import IconLink from '@/images/icons/link.svg'
 import IconSettings from '@/images/icons/settings.svg'
 import IconTelegram from '@/images/icons/telegram.svg'
+import { Session } from '@/lib/session'
 import { getShortAddress } from '@/utils/strings'
 
 import styles from './profile.module.scss'

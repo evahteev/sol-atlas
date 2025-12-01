@@ -1,4 +1,5 @@
 import clsx from 'clsx'
+import { getTranslations } from 'next-intl/server'
 
 import Text from '@/components/atoms/Text'
 import Caption from '@/components/ui/Caption'
@@ -11,29 +12,35 @@ import styles from './_assets/page.module.scss'
 export const revalidate = 300
 
 export default async function PageLauncher() {
+  const t = await getTranslations('Launcher')
+
   return (
     <div className={styles.container}>
       <div className={styles.header}>
         <Caption variant="header" size="lg" className={styles.title}>
-          Launcher Wizard
+          {t('title')}
         </Caption>
       </div>
 
       <div className={styles.body}>
         <PageLauncherCTA
           className={styles.cta}
-          caption="Explore the GURU Community App Ecosystem"
+          caption={t('firstCta.caption')}
           action={{
-            caption: 'Launch Your App',
+            caption: t('firstCta.button'),
             variant: 'success',
             size: 'lg',
-            href: '/flow/token_app',
+            href: '/run/token_app',
           }}>
           <Text>
-            <p>
-              Every app you see here was launched with the GURU Framework Wizard—no code needed.
-              They all run on our powerful automation, AI, and Web3 infrastructure. Ready to add
-              your app to the list?
+            <p style={{ marginBottom: '1rem' }}>{t('firstCta.description1')}</p>
+            <p
+              style={{
+                marginTop: '1rem',
+                fontSize: '0.85rem',
+                color: 'var(--color-text-secondary)',
+              }}>
+              ⏱️ {t('firstCta.deploymentTime')}
             </p>
           </Text>
         </PageLauncherCTA>
@@ -42,17 +49,22 @@ export default async function PageLauncher() {
 
         <PageLauncherCTA
           className={clsx(styles.cta, styles.last)}
-          caption="The ultimate upgrade for your community"
+          caption={t('secondCta.caption')}
           action={{
-            caption: 'Launch Your App',
+            caption: t('secondCta.button'),
             variant: 'success',
             size: 'lg',
-            href: '/flow/token_app',
+            href: '/run/token_app',
           }}>
           <Text>
-            <p>
-              Launch your unique app under 5 mins and start your journey in the GURU ecosystem
-              today.
+            <p>{t('secondCta.description1')}</p>
+            <p
+              style={{
+                marginTop: '1rem',
+                fontSize: '0.9rem',
+                color: 'var(--color-text-secondary)',
+              }}>
+              {t('secondCta.description2', { count: '36K+' })}
             </p>
           </Text>
         </PageLauncherCTA>

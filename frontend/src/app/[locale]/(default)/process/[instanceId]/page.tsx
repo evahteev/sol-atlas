@@ -1,7 +1,7 @@
-import auth from '@/auth'
 import StateMessage from '@/components/composed/StateMessage'
 import QuestRunner from '@/components/feature/QuestRunner'
 import Caption from '@/components/ui/Caption'
+import { getSessionWithUser } from '@/lib/dal'
 import { FlowClientObject } from '@/services/flow'
 
 import styles from './_assets/page.module.scss'
@@ -11,7 +11,7 @@ type Params = Promise<{ instanceId: string }>
 export default async function PageProcessInstance(props: { params: Params }) {
   const params = await props.params
   const instanceId = params.instanceId
-  const session = await auth()
+  const session = await getSessionWithUser()
   const instance = session
     ? await FlowClientObject.engine.process.instance.get({ instanceId, session })
     : undefined

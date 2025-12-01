@@ -1,21 +1,33 @@
 import { redirect } from 'next/navigation'
 
-import { AuthError } from 'next-auth'
-
-import { signIn } from '@/auth'
-
 export default async function SignInPage() {
   return (
     <form
       action={async (formData) => {
         'use server'
         try {
-          await signIn('credentials', formData)
-        } catch (error) {
-          if (error instanceof AuthError) {
-            return redirect(`/login?error=${error.message}`)
+          const jwt = formData.get('jwt') as string
+          const wallets = formData.get('wallets') as string
+
+          const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/auth/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              jwt,
+              wallets: wallets ? JSON.parse(wallets) : [],
+            }),
+          })
+
+          const result = await response.json()
+
+          if (!result.success) {
+            return redirect(`/login?error=${result.error || 'Login failed'}`)
           }
-          throw error
+
+          return redirect('/')
+        } catch (error) {
+          const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+          return redirect(`/login?error=${errorMessage}`)
         }
       }}>
       <label htmlFor="jwt">
@@ -23,7 +35,7 @@ export default async function SignInPage() {
         <input name="jwt" id="jwt" />
       </label>
       <label htmlFor="wallets">
-        Thirdweb Wallets
+        Thirdweb Wallets (JSON array)
         <input name="wallets" id="wallets" />
       </label>
       <input type="submit" value="Sign In" />

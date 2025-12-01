@@ -39,9 +39,9 @@ export const Intro: FC<IntroProps> = ({ className, isLoading }) => {
         <Loader className={styles.loader} />
       </div>
 
-      <Show if={process.env.NEXT_PUBLIC_GIT_COMMIT}>
+      <Show if={env('NEXT_PUBLIC_GIT_COMMIT')}>
         <div className={styles.footer}>
-          <span className={styles.version}>Version {process.env.NEXT_PUBLIC_GIT_COMMIT}</span>
+          <span className={styles.version}>Version {env('NEXT_PUBLIC_GIT_COMMIT')}</span>
         </div>
       </Show>
     </div>

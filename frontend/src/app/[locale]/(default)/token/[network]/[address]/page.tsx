@@ -13,6 +13,7 @@ import { PageTokenChart } from './_components/chart/chart'
 import { TokenOverviewLinks } from './_components/links'
 import PageTokenShareButton from './_components/share/share'
 import TokenOverviewStats from './_components/stats'
+import { TokenOverviewTokenSwapContent } from './_components/swap/content'
 import { TokenOverviewTokenSwap } from './_components/swap/swap'
 
 import styles from './_assets/page.module.scss'
@@ -101,6 +102,10 @@ const PageToken = async ({
 
         <div className={clsx(styles.activity, { [styles.active]: view === 'activity' })}>
           <TokenActivity token={token} className={styles.activityContent} chains={chains} />
+        </div>
+
+        <div className={clsx(styles.swap, { [styles.active]: view === 'activity' })}>
+          <TokenOverviewTokenSwapContent token={token} className={styles.swapContent} />
         </div>
       </div>
     </>

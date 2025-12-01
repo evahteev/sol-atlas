@@ -1,26 +1,36 @@
 import { renderHook } from '@testing-library/react'
-import { useSession } from 'next-auth/react'
 import { env } from 'next-runtime-env'
 import useWebSocket, { ReadyState } from 'react-use-websocket'
+
+import { useSession } from '@/hooks/useSession'
 
 import { TaskEvent, useTaskWebSocket } from '../useTaskWebSocket'
 
 // Mock dependencies
-jest.mock('next-auth/react')
+jest.mock('@/hooks/useSession')
 jest.mock('react-use-websocket')
 
 const mockUseSession = useSession as jest.MockedFunction<typeof useSession>
 const mockUseWebSocket = useWebSocket as jest.MockedFunction<typeof useWebSocket>
 
 describe('useTaskWebSocket', () => {
-  const mockSession = {
-    data: {
-      user: { camunda_user_id: 'test-user-123' },
-      access_token: 'mock-jwt-token',
-      expires: '2025-12-31',
+  const mockSessionData = {
+    user: {
+      id: 'test-user-123',
+      webapp_user_id: 'test-webapp-123',
+      is_admin: false,
+      is_block: false,
+      camunda_user_id: 'test-user-123',
     },
-    status: 'authenticated' as const,
-    update: jest.fn(),
+    access_token: 'mock-jwt-token',
+    expires: '2025-12-31',
+  }
+
+  const mockSession = {
+    session: mockSessionData,
+    loading: false,
+    error: null,
+    refetch: jest.fn(),
   }
 
   const mockTaskEvent: TaskEvent = {
@@ -72,9 +82,10 @@ describe('useTaskWebSocket', () => {
 
     it('should not connect when session is missing', () => {
       mockUseSession.mockReturnValue({
-        data: null,
-        status: 'unauthenticated',
-        update: jest.fn(),
+        session: null,
+        loading: false,
+        error: null,
+        refetch: jest.fn(),
       })
 
       renderHook(() => useTaskWebSocket())
@@ -85,13 +96,20 @@ describe('useTaskWebSocket', () => {
 
     it('should not connect when access_token is missing', () => {
       mockUseSession.mockReturnValue({
-        data: {
-          user: { camunda_user_id: 'test-user-123' },
+        session: {
+          user: {
+            id: 'test-user-123',
+            webapp_user_id: 'test-webapp-123',
+            is_admin: false,
+            is_block: false,
+            camunda_user_id: 'test-user-123',
+          },
           expires: '2025-12-31',
           // access_token is missing
         },
-        status: 'authenticated',
-        update: jest.fn(),
+        loading: false,
+        error: null,
+        refetch: jest.fn(),
       })
 
       renderHook(() => useTaskWebSocket())
@@ -417,11 +435,13 @@ describe('useTaskWebSocket', () => {
 
       // Update session with new token
       mockUseSession.mockReturnValue({
-        ...mockSession,
-        data: {
-          ...mockSession.data!,
+        session: {
+          ...mockSessionData,
           access_token: 'new-jwt-token',
         },
+        loading: false,
+        error: null,
+        refetch: jest.fn(),
       })
 
       // Rerender to trigger useMemo recalculation
@@ -442,9 +462,10 @@ describe('useTaskWebSocket', () => {
 
       // Session expires
       mockUseSession.mockReturnValue({
-        data: null,
-        status: 'unauthenticated',
-        update: jest.fn(),
+        session: null,
+        loading: false,
+        error: null,
+        refetch: jest.fn(),
       })
 
       // Rerender

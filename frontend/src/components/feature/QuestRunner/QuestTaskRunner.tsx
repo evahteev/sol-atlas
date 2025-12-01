@@ -1,5 +1,7 @@
 'use client'
 
+import { useRouter } from 'next/navigation'
+
 import { FC, useCallback, useState } from 'react'
 
 import { useAppKit } from '@reown/appkit/react'
@@ -16,7 +18,9 @@ import Loader from '@/components/atoms/Loader'
 import TaskForm from '@/components/composed/TaskForm'
 import { TaskFormVariable } from '@/components/composed/TaskForm/types'
 import Card from '@/components/ui/Card'
+import { DEFAULT_REDIRECT_PATH } from '@/config/settings'
 import { wagmiAdapter } from '@/config/wagmi'
+import IconClose from '@/images/icons/close.svg'
 import { FlowClientObject } from '@/services/flow'
 import { components } from '@/services/flow/schema'
 
@@ -37,6 +41,7 @@ export const QuestTaskRunner: FC<QuestTaskRunnerProps> = ({
   onComplete,
 }) => {
   const [isPending, setIsPending] = useState(false)
+  const router = useRouter()
   const { address } = useAccount()
   const { open } = useAppKit()
   const queryClient = useQueryClient()
@@ -176,6 +181,20 @@ export const QuestTaskRunner: FC<QuestTaskRunnerProps> = ({
     },
     [address, onComplete, open, queryClient, task.id, taskKey]
   )
+  const handleClose = useCallback(async () => {
+    try {
+      setIsPending(true)
+
+      await FlowClientObject.engine.process.instance.delete(instance.id)
+      toast.success('Quest cancelled')
+      router.push(DEFAULT_REDIRECT_PATH)
+    } catch (e) {
+      console.error(e)
+      toast.error('Error cancelling Quest')
+    } finally {
+      setIsPending(false)
+    }
+  }, [instance.id, router])
 
   return (
     <Card
@@ -187,6 +206,9 @@ export const QuestTaskRunner: FC<QuestTaskRunnerProps> = ({
       data-process-instance={instance.id}
       data-task-key={task.taskDefinitionKey}
       data-task-id={task.id}>
+      <button className={styles.close} onClick={handleClose}>
+        <IconClose className={styles.closeIcon} />
+      </button>
       {!isPending && (
         <TaskForm
           title={task.name}

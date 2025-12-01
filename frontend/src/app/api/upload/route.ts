@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-import auth from '@/auth'
+import { getSession } from '@/lib/dal'
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await auth()
-    if (!session?.user?.id) {
+    const session = await getSession()
+    if (!session?.userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
     const fileExtension = file.name.split('.').pop()
     const { v4: uuidv4 } = await import('uuid')
     const uniqueFileName = `${uuidv4()}.${fileExtension}`
-    const fileKey = `uploads/${session.user.id}/${uniqueFileName}`
+    const fileKey = `uploads/${session.userId}/${uniqueFileName}`
 
     // Upload file to S3 server-side
     const { S3Client, PutObjectCommand } = await import('@aws-sdk/client-s3')

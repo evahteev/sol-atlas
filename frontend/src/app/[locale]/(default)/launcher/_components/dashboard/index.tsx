@@ -17,7 +17,7 @@ export const PageLauncherDashboard = async () => {
       <div className={styles.container}>
         <div className={styles.header}>
           <Caption variant="body" size="lg" className={styles.title}>
-            GURU Network Ecosystem Overview
+            SOL Atlas Ecosystem Overview
           </Caption>
         </div>
         <div className={styles.body}>
@@ -28,7 +28,7 @@ export const PageLauncherDashboard = async () => {
       <div className={styles.container}>
         <div className={styles.header}>
           <Caption variant="body" size="lg" className={styles.title}>
-            Live Apps Leaderboard
+            Live Communities Leaderboard.
           </Caption>
           <span className={styles.description}>The communities shaping the next wave of Web3</span>
         </div>
