@@ -24,6 +24,7 @@ __pycache__/
 *.pem
 build/
 dist/
+!frontend/src/lib/dash-guru/dist/
 *.egg-info/
 .ipynb_checkpoints
 .pytest_cache/
