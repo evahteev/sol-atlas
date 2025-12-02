@@ -17,7 +17,7 @@ export const useConnectHandler = () => {
     async (wallet: Wallet) => {
       const account = wallet.getAccount()
       const address = account?.address
-      if (!session && address) {
+      if (!session?.user?.id && address) {
         console.log('logging in!')
         const thirdwebAuthJwt = localStorage.getItem(THIRDWEB_AUTH_TOKEN_LS_KEY)
 

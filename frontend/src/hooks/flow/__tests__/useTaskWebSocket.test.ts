@@ -36,11 +36,11 @@ describe('useTaskWebSocket', () => {
   const mockTaskEvent: TaskEvent = {
     eventType: 'create',
     taskId: 'task-123',
-    taskName: 'Test Task',
+    name: 'Test Task',
     assignee: 'test-user-123',
     processInstanceId: 'process-456',
     processDefinitionKey: 'test_process',
-    timestamp: Date.now(),
+    startTime: Date.now(),
     variables: {},
   }
 

@@ -69,11 +69,11 @@ describe('useTasks with WebSocket Integration', () => {
   const mockTaskEvent: TaskEvent = {
     eventType: 'create',
     taskId: 'task-2',
-    taskName: 'New Task from WebSocket',
+    name: 'New Task from WebSocket',
     assignee: 'test-user-123',
     processInstanceId: 'process-1',
     processDefinitionKey: 'test_process',
-    timestamp: Date.now(),
+    startTime: Date.now(),
     variables: {},
   }
 
@@ -254,7 +254,7 @@ describe('useTasks with WebSocket Integration', () => {
         ...mockTaskEvent,
         eventType: 'update',
         taskId: 'task-1',
-        taskName: 'Updated Task Name',
+        name: 'Updated Task Name',
       }
 
       const { rerender } = renderHook(
