@@ -2,9 +2,8 @@
 
 import { FC, useEffect, useState } from 'react'
 
-import { useSession } from 'next-auth/react'
-
 import Loader from '@/components/atoms/Loader'
+import { useSession } from '@/hooks/useAuth.compat'
 import { useTasks } from '@/services/flow/hooks/engine'
 import { components } from '@/services/flow/schema'
 

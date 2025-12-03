@@ -6,13 +6,13 @@ import {
   useQuery,
   useQueryClient,
 } from '@tanstack/react-query'
-import { Session } from 'next-auth'
-import { useSession } from 'next-auth/react'
 import { env } from 'next-runtime-env'
 
 import { TaskFormDeployedForm } from '@/components/composed/TaskForm/TaskFormDeployed/types'
 import { TaskFormVariable } from '@/components/composed/TaskForm/types'
 import { TaskEvent, useTaskWebSocket } from '@/hooks/flow/useTaskWebSocket'
+import { useSession } from '@/hooks/useAuth.compat'
+import { Session } from '@/lib/session'
 import { FlowClientObject } from '@/services/flow'
 
 import { components } from '../../schema'
@@ -29,9 +29,13 @@ function mapTaskEventToTaskSchema(event: TaskEvent): components['schemas']['Task
     name: event.name,
     assignee: event.assignee,
     owner: event.owner,
-    created: event.startTime ? new Date(event.startTime).toISOString() : new Date().toISOString(),
+    created: event.startTime
+      ? new Date(Number(event.startTime)).toISOString()
+      : new Date().toISOString(),
     due: event.dueDate,
-    lastUpdated: event.endTime ? new Date(event.endTime).toISOString() : new Date().toISOString(),
+    lastUpdated: event.endTime
+      ? new Date(Number(event.endTime)).toISOString()
+      : new Date().toISOString(),
     delegationState: null,
     description: event.description,
     executionId: event.executionId,

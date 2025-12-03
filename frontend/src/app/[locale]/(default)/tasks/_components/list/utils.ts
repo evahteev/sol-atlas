@@ -7,5 +7,9 @@ export const getFilter = (tab?: string, isNFTHolder?: boolean) => {
     return isNFTHolder ? 'quest_daonft' : 'quest_nodaonft'
   }
 
+  if (tab === 'minima') {
+    return 'quest_minima'
+  }
+
   return '^quest(?!_daonft$|_nodaonft$).*'
 }

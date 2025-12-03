@@ -4,7 +4,6 @@ import { ChangeEventHandler, FC, FocusEventHandler, useContext, useEffect, useSt
 
 import { useAppKitAccount } from '@reown/appkit/react'
 import clsx from 'clsx'
-import { useSession } from 'next-auth/react'
 
 import Loader from '@/components/atoms/Loader'
 import Value from '@/components/atoms/Value'
@@ -18,6 +17,7 @@ import Caption from '@/components/ui/Caption'
 import Card from '@/components/ui/Card'
 import Show from '@/components/ui/Show'
 import { useTokens } from '@/hooks/tokens/useTokens'
+import { useSession } from '@/hooks/useAuth.compat'
 import { WalletType, useWalletAddress } from '@/hooks/useWalletAddress'
 import { useWalletTotals } from '@/hooks/useWalletTotals'
 import IconChange from '@/images/icons/change.svg'
@@ -27,6 +27,7 @@ import { TokenV3Model } from '@/models/token'
 import { AppContext } from '@/providers/context'
 import { formatNumber, inputNumberParseValue } from '@/utils/numbers'
 
+import { TaskFormFieldExternalWallet } from '../../fields/externalWallet/externalWallet'
 import { TaskFormCustomSwapTokenSlippage } from './slippage'
 import { TaskFormCustomSwapTokenSummary } from './summary'
 import { SwapSummary } from './types'
@@ -286,8 +287,7 @@ const TaskFormCustomSwapToken: FC<TaskFormProps> = ({ variables = {}, isLoading,
     )
   }
 
-  const buttonCaption =
-    values.amount && isInsufficientBalance ? 'Insufficient balance? Top Up You Wallet' : 'Swap'
+  const buttonCaption = values.amount && isInsufficientBalance ? 'Insufficient balance' : 'Swap'
 
   return (
     <div className={styles.container}>
@@ -452,15 +452,29 @@ const TaskFormCustomSwapToken: FC<TaskFormProps> = ({ variables = {}, isLoading,
       </div>
 
       <div className={styles.footer}>
-        <Button
-          href={isInsufficientBalance ? '/topup' : undefined}
-          caption={buttonCaption}
-          size="xl"
-          variant="primary"
-          isBlock
-          isDisabled={!values.amount}
-          onClick={!isInsufficientBalance ? handleConfirm : undefined}
-        />
+        {Object.keys(variables)
+          .filter((x) => x.includes('externalWallet_'))
+          ?.map((varName) => {
+            const varData = variables[varName]
+            return (
+              <TaskFormFieldExternalWallet
+                name={varName}
+                key={varName}
+                className={styles.externalWallet}
+                title={varData.label}
+              />
+            )
+          })}
+        {address && (
+          <Button
+            caption={buttonCaption}
+            size="xl"
+            variant="primary"
+            isBlock
+            isDisabled={!values.amount || isInsufficientBalance}
+            onClick={handleConfirm}
+          />
+        )}
       </div>
     </div>
   )

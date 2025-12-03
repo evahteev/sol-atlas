@@ -3,7 +3,6 @@ import type { Metadata } from 'next'
 import { getTranslations } from 'next-intl/server'
 import { env } from 'next-runtime-env'
 
-import auth from '@/auth'
 import Banner from '@/components/composed/Banner'
 import IconAI from '@/images/icons/aichat.svg'
 import IconFolder from '@/images/icons/folder.svg'
@@ -11,6 +10,7 @@ import IconGlobe from '@/images/icons/globe.svg'
 import IconTGChat from '@/images/icons/telegram-chat.svg'
 import IconTG from '@/images/icons/telegram.svg'
 import IconX from '@/images/icons/x.svg'
+import { getSessionWithUser } from '@/lib/dal'
 import { FlowClientObject } from '@/services/flow'
 import { getWarehouseQueryResponse } from '@/services/warehouse-redash'
 
@@ -56,7 +56,7 @@ export async function generateMetadata({
 }
 
 export default async function PageCommunity() {
-  const session = await auth()
+  const session = await getSessionWithUser()
   const t = await getTranslations('AIFeed')
   const dashboardT = await getTranslations('AIFeed.dashboard')
   const profileT = await getTranslations('AIFeed.profile')
@@ -160,7 +160,7 @@ export default async function PageCommunity() {
           actions={[
             {
               caption: t('support.buttonText'),
-              href: '/flow/app_support',
+              href: '/run/app_support',
               isOutline: true,
               variant: 'secondary',
             },

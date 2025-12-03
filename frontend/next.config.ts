@@ -4,6 +4,7 @@ import CopyPlugin from 'copy-webpack-plugin'
 import CssLayeringPlugin from 'css-layering-webpack-plugin'
 import fs from 'fs'
 import createNextIntlPlugin from 'next-intl/plugin'
+import { env } from 'next-runtime-env'
 import path from 'path'
 
 const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts')
@@ -100,9 +101,33 @@ const fullNextConfig: NextConfig = {
 
     config.externals.push('pino-pretty', 'lokijs', 'encoding')
 
+    // Fix for MetaMask SDK React Native dependencies in web builds
+    // See: https://github.com/MetaMask/metamask-sdk/issues/857
+    config.resolve.fallback = {
+      ...config.resolve.fallback,
+      '@react-native-async-storage/async-storage': false,
+    }
+
+    // Suppress "Critical dependency" warnings from @whatwg-node/fetch and graphql-yoga
+    // These warnings occur due to dynamic requires in server-side polyfills
+    // The code works correctly despite the warnings
+    config.module = {
+      ...config.module,
+      exprContextCritical: false,
+    }
+
+    // Ignore dynamic require warnings in specific modules
+    config.ignoreWarnings = [
+      ...(config.ignoreWarnings || []),
+      {
+        module: /@whatwg-node\/fetch/,
+        message: /Critical dependency/,
+      },
+    ]
+
     return config
   },
-  generateBuildId: () => `${process.env.NEXT_PUBLIC_GIT_COMMIT}`,
+  generateBuildId: () => `${env('NEXT_PUBLIC_GIT_COMMIT')}`,
 
   ...nextConfig,
 }

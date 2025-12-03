@@ -22,7 +22,7 @@ export default function AppProvider({
 }>) {
   return (
     <QueryClientProvider client={queryClient}>
-      <ReactQueryDevtools initialIsOpen={true} />
+      <ReactQueryDevtools initialIsOpen={false} />
 
       <AppContextProvider chains={chains} config={config}>
         {children}

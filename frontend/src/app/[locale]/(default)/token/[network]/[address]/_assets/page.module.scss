@@ -26,7 +26,7 @@
   display: flex;
   align-items: center;
 
-  @container page-content (width<=1024px) {
+  @container page-content (width<=1100px) {
     margin-inline-end: auto;
   }
 }
@@ -63,7 +63,7 @@
   align-items: center;
   flex-flow: row wrap;
 
-  @container page-content (width>1024px) {
+  @container page-content (width>1100px) {
     display: contents;
   }
 }
@@ -77,15 +77,17 @@
   flex: 1 0 auto;
   background: inherit;
 
-  @container page-content (width>1024px) {
+  @container page-content (width>1100px) {
     display: grid;
     gap: 16px;
-    grid-template-areas: 'stats body';
-    grid-template-columns: 360px auto;
+    grid-template-areas:
+      'stats chart swap'
+      'stats activity swap';
+    grid-template-columns: 360px auto 440px;
     margin-block-end: calc(-1 * var(--page-padding));
   }
 
-  @container page-content (width<=1024px) {
+  @container page-content (width<=1100px) {
     position: relative;
     min-height: calc(min(100vh, 100svh) - 56px - 220px);
     margin: calc(-1 * var(--page-padding));
@@ -95,18 +97,16 @@
 
 .stats {
   grid-area: stats;
-  position: relative;
   background: inherit;
 
-  @container page-content (width>1024px) {
+  @container page-content (width>1100px) {
     &Content {
-      position: absolute;
-      inset: 0;
-      overflow: auto;
+      position: sticky;
+      top: 72px;
     }
   }
 
-  @container page-content (width<=1024px) {
+  @container page-content (width<=1100px) {
     padding: 0 var(--page-padding);
   }
 
@@ -116,43 +116,58 @@
 }
 
 .chart {
-  grid-area: body;
+  grid-area: chart;
   background: inherit;
   display: flex;
   flex-flow: column;
+  position: relative;
 
-  @container page-content (width<=1024px) {
+  @container page-content (width>1100px) {
+    height: clamp(320px, 60vh, 560px);
+  }
+
+  @container page-content (width<=1100px) {
     height: calc(min(100vh, 100svh) - 56px - 220px);
-    position: relative;
+  }
 
-    &Content {
-      height: auto !important;
-      position: absolute !important;
-      inset: 0 !important;
-    }
+  &Content {
+    height: auto !important;
+    position: absolute !important;
+    inset: 0 !important;
   }
 }
 
 .activity {
-  grid-area: body;
+  grid-area: activity;
   position: relative;
   background: inherit;
+  overflow: auto;
 
-  @container page-content (width>1024px) {
+  @container page-content (width>1100px) {
     margin-inline-end: -16px;
   }
 
-  @container page-content (width<=1024px) {
+  @container page-content (width<=1100px) {
     &Content {
       padding: 0 var(--page-padding);
     }
   }
 }
 
+.swap {
+  grid-area: swap;
+
+  &Content {
+    position: sticky;
+    top: 72px;
+  }
+}
+
 .chart,
 .activity,
-.stats {
-  @container page-content (width<=1024px) {
+.stats,
+.swap {
+  @container page-content (width<=1100px) {
     &:not(.active) {
       visibility: hidden !important;
       opacity: 0 !important;
@@ -166,24 +181,6 @@
   }
 }
 
-.chart,
-.activity {
-  @container page-content (width>1024px) {
-    opacity: 1;
-    visibility: visible;
-    transition: 0.25s ease;
-
-    &:not(.active) {
-      visibility: hidden !important;
-      opacity: 0 !important;
-      inset: 0;
-      overflow: hidden;
-      position: absolute;
-      pointer-events: none;
-    }
-  }
-}
-
 .tabs {
   flex: 0 0 auto;
   display: flex;
@@ -192,21 +189,27 @@
   border-bottom: 1px solid var(--color-dark-40);
   margin-inline-end: auto;
 
-  @container page-content (width>1024px) {
+  @container page-content (width>1100px) {
     order: -2;
   }
 }
 
 .asset {
-  @container page-content (width>1024px) {
+  @container page-content (width>1100px) {
     order: -3;
   }
 }
 
 .tab {
-  @container page-content (width>1024px) {
+  @container page-content (width>1100px) {
     &Stats {
       display: none !important;
     }
+  }
+}
+
+.openSwap {
+  @container page-content (width>1100px) {
+    display: none !important;
   }
 }

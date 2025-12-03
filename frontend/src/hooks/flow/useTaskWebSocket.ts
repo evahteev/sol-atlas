@@ -1,8 +1,9 @@
 import { useMemo } from 'react'
 
-import { useSession } from 'next-auth/react'
 import { env } from 'next-runtime-env'
 import useWebSocket, { ReadyState } from 'react-use-websocket'
+
+import { useSession } from '@/hooks/useSession'
 
 /**
  * Task event from WebSocket endpoint /api/ws/tasks
@@ -116,7 +117,7 @@ export interface UseTaskWebSocketReturn {
  */
 export const useTaskWebSocket = (options: UseTaskWebSocketOptions = {}): UseTaskWebSocketReturn => {
   const { enabled = true, onEvent } = options
-  const { data: session } = useSession()
+  const { session } = useSession()
 
   // Build WebSocket URL without authentication (auth passed via protocols)
   // Only connect if enabled and session with access token is available

@@ -5,7 +5,6 @@ import { CSSProperties, FC } from 'react'
 import clsx from 'clsx'
 import DOMPurify from 'isomorphic-dompurify'
 import { marked } from 'marked'
-import { Session } from 'next-auth'
 
 import ImageFallback from '@/components/atoms/ImageFallback'
 import Text from '@/components/atoms/Text'
@@ -13,6 +12,7 @@ import { WarehouseDashboardBySlugClient } from '@/components/feature/WarehouseDa
 import Button, { ButtonSize, ButtonVariant } from '@/components/ui/Button'
 import Message from '@/components/ui/Message'
 import Show from '@/components/ui/Show'
+import { Session } from '@/lib/session'
 import { replaceTemplateVariables } from '@/utils/strings'
 
 import FormField from '../../FormField'

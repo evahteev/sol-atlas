@@ -1,14 +1,14 @@
 import { FC } from 'react'
 
-import auth from '@/auth'
 import { QuestListProps } from '@/components/composed/Quest/QuestList/QuestList'
+import { getSessionWithUser } from '@/lib/dal'
 import { FlowClientObject } from '@/services/flow'
 
 import { PageQuestsListClient } from './client'
 import { getFilter } from './utils'
 
 export const PageQuestsList: FC<QuestListProps & { tab?: string }> = async ({ className, tab }) => {
-  const session = await auth()
+  const session = await getSessionWithUser()
   const flows = await FlowClientObject.flows.list({ filter: getFilter(tab) })
 
   const [instances, tasks] = session?.access_token

@@ -4,8 +4,10 @@ import { env } from 'next-runtime-env'
 export const AUTH_COOKIE_NAME = 'access_token_cookie'
 export const AUTH_REFRESH_COOKIE_NAME = 'refresh_token_cookie'
 export const REF_USER_ID_COOKIE_NAME = 'gurunetwork_ref_user_id'
+export const SESSION_COOKIE_NAME = 'gurunetwork_session'
 export const THIRDWEB_JWT_COOKIE_NAME = 'gurunetwork_thirdweb_jwt'
 export const THIRDWEB_ECOSYSTEM_ID = 'ecosystem.guru-network'
+
 export const NATIVE_TOKEN_ADDRESS = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
 
 export const JWT_TOKEN_REFRESH_INTERVAL = 60 * 60 * 1000 // 1 hour

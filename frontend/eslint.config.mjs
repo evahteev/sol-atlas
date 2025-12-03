@@ -13,8 +13,6 @@ export default tseslint.config(
       '**/lib',
       'src/providers/yandexMetrica.tsx',
       'public/landing',
-      './entrypoint.js',
-      'public/landing',
     ],
   },
   // Base ESLint recommended rules

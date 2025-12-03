@@ -3,12 +3,12 @@ import type { Metadata } from 'next'
 import { getTranslations } from 'next-intl/server'
 import { env } from 'next-runtime-env'
 
-import auth from '@/auth'
 import RequireLogin from '@/components/composed/RequireLogin'
 import Tabs from '@/components/composed/Tabs'
 import Caption from '@/components/ui/Caption'
 import Show from '@/components/ui/Show'
-import { ApplicationSettings } from '@/framework/config'
+import { type ApplicationSettings } from '@/framework/config'
+import { getSession } from '@/lib/dal'
 
 import { PageQuestsList } from './_components/list/list'
 
@@ -48,11 +48,11 @@ export async function generateMetadata({
 
 export default async function PageQuests(props: { searchParams?: SearchParams }) {
   const t = await getTranslations('Tasks')
-  const session = await auth()
+  const session = await getSession()
 
   const tab = (await props.searchParams)?.tab
-  const isDefaultTab = tab !== 'mainnet'
-  const isForOnboarding = !!session?.user?.is_block
+  const isDefaultTab = tab !== 'mainnet' && tab !== 'minima'
+  const isForOnboarding = !!session?.is_block
 
   const tabs = []
 
@@ -79,6 +79,12 @@ export default async function PageQuests(props: { searchParams?: SearchParams })
       isActive: true,
     })
   }
+
+  tabs.push({
+    caption: 'MINIMA',
+    isActive: tab === 'minima',
+    href: `?tab=minima`,
+  })
 
   return (
     <RequireLogin>

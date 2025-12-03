@@ -1,6 +1,5 @@
-import { Session } from 'next-auth'
-
 import { TaskFormDeployedForm } from '@/components/composed/TaskForm/TaskFormDeployed/types'
+import { Session } from '@/lib/session'
 import { getFlowClient } from '@/services/flow/getClient'
 import { components, operations, paths } from '@/services/flow/schema'
 

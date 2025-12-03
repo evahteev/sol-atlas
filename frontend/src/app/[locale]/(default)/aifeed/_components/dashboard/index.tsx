@@ -1,10 +1,9 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-
 import clsx from 'clsx'
 
 import Dashboard from '@/components/composed/Dashboard'
+import { useQueryResponse } from '@/hooks/warehouse/useQueryResponse'
 import { TWarehouseQueryResponse } from '@/services/warehouse-redash/types'
 import { getDate } from '@/utils/dates'
 
@@ -34,47 +33,15 @@ export const PageCommunityDashboard = ({
 }) => {
   const t = (key: keyof DashboardTranslations) => translations[key]
 
-  // Use initial data immediately
-  const initialRowData = initialData?.query_result?.data?.rows[0] ?? null
-  const [data, setData] = useState(initialRowData)
-  const [isLoading, setIsLoading] = useState(data === null)
+  const { result } = useQueryResponse({
+    queryId: 'admin_panel_combined',
+    maxAge: 0,
+    refetchInterval: 5 * 60 * 1000,
+    initialData,
+  })
 
-  // Set up periodic data fetching on the client side
-  useEffect(() => {
-    if (typeof window === 'undefined' || !initialData) return
-
-    const fetchData = async () => {
-      try {
-        const response = await fetch('/api/warehouse-redash', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            queryId: 'admin_panel_combined',
-            params: {},
-            maxAge: 0,
-          }),
-        })
-
-        if (response.ok) {
-          const result: TWarehouseQueryResponse = await response.json()
-          const newData = result?.query_result?.data?.rows[0] ?? null
-          if (newData) {
-            setData(newData)
-            setIsLoading(false)
-          }
-        }
-      } catch (error) {
-        console.warn('Failed to fetch updated dashboard data:', error)
-      }
-    }
-
-    // Set up interval for periodic updates (5 minutes)
-    const interval = setInterval(fetchData, 5 * 60 * 1000)
-
-    return () => clearInterval(interval)
-  }, [initialData])
+  const data = result?.data?.rows[0] ?? null
+  const isLoading = data === null
 
   return (
     <Dashboard

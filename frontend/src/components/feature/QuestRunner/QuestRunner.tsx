@@ -1,15 +1,18 @@
 'use client'
 
-import { FC, ReactNode, useEffect, useState } from 'react'
+import { usePathname, useRouter } from 'next/navigation'
+
+import { FC, ReactNode, useCallback, useEffect, useState } from 'react'
 
 import { useQueryClient } from '@tanstack/react-query'
-import { useSession } from 'next-auth/react'
 
 import { VariablePayload } from '@/actions/engine'
 import Loader from '@/components/atoms/Loader'
 import RequireLogin from '@/components/composed/RequireLogin'
 import StateMessage from '@/components/composed/StateMessage'
+import { DEFAULT_REDIRECT_PATH } from '@/config/settings'
 import { HistoricProcessInstanceEventEntity } from '@/hooks/flow/useProcessInstanceWithWS'
+import { signOut, useSession } from '@/hooks/useAuth.compat'
 import { useProcessInstances } from '@/services/flow/hooks/engine'
 import { components } from '@/services/flow/schema'
 
@@ -62,9 +65,14 @@ export const QuestRunner: FC<QuestRunnerProps> = ({
   content: { loader, starter, empty, waiting } = {},
 }) => {
   const queryClient = useQueryClient()
+  const router = useRouter()
+  const pathname = usePathname()
 
-  const { data: session } = useSession()
+  const { data: session, update } = useSession()
   const [currentInstance, setCurrentInstance] = useState(initialData?.instance)
+  const [isCompleting, setIsCompleting] = useState(false)
+  const [completingFlowName, setCompletingFlowName] = useState<string | null>(null)
+
   const { data: instances, isLoading } = useProcessInstances({
     businessKey: currentInstance?.businessKey || businessKey,
     processDefinitionKey,
@@ -75,6 +83,9 @@ export const QuestRunner: FC<QuestRunnerProps> = ({
     },
   })
 
+  // Check if we're on a /flow/* route
+  const isFlowRoute = pathname?.startsWith('/flow/')
+
   useEffect(() => {
     setCurrentInstance(initialData?.instance ?? null)
   }, [initialData?.instance])
@@ -84,6 +95,64 @@ export const QuestRunner: FC<QuestRunnerProps> = ({
   }, [instances])
 
   const instance = currentInstance || instances?.[0]
+
+  // Default completion handler for /flow/* routes
+  const defaultFlowCompletionHandler = useCallback(
+    async (event: HistoricProcessInstanceEventEntity) => {
+      const flowName = instance?.processDefinitionName || instance?.processDefinitionKey || 'Flow'
+
+      console.log('Flow completed:', event)
+      setIsCompleting(true)
+      setCompletingFlowName(flowName)
+
+      try {
+        // Refresh session to get updated user data from Flow API
+        await update()
+
+        // Wait for session to propagate
+        setTimeout(() => {
+          router.push(DEFAULT_REDIRECT_PATH)
+        }, 500)
+      } catch (error) {
+        console.error('Error refreshing session after flow completion:', error)
+        // On error, log out user and redirect
+        await signOut({ redirect: false })
+        router.push(DEFAULT_REDIRECT_PATH)
+      }
+    },
+    [instance?.processDefinitionName, instance?.processDefinitionKey, update, router]
+  )
+
+  const handleInstanceEnd = useCallback(
+    async (event: HistoricProcessInstanceEventEntity) => {
+      // If on a /flow/* route and no custom handler, use default
+      if (isFlowRoute && !onInstanceEnd) {
+        await defaultFlowCompletionHandler(event)
+      } else {
+        onInstanceEnd?.(event)
+      }
+      setCurrentInstance(null)
+    },
+    [isFlowRoute, onInstanceEnd, defaultFlowCompletionHandler]
+  )
+
+  const handleTaskClose = useCallback(
+    (taskId?: string) => {
+      onTaskClose?.(taskId)
+    },
+    [onTaskClose]
+  )
+
+  const handleTaskComplete = useCallback(
+    (taskId?: string) => {
+      onTaskComplete?.(taskId)
+
+      queryClient.invalidateQueries({
+        queryKey: ['FlowClientObject.engine.task.list'],
+      })
+    },
+    [onTaskComplete, queryClient]
+  )
 
   if (!instance && isLoading) {
     return loader ?? <Loader className={styles.loader}>Loading instance&hellip;</Loader>
@@ -134,21 +203,14 @@ export const QuestRunner: FC<QuestRunnerProps> = ({
     )
   }
 
-  const handleInstanceEnd = (event: HistoricProcessInstanceEventEntity) => {
-    onInstanceEnd?.(event)
-    setCurrentInstance(null)
-  }
-
-  const handleTaskClose = (taskId?: string) => {
-    onTaskClose?.(taskId)
-  }
-
-  const handleTaskComplete = (taskId?: string) => {
-    onTaskComplete?.(taskId)
-
-    queryClient.invalidateQueries({
-      queryKey: ['FlowClientObject.engine.task.list'],
-    })
+  // Show completion message while redirecting
+  if (isCompleting && completingFlowName) {
+    return (
+      <Loader className={styles.loader}>
+        Flow &ldquo;{completingFlowName}&rdquo; is completed, redirecting to {DEFAULT_REDIRECT_PATH}
+        &hellip;
+      </Loader>
+    )
   }
 
   return (

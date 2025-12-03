@@ -18,8 +18,8 @@ import {
   sepolia,
   sonic,
 } from '@reown/appkit/networks'
+import { cookieStorage, createStorage, http } from '@wagmi/core'
 import { env } from 'next-runtime-env'
-import { cookieStorage, createStorage, http } from 'wagmi'
 
 export const guruTestnet = {
   ...guruBaseSepolia,

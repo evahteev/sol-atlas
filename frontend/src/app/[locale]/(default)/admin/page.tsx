@@ -1,7 +1,6 @@
 import get from 'lodash/get'
 import { env } from 'next-runtime-env'
 
-import auth from '@/auth'
 import Banner from '@/components/composed/Banner'
 import StateMessage from '@/components/composed/StateMessage'
 import IconAI from '@/images/icons/aichat.svg'
@@ -12,6 +11,7 @@ import IconTG from '@/images/icons/telegram.svg'
 import IconX from '@/images/icons/x.svg'
 import IconDiscord from '@/images/socials/discord.svg'
 import IconYoutube from '@/images/socials/youtube.svg'
+import { getSession } from '@/lib/dal'
 import { FlowClientObject } from '@/services/flow'
 import { getWarehouseQueryResponse } from '@/services/warehouse-redash'
 
@@ -28,10 +28,10 @@ const APP_CONFIG_KEY = 'app_config'
 const S3Logo = env('NEXT_PUBLIC_APP_LOGO')
 
 export default async function PageCommunity() {
-  const session = await auth()
+  const session = await getSession()
   const appConfig = await FlowClientObject.config.get({ key: APP_CONFIG_KEY })
 
-  const isAdmin = session?.user?.is_admin
+  const isAdmin = session?.is_admin
   if (!isAdmin) {
     return (
       <StateMessage type="danger" caption="Forbidden" className={styles.error}>

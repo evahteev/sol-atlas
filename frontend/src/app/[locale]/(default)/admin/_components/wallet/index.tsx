@@ -4,7 +4,7 @@ import { FC } from 'react'
 
 import clsx from 'clsx'
 import { env } from 'next-runtime-env'
-import { Address } from 'viem'
+import { Address, formatUnits } from 'viem'
 import { useBalance } from 'wagmi'
 
 import AnimatedValue from '@/components/ui/AnimatedValue'
@@ -38,7 +38,9 @@ export const PageCommunityWallet: FC<PageCommunityWalletProps> = ({ className })
         <AnimatedValue
           className={styles.value}
           value={
-            data?.formatted ? formatNumber(data?.formatted || '–', { notation: 'compact' }) : '–'
+            data?.value
+              ? formatNumber(formatUnits(data.value, data.decimals) || '–', { notation: 'compact' })
+              : '–'
           }
         />
       </div>

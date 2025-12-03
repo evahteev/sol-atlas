@@ -2,7 +2,8 @@
 
 import { FC } from 'react'
 
-import { FeatureFlag, useFeatureFlag } from '@/lib/feature-flags'
+import { env } from 'next-runtime-env'
+
 import { components } from '@/services/flow/schema'
 
 import { AIChatBotAPI } from './AIChatBotAPI'
@@ -33,7 +34,7 @@ export const AIChat: FC<AIChatProps> = ({
   onControlTasks,
   integrationId = 'luka',
 }) => {
-  const isBotAPIEnabled = useFeatureFlag(FeatureFlag.BOT_API_CHAT)
+  const isBotAPIEnabled = env('NEXT_PUBLIC_FEATURE_BOT_API_CHAT') === 'true'
 
   // Feature flag: Use bot API or legacy Camunda
   if (isBotAPIEnabled) {

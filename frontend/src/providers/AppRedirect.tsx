@@ -4,9 +4,8 @@ import { useRouter } from 'next/navigation'
 
 import { ReactNode, useEffect, useState } from 'react'
 
-import { useSession } from 'next-auth/react'
-
 import { DEFAULT_REDIRECT_PATH } from '@/config/settings'
+import { useSession } from '@/hooks/useAuth.compat'
 
 function isValidCallbackUrl(url: string): boolean {
   try {
@@ -41,6 +40,7 @@ export function AppRedirect({ children }: { children?: ReactNode }) {
       router.push(DEFAULT_REDIRECT_PATH)
       return
     }
+
     if (session?.user?.is_block) {
       router.push('/flow/community_onboarding')
       return

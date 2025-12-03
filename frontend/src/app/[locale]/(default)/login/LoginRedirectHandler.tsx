@@ -4,10 +4,9 @@ import { useRouter } from 'next/navigation'
 
 import { useEffect, useRef, useState } from 'react'
 
-import { useSession } from 'next-auth/react'
-
 import { DEFAULT_REDIRECT_PATH } from '@/config/settings'
 import useAuth from '@/hooks/useAuth'
+import { useSession } from '@/hooks/useAuth.compat'
 
 function isValidCallbackUrl(url: string): boolean {
   try {
@@ -51,7 +50,7 @@ export function LoginRedirectHandler() {
 
       // Handle blocked users
       if (session?.user?.is_block) {
-        window.location.href = '/agents'
+        window.location.href = '/flow/community_onboarding'
         return
       }
 

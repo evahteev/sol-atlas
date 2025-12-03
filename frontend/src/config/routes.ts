@@ -14,7 +14,18 @@ export interface RouteConfig {
 
 export const routeConfig: RouteConfig = {
   // Public routes - accessible to everyone
-  public: ['/', '/about', '/content', '/content/*', '/login', '/aifeed', '/aifeed/*', '/landing/*'],
+  public: [
+    '/',
+    '/about',
+    '/content',
+    '/content/*',
+    '/login',
+    '/aifeed',
+    '/aifeed/*',
+    '/landing/*',
+    '/swap',
+    '/swap/*',
+  ],
 
   // Semi-protected routes - viewable by all, but interactions require auth
   semiProtected: [
@@ -40,8 +51,6 @@ export const routeConfig: RouteConfig = {
     '/tasks/*',
     '/admin',
     '/admin/*',
-    '/swap',
-    '/swap/*',
   ],
 }
 

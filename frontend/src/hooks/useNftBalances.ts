@@ -2,11 +2,11 @@ import { CaipAddress } from '@reown/appkit'
 import { useQuery } from '@tanstack/react-query'
 import { readContract, readContracts } from '@wagmi/core'
 import { AssetId, AssetType } from 'caip'
-import { useSession } from 'next-auth/react'
 import { env } from 'next-runtime-env'
 import { Address } from 'viem'
 
 import { wagmiAdapter } from '@/config/wagmi'
+import { useSession } from '@/hooks/useAuth.compat'
 import { NFTCollectionBalance, NFTMetadata } from '@/models/nft'
 
 import { communityNftAbi } from './useNftBalances.module'
@@ -171,7 +171,9 @@ export const useCheckNFTOwnership = () => {
     ? JSON.parse(NEXT_PUBLIC_APP_COMMUNITY_NFT_ADDRESSES)
     : []
   const { data: session } = useSession()
-  const wallets = session?.user?.web3_wallets?.map((x) => x.wallet_address)
+  const wallets = session?.user?.web3_wallets
+    ?.map((x) => x.wallet_address || x.address)
+    .filter(Boolean)
   return useQuery({
     queryKey: ['checkIfUserHoldsNFT', communityNftAddresses, wallets],
     queryFn: () => checkIfUserHoldsNFT(communityNftAddresses, wallets ?? []),

@@ -1,6 +1,7 @@
 @use '@/styles/mixins' as mixins;
 
 .container {
+  margin: auto;
   display: flex;
   flex-flow: column;
   gap: 32px;
@@ -74,4 +75,7 @@
   &:focus-visible {
     color: var(--color-light);
   }
+
+  position: absolute;
+  top: 20px;
 }
